@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <meta name="robots" content="noindex, nofollow">
+    <title>JG Sistemas - Painel de Controle</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
+        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
+        header .brand { display: flex; align-items: center; gap: 10px; }
+        header .brand span.logo { background-color: #2ecc71; color: #0b2545; padding: 4px 10px; border-radius: 4px; font-weight: 800; }
+        main { padding: 25px; max-width: 1100px; margin: 0 auto; width: 100%; }
+        .boas-vindas { background: linear-gradient(135deg, #0b2545, #134074); color: white; border-radius: 6px; padding: 22px 26px; margin-bottom: 24px; }
+        .boas-vindas h1 { font-size: 22px; margin-bottom: 6px; }
+        .boas-vindas p { font-size: 13px; color: #aab2bd; }
+        .modulos { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+        .modulo { background: white; border: 1px solid #ccd1d9; border-radius: 6px; padding: 18px; cursor: pointer; transition: all 0.15s ease; display: flex; flex-direction: column; gap: 10px; text-decoration: none; color: inherit; }
+        .modulo:hover { border-color: #134074; transform: translateY(-2px); box-shadow: 0 4px 14px rgba(11, 37, 69, 0.15); }
+        .modulo .icone { width: 46px; height: 46px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: white; }
+        .modulo .nome { font-size: 15px; font-weight: bold; color: #0b2545; text-transform: uppercase; }
+        .modulo .desc { font-size: 12px; color: #8b95a1; line-height: 1.4; }
+        .modulo.bloqueado { cursor: not-allowed; opacity: 0.6; }
+        .modulo.bloqueado:hover { transform: none; box-shadow: none; border-color: #ccd1d9; }
+        .modulo .em-breve { font-size: 11px; font-weight: bold; color: #d9534f; text-transform: uppercase; }
+        .aviso-mensalidade { background: #fde8c8; color: #b26b00; border: 1px solid #e6c47a; border-radius: 6px; padding: 12px 16px; font-size: 14px; font-weight: bold; margin-bottom: 24px; display: none; justify-content: space-between; align-items: center; gap: 12px; }
+        .aviso-mensalidade .fechar-aviso { background: none; border: 1px solid #b26b00; color: #b26b00; border-radius: 4px; padding: 4px 10px; font-size: 12px; font-weight: bold; cursor: pointer; flex: 0 0 auto; }
+        .aviso-mensalidade .fechar-aviso:hover { background: #b26b00; color: white; }
+        .ic-cor { background-color: #134074; }
+        .ic-verde { background-color: #00a651; }
+        .ic-roxo { background-color: #7d5ba6; }
+        .ic-laranja { background-color: #e67e22; }
+        .ic-vermelho { background-color: #d9534f; }
+        .ic-azul { background-color: #2980b9; }
+        .ic-cinza { background-color: #8b95a1; }
+        .ic-ciano { background-color: #17a2b8; }
+        footer { background-color: #134074; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
+
+        @media (max-width: 768px) {
+            .boas-vindas h1 { font-size: 18px; }
+            main { padding: 15px; }
+            .modulos { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand">
+            <span class="logo">JG</span>
+            <span>JG SISTEMAS - PAINEL DE CONTROLE</span>
+        </div>
+        <div style="display:flex; gap:14px; align-items:center;">
+            <span id="operador-lbl">OPERADOR: DEV_MASTER</span>
+            <a href="#" onclick="sair(); return false;" style="color:#2ecc71; text-decoration:none; font-weight:normal;">Trocar Operador</a>
+        </div>
+    </header>
+
+    <main>
+        <div class="aviso-mensalidade" id="aviso-mensalidade"></div>
+        <div class="boas-vindas">
+            <h1>Bem-vindo ao JG Sistemas</h1>
+            <p>Selecione um dos módulos abaixo para acessar as funções do sistema.</p>
+        </div>
+
+        <div class="modulos">
+            <a class="modulo" href="/dashboard.html">
+                <div class="icone ic-verde">DASH</div>
+                <div class="nome">Dashboard</div>
+                <div class="desc">Resumo do dia: vendas, caixas, contas e estoque.</div>
+            </a>
+
+            <a class="modulo" href="/caixa.html">
+                <div class="icone ic-cinza">CAIX</div>
+                <div class="nome">Abertura de Caixa</div>
+                <div class="desc">Abrir e fechar registradora antes das vendas.</div>
+            </a>
+
+            <a class="modulo" href="/pdv.html">
+                <div class="icone ic-verde">PDV</div>
+                <div class="nome">Frente de Caixa</div>
+                <div class="desc">Vendas no PDV, pagamentos e emissão de cupom.</div>
+            </a>
+
+            <a class="modulo" href="/vendas-fora-pdv.html">
+                <div class="icone ic-laranja">VAP</div>
+                <div class="nome">Vendas Fora do PDV</div>
+                <div class="desc">Venda a prazo para clientes com parcelas e datas de pagamento.</div>
+            </a>
+
+            <a class="modulo" href="/produtos.html">
+                <div class="icone ic-cor">PROD</div>
+                <div class="nome">Cadastro de Produtos</div>
+                <div class="desc">Criar, editar e excluir produtos e categorias.</div>
+            </a>
+
+            <a class="modulo" href="/clientes.html">
+                <div class="icone ic-azul">CLI</div>
+                <div class="nome">Clientes</div>
+                <div class="desc">Cadastro, tabela de preço e análise de crédito.</div>
+            </a>
+
+            <a class="modulo" href="/tabelas-preco.html">
+                <div class="icone ic-azul">TBP</div>
+                <div class="nome">Tabelas de Preço</div>
+                <div class="desc">Tabelas com preço fixo ou percentual de desconto por produto.</div>
+            </a>
+
+            <a class="modulo" href="/promocoes.html">
+                <div class="icone ic-laranja">PRO</div>
+                <div class="nome">Promoções</div>
+                <div class="desc">Promoções por produto, marca ou categoria (ex.: Leve 3 Pague 2).</div>
+            </a>
+
+            <a class="modulo" href="/trocas.html">
+                <div class="icone ic-roxo">TRO</div>
+                <div class="nome">Troca / Devolução</div>
+                <div class="desc">Devolução de itens de vendas e troca por novos produtos.</div>
+            </a>
+
+            <a class="modulo" href="/inventario.html">
+                <div class="icone ic-ciano">INV</div>
+                <div class="nome">Inventário</div>
+                <div class="desc">Contagem de estoque e ajustes por divergência.</div>
+            </a>
+
+            <a class="modulo" href="/cobranca.html">
+                <div class="icone ic-vermelho">COB</div>
+                <div class="nome">Cobrança / Inadimplência</div>
+                <div class="desc">Crédito dos clientes e renegociação de crediário.</div>
+            </a>
+
+            <a class="modulo" href="/recebiveis.html">
+                <div class="icone ic-laranja">RCB</div>
+                <div class="nome">Recebíveis de Cartão</div>
+                <div class="desc">Antecipação, baixa e acompanhamento dos recebíveis.</div>
+            </a>
+
+            <a class="modulo" href="/projecao-repasses.html">
+                <div class="icone ic-ciano">PRJ</div>
+                <div class="nome">Projeção de Repasses</div>
+                <div class="desc">Projeção D+ por operadora e por data de repasse.</div>
+            </a>
+
+            <a class="modulo" href="/operadoras.html">
+                <div class="icone ic-cinza">OPC</div>
+                <div class="nome">Operadoras de Cartão</div>
+                <div class="desc">Cadastro de operadoras, bandeiras e taxas (MDR).</div>
+            </a>
+
+            <a class="modulo" href="/fornecedores.html">
+                <div class="icone ic-laranja">FOR</div>
+                <div class="nome">Fornecedores</div>
+                <div class="desc">Cadastro e gestão de fornecedores.</div>
+            </a>
+
+            <a class="modulo" href="/estoque.html">
+                <div class="icone ic-roxo">EST</div>
+                <div class="nome">Estoque</div>
+                <div class="desc">Controle de estoque e movimentações.</div>
+            </a>
+
+            <a class="modulo" href="/financeiro.html">
+                <div class="icone ic-vermelho">FIN</div>
+                <div class="nome">Financeiro</div>
+                <div class="desc">Contas a receber e a pagar.</div>
+            </a>
+
+            <a class="modulo" href="/funcionarios.html">
+                <div class="icone ic-ciano">FUN</div>
+                <div class="nome">Funcionários</div>
+                <div class="desc">Cadastro de funcionários com salário e benefícios.</div>
+            </a>
+
+            <a class="modulo" href="/consultas.html">
+                <div class="icone ic-cinza">VEN</div>
+                <div class="nome">Consulta de Vendas</div>
+                <div class="desc">Histórico e relatórios de vendas.</div>
+            </a>
+
+            <a class="modulo" href="/relatorio-caixas.html">
+                <div class="icone ic-cinza">REL</div>
+                <div class="nome">Relatórios</div>
+                <div class="desc">Fechamento do dia e desempenho das registradoras.</div>
+            </a>
+
+            <a class="modulo" href="/relatorios.html">
+                <div class="icone ic-roxo">GRL</div>
+                <div class="nome">Relatórios Gerenciais</div>
+                <div class="desc">Vendas por operador, ranking de produtos e comissões.</div>
+            </a>
+
+            <a class="modulo" href="/orcamentos.html">
+                <div class="icone ic-laranja">ORC</div>
+                <div class="nome">Orçamentos</div>
+                <div class="desc">Orçamentos pendentes aguardando efetivação.</div>
+            </a>
+
+            <a class="modulo" href="/compras.html">
+                <div class="icone ic-cor">CMP</div>
+                <div class="nome">Compras</div>
+                <div class="desc">Pedidos de compra de fornecedores e entrada de estoque.</div>
+            </a>
+
+            <a class="modulo" href="/fidelidade.html">
+                <div class="icone ic-ciano">FID</div>
+                <div class="nome">Fidelidade / Cashback</div>
+                <div class="desc">Saldos de cashback e extrato de pontos dos clientes.</div>
+            </a>
+
+            <a class="modulo" href="/marcas.html">
+                <div class="icone ic-azul">MAR</div>
+                <div class="nome">Marcas</div>
+                <div class="desc">Cadastro de marcas usadas nos produtos.</div>
+            </a>
+
+            <a class="modulo" href="/colecoes.html">
+                <div class="icone ic-vermelho">COL</div>
+                <div class="nome">Coleções</div>
+                <div class="desc">Coleções e temporadas dos produtos.</div>
+            </a>
+
+            <a class="modulo" href="/auditoria.html">
+                <div class="icone ic-cinza">AUD</div>
+                <div class="nome">Auditoria</div>
+                <div class="desc">Registro de ações sensíveis do sistema.</div>
+            </a>
+
+            <a class="modulo" href="/config-pagamento.html">
+                <div class="icone ic-laranja">PGT</div>
+                <div class="nome">Configuração de Pagamento</div>
+                <div class="desc">Formas de pagamento do PDV e parcelamento no crédito.</div>
+            </a>
+
+            <a class="modulo" href="/configuracoes.html">
+                <div class="icone ic-cinza">CONF</div>
+                <div class="nome">Configurações</div>
+                <div class="desc">Logo e dados da empresa usados nos comprovantes.</div>
+            </a>
+        </div>
+    </main>
+
+    <footer>© 2026 JG Sistemas</footer>
+
+    <script>
+        function obterOperador() {
+            try {
+                const raw = localStorage.getItem('jg_operador');
+                return raw ? JSON.parse(raw) : null;
+            } catch (e) { return null; }
+        }
+
+        function tokenAuth() {
+            const op = obterOperador();
+            return op && op.token ? { 'Authorization': 'Bearer ' + op.token } : {};
+        }
+
+        function sair() {
+            fetch('/api/auth/logout', { method: 'POST', headers: tokenAuth() }).catch(() => {});
+            localStorage.removeItem('jg_operador');
+            window.location.href = '/login.html';
+        }
+
+        function exibirAvisoMensalidade() {
+            let aviso = null;
+            try { aviso = JSON.parse(localStorage.getItem('jg_aviso_mensalidade')); } catch (e) { aviso = null; }
+            const el = document.getElementById('aviso-mensalidade');
+            if (!aviso || !aviso.mensagem) { el.style.display = 'none'; return; }
+            // Exibe o banner no máximo uma vez por hora.
+            const HORA_MS = 3600000;
+            const ultima = Number(localStorage.getItem('jg_aviso_mensalidade_ultima') || 0);
+            if (Date.now() - ultima < HORA_MS) { el.style.display = 'none'; return; }
+            localStorage.setItem('jg_aviso_mensalidade_ultima', String(Date.now()));
+            el.innerHTML = '';
+            const texto = document.createElement('div');
+            texto.innerText = `⚠ ${aviso.mensagem}`;
+            el.appendChild(texto);
+            const btn = document.createElement('button');
+            btn.className = 'fechar-aviso';
+            btn.innerText = 'Entendi';
+            btn.onclick = () => { el.style.display = 'none'; };
+            el.appendChild(btn);
+            el.style.display = 'flex';
+        }
+
+        // Operador de caixa (SELLER) vê somente os módulos de operação
+        const MODULOS_PERMITIDOS_SELLER = ['/caixa.html', '/pdv.html', '/vendas-fora-pdv.html', '/orcamentos.html'];
+
+        (() => {
+            const operador = obterOperador();
+            if (!operador) {
+                window.location.href = '/login.html';
+                return;
+            }
+            document.getElementById('operador-lbl').innerText = `OPERADOR: ${operador.nome || operador.email}`;
+            exibirAvisoMensalidade();
+
+            if (operador.papel === 'SELLER') {
+                document.querySelectorAll('.modulo').forEach(modulo => {
+                    if (!MODULOS_PERMITIDOS_SELLER.includes(modulo.getAttribute('href'))) {
+                        modulo.remove();
+                    }
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

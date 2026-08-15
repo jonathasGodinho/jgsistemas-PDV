@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>Relatório de Caixas - JG Sistemas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
+        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
+        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
+        header a:hover { color: white; }
+        main { padding: 20px; max-width: 1000px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
+        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
+        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+        .painel-corpo { padding: 20px; }
+        .form-linha { display: flex; gap: 14px; align-items: flex-end; margin-bottom: 6px; }
+        .form-linha .campo { display: flex; flex-direction: column; gap: 5px; }
+        .form-linha label { font-size: 12px; color: #656d78; font-weight: bold; text-transform: uppercase; }
+        .form-linha input { padding: 11px; font-size: 16px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
+        .btn { border: none; border-radius: 4px; padding: 11px 18px; font-size: 14px; font-weight: bold; cursor: pointer; }
+        .btn-verde { background-color: #00a651; color: white; }
+        .btn-verde:hover { background-color: #007a3d; }
+        .btn-cinza { background-color: #8b95a1; color: white; text-decoration: none; display: inline-block; }
+        .btn-cinza:hover { background-color: #6f7885; }
+        .resumo-dia { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+        .resumo-dia .item { background: #f8f9fa; border: 1px solid #e6e9ed; border-radius: 4px; padding: 12px; }
+        .resumo-dia .item .rotulo { font-size: 11px; color: #8b95a1; font-weight: bold; text-transform: uppercase; }
+        .resumo-dia .item .valor { font-size: 20px; font-weight: bold; color: #134074; margin-top: 4px; }
+        .caixa { border: 1px solid #ccd1d9; border-radius: 4px; margin-bottom: 16px; overflow: hidden; }
+        .caixa-aberto { border-color: #00a651; }
+        .caixa-head { background: #f8f9fa; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+        .caixa-aberto .caixa-head { background: #e3f7ec; }
+        .caixa-titulo { font-size: 15px; font-weight: bold; color: #0b2545; }
+        .caixa-titulo .badge { font-size: 11px; padding: 3px 8px; border-radius: 3px; margin-left: 8px; }
+        .badge.ABERTO { color: #00a651; background: #e3f7ec; }
+        .badge.CLOSED { color: #8b95a1; background: #eceff1; }
+        .caixa-sub { font-size: 12px; color: #656d78; }
+        .caixa-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1px; background: #e6e9ed; }
+        .caixa-grid .g { background: white; padding: 12px; }
+        .caixa-grid .rotulo { font-size: 11px; color: #8b95a1; font-weight: bold; text-transform: uppercase; }
+        .caixa-grid .valor { font-size: 16px; font-weight: bold; color: #134074; margin-top: 4px; }
+        .caixa-grid .valor.pos { color: #00a651; }
+        .caixa-grid .valor.neg { color: #d9534f; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background-color: #134074; color: white; padding: 8px 10px; text-align: left; text-transform: uppercase; font-size: 11px; }
+        td { padding: 8px 10px; border-bottom: 1px solid #e6e9ed; color: #333; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        .sem-dados { text-align: center; color: #8b95a1; padding: 20px; font-size: 14px; }
+        .secao-titulo { font-size: 12px; font-weight: bold; text-transform: uppercase; color: #656d78; padding: 12px 16px 6px; }
+        footer { background-color: #134074; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>JG SISTEMAS - RELATÓRIO DE CAIXAS</div>
+        <div><a href="/">← Menu Principal</a></div>
+    </header>
+
+    <main>
+        <div class="painel">
+            <div class="painel-titulo"><span>Fechamento do Dia por Registradora</span></div>
+            <div class="painel-corpo">
+                <div class="form-linha">
+                    <div class="campo">
+                        <label>Data do relatório</label>
+                        <input type="date" id="filtro-data">
+                    </div>
+                    <button class="btn btn-verde" onclick="gerar()">Gerar Relatório</button>
+                    <button class="btn btn-cinza" onclick="imprimir()">Imprimir</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="area-relatorio">
+            <div class="painel">
+                <div class="painel-corpo">
+                    <div class="sem-dados">Selecione a data e clique em "Gerar Relatório".</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>© 2026 JG Sistemas</footer>
+
+    <script src="/seguranca.js"></script>
+    <script>
+        function formatarMoeda(v) {
+            return 'R$ ' + (Number(v) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function formatarDataHora(d) {
+            if (!d) return '-';
+            const data = new Date(d);
+            return data.toLocaleString('pt-BR');
+        }
+
+        function obterOperador() {
+            try {
+                const raw = localStorage.getItem('jg_operador');
+                return raw ? JSON.parse(raw) : null;
+            } catch (e) { return null; }
+        }
+
+        function tokenAuth() {
+            const op = obterOperador();
+            return op && op.token ? { 'Authorization': 'Bearer ' + op.token } : {};
+        }
+
+        function bloquearCaixa() {
+            const op = obterOperador();
+            if (!op) { window.location.href = '/login.html'; return true; }
+            if (op.papel === 'SELLER') { window.location.href = '/'; return true; }
+            return false;
+        }
+
+        async function api(url, metodo, corpo) {
+            const opt = { method: metodo || 'GET', headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()) };
+            if (corpo) opt.body = JSON.stringify(corpo);
+            const response = await fetch(url, opt);
+            if (response.status === 401) {
+                localStorage.removeItem('jg_operador');
+                window.location.href = '/login.html';
+                throw new Error('Sessão expirada.');
+            }
+            const dados = await response.json();
+            if (!response.ok) throw new Error(dados.erro || 'Erro na requisição');
+            return dados;
+        }
+
+        bloquearCaixa();
+
+        function div(valor, cls) {
+            return `<div class="valor ${cls || ''}">${formatarMoeda(valor)}</div>`;
+        }
+
+        function montarMovimentos(lista, titulo, reg) {
+            if (!lista || lista.length === 0) {
+                return `<div class="secao-titulo">${titulo}: nenhum movimento</div>`;
+            }
+            const linhas = lista.map(m => `
+                <tr>
+                    <td>${formatarDataHora(m.data)}</td>
+                    <td style="text-align:right;">${formatarMoeda(m.valor)}</td>
+                    <td>${esc(m.observacoes || '-')}</td>
+                    <td style="text-align:center;"><button class="btn btn-mini btn-verde" onclick="imprimirComprovante(${esc(JSON.stringify(m))}, ${reg.numero}, '${esc((reg.operador || 'Admin').replace(/'/g, "\\'"))}')">Imprimir</button></td>
+                </tr>`).join('');
+            return `
+                <div class="secao-titulo">${titulo}</div>
+                <table>
+                    <thead><tr><th>Data/Hora</th><th style="text-align:right;">Valor</th><th>Observações</th><th style="text-align:center;">Recibo</th></tr></thead>
+                    <tbody>${linhas}</tbody>
+                </table>`;
+        }
+
+        let CONFIG = { name: 'JG SISTEMAS', tradeName: 'TESTE LTDA', document: '', logo: null };
+        async function carregarConfig() {
+            try {
+                const r = await fetch('/api/configuracoes', { headers: tokenAuth() });
+                if (r.ok) CONFIG = Object.assign(CONFIG, await r.json());
+            } catch (e) { console.error('Falha ao carregar configurações:', e); }
+        }
+
+        function imprimirComprovante(mov, numero, operador) {
+            const titulo = mov.tipo === 'SANGRIAS' ? 'COMPROVANTE DE SANGRIA' : 'COMPROVANTE DE SUPRIMENTO';
+            const data = new Date(mov.data);
+            const nomeEmpresa = (CONFIG.tradeName || CONFIG.name || 'JG SISTEMAS').toUpperCase();
+            const endereco = [CONFIG.address, CONFIG.number ? `nº ${CONFIG.number}` : ''].filter(Boolean).join(', ');
+            const cidade = [CONFIG.city, CONFIG.state].filter(Boolean).join('/');
+            const logo = CONFIG.logo
+                ? `<div style="text-align:center; margin-bottom:4px;"><img src="${CONFIG.logo}" style="max-width:160px; max-height:80px;"></div>`
+                : '';
+            const centro = (t) => {
+                if (!t) return '';
+                t = String(t);
+                if (t.length >= 42) return t;
+                return ' '.repeat(Math.floor((42 - t.length) / 2)) + t;
+            };
+            const cabecalho = [
+                centro(nomeEmpresa),
+                CONFIG.document ? centro(`CNPJ: ${CONFIG.document}`) : null,
+                endereco ? centro(endereco) : null,
+                (CONFIG.neighborhood && cidade) ? centro(`${CONFIG.neighborhood} - ${cidade}`) : (cidade ? centro(cidade) : null),
+                CONFIG.phone ? centro(`Tel: ${CONFIG.phone}`) : null,
+                ''
+            ].filter(Boolean);
+            const linha = (label, valor) => `${String(label).padEnd(15)}: ${valor}`;
+            const corpo = [
+                '-'.repeat(42),
+                centro(titulo),
+                '-'.repeat(42),
+                linha('Registradora', `Nº ${numero}`),
+                linha('Data', `${data.toLocaleDateString('pt-BR')} ${data.toLocaleTimeString('pt-BR')}`),
+                linha('Operador', operador),
+                '-'.repeat(42),
+                linha('Valor', formatarMoeda(mov.valor)),
+                mov.observacoes ? linha('Motivo', mov.observacoes) : null,
+                '-'.repeat(42),
+                'Assinatura: ______________________',
+                ''
+            ].filter(l => l !== null).join('\n');
+
+            const w = window.open('', '_blank', 'width=380,height=500');
+            w.document.write(`<html><body style="margin:0;"><div style="padding:10px;">${logo}<pre style="font-family:'Courier New',monospace; font-size:12px; margin:0;">${cabecalho.join('\n')}\n${corpo}</pre></div></body></html>`);
+            w.document.close();
+            w.print();
+        }
+
+        function renderizar(r, t) {
+            const badge = `<span class="badge ${r.status}">${r.status === 'OPEN' ? 'ABERTO' : 'FECHADO'}</span>`;
+            const divDiv = r.divergencia !== null
+                ? (r.divergencia > 0 ? div(r.divergencia, 'pos') : r.divergencia < 0 ? div(r.divergencia, 'neg') : div(r.divergencia))
+                : div(r.fechamento ?? r.previsao);
+            return `
+                <div class="caixa ${r.status === 'OPEN' ? 'caixa-aberto' : ''}">
+                    <div class="caixa-head">
+                        <div>
+                            <div class="caixa-titulo">Registradora Nº ${r.numero}${badge}</div>
+                            <div class="caixa-sub">Operador: ${esc(r.operador || '-')} | Aberto: ${formatarDataHora(r.abertoEm)} | Fechado: ${formatarDataHora(r.fechadoEm)}</div>
+                        </div>
+                    </div>
+                    <div class="caixa-grid">
+                        <div class="g"><div class="rotulo">Fundo de Caixa</div>${div(r.abertura)}</div>
+                        <div class="g"><div class="rotulo">Nº de Vendas</div><div class="valor">${r.numVendas}</div></div>
+                        <div class="g"><div class="rotulo">Quantidade</div><div class="valor">${r.quantidade} un.</div></div>
+                        <div class="g"><div class="rotulo">Total Vendido</div>${div(r.totalVendas)}</div>
+                        <div class="g"><div class="rotulo">Sangrias</div>${div(r.totalSangrias)}</div>
+                        <div class="g"><div class="rotulo">Suprimentos</div>${div(r.totalSuprimentos)}</div>
+                        <div class="g"><div class="rotulo">Previsão</div>${div(r.previsao)}</div>
+                        <div class="g"><div class="rotulo">Onde o Caixa Fechou</div>${r.fechamento !== null ? div(r.fechamento) : div(r.previsao)}</div>
+                        <div class="g"><div class="rotulo">Divergência</div>${divDiv}</div>
+                    </div>
+                    <div class="painel-corpo" style="padding:0 0 14px;">
+                        ${montarMovimentos(r.sangrias, `Sangrias (${r.sangrias.length})`, r)}
+                        ${montarMovimentos(r.suprimentos, `Suprimentos (${r.suprimentos.length})`, r)}
+                    </div>
+                </div>`;
+        }
+
+        async function gerar() {
+            const data = document.getElementById('filtro-data').value;
+            if (!data) { alert("Selecione a data!"); return; }
+            try {
+                const r = await api(`/api/caixa/fechamentos?data=${data}`);
+                const t = r.totais;
+                const cards = `
+                    <div class="resumo-dia">
+                        <div class="item"><div class="rotulo">Caixas Fechados</div><div class="valor">${t.caixasFechados}</div></div>
+                        <div class="item"><div class="rotulo">Caixas em Aberto</div><div class="valor">${t.caixasAbertos}</div></div>
+                        <div class="item"><div class="rotulo">Total Vendido (R$)</div>${div(t.totalVendas)}</div>
+                        <div class="item"><div class="rotulo">Quantidade Total</div><div class="valor">${t.totalQuantidade} un.</div></div>
+                        <div class="item"><div class="rotulo">Divergência Total</div>${div(t.divergencia)}</div>
+                    </div>`;
+                const lista = r.registros.length === 0
+                    ? `<div class="painel"><div class="painel-corpo"><div class="sem-dados">Nenhum caixa aberto ou fechado nesta data.</div></div></div>`
+                    : r.registros.map(x => renderizar(x)).join('');
+                document.getElementById('area-relatorio').innerHTML = cards + lista;
+            } catch (e) { alert(e.message); }
+        }
+
+        function imprimir() {
+            const conteudo = document.getElementById('area-relatorio').innerHTML;
+            if (!conteudo.trim()) { alert("Gere o relatório antes de imprimir!"); return; }
+            const data = document.getElementById('filtro-data').value || '';
+            const w = window.open('', '_blank');
+            w.document.write(`<html><head><title>Relatório de Caixas - ${data}</title>
+                <style>
+                    body { font-family: 'Segoe UI', sans-serif; color: #222; padding: 20px; }
+                    h1 { font-size: 16px; color: #0b2545; margin-bottom: 4px; }
+                    h2 { font-size: 13px; color: #555; margin: 18px 0 8px; }
+                    .resumo-dia { display: flex; gap: 16px; margin-bottom: 20px; }
+                    .resumo-dia .item { border: 1px solid #ccc; border-radius: 4px; padding: 8px 12px; }
+                    .rotulo { font-size: 10px; text-transform: uppercase; color: #777; }
+                    .valor { font-size: 16px; font-weight: bold; color: #0b2545; }
+                    .caixa { border: 1px solid #ccc; border-radius: 4px; margin-bottom: 16px; page-break-inside: avoid; }
+                    .caixa-head { padding: 10px 12px; background: #eee; }
+                    .caixa-titulo { font-weight: bold; }
+                    .badge { font-size: 10px; padding: 2px 6px; border: 1px solid #ccc; border-radius: 3px; margin-left: 6px; }
+                    .caixa-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: #ddd; }
+                    .caixa-grid .g { background: white; padding: 8px 12px; }
+                    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+                    th { background: #0b2545; color: white; padding: 6px; text-align: left; }
+                    td { padding: 6px; border-bottom: 1px solid #ccc; }
+                    .secao-titulo { font-size: 11px; font-weight: bold; text-transform: uppercase; margin: 10px 12px 4px; }
+                    .sem-dados { color: #888; }
+                    @media print { @page { margin: 12mm; } }
+                </style></head><body>
+                <h1>JG Sistemas - Relatório de Fechamento de Caixas</h1>
+                <h2>Data: ${data}</h2>
+                ${conteudo}
+            </body></html>`);
+            w.document.close();
+            w.print();
+        }
+
+        document.getElementById('filtro-data').value = new Date().toISOString().slice(0, 10);
+        carregarConfig();
+    </script>
+</body>
+</html>

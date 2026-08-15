@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>Consulta de Vendas - JG Sistemas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
+        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
+        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
+        header a:hover { color: white; }
+        main { padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
+        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
+        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+        .painel-titulo .resumo { font-size: 12px; color: #aab2bd; font-weight: normal; }
+        .painel-corpo { padding: 14px; }
+        .toolbar { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; align-items: flex-end; }
+        .toolbar .campo { display: flex; flex-direction: column; gap: 4px; }
+        .toolbar label { font-size: 11px; color: #656d78; font-weight: bold; text-transform: uppercase; }
+        .toolbar input, .toolbar select { padding: 9px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
+        .toolbar input[type="text"] { flex: 1; min-width: 180px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background-color: #134074; color: white; padding: 10px; text-align: left; text-transform: uppercase; font-size: 12px; }
+        td { padding: 10px; border-bottom: 1px solid #e6e9ed; color: #333; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        tr:hover { background-color: #eef2f7; }
+        tr.cancelada td { color: #8b95a1; text-decoration: line-through; }
+        .btn { border: none; border-radius: 4px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .btn-azul { background-color: #134074; color: white; }
+        .btn-azul:hover { background-color: #0b2545; }
+        .btn-perigo { background-color: #d9534f; color: white; }
+        .btn-perigo:hover { background-color: #b0433f; }
+        .btn-mini { padding: 4px 8px; font-size: 12px; }
+        .sem-dados { text-align: center; color: #8b95a1; padding: 30px; font-size: 14px; }
+        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+        .card { background: white; border: 1px solid #ccd1d9; border-radius: 4px; padding: 16px; }
+        .card .rotulo { font-size: 11px; text-transform: uppercase; color: #8b95a1; font-weight: bold; }
+        .card .valor { font-size: 24px; font-weight: bold; color: #134074; margin-top: 6px; }
+        .card .detalhe { font-size: 12px; color: #656d78; margin-top: 6px; }
+        .verde { color: #00a651 !important; }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 100; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: white; border-radius: 6px; width: 620px; max-width: 94vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
+        .modal-head { background-color: #0b2545; color: white; padding: 14px 18px; font-weight: bold; font-size: 15px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
+        .modal-head .close { cursor: pointer; font-size: 20px; color: #aab2bd; }
+        .modal-head .close:hover { color: white; }
+        .modal-body { padding: 18px; }
+        .cupom-info { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 13px; margin-bottom: 14px; }
+        .cupom-info span { color: #333; }
+        .cupom-total { background: #f0f2f5; border-radius: 4px; padding: 12px; margin-top: 12px; display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; }
+        .cupom-total .verde { color: #00a651; }
+
+        footer { background-color: #134074; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>JG SISTEMAS - CONSULTA DE VENDAS</div>
+        <div><a href="/">← Menu Principal</a></div>
+    </header>
+
+    <main>
+        <div class="painel">
+            <div class="painel-titulo"><span>Filtros de Consulta</span></div>
+            <div class="painel-corpo">
+                <div class="toolbar">
+                    <div class="campo">
+                        <label>De</label>
+                        <input type="date" id="f-de">
+                    </div>
+                    <div class="campo">
+                        <label>Até</label>
+                        <input type="date" id="f-ate">
+                    </div>
+                    <div class="campo">
+                        <label>Forma de Pagamento</label>
+                        <select id="f-metodo">
+                            <option value="">Todas</option>
+                            <option value="MONEY">Dinheiro</option>
+                            <option value="PIX">PIX</option>
+                            <option value="CREDIT_CARD">Crédito</option>
+                            <option value="DEBIT_CARD">Débito</option>
+                            <option value="CREDIARIO">Crediário</option>
+                            <option value="VOUCHER">Vale</option>
+                            <option value="TRANSFER">Transferência</option>
+                        </select>
+                    </div>
+                    <div class="campo">
+                        <label>Status</label>
+                        <select id="f-status">
+                            <option value="COMPLETED">Concluídas</option>
+                            <option value="">Todas</option>
+                            <option value="CANCELLED">Canceladas</option>
+                        </select>
+                    </div>
+                    <div class="campo" style="flex:1; min-width:180px;">
+                        <label>Nº da venda ou produto</label>
+                        <input type="text" id="f-busca" placeholder="Ex.: 000123 ou CAFÉ...">
+                    </div>
+                    <button class="btn btn-azul" onclick="buscarVendas()">Buscar</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="cards">
+            <div class="card">
+                <div class="rotulo">Vendas no Período</div>
+                <div class="valor" id="c-qtd">0</div>
+            </div>
+            <div class="card">
+                <div class="rotulo">Total Vendido</div>
+                <div class="valor verde" id="c-total">R$ 0,00</div>
+            </div>
+            <div class="card">
+                <div class="rotulo">Por Forma de Pagamento</div>
+                <div class="valor" id="c-metodos" style="font-size:14px;">-</div>
+            </div>
+        </div>
+
+        <div class="painel">
+            <div class="painel-titulo"><span>Vendas Encontradas</span><span class="resumo" id="resumo-lista"></span></div>
+            <div class="painel-corpo">
+                <div class="table-container" style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Número</th>
+                                <th>Data</th>
+                                <th>Operador</th>
+                                <th style="text-align: right;">Itens</th>
+                                <th>Pagamento</th>
+                                <th style="text-align: right;">Total</th>
+                                <th style="text-align: center;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-vendas">
+                            <tr><td colspan="7" class="sem-dados">Carregando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>© 2026 JG Sistemas</footer>
+
+    <!-- Modal cupom -->
+    <div class="modal-overlay" id="modal-cupom">
+        <div class="modal">
+            <div class="modal-head">
+                <span>Cupom de Venda</span>
+                <span class="close" onclick="fecharCupom()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="cupom-conteudo"></div>
+                <button class="btn btn-azul" style="width:100%; margin-top:16px; padding:13px; font-size:15px;" onclick="imprimirCupom()">Imprimir Cupom</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/seguranca.js"></script>
+    <script>
+        const API_BASE = '';
+        const formatarMoeda = v => `R$ ${Number(v).toFixed(2).replace('.', ',')}`;
+
+        const NOMES_METODOS = {
+            MONEY: 'Dinheiro', PIX: 'PIX', CREDIT_CARD: 'Crédito',
+            DEBIT_CARD: 'Débito', CREDIARIO: 'Crediário', VOUCHER: 'Vale',
+            TRANSFER: 'Transferência'
+        };
+
+        function obterOperador() {
+            try {
+                const raw = localStorage.getItem('jg_operador');
+                return raw ? JSON.parse(raw) : null;
+            } catch (e) { return null; }
+        }
+
+        function tokenAuth() {
+            const op = obterOperador();
+            return op && op.token ? { 'Authorization': 'Bearer ' + op.token } : {};
+        }
+
+        function bloquearCaixa() {
+            const op = obterOperador();
+            if (!op) { window.location.href = '/login.html'; return true; }
+            if (op.papel === 'SELLER') { window.location.href = '/'; return true; }
+            return false;
+        }
+
+        async function api(url, metodo = 'GET', corpo = null) {
+            const opcoes = { method: metodo, headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()) };
+            if (corpo) opcoes.body = JSON.stringify(corpo);
+            const response = await fetch(`${API_BASE}${url}`, opcoes);
+            if (response.status === 401) {
+                localStorage.removeItem('jg_operador');
+                window.location.href = '/login.html';
+                throw new Error('Sessão expirada.');
+            }
+            const dados = await response.json();
+            if (!response.ok) throw new Error(dados.erro || 'Erro na requisição');
+            return dados;
+        }
+
+        bloquearCaixa();
+
+        function formatarDataHora(d) {
+            return new Date(d).toLocaleString('pt-BR');
+        }
+
+        function nfeBadge(st) {
+            if (!st || st === 'NONE') return '';
+            const mapa = {
+                AUTORIZADA: ['NFC-e', '#00a651'],
+                CANCELADA: ['NFC-e CANC', '#c0392b'],
+                REJEITADA: ['NFC-e REJ', '#c0392b'],
+                PENDENTE: ['NFC-e', '#e67e22'],
+                DESATIVADO: ['NFC-e OFF', '#95a5a6']
+            };
+            const [txt, cor] = mapa[st] || ['NFC-e', '#7f8c8d'];
+            return ` <span style="font-size:10px;padding:1px 5px;border-radius:3px;color:#fff;background:${cor};">${txt}</span>`;
+        }
+
+        function montarUrlConsulta() {
+            const params = [];
+            const de = document.getElementById('f-de').value;
+            const ate = document.getElementById('f-ate').value;
+            const metodo = document.getElementById('f-metodo').value;
+            const status = document.getElementById('f-status').value;
+            const busca = document.getElementById('f-busca').value.trim();
+            if (de) params.push(`de=${de}`);
+            if (ate) params.push(`ate=${ate}`);
+            if (metodo) params.push(`metodo=${metodo}`);
+            if (status) params.push(`status=${status}`);
+            if (busca) params.push(`busca=${encodeURIComponent(busca)}`);
+            return '/api/vendas/consulta' + (params.length ? '?' + params.join('&') : '');
+        }
+
+        async function buscarVendas() {
+            try {
+                const r = await api(montarUrlConsulta());
+                document.getElementById('c-qtd').innerText = r.resumo.quantidade;
+                document.getElementById('c-total').innerText = formatarMoeda(r.resumo.total);
+                const metodos = Object.entries(r.resumo.porMetodo)
+                    .map(([m, v]) => `${NOMES_METODOS[m] || m}: ${formatarMoeda(v)}`)
+                    .join('<br>') || '-';
+                document.getElementById('c-metodos').innerHTML = metodos;
+
+                const tbody = document.getElementById('tabela-vendas');
+                if (r.vendas.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="sem-dados">Nenhuma venda encontrada</td></tr>';
+                    document.getElementById('resumo-lista').innerText = '';
+                    return;
+                }
+                document.getElementById('resumo-lista').innerText = `${r.vendas.length} venda(s) exibidas de ${r.resumo.quantidade}`;
+                tbody.innerHTML = r.vendas.map(v => `
+                    <tr class="${v.status === 'CANCELLED' ? 'cancelada' : ''}">
+                        <td><strong>${esc(v.numero)}</strong>${nfeBadge(v.nfeStatus)}</td>
+                        <td>${formatarDataHora(v.data)}</td>
+                        <td>${esc(v.operador)}</td>
+                        <td style="text-align:right;">${v.qtdItens}</td>
+                        <td>${NOMES_METODOS[v.metodo] || v.metodo}${v.parcelas > 1 ? ` ${v.parcelas}x` : ''}</td>
+                        <td style="text-align:right;"><strong>${formatarMoeda(v.total)}</strong></td>
+                        <td style="text-align:center;">
+                            <button class="btn btn-mini btn-azul" onclick="abrirCupom('${v.id}')">Cupom</button>
+                            ${v.status === 'COMPLETED' && v.nfeStatus !== 'AUTORIZADA' && v.nfeStatus !== 'CANCELADA' ? `<button class="btn btn-mini" onclick="emitirNfe('${v.id}', '${esc(v.numero)}')">Emitir NFC-e</button>` : ''}
+                            ${v.nfeStatus === 'AUTORIZADA' ? `<button class="btn btn-mini" onclick="cancelarNfe('${v.id}', '${esc(v.numero)}')">Canc. NFC-e</button>` : ''}
+                            ${v.status === 'COMPLETED' ? `<a class="btn btn-mini btn-verde" style="text-decoration:none; color:white; display:inline-block;" href="/trocas.html?numero=${esc(v.numero)}">Troca</a>` : ''}
+                            ${v.status === 'COMPLETED' || v.status === 'PENDING' ? `<button class="btn btn-mini btn-perigo" onclick="cancelarVenda('${v.id}', '${esc(v.numero)}')">Cancelar</button>` : ''}
+                        </td>
+                    </tr>`).join('');
+            } catch (e) { alert(e.message); }
+        }
+
+        let cupomAtual = null;
+
+        async function cancelarVenda(id, numero) {
+            const senha = prompt(`Cancelar a venda ${numero}?\n\nDigite a senha do ADMINISTRADOR:`);
+            if (!senha) return;
+            const motivo = prompt('Motivo do cancelamento (opcional):') || '';
+            try {
+                await api(`/api/vendas/${id}/cancelar`, 'POST', { senhaAdmin: senha, motivo });
+                alert(`Venda ${numero} cancelada com sucesso!`);
+                await buscarVendas();
+            } catch (e) { alert(e.message); }
+        }
+
+        async function abrirCupom(id) {
+            try {
+                cupomAtual = await api(`/api/vendas/${id}`);
+                renderizarCupom();
+                document.getElementById('modal-cupom').classList.add('active');
+            } catch (e) { alert(e.message); }
+        }
+
+        async function emitirNfe(id, numero) {
+            if (!confirm(`Emitir a NFC-e da venda ${numero} agora?`)) return;
+            try {
+                const r = await api(`/api/nfe/emitir/${id}`, 'POST', {});
+                if (r && r.status === 'AUTORIZADA') {
+                    alert(`NFC-e ${numero} emitida com sucesso!\nProtocolo: ${r.protocolo}`);
+                } else if (r && r.mensagem) {
+                    alert(`Falha ao emitir NFC-e: ${r.mensagem}`);
+                } else {
+                    alert('Falha ao emitir NFC-e. Verifique o configurador fiscal e o certificado.');
+                }
+                await buscarVendas();
+            } catch (e) { alert(e.message); }
+        }
+
+        async function cancelarNfe(id, numero) {
+            const justificativa = prompt(`Cancelar a NFC-e da venda ${numero}?\n\nInforme a justificativa (mínimo 15 caracteres):`);
+            if (!justificativa) return;
+            try {
+                const r = await api(`/api/nfe/cancelar/${id}`, 'POST', { justificativa });
+                if (r && r.ok) {
+                    alert(`NFC-e ${numero} cancelada com sucesso!`);
+                } else {
+                    alert((r && r.mensagem) || 'Falha ao cancelar NFC-e.');
+                }
+                await buscarVendas();
+            } catch (e) { alert(e.message); }
+        }
+
+        function fecharCupom() {
+            document.getElementById('modal-cupom').classList.remove('active');
+        }
+
+        function renderizarCupom() {
+            const v = cupomAtual;
+            const itens = v.itens.map(i => `
+                <tr>
+                    <td>${esc(i.codigo)}</td>
+                    <td>${esc(i.nome)}</td>
+                    <td style="text-align:right;">${i.quantidade}</td>
+                    <td style="text-align:right;">${formatarMoeda(i.unitario)}</td>
+                    <td style="text-align:right;">${formatarMoeda(i.subtotal)}</td>
+                </tr>`).join('');
+
+            const pagamentos = v.pagamento.map(p => {
+                let txt = NOMES_METODOS[p.metodo] || p.metodo;
+                if (p.parcelas > 1) txt += ` ${p.parcelas}x`;
+                if (p.bandeira) txt += ` (${esc(p.bandeira)})`;
+                return `<div>${txt}: <strong>${formatarMoeda(p.valor)}</strong></div>`;
+            }).join('');
+
+            document.getElementById('cupom-conteudo').innerHTML = `
+                <div class="cupom-info">
+                    <span><strong>Venda ${esc(v.numero)}</strong></span>
+                    <span>${formatarDataHora(v.data)}</span>
+                    <span>Operador: ${esc(v.operador)}</span>
+                    ${v.cliente ? `<span>Cliente: ${esc(v.cliente)}</span>` : ''}
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Produto</th>
+                            <th style="text-align:right;">Qtd</th>
+                            <th style="text-align:right;">Unit.</th>
+                            <th style="text-align:right;">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>${itens}</tbody>
+                </table>
+                <div style="text-align:right; margin-top:10px; font-size:13px;">
+                    <div>Subtotal: ${formatarMoeda(v.subtotal)}</div>
+                    ${v.desconto > 0 ? `<div>Desconto: -${formatarMoeda(v.desconto)}</div>` : ''}
+                </div>
+                <div class="cupom-total">
+                    <span>Total</span>
+                    <span class="verde">${formatarMoeda(v.total)}</span>
+                </div>
+                <div style="margin-top:10px; font-size:13px; color:#333;">
+                    <strong>Pagamento:</strong> ${pagamentos}
+                </div>
+                ${nfceFooterHtml(v.nfe)}
+            `;
+        }
+
+        let CONFIG = { name: 'JG SISTEMAS', tradeName: 'TESTE LTDA', document: '', logo: null };
+        async function carregarConfig() {
+            try {
+                const r = await fetch('/api/configuracoes', { headers: tokenAuth() });
+                if (r.ok) CONFIG = Object.assign(CONFIG, await r.json());
+            } catch (e) { console.error('Falha ao carregar configurações:', e); }
+        }
+
+        const LARGURA_CUPOM = 42;
+        function sepCupom() { return '-'.repeat(LARGURA_CUPOM); }
+        function centroCupom(t) {
+            if (!t) return '';
+            t = String(t);
+            if (t.length >= LARGURA_CUPOM) return t;
+            return ' '.repeat(Math.floor((LARGURA_CUPOM - t.length) / 2)) + t;
+        }
+        function quebrarCupom(t) {
+            t = String(t);
+            if (t.length <= LARGURA_CUPOM) return t;
+            const linhas = [];
+            for (let i = 0; i < t.length; i += LARGURA_CUPOM) linhas.push(t.slice(i, i + LARGURA_CUPOM));
+            return linhas.join('\n');
+        }
+        function linhaValor(label, valor) {
+            const v = formatarMoeda(valor);
+            return label.padEnd(Math.max(1, LARGURA_CUPOM - v.length - 1)) + ' ' + v;
+        }
+        function linhaTexto(label, texto) {
+            const t = String(texto);
+            return label.padEnd(Math.max(1, LARGURA_CUPOM - t.length - 1)) + ' ' + t;
+        }
+
+        function imprimirCupom() {
+            if (!cupomAtual) return;
+            const v = cupomAtual;
+            const nomeEmpresa = (CONFIG.tradeName || CONFIG.name || 'JG SISTEMAS').toUpperCase();
+            const endereco = [CONFIG.address, CONFIG.number ? `nº ${esc(CONFIG.number)}` : ''].filter(Boolean).join(', ');
+            const cidade = [CONFIG.city, CONFIG.state].filter(Boolean).join('/');
+
+            const cabecalho = [
+                centroCupom(nomeEmpresa),
+                CONFIG.document ? centroCupom(`CNPJ: ${esc(CONFIG.document)}`) : null,
+                endereco ? centroCupom(endereco) : null,
+                (CONFIG.neighborhood && cidade) ? centroCupom(`${esc(CONFIG.neighborhood)} - ${esc(cidade)}`) : (cidade ? centroCupom(cidade) : null),
+                CONFIG.phone ? centroCupom(`Tel: ${esc(CONFIG.phone)}`) : null,
+                ''
+            ].filter(Boolean);
+
+            const linhasItens = v.itens.map(i => {
+                const qtd = Number(i.quantidade) || 1;
+                const preco = Number(i.unitario) || 0;
+                const totalItem = Number(i.subtotal) || (qtd * preco);
+                const d2 = `${qtd} x ${preco.toFixed(2).replace('.', ',')}`;
+                const tot = `R$ ${totalItem.toFixed(2).replace('.', ',')}`;
+                const linha2 = d2 + ' '.repeat(Math.max(1, LARGURA_CUPOM - 10 - d2.length - tot.length)) + tot;
+                return quebrarCupom(i.nome || 'PRODUTO') + '\n' + linha2;
+            }).join('\n');
+
+            const pag = v.pagamento.map(p => `${NOMES_METODOS[p.metodo] || p.metodo}${p.parcelas > 1 ? ` ${p.parcelas}x` : ''}: ${formatarMoeda(p.valor)}`).join(' | ');
+
+            const corpo = [
+                sepCupom(),
+                centroCupom(`VENDA Nº ${esc(v.numero)}`),
+                centroCupom(`DATA: ${formatarDataHora(v.data)}`),
+                centroCupom(`OP: ${esc(v.operador)}`),
+                sepCupom(),
+                linhasItens,
+                sepCupom(),
+                linhaTexto('QTD. ITENS:', v.itens.reduce((s, i) => s + (Number(i.quantidade) || 0), 0)),
+                linhaValor('SUBTOTAL', v.subtotal),
+                v.desconto > 0 ? linhaValor('DESCONTO', -v.desconto) : null,
+                linhaValor('TOTAL', v.total),
+                sepCupom(),
+                linhaTexto('PAGAMENTO', pag),
+                sepCupom(),
+                '',
+                centroCupom('OBRIGADO PELA'),
+                centroCupom('PREFERENCIA!'),
+                ''
+            ].filter(l => l !== null).join('\n');
+
+            const w = window.open('', '_blank', 'width=420,height=600');
+            w.document.write(`<html><body style="margin:0;"><div style="padding:10px;"><pre style="font-family:'Courier New',monospace; font-size:11px; margin:0; line-height:1.25;">${cabecalho.join('\n')}\n${corpo}</pre>${nfceFooterPrintHtml(v.nfe)}</div></body></html>`);
+            w.document.close();
+            w.print();
+        }
+
+        ['f-de', 'f-ate', 'f-busca'].forEach(id => {
+            document.getElementById(id).addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') buscarVendas();
+            });
+        });
+
+        (async () => {
+            try {
+                const hoje = new Date();
+                const inicio = new Date();
+                inicio.setDate(hoje.getDate() - 7);
+                document.getElementById('f-de').value = inicio.toISOString().slice(0, 10);
+                document.getElementById('f-ate').value = hoje.toISOString().slice(0, 10);
+                await carregarConfig();
+                await buscarVendas();
+            } catch (e) {
+                alert("Falha ao carregar dados: " + e.message);
+            }
+        })();
+    </script>
+    <script src="qrcode.js"></script>
+    <script src="nfce.js"></script>
+</body>
+</html>

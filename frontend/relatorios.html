@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>Relatórios Gerenciais - JG Sistemas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
+        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
+        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
+        header a:hover { color: white; }
+        main { padding: 20px; max-width: 1100px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
+        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
+        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+        .painel-corpo { padding: 16px; }
+        .form-linha { display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; }
+        .form-linha .campo { display: flex; flex-direction: column; gap: 5px; }
+        .form-linha label { font-size: 12px; color: #656d78; font-weight: bold; text-transform: uppercase; }
+        .form-linha input { padding: 10px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
+        .btn { border: none; border-radius: 4px; padding: 10px 16px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .btn-verde { background-color: #00a651; color: white; }
+        .btn-verde:hover { background-color: #007a3d; }
+        .btn-cinza { background-color: #8b95a1; color: white; }
+        .btn-cinza:hover { background-color: #6f7885; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background-color: #134074; color: white; padding: 8px 10px; text-align: left; text-transform: uppercase; font-size: 11px; }
+        td { padding: 8px 10px; border-bottom: 1px solid #e6e9ed; color: #333; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        .sem-dados { text-align: center; color: #8b95a1; padding: 24px; font-size: 14px; }
+        .abas { display: flex; gap: 6px; margin-bottom: 0; }
+        .aba { padding: 10px 16px; background: #e6e9ed; border: none; border-radius: 4px 4px 0 0; font-weight: bold; font-size: 13px; cursor: pointer; color: #656d78; }
+        .aba.ativa { background: white; color: #0b2545; border: 1px solid #ccd1d9; border-bottom: none; }
+        .resumo-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 14px; }
+        .resumo-cards .item { background: #f8f9fa; border: 1px solid #e6e9ed; border-radius: 4px; padding: 12px; }
+        .resumo-cards .item .rotulo { font-size: 11px; color: #8b95a1; font-weight: bold; text-transform: uppercase; }
+        .resumo-cards .item .valor { font-size: 20px; font-weight: bold; color: #134074; margin-top: 4px; }
+        footer { background-color: #134074; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>JG SISTEMAS - RELATÓRIOS GERENCIAIS</div>
+        <div><a href="/">← Menu Principal</a></div>
+    </header>
+
+    <main>
+        <div class="painel">
+            <div class="painel-corpo">
+                <div class="form-linha">
+                    <div class="campo"><label>De</label><input type="date" id="f-de"></div>
+                    <div class="campo"><label>Até</label><input type="date" id="f-ate"></div>
+                    <button class="btn btn-verde" onclick="gerar()">Gerar Relatório</button>
+                    <button class="btn btn-cinza" onclick="imprimir()">Imprimir</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="painel">
+            <div class="abas">
+                <button class="aba ativa" id="aba-operador" onclick="mostrarAba('operador')">Vendas por Operador</button>
+                <button class="aba" id="aba-ranking" onclick="mostrarAba('ranking')">Ranking de Produtos</button>
+                <button class="aba" id="aba-pagamento" onclick="mostrarAba('pagamento')">Por Pagamento</button>
+                <button class="aba" id="aba-comissao" onclick="mostrarAba('comissao')">Comissões</button>
+            </div>
+            <div class="painel-corpo" id="area-resultado">
+                <div class="sem-dados">Selecione o período e clique em "Gerar Relatório".</div>
+            </div>
+        </div>
+    </main>
+
+    <footer>© 2026 JG Sistemas</footer>
+
+    <script src="/seguranca.js"></script>
+    <script>
+        function formatarMoeda(v) {
+            return 'R$ ' + (Number(v) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+        function obterOperador() {
+            try {
+                const raw = localStorage.getItem('jg_operador');
+                return raw ? JSON.parse(raw) : null;
+            } catch (e) { return null; }
+        }
+        function tokenAuth() {
+            const op = obterOperador();
+            return op && op.token ? { 'Authorization': 'Bearer ' + op.token } : {};
+        }
+        function bloquearCaixa() {
+            const op = obterOperador();
+            if (!op) { window.location.href = '/login.html'; return true; }
+            if (op.papel === 'SELLER') { window.location.href = '/'; return true; }
+            return false;
+        }
+        async function api(url, metodo, corpo) {
+            const opt = { method: metodo || 'GET', headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()) };
+            if (corpo) opt.body = JSON.stringify(corpo);
+            const response = await fetch(url, opt);
+            if (response.status === 401) {
+                localStorage.removeItem('jg_operador');
+                window.location.href = '/login.html';
+                throw new Error('Sessão expirada.');
+            }
+            const dados = await response.json();
+            if (!response.ok) throw new Error(dados.erro || 'Erro na requisição');
+            return dados;
+        }
+        bloquearCaixa();
+
+        const NOMES_METODOS = { MONEY: 'Dinheiro', PIX: 'PIX', CREDIT_CARD: 'Cartão de Crédito', DEBIT_CARD: 'Cartão de Débito', CREDIARIO: 'Crediário', VOUCHER: 'Vale', TRANSFER: 'Transferência' };
+
+        let abaAtiva = 'operador';
+        let dadosGerados = {};
+
+        function montarPeriodo() {
+            const de = document.getElementById('f-de').value;
+            const ate = document.getElementById('f-ate').value;
+            const params = [];
+            if (de) params.push(`de=${de}`);
+            if (ate) params.push(`ate=${ate}`);
+            return params.length ? '?' + params.join('&') : '';
+        }
+
+        function mostrarAba(aba) {
+            abaAtiva = aba;
+            document.querySelectorAll('.aba').forEach(b => b.classList.remove('ativa'));
+            document.getElementById(`aba-${aba}`).classList.add('ativa');
+            renderizarAba();
+        }
+
+        async function gerar() {
+            const p = montarPeriodo();
+            try {
+                const [porOperador, ranking, pagamentos, comissoes] = await Promise.all([
+                    api('/api/relatorios/vendas-por-operador' + p),
+                    api('/api/relatorios/ranking-produtos' + p),
+                    api('/api/relatorios/vendas-por-pagamento' + p),
+                    api('/api/relatorios/comissoes' + p)
+                ]);
+                dadosGerados = { porOperador, ranking, pagamentos, comissoes };
+                renderizarAba();
+            } catch (e) { alert(e.message); }
+        }
+
+        function tabela(thead, linhas, vazio) {
+            if (linhas.length === 0) return `<div class="sem-dados">${vazio}</div>`;
+            return `<table><thead>${thead}</thead><tbody>${linhas.join('')}</tbody></table>`;
+        }
+
+        function renderizarAba() {
+            const area = document.getElementById('area-resultado');
+            if (!Object.keys(dadosGerados).length) {
+                area.innerHTML = '<div class="sem-dados">Selecione o período e clique em "Gerar Relatório".</div>';
+                return;
+            }
+            let html = '';
+
+            if (abaAtiva === 'operador') {
+                const d = dadosGerados.porOperador;
+                const total = d.reduce((s, x) => s + x.total, 0);
+                html = `
+                    <div class="resumo-cards">
+                        <div class="item"><div class="rotulo">Operadores</div><div class="valor">${d.length}</div></div>
+                        <div class="item"><div class="rotulo">Total Vendido</div><div class="valor">${formatarMoeda(total)}</div></div>
+                    </div>
+                    ${tabela(
+                        '<tr><th>Operador</th><th style="text-align:right;">Vendas</th><th style="text-align:right;">Canceladas</th><th style="text-align:right;">Total</th></tr>',
+                        d.map(x => `
+                            <tr>
+                                <td><strong>${esc(x.operador)}</strong></td>
+                                <td style="text-align:right;">${x.quantidade}</td>
+                                <td style="text-align:right;">${x.canceladas}</td>
+                                <td style="text-align:right;">${formatarMoeda(x.total)}</td>
+                            </tr>`),
+                        'Nenhuma venda no período.'
+                    )}`;
+            } else if (abaAtiva === 'ranking') {
+                const d = dadosGerados.ranking;
+                const totalQtd = d.reduce((s, x) => s + x.qtd, 0);
+                html = `
+                    <div class="resumo-cards">
+                        <div class="item"><div class="rotulo">Produtos</div><div class="valor">${d.length}</div></div>
+                        <div class="item"><div class="rotulo">Unidades</div><div class="valor">${totalQtd}</div></div>
+                    </div>
+                    ${tabela(
+                        '<tr><th>#</th><th>Produto</th><th style="text-align:right;">Qtd</th><th style="text-align:right;">Valor</th></tr>',
+                        d.map(x => `
+                            <tr>
+                                <td>${x.posicao}</td>
+                                <td>${esc(x.nome)} <small style="color:#8b95a1;">(${esc(x.codigo)})</small></td>
+                                <td style="text-align:right;">${x.qtd}</td>
+                                <td style="text-align:right;">${formatarMoeda(x.valor)}</td>
+                            </tr>`),
+                        'Nenhuma venda no período.'
+                    )}`;
+            } else if (abaAtiva === 'pagamento') {
+                const d = dadosGerados.pagamentos;
+                const total = d.reduce((s, x) => s + x.total, 0);
+                html = `
+                    <div class="resumo-cards">
+                        <div class="item"><div class="rotulo">Total Recebido</div><div class="valor">${formatarMoeda(total)}</div></div>
+                    </div>
+                    ${tabela(
+                        '<tr><th>Forma de Pagamento</th><th style="text-align:right;">Valor</th></tr>',
+                        d.map(x => `
+                            <tr>
+                                <td>${NOMES_METODOS[x.metodo] || x.metodo}</td>
+                                <td style="text-align:right;">${formatarMoeda(x.total)}</td>
+                            </tr>`),
+                        'Nenhuma venda no período.'
+                    )}`;
+            } else if (abaAtiva === 'comissao') {
+                const d = dadosGerados.comissoes;
+                const totalComissao = d.reduce((s, x) => s + x.comissao, 0);
+                html = `
+                    <div class="resumo-cards">
+                        <div class="item"><div class="rotulo">Comissões a Pagar</div><div class="valor">${formatarMoeda(totalComissao)}</div></div>
+                    </div>
+                    ${tabela(
+                        '<tr><th>Operador</th><th style="text-align:right;">Taxa (%)</th><th style="text-align:right;">Total Vendido</th><th style="text-align:right;">Comissão</th></tr>',
+                        d.map(x => `
+                            <tr>
+                                <td><strong>${esc(x.operador)}</strong></td>
+                                <td style="text-align:right;">${x.taxa}%</td>
+                                <td style="text-align:right;">${formatarMoeda(x.totalVendido)}</td>
+                                <td style="text-align:right;"><strong>${formatarMoeda(x.comissao)}</strong></td>
+                            </tr>`),
+                        'Nenhum operador com comissão configurada. Configure em Configurações > Operadores e Comissão.'
+                    )}`;
+            }
+
+            area.innerHTML = html;
+        }
+
+        function imprimir() {
+            const conteudo = document.getElementById('area-resultado').innerHTML;
+            if (!conteudo.trim() || !Object.keys(dadosGerados).length) { alert("Gere o relatório antes de imprimir!"); return; }
+            const de = document.getElementById('f-de').value || '-';
+            const ate = document.getElementById('f-ate').value || '-';
+            const nomeAba = document.getElementById(`aba-${abaAtiva}`).innerText;
+            const w = window.open('', '_blank');
+            w.document.write(`<html><head><title>Relatório - ${nomeAba}</title>
+                <style>
+                    body { font-family: 'Segoe UI', sans-serif; color: #222; padding: 20px; }
+                    h1 { font-size: 16px; color: #0b2545; }
+                    h2 { font-size: 13px; color: #555; font-weight: normal; margin-bottom: 16px; }
+                    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+                    th { background: #0b2545; color: white; padding: 6px; text-align: left; }
+                    td { padding: 6px; border-bottom: 1px solid #ccc; }
+                    .resumo-cards { display: flex; gap: 12px; margin-bottom: 12px; }
+                    .resumo-cards .item { border: 1px solid #ccc; border-radius: 4px; padding: 8px 12px; }
+                    .rotulo { font-size: 10px; text-transform: uppercase; color: #777; }
+                    .valor { font-size: 16px; font-weight: bold; color: #0b2545; }
+                    .sem-dados { color: #888; }
+                    @media print { @page { margin: 12mm; } }
+                </style></head><body>
+                <h1>JG Sistemas - Relatório Gerencial: ${nomeAba}</h1>
+                <h2>Período: ${de} a ${ate}</h2>
+                ${conteudo}
+            </body></html>`);
+            w.document.close();
+            w.print();
+        }
+
+        document.getElementById('f-de').value = new Date().toISOString().slice(0, 10);
+        document.getElementById('f-ate').value = new Date().toISOString().slice(0, 10);
+    </script>
+</body>
+</html>

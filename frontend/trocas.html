@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>Troca / Devolução - JG Sistemas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
+        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
+        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
+        header a:hover { color: white; }
+        main { padding: 20px; max-width: 1000px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
+        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
+        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; }
+        .painel-corpo { padding: 14px; }
+        .campo { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+        .campo label { font-size: 11px; color: #656d78; font-weight: bold; text-transform: uppercase; }
+        .campo input, .campo select { padding: 9px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; width: 100%; }
+        .linha { display: flex; gap: 10px; align-items: flex-end; }
+        .linha .campo { flex: 1; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background-color: #134074; color: white; padding: 8px; text-align: left; text-transform: uppercase; font-size: 11px; }
+        td { padding: 8px; border-bottom: 1px solid #e6e9ed; color: #333; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        .btn { border: none; border-radius: 4px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .btn-azul { background-color: #134074; color: white; }
+        .btn-verde { background-color: #00a651; color: white; }
+        .btn-perigo { background-color: #d9534f; color: white; }
+        .btn-mini { padding: 4px 8px; font-size: 12px; }
+        .btn-block { width: 100%; padding: 12px; font-size: 15px; }
+        .sem-dados { text-align: center; color: #8b95a1; padding: 24px; font-size: 14px; }
+        .resumo { background: #f8f9fa; border: 1px solid #ccd1d9; border-radius: 4px; padding: 12px; margin-bottom: 14px; font-size: 13px; line-height: 1.6; }
+        .resumo strong { color: #134074; }
+        .oculto { display: none; }
+        .qtd-input { width: 70px; padding: 6px; border: 1px solid #aab2bd; border-radius: 4px; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>JG SISTEMAS - TROCA / DEVOLUÇÃO</div>
+        <div><a href="/">← Menu Principal</a></div>
+    </header>
+
+    <main>
+        <div class="painel">
+            <div class="painel-titulo"><span>1. Buscar a venda original</span></div>
+            <div class="painel-corpo">
+                <div class="linha">
+                    <div class="campo">
+                        <label>Número da venda (NF-e)</label>
+                        <input type="text" id="f-numero" placeholder="Ex.: 000034" onkeydown="if(event.key==='Enter')buscarVenda()">
+                    </div>
+                    <button class="btn btn-azul" onclick="buscarVenda()">Buscar</button>
+                </div>
+                <div id="resumo-venda" class="resumo oculto"></div>
+                <div id="itens-venda" class="oculto">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th style="text-align:right;">Vendido</th>
+                                <th style="text-align:right;">Unit.</th>
+                                <th style="text-align:center;">Devolver</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-itens-venda"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="painel oculto" id="painel-troca">
+            <div class="painel-titulo"><span>2. Itens novos (troca) e pagamento da diferença</span></div>
+            <div class="painel-corpo">
+                <div class="linha">
+                    <div class="campo">
+                        <label>Código do produto</label>
+                        <input type="text" id="f-codigo-novo" placeholder="Código de barras ou SKU" onkeydown="if(event.key==='Enter')adicionarItemNovo()">
+                    </div>
+                    <div class="campo" style="max-width:110px;">
+                        <label>Qtd</label>
+                        <input type="number" id="f-qtd-novo" min="1" value="1">
+                    </div>
+                    <button class="btn btn-verde" onclick="adicionarItemNovo()">Adicionar</button>
+                </div>
+                <div style="margin:10px 0;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Produto</th>
+                                <th style="text-align:right;">Qtd</th>
+                                <th style="text-align:right;">Unit.</th>
+                                <th style="text-align:right;">Subtotal</th>
+                                <th style="text-align:center;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-itens-novos">
+                            <tr><td colspan="5" class="sem-dados">Nenhum item novo — será apenas devolução (estorno)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="linha">
+                    <div class="campo">
+                        <label>Forma de pagamento da diferença</label>
+                        <select id="f-metodo">
+                            <option value="MONEY">Dinheiro</option>
+                            <option value="PIX">PIX</option>
+                            <option value="CREDIT_CARD">Crédito</option>
+                            <option value="DEBIT_CARD">Débito</option>
+                        </select>
+                    </div>
+                    <div class="campo">
+                        <label>Valor recebido (se dinheiro)</label>
+                        <input type="number" id="f-valor-recebido" step="0.01" min="0" value="0">
+                    </div>
+                    <div class="campo">
+                        <label>Senha do administrador *</label>
+                        <input type="password" id="f-senha-admin" placeholder="Obrigatório para trocas">
+                    </div>
+                </div>
+
+                <button class="btn btn-verde btn-block" onclick="registrarTroca()" style="font-size:16px;">Registrar Troca / Devolução</button>
+            </div>
+        </div>
+
+        <div class="painel">
+            <div class="painel-titulo"><span>Histórico de Trocas</span></div>
+            <div class="painel-corpo" style="padding:0;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Venda</th>
+                            <th>Data</th>
+                            <th>Cliente</th>
+                            <th style="text-align:right;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-historico">
+                        <tr><td colspan="4" class="sem-dados">Carregando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer>© 2026 JG Sistemas</footer>
+
+    <script src="/seguranca.js"></script>
+    <script>
+        const API_BASE = '';
+
+        function obterOperador() {
+            try {
+                const raw = localStorage.getItem('jg_operador');
+                return raw ? JSON.parse(raw) : null;
+            } catch (e) { return null; }
+        }
+        function tokenAuth() {
+            const op = obterOperador();
+            return op && op.token ? { 'Authorization': 'Bearer ' + op.token } : {};
+        }
+        function bloquear() {
+            const op = obterOperador();
+            if (!op) { window.location.href = '/login.html'; return true; }
+            if (op.papel === 'SELLER') { window.location.href = '/'; return true; }
+            return false;
+        }
+        async function api(url, metodo = 'GET', corpo = null) {
+            const opcoes = { method: metodo, headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()) };
+            if (corpo) opcoes.body = JSON.stringify(corpo);
+            const response = await fetch(`${API_BASE}${url}`, opcoes);
+            if (response.status === 401) {
+                localStorage.removeItem('jg_operador');
+                window.location.href = '/login.html';
+                throw new Error('Sessão expirada.');
+            }
+            const dados = await response.json();
+            if (!response.ok) throw new Error(dados.erro || 'Erro na requisição');
+            return dados;
+        }
+        bloquear();
+
+        let vendaSelecionada = null;
+        let itensNovos = [];
+
+        async function buscarVenda() {
+            const numero = document.getElementById('f-numero').value.trim();
+            if (!numero) { alert('Informe o número da venda!'); return; }
+            try {
+                const consulta = await api('/api/vendas/consulta?busca=' + encodeURIComponent(numero));
+                const venda = consulta.vendas.find(v => v.numero === numero);
+                if (!venda) {
+                    alert('Venda não encontrada!');
+                    vendaSelecionada = null;
+                    document.getElementById('resumo-venda').classList.add('oculto');
+                    document.getElementById('itens-venda').classList.add('oculto');
+                    document.getElementById('painel-troca').classList.add('oculto');
+                    return;
+                }
+                if (venda.status !== 'COMPLETED') {
+                    alert(`Esta venda está ${venda.status}. Somente vendas concluídas podem ser trocadas!`);
+                    return;
+                }
+                vendaSelecionada = venda;
+                document.getElementById('resumo-venda').classList.remove('oculto');
+                document.getElementById('itens-venda').classList.remove('oculto');
+                document.getElementById('painel-troca').classList.remove('oculto');
+                document.getElementById('resumo-venda').innerHTML = `
+                    <strong>Venda ${esc(venda.numero)}</strong> — ${new Date(venda.data).toLocaleDateString('pt-BR')} ${new Date(venda.data).toLocaleTimeString('pt-BR').slice(0,5)}<br>
+                    Cliente: ${esc(venda.cliente ?? 'Consumidor final')} · Operador: ${esc(venda.operador)}<br>
+                    Total: <strong>R$ ${venda.total.toFixed(2)}</strong> (subtotal R$ ${venda.subtotal.toFixed(2)} ${venda.desconto > 0 ? '· desconto R$ ' + venda.desconto.toFixed(2) : ''})
+                `;
+                document.getElementById('tabela-itens-venda').innerHTML = venda.itensDetalhe.map((i, idx) => `
+                    <tr>
+                        <td><strong>${esc(i.nome)}</strong><br><small style="color:#8b95a1;">${esc(i.codigo)}</small></td>
+                        <td style="text-align:right;">${i.quantidade}</td>
+                        <td style="text-align:right;">${i.unitario.toFixed(2)}</td>
+                        <td style="text-align:center;">
+                            <input type="number" class="qtd-input" min="0" max="${i.quantidade}" value="${i.quantidade}" id="qtd-dev-${idx}">
+                        </td>
+                    </tr>`).join('');
+            } catch (e) { alert(e.message); }
+        }
+
+        async function adicionarItemNovo() {
+            const codigo = document.getElementById('f-codigo-novo').value.trim();
+            const qtd = Math.max(1, Number(document.getElementById('f-qtd-novo').value) || 1);
+            if (!codigo) { alert('Informe o código do produto!'); return; }
+            try {
+                const p = await api('/api/produtos/' + encodeURIComponent(codigo));
+                itensNovos.push({ codigo, quantidade: qtd, produto: p.descricao, preco: p.preco });
+                document.getElementById('f-codigo-novo').value = '';
+                document.getElementById('f-qtd-novo').value = '1';
+                renderItensNovos();
+            } catch (e) { alert(e.message); }
+        }
+
+        function renderItensNovos() {
+            const tbody = document.getElementById('tabela-itens-novos');
+            if (itensNovos.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="sem-dados">Nenhum item novo — será apenas devolução (estorno)</td></tr>';
+                return;
+            }
+            tbody.innerHTML = itensNovos.map((i, idx) => `
+                <tr>
+                    <td><strong>${esc(i.produto)}</strong><br><small style="color:#8b95a1;">${esc(i.codigo)}</small></td>
+                    <td style="text-align:right;">${i.quantidade}</td>
+                    <td style="text-align:right;">${i.preco.toFixed(2)}</td>
+                    <td style="text-align:right;">${(i.preco * i.quantidade).toFixed(2)}</td>
+                    <td style="text-align:center;">
+                        <button class="btn btn-mini btn-perigo" onclick="removerItemNovo(${idx})">Remover</button>
+                    </td>
+                </tr>`).join('');
+        }
+
+        function removerItemNovo(idx) {
+            itensNovos.splice(idx, 1);
+            renderItensNovos();
+        }
+
+        async function registrarTroca() {
+            if (!vendaSelecionada) return;
+            const devolvidos = vendaSelecionada.itensDetalhe
+                .map((i, idx) => ({ codigo: i.codigo, quantidade: Math.min(i.quantidade, Math.max(0, Number(document.getElementById(`qtd-dev-${idx}`).value) || 0)) }))
+                .filter(d => d.quantidade > 0);
+            if (devolvidos.length === 0) {
+                alert('Selecione ao menos um item para devolver!');
+                return;
+            }
+            const senhaAdmin = document.getElementById('f-senha-admin').value;
+            if (!senhaAdmin) { alert('Informe a senha do administrador!'); return; }
+
+            const corpo = {
+                vendaId: vendaSelecionada.id,
+                senhaAdmin,
+                itensDevolvidos: devolvidos,
+                itensNovos: itensNovos.map(i => ({ codigo: i.codigo, quantidade: i.quantidade })),
+                pagamento: {
+                    metodo: document.getElementById('f-metodo').value,
+                    valorRecebido: Number(document.getElementById('f-valor-recebido').value) || 0
+                }
+            };
+
+            if (!confirm('Registrar esta troca/devolução? A venda original será marcada como devolvida.')) return;
+
+            try {
+                const r = await api('/api/trocas', 'POST', corpo);
+                const msg = `Troca registrada!\n\n` +
+                    `Valor devolvido: R$ ${r.valorDevolvido.toFixed(2)}\n` +
+                    `Valor dos novos: R$ ${r.valorNovos.toFixed(2)}\n` +
+                    `Diferença: R$ ${r.diferenca.toFixed(2)}\n` +
+                    (r.diferenca < 0 ? `Troco a devolver ao cliente: R$ ${r.troco.toFixed(2)}` : `Pagamento: R$ ${r.diferenca.toFixed(2)}`) +
+                    `\nNova venda: ${r.novaVenda}`;
+                alert(msg);
+                vendaSelecionada = null;
+                itensNovos = [];
+                document.getElementById('f-numero').value = '';
+                document.getElementById('resumo-venda').classList.add('oculto');
+                document.getElementById('itens-venda').classList.add('oculto');
+                document.getElementById('painel-troca').classList.add('oculto');
+                document.getElementById('f-senha-admin').value = '';
+                renderItensNovos();
+                carregarHistorico();
+            } catch (e) { alert(e.message); }
+        }
+
+        async function carregarHistorico() {
+            try {
+                const trocas = await api('/api/trocas');
+                const tbody = document.getElementById('tabela-historico');
+                if (trocas.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="sem-dados">Nenhuma troca registrada</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = trocas.map(t => `
+                    <tr>
+                        <td><strong>${t.numero}</strong></td>
+                        <td>${new Date(t.data).toLocaleDateString('pt-BR')} ${new Date(t.data).toLocaleTimeString('pt-BR').slice(0,5)}</td>
+                        <td>${esc(t.cliente ?? '—')}</td>
+                        <td style="text-align:right;">R$ ${t.total.toFixed(2)}</td>
+                    </tr>`).join('');
+            } catch (e) { alert(e.message); }
+        }
+
+        carregarHistorico();
+    </script>
+</body>
+</html>

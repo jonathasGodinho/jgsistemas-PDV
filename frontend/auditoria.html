@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>Auditoria - JG Sistemas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
+        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
+        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
+        header a:hover { color: white; }
+        main { padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
+        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
+        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+        .painel-corpo { padding: 14px; }
+        .filtros { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; gap: 12px; align-items: end; }
+        @media (max-width: 900px) { .filtros { grid-template-columns: 1fr 1fr; } }
+        .campo { display: flex; flex-direction: column; gap: 4px; }
+        .campo label { font-size: 11px; color: #656d78; font-weight: bold; text-transform: uppercase; }
+        .campo input { padding: 8px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; width: 100%; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background-color: #134074; color: white; padding: 8px; text-align: left; text-transform: uppercase; font-size: 11px; }
+        td { padding: 8px; border-bottom: 1px solid #e6e9ed; color: #333; vertical-align: top; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        .btn { border: none; border-radius: 4px; padding: 8px 14px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .btn-azul { background-color: #134074; color: white; }
+        .sem-dados { text-align: center; color: #8b95a1; padding: 24px; font-size: 14px; }
+        .acao { font-family: 'Consolas', monospace; font-weight: bold; color: #134074; }
+        .detalhe { font-size: 12px; color: #656d78; font-family: 'Consolas', monospace; background: #f4f6f8; border-radius: 3px; padding: 4px 6px; display: inline-block; max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .ip { font-size: 11px; color: #aab2bd; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .b-verde { background: #d8f3e3; color: #008c45; }
+        .b-vermelho { background: #fde2e2; color: #c0392b; }
+        .b-amarelo { background: #fdf3d7; color: #8a6d3b; }
+        .resumo-falhas { background: #fdeaea; color: #c0392b; border: 1px solid #e8a09b; padding: 10px 14px; border-radius: 4px; font-size: 13px; font-weight: bold; margin-bottom: 14px; display: none; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>JG SISTEMAS - AUDITORIA</div>
+        <div><a href="/">← Menu Principal</a></div>
+    </header>
+
+    <main>
+        <div class="painel">
+            <div class="painel-titulo"><span>Histórico de Operações Sensíveis</span></div>
+            <div class="painel-corpo">
+                <div class="filtros" style="margin-bottom:14px;">
+                    <div class="campo">
+                        <label>De</label>
+                        <input type="date" id="f-de">
+                    </div>
+                    <div class="campo">
+                        <label>Até</label>
+                        <input type="date" id="f-ate">
+                    </div>
+                    <div class="campo">
+                        <label>Operador</label>
+                        <input type="text" id="f-usuario" placeholder="Nome do operador">
+                    </div>
+                    <div class="campo">
+                        <label>Ação</label>
+                        <input type="text" id="f-acao" placeholder="Ex.: VENDA_CANCELADA">
+                    </div>
+                    <button class="btn btn-azul" onclick="carregarLogs()">Filtrar</button>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Operador</th>
+                                <th>Ação</th>
+                                <th>Entidade</th>
+                                <th>Detalhe</th>
+                                <th style="text-align:center;">IP</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-logs">
+                            <tr><td colspan="6" class="sem-dados">Carregando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="painel">
+            <div class="painel-titulo"><span>Acessos (Tentativas de Login)</span></div>
+            <div class="painel-corpo">
+                <div class="resumo-falhas" id="resumo-falhas"></div>
+                <div class="filtros" style="margin-bottom:14px; grid-template-columns: 1fr 1fr 1fr auto;">
+                    <div class="campo">
+                        <label>De</label>
+                        <input type="date" id="lf-de">
+                    </div>
+                    <div class="campo">
+                        <label>Até</label>
+                        <input type="date" id="lf-ate">
+                    </div>
+                    <div class="campo">
+                        <label>Operador / Identificador</label>
+                        <input type="text" id="lf-usuario" placeholder="Nome ou e-mail">
+                    </div>
+                    <div class="campo">
+                        <label>Resultado</label>
+                        <select id="lf-resultado" onchange="carregarLogins()" style="padding:8px; font-size:14px; border:1px solid #aab2bd; border-radius:4px; color:#134074; background:white;">
+                            <option value="">Todos</option>
+                            <option value="sucesso">Sucesso</option>
+                            <option value="falha">Falha</option>
+                            <option value="suspeito">Suspeito</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-azul" onclick="carregarLogins()">Filtrar</button>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Operador</th>
+                                <th>Identificador</th>
+                                <th>Resultado</th>
+                                <th>Detalhe</th>
+                                <th style="text-align:center;">IP</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-logins">
+                            <tr><td colspan="6" class="sem-dados">Carregando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>© 2026 JG Sistemas</footer>
+
+    <script>
+        const API_BASE = '';
+        const formatarDataHora = d => new Date(d).toLocaleString('pt-BR');
+
+        function obterOperador() {
+            try {
+                const raw = localStorage.getItem('jg_operador');
+                return raw ? JSON.parse(raw) : null;
+            } catch (e) { return null; }
+        }
+        function tokenAuth() {
+            const op = obterOperador();
+            return op && op.token ? { 'Authorization': 'Bearer ' + op.token } : {};
+        }
+        function bloquear() {
+            const op = obterOperador();
+            if (!op) { window.location.href = '/login.html'; return true; }
+            if (op.papel === 'SELLER') { window.location.href = '/'; return true; }
+            return false;
+        }
+        async function api(url, metodo = 'GET', corpo = null) {
+            const opcoes = { method: metodo, headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()) };
+            if (corpo) opcoes.body = JSON.stringify(corpo);
+            const response = await fetch(`${API_BASE}${url}`, opcoes);
+            if (response.status === 401) {
+                localStorage.removeItem('jg_operador');
+                window.location.href = '/login.html';
+                throw new Error('Sessão expirada.');
+            }
+            const dados = await response.json();
+            if (!response.ok) throw new Error(dados.erro || 'Erro na requisição');
+            return dados;
+        }
+        bloquear();
+
+        function esc(s) {
+            if (s === null || s === undefined) return '';
+            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        async function carregarLogins() {
+            try {
+                const params = new URLSearchParams();
+                const de = document.getElementById('lf-de').value;
+                const ate = document.getElementById('lf-ate').value;
+                const usuario = document.getElementById('lf-usuario').value.trim();
+                const resultado = document.getElementById('lf-resultado').value;
+                if (de) params.set('de', de);
+                if (ate) params.set('ate', ate);
+                if (usuario) params.set('usuario', usuario);
+                if (resultado) params.set('resultado', resultado);
+                const query = params.toString();
+
+                const dados = await api('/api/auth/logins' + (query ? '?' + query : ''));
+                const resumo = document.getElementById('resumo-falhas');
+                if (dados.falhas24h > 0) {
+                    resumo.style.display = 'block';
+                    resumo.innerText = `⚠ ${dados.falhas24h} tentativa(s) de login com senha errada nas últimas 24 horas.`;
+                } else {
+                    resumo.style.display = 'none';
+                }
+
+                const tbody = document.getElementById('tabela-logins');
+                if (!dados.logs || dados.logs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="sem-dados">Nenhum acesso registrado</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = dados.logs.map(l => {
+                    const badge = l.suspeito ? '<span class="badge b-amarelo">Suspeito</span>'
+                        : l.success ? '<span class="badge b-verde">Sucesso</span>'
+                        : '<span class="badge b-vermelho">Falha</span>';
+                    return `
+                    <tr>
+                        <td>${formatarDataHora(l.data)}</td>
+                        <td><strong>${esc(l.operador || '-')}</strong></td>
+                        <td>${esc(l.identificador || '-')}</td>
+                        <td>${badge}</td>
+                        <td><span class="detalhe" title="${esc(l.detail || '')}">${esc(l.detail || '-')}</span></td>
+                        <td style="text-align:center;"><span class="ip">${esc(l.ip || '-')}</span></td>
+                    </tr>`;
+                }).join('');
+            } catch (e) { alert(e.message); }
+        }
+
+        carregarLogs();
+        carregarLogins();
+
+        async function carregarLogs() {
+            try {
+                const params = new URLSearchParams();
+                const de = document.getElementById('f-de').value;
+                const ate = document.getElementById('f-ate').value;
+                const usuario = document.getElementById('f-usuario').value.trim();
+                const acao = document.getElementById('f-acao').value.trim();
+                if (de) params.set('de', de);
+                if (ate) params.set('ate', ate);
+                if (usuario) params.set('usuario', usuario);
+                if (acao) params.set('acao', acao);
+                const query = params.toString();
+
+                const logs = await api('/api/auditoria' + (query ? '?' + query : ''));
+                const tbody = document.getElementById('tabela-logs');
+                if (logs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="sem-dados">Nenhum registro encontrado</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = logs.map(l => `
+                    <tr>
+                        <td>${formatarDataHora(l.data)}</td>
+                        <td><strong>${esc(l.operador)}</strong></td>
+                        <td><span class="acao">${esc(l.acao)}</span></td>
+                        <td>${esc(l.entidade)}<br><small style="color:#aab2bd;">${esc(l.entidadeId || '')}</small></td>
+                        <td><span class="detalhe" title="${esc(l.detalhe ? JSON.stringify(l.detalhe) : '')}">${esc(l.detalhe ? JSON.stringify(l.detalhe) : '-')}</span></td>
+                        <td style="text-align:center;"><span class="ip">${esc(l.ip || '-')}</span></td>
+                    </tr>`).join('');
+            } catch (e) { alert(e.message); }
+        }
+    </script>
+</body>
+</html>

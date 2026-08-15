@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>Projeção de Repasses - JG Sistemas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
+        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
+        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
+        header a:hover { color: white; }
+        main { padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
+        footer { text-align: center; font-size: 11px; color: #8b95a1; }
+        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+        .card { background: white; border: 1px solid #ccd1d9; border-radius: 4px; padding: 14px; }
+        .card .valor { font-size: 20px; font-weight: bold; color: #134074; margin-top: 6px; }
+        .card .rotulo { font-size: 11px; color: #656d78; font-weight: bold; text-transform: uppercase; }
+        .card.verde .valor { color: #008c45; }
+        .card.laranja .valor { color: #b26b00; }
+        .card.vermelho .valor { color: #d9534f; }
+        .filtros { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; background: white; border: 1px solid #ccd1d9; border-radius: 4px; padding: 12px; }
+        .filtros .campo { display: flex; flex-direction: column; gap: 4px; }
+        .filtros label { font-size: 11px; color: #656d78; font-weight: bold; text-transform: uppercase; }
+        .filtros select, .filtros input { padding: 8px; font-size: 13px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
+        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; padding: 16px; }
+        .painel h3 { font-size: 13px; color: #0b2545; text-transform: uppercase; margin-bottom: 12px; }
+        canvas { width: 100%; max-width: 100%; height: 320px; }
+        .grafico-vazio { color: #8b95a1; text-align: center; padding: 60px 0; font-size: 14px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background-color: #134074; color: white; padding: 8px; text-align: left; text-transform: uppercase; font-size: 11px; }
+        td { padding: 8px; border-bottom: 1px solid #e6e9ed; color: #333; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        .sem-dados { text-align: center; color: #8b95a1; padding: 24px; font-size: 14px; }
+        .btn { border: none; border-radius: 4px; padding: 8px 14px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .btn-azul { background-color: #134074; color: white; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>JG SISTEMAS - PROJEÇÃO DE REPASSES</div>
+        <div><a href="/">← Menu Principal</a> &nbsp;|&nbsp; <a href="/recebiveis.html">Recebíveis</a> &nbsp;|&nbsp; <a href="/operadoras.html">Operadoras e Taxas</a></div>
+    </header>
+
+    <main>
+        <div class="cards">
+            <div class="card verde">
+                <div class="rotulo">A Receber (líquido)</div>
+                <div class="valor" id="card-liquido">R$ 0,00</div>
+            </div>
+            <div class="card">
+                <div class="rotulo">Bruto</div>
+                <div class="valor" id="card-bruto">R$ 0,00</div>
+            </div>
+            <div class="card vermelho">
+                <div class="rotulo">Taxas MDR</div>
+                <div class="valor" id="card-taxa">R$ 0,00</div>
+            </div>
+            <div class="card">
+                <div class="rotulo">Recebíveis</div>
+                <div class="valor" id="card-qtd">0</div>
+            </div>
+        </div>
+
+        <div class="filtros">
+            <div class="campo">
+                <label>Operadora</label>
+                <select id="f-operadora" onchange="carregarProjecao()">
+                    <option value="">Todas</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label>De</label>
+                <input type="date" id="f-de" onchange="carregarProjecao()">
+            </div>
+            <div class="campo">
+                <label>Até</label>
+                <input type="date" id="f-ate" onchange="carregarProjecao()">
+            </div>
+            <button class="btn btn-azul" onclick="carregarProjecao()">Atualizar</button>
+        </div>
+
+        <div class="painel">
+            <h3>Projeção por Data de Repasse (líquido por dia)</h3>
+            <div id="grafico-holder"><canvas id="grafico" width="1140" height="320"></canvas></div>
+        </div>
+
+        <div class="painel">
+            <h3>Resumo por Operadora</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Operadora</th>
+                        <th style="text-align:right;">Bruto</th>
+                        <th style="text-align:right;">Taxa</th>
+                        <th style="text-align:right;">Líquido</th>
+                        <th style="text-align:right;">Qtd</th>
+                        <th>1º Repasse</th>
+                        <th>Último Repasse</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-operadoras"></tbody>
+            </table>
+        </div>
+
+        <div class="painel">
+            <h3>Projeção Dia a Dia</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data de Repasse</th>
+                        <th style="text-align:right;">Bruto</th>
+                        <th style="text-align:right;">Taxa</th>
+                        <th style="text-align:right;">Líquido</th>
+                        <th style="text-align:right;">Recebíveis</th>
+                        <th>Por Operadora</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-dias"></tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer>JG Sistemas</footer>
+
+    <script src="/seguranca.js"></script>
+    <script>
+        const API_BASE = window.location.protocol.startsWith('http') ? '' : 'http://localhost:3000';
+
+        function obterOperador() {
+            try { const raw = localStorage.getItem('jg_operador'); return raw ? JSON.parse(raw) : null; } catch (e) { return null; }
+        }
+        function tokenAuth() {
+            const op = obterOperador();
+            return op && op.token ? { 'Authorization': 'Bearer ' + op.token } : {};
+        }
+        function bloquear() {
+            const op = obterOperador();
+            if (!op || ['ADMIN', 'MANAGER', 'SUPERVISOR', 'FINANCIAL'].indexOf(op.papel) === -1) {
+                window.location.href = '/login.html';
+            }
+        }
+        async function api(url, metodo = 'GET', corpo = null) {
+            const opcoes = { method: metodo, headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()) };
+            if (corpo) opcoes.body = JSON.stringify(corpo);
+            const response = await fetch(`${API_BASE}${url}`, opcoes);
+            if (response.status === 401) {
+                localStorage.removeItem('jg_operador');
+                window.location.href = '/login.html';
+                throw new Error('Sessão expirada.');
+            }
+            const dados = await response.json();
+            if (!response.ok) throw new Error(dados.erro || 'Erro na requisição');
+            return dados;
+        }
+        bloquear();
+
+        function moeda(v) { return `R$ ${Number(v || 0).toFixed(2)}`; }
+        function formatarData(d) {
+            if (!d) return '—';
+            const dt = new Date(d);
+            return dt.toLocaleDateString('pt-BR');
+        }
+
+        function defaultsDatas() {
+            const hoje = new Date();
+            document.getElementById('f-de').value = hoje.toISOString().slice(0, 10);
+            const ate = new Date(hoje);
+            ate.setDate(ate.getDate() + 60);
+            document.getElementById('f-ate').value = ate.toISOString().slice(0, 10);
+        }
+
+        async function carregarFiltros() {
+            try {
+                const operadoras = await api('/api/cartoes/operadoras');
+                document.getElementById('f-operadora').innerHTML = '<option value="">Todas</option>' +
+                    operadoras.map(o => `<option value="${o.id}">${esc(o.nome)}</option>`).join('');
+            } catch (e) { console.warn(e.message); }
+        }
+
+        function desenharGrafico(porData) {
+            const holder = document.getElementById('grafico-holder');
+            if (!porData.length) {
+                holder.innerHTML = '<div class="grafico-vazio">Nenhum repasse previsto no período.</div>';
+                return;
+            }
+            holder.innerHTML = '<canvas id="grafico" width="1140" height="320"></canvas>';
+            const canvas = document.getElementById('grafico');
+            const ctx = canvas.getContext('2d');
+            const W = canvas.width, H = canvas.height;
+            const margemEsq = 70, margemDir = 16, margemTop = 20, margemBot = 36;
+
+            const max = Math.max(...porData.map(d => d.liquido));
+            const teto = max > 0 ? Math.ceil((max * 1.15) / 10) * 10 : 10;
+            const areaW = W - margemEsq - margemDir;
+            const areaH = H - margemTop - margemBot;
+
+            ctx.clearRect(0, 0, W, H);
+
+            ctx.strokeStyle = '#ccd1d9';
+            ctx.fillStyle = '#656d78';
+            ctx.font = '11px Segoe UI';
+            ctx.textAlign = 'right';
+            const linhasY = 5;
+            for (let i = 0; i <= linhasY; i++) {
+                const y = margemTop + areaH - (areaH * i / linhasY);
+                ctx.beginPath();
+                ctx.moveTo(margemEsq, y);
+                ctx.lineTo(W - margemDir, y);
+                ctx.stroke();
+                ctx.fillText(`R$ ${(teto * i / linhasY).toFixed(0)}`, margemEsq - 6, y + 4);
+            }
+
+            const n = porData.length;
+            const passo = areaW / n;
+            const largBarra = Math.min(passo * 0.6, 34);
+            const cores = ['#134074', '#00a651', '#f0ad4e', '#9b59b6', '#d9534f', '#16a2b8', '#7f8c8d', '#2ecc71'];
+
+            porData.forEach((d, idx) => {
+                const x = margemEsq + passo * idx + (passo - largBarra) / 2;
+                const alt = d.liquido > 0 ? Math.max(2, areaH * d.liquido / teto) : 2;
+                const y = margemTop + areaH - alt;
+                ctx.fillStyle = cores[idx % cores.length];
+                ctx.fillRect(x, y, largBarra, alt);
+
+                ctx.fillStyle = '#134074';
+                ctx.font = 'bold 10px Segoe UI';
+                ctx.textAlign = 'center';
+                if (d.liquido > 0) {
+                    ctx.fillText(`R$ ${d.liquido.toFixed(0)}`, x + largBarra / 2, y - 4);
+                }
+
+                const dt = d.data.slice(5).replace('-', '/');
+                ctx.fillStyle = '#656d78';
+                ctx.font = '10px Segoe UI';
+                ctx.textAlign = 'center';
+                if (n > 22 && idx % 3 !== 0) return;
+                ctx.fillText(dt, x + largBarra / 2, margemTop + areaH + 14);
+            });
+        }
+
+        async function carregarProjecao() {
+            try {
+                const params = new URLSearchParams();
+                const operadora = document.getElementById('f-operadora').value;
+                const de = document.getElementById('f-de').value;
+                const ate = document.getElementById('f-ate').value;
+                if (operadora) params.set('operadoraId', operadora);
+                if (de) params.set('de', de);
+                if (ate) params.set('ate', ate);
+
+                const dados = await api(`/api/cartoes/projecao?${params.toString()}`);
+                const r = dados.resumo;
+                document.getElementById('card-liquido').innerText = moeda(r.liquido);
+                document.getElementById('card-bruto').innerText = moeda(r.bruto);
+                document.getElementById('card-taxa').innerText = moeda(r.taxa);
+                document.getElementById('card-qtd').innerText = String(r.qtd);
+
+                desenharGrafico(dados.porData);
+
+                const tOper = document.getElementById('tabela-operadoras');
+                if (dados.porOperadora.length === 0) {
+                    tOper.innerHTML = '<tr><td colspan="7" class="sem-dados">Nenhum repasse no período.</td></tr>';
+                } else {
+                    tOper.innerHTML = dados.porOperadora.map(op => `
+                        <tr>
+                            <td><strong>${esc(op.operadora)}</strong></td>
+                            <td style="text-align:right;">${moeda(op.bruto)}</td>
+                            <td style="text-align:right;">${moeda(op.taxa)}</td>
+                            <td style="text-align:right;"><strong>${moeda(op.liquido)}</strong></td>
+                            <td style="text-align:right;">${op.qtd}</td>
+                            <td>${formatarData(op.primeiroVencimento)}</td>
+                            <td>${formatarData(op.ultimoVencimento)}</td>
+                        </tr>
+                    `).join('');
+                }
+
+                const tDias = document.getElementById('tabela-dias');
+                if (dados.porData.length === 0) {
+                    tDias.innerHTML = '<tr><td colspan="6" class="sem-dados">Nenhum repasse no período.</td></tr>';
+                } else {
+                    tDias.innerHTML = dados.porData.map(d => `
+                        <tr>
+                            <td><strong>${formatarData(d.data + 'T12:00:00')}</strong></td>
+                            <td style="text-align:right;">${moeda(d.bruto)}</td>
+                            <td style="text-align:right;">${moeda(d.taxa)}</td>
+                            <td style="text-align:right;"><strong>${moeda(d.liquido)}</strong></td>
+                            <td style="text-align:right;">${d.qtd}</td>
+                            <td>${d.porOperadora.map(o => `${esc(o.operadora)}: ${moeda(o.liquido)}`).join('<br>') || '—'}</td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (e) {
+                alert(e.message);
+            }
+        }
+
+        defaultsDatas();
+        carregarFiltros();
+        carregarProjecao();
+    </script>
+</body>
+</html>

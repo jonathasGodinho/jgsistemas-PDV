@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>Fidelidade / Cashback - JG Sistemas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
+        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
+        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
+        header a:hover { color: white; }
+        main { padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
+        .grid { display: grid; grid-template-columns: 340px 1fr; gap: 20px; align-items: start; }
+        @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
+        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+        .painel-corpo { padding: 14px; }
+        .campo { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+        .campo label { font-size: 11px; color: #656d78; font-weight: bold; text-transform: uppercase; }
+        .campo input, .campo select { padding: 9px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; width: 100%; background: white; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background-color: #134074; color: white; padding: 8px; text-align: left; text-transform: uppercase; font-size: 11px; }
+        td { padding: 8px; border-bottom: 1px solid #e6e9ed; color: #333; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        .btn { border: none; border-radius: 4px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .btn-azul { background-color: #134074; color: white; }
+        .btn-verde { background-color: #00a651; color: white; }
+        .btn-perigo { background-color: #d9534f; color: white; }
+        .btn-mini { padding: 4px 8px; font-size: 12px; }
+        .btn-block { width: 100%; padding: 12px; font-size: 15px; }
+        .sem-dados { text-align: center; color: #8b95a1; padding: 24px; font-size: 14px; }
+        .verde { color: #00a651; }
+        .vermelho { color: #d9534f; }
+        .saldo-caixa { background: linear-gradient(135deg, #134074, #1d5fa8); color: white; border-radius: 6px; padding: 18px; text-align: center; margin-bottom: 14px; }
+        .saldo-caixa .valor { font-size: 30px; font-weight: bold; }
+        .saldo-caixa .rotulo { font-size: 12px; text-transform: uppercase; opacity: 0.85; }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .b-c { background: #d8f3e3; color: #008c45; }
+        .b-d { background: #fbe3e3; color: #d9534f; }
+        .resumo { display: flex; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+        .resumo div { flex: 1; min-width: 130px; background: #f0f2f5; border-radius: 4px; padding: 12px; text-align: center; }
+        .resumo .v { font-size: 18px; font-weight: bold; color: #134074; }
+        .resumo .r { font-size: 11px; color: #656d78; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>JG SISTEMAS - FIDELIDADE / CASHBACK</div>
+        <div><a href="/">← Menu Principal</a></div>
+    </header>
+
+    <main>
+        <div class="grid">
+            <div class="painel">
+                <div class="painel-titulo"><span>Cliente e Ajuste</span></div>
+                <div class="painel-corpo">
+                    <div class="campo">
+                        <label>Cliente</label>
+                        <select id="f-cliente"><option value="">Selecione...</option></select>
+                    </div>
+                    <div id="box-saldo" style="display:none;">
+                        <div class="saldo-caixa">
+                            <div class="rotulo">Saldo de cashback</div>
+                            <div class="valor" id="lbl-saldo">R$ 0,00</div>
+                        </div>
+                        <div class="resumo">
+                            <div><div class="v" id="lbl-creditos">0</div><div class="r">Créditos</div></div>
+                            <div><div class="v" id="lbl-debitos">0</div><div class="r">Débitos</div></div>
+                        </div>
+                    </div>
+
+                    <div class="campo">
+                        <label>Valor do ajuste (R$) *</label>
+                        <input type="number" id="f-valor" step="0.01" placeholder="Positivo credita, negativo debita">
+                    </div>
+                    <div class="campo">
+                        <label>Motivo *</label>
+                        <input type="text" id="f-motivo" placeholder="Ex.: brinde por promoção">
+                    </div>
+                    <div class="campo">
+                        <label>Senha do administrador *</label>
+                        <input type="password" id="f-senha" placeholder="Necessária para ajustes">
+                    </div>
+                    <button class="btn btn-verde btn-block" onclick="aplicarAjuste()">Aplicar Ajuste</button>
+                </div>
+            </div>
+
+            <div class="painel">
+                <div class="painel-titulo"><span>Clientes com Saldo</span></div>
+                <div class="painel-corpo">
+                    <div style="overflow-x:auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Telefone</th>
+                                    <th style="text-align:right;">Saldo</th>
+                                    <th style="text-align:center;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-clientes">
+                                <tr><td colspan="4" class="sem-dados">Carregando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="painel">
+            <div class="painel-titulo"><span>Extrato do Cliente</span></div>
+            <div class="painel-corpo">
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Tipo</th>
+                                <th style="text-align:right;">Valor</th>
+                                <th style="text-align:right;">Pontos</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-extrato">
+                            <tr><td colspan="4" class="sem-dados">Selecione um cliente para ver o extrato</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>© 2026 JG Sistemas</footer>
+
+    <script src="/seguranca.js"></script>
+    <script>
+        const API_BASE = '';
+        const formatarMoeda = v => `R$ ${Number(v).toFixed(2).replace('.', ',')}`;
+        const formatarDataHora = d => new Date(d).toLocaleString('pt-BR');
+        const TIPOS_LABEL = {
+            CASHBACK_CREDITO: 'Crédito (venda fora do PDV)',
+            CASHBACK_RESGATE: 'Resgate (venda fora do PDV)',
+            CASHBACK_AJUSTE_CREDITO: 'Ajuste - Crédito',
+            CASHBACK_AJUSTE_DEBITO: 'Ajuste - Débito'
+        };
+
+        function obterOperador() {
+            try {
+                const raw = localStorage.getItem('jg_operador');
+                return raw ? JSON.parse(raw) : null;
+            } catch (e) { return null; }
+        }
+        function tokenAuth() {
+            const op = obterOperador();
+            return op && op.token ? { 'Authorization': 'Bearer ' + op.token } : {};
+        }
+        function bloquearCaixa() {
+            const op = obterOperador();
+            if (!op) { window.location.href = '/login.html'; return true; }
+            if (op.papel === 'SELLER') { window.location.href = '/'; return true; }
+            return false;
+        }
+        async function api(url, metodo = 'GET', corpo = null) {
+            const opcoes = { method: metodo, headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()) };
+            if (corpo) opcoes.body = JSON.stringify(corpo);
+            const response = await fetch(`${API_BASE}${url}`, opcoes);
+            if (response.status === 401) {
+                localStorage.removeItem('jg_operador');
+                window.location.href = '/login.html';
+                throw new Error('Sessão expirada.');
+            }
+            const dados = await response.json();
+            if (!response.ok) throw new Error(dados.erro || 'Erro na requisição');
+            return dados;
+        }
+        bloquearCaixa();
+
+        let clienteIdSelecionado = null;
+
+        async function carregarClientes() {
+            try {
+                const clientes = await api('/api/clientes');
+                const select = document.getElementById('f-cliente');
+                select.innerHTML = '<option value="">Selecione...</option>';
+                clientes.forEach(c => {
+                    select.innerHTML += `<option value="${c.id}">${esc(c.nome)}</option>`;
+                });
+
+                const saldos = await api('/api/fidelidade');
+                const tbody = document.getElementById('tabela-clientes');
+                if (saldos.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="sem-dados">Nenhum cliente com saldo</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = saldos.map(s => `
+                    <tr>
+                        <td><strong>${esc(s.cliente)}</strong></td>
+                        <td>${esc(s.telefone || '-')}</td>
+                        <td style="text-align:right;"><strong class="verde">${formatarMoeda(s.saldo)}</strong></td>
+                        <td style="text-align:center;">
+                            <button class="btn btn-mini btn-azul" onclick="selecionarCliente('${s.clienteId}')">Extrato</button>
+                        </td>
+                    </tr>`).join('');
+            } catch (e) { alert(e.message); }
+        }
+
+        async function selecionarCliente(id) {
+            clienteIdSelecionado = id;
+            document.getElementById('f-cliente').value = id;
+            await carregarExtrato();
+        }
+
+        document.getElementById('f-cliente').addEventListener('change', async (e) => {
+            clienteIdSelecionado = e.target.value || null;
+            if (clienteIdSelecionado) await carregarExtrato();
+        });
+
+        async function carregarExtrato() {
+            if (!clienteIdSelecionado) return;
+            try {
+                const dados = await api(`/api/fidelidade/${clienteIdSelecionado}`);
+                document.getElementById('box-saldo').style.display = 'block';
+                document.getElementById('lbl-saldo').innerText = formatarMoeda(dados.saldo);
+
+                let creditos = 0, debitos = 0;
+                dados.movimentacoes.forEach(m => {
+                    if (m.pontos > 0) creditos += m.valor;
+                    else debitos += Math.abs(m.valor);
+                });
+
+                const tbody = document.getElementById('tabela-extrato');
+                if (dados.movimentacoes.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="sem-dados">Sem movimentações</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = dados.movimentacoes.map(m => {
+                    const credito = m.pontos > 0;
+                    return `
+                        <tr>
+                            <td>${formatarDataHora(m.data)}</td>
+                            <td>${TIPOS_LABEL[m.tipo] || m.tipo}</td>
+                            <td style="text-align:right;" class="${credito ? 'verde' : 'vermelho'}"><strong>${credito ? '+' : '-'}${formatarMoeda(m.valor)}</strong></td>
+                            <td style="text-align:right;">${m.pontos}</td>
+                        </tr>`;
+                }).join('');
+            } catch (e) { alert(e.message); }
+        }
+
+        async function aplicarAjuste() {
+            if (!clienteIdSelecionado) { alert('Selecione um cliente!'); return; }
+            const valor = Number(String(document.getElementById('f-valor').value).replace(',', '.'));
+            const motivo = document.getElementById('f-motivo').value.trim();
+            const senha = document.getElementById('f-senha').value;
+            if (!valor) { alert('Informe o valor do ajuste!'); return; }
+            if (!motivo) { alert('Informe o motivo!'); return; }
+            if (!senha) { alert('Informe a senha do administrador!'); return; }
+
+            let confirmacao = true;
+            if (valor < 0 && !confirm(`Débito de ${formatarMoeda(Math.abs(valor))} no saldo do cliente. Confirmar?`)) return;
+            if (!confirmacao) return;
+
+            try {
+                const r = await api('/api/fidelidade/ajuste', 'POST', {
+                    clienteId: clienteIdSelecionado,
+                    valor,
+                    motivo,
+                    senha: senha
+                });
+                alert(`Ajuste aplicado! Novo saldo: ${formatarMoeda(r.novoSaldo)}`);
+                document.getElementById('f-valor').value = '';
+                document.getElementById('f-motivo').value = '';
+                document.getElementById('f-senha').value = '';
+                carregarExtrato();
+                carregarClientes();
+            } catch (e) { alert(e.message); }
+        }
+
+        carregarClientes();
+    </script>
+</body>
+</html>

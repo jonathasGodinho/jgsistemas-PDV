@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>Tabelas de Preço - JG Sistemas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
+        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
+        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
+        header a:hover { color: white; }
+        main { padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
+        .grid { display: grid; grid-template-columns: 360px 1fr; gap: 20px; align-items: start; }
+        @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
+        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+        .painel-corpo { padding: 14px; }
+        .campo { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+        .campo label { font-size: 11px; color: #656d78; font-weight: bold; text-transform: uppercase; }
+        .campo input, .campo select { padding: 9px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; width: 100%; }
+        .linha { display: flex; gap: 10px; }
+        .linha .campo { flex: 1; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background-color: #134074; color: white; padding: 8px; text-align: left; text-transform: uppercase; font-size: 11px; }
+        td { padding: 8px; border-bottom: 1px solid #e6e9ed; color: #333; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        .btn { border: none; border-radius: 4px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .btn-azul { background-color: #134074; color: white; }
+        .btn-verde { background-color: #00a651; color: white; }
+        .btn-perigo { background-color: #d9534f; color: white; }
+        .btn-mini { padding: 4px 8px; font-size: 12px; }
+        .btn-block { width: 100%; padding: 12px; font-size: 15px; }
+        .sem-dados { text-align: center; color: #8b95a1; padding: 24px; font-size: 14px; }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .b-verde { background: #d8f3e3; color: #008c45; }
+        .b-cinza { background: #e6e9ed; color: #656d78; }
+        .b-azul { background: #dbeafe; color: #134074; }
+        .check { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+        .check input { width: auto; }
+        .check label { font-size: 12px; color: #333; }
+        .selecionada { background-color: #dbeafe !important; }
+        .divisor { margin: 14px 0; border-top: 1px dashed #ccd1d9; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>JG SISTEMAS - TABELAS DE PREÇO</div>
+        <div><a href="/">← Menu Principal</a></div>
+    </header>
+
+    <main>
+        <div class="grid">
+            <div>
+                <div class="painel" style="margin-bottom:20px;">
+                    <div class="painel-titulo"><span id="titulo-form">Nova Tabela</span></div>
+                    <div class="painel-corpo">
+                        <div class="campo">
+                            <label>Nome da tabela *</label>
+                            <input type="text" id="f-nome" placeholder="Ex.: TABELA ATACADO">
+                        </div>
+                        <div class="check">
+                            <input type="checkbox" id="f-padrao">
+                            <label for="f-padrao">Tabela padrão (usada quando o cliente não tem tabela)</label>
+                        </div>
+                        <button class="btn btn-verde btn-block" onclick="salvarTabela()">Salvar Tabela</button>
+                        <button class="btn btn-azul btn-block" id="btn-cancelar-edit" onclick="cancelarEdicao()" style="display:none;">Cancelar edição</button>
+                    </div>
+                </div>
+
+                <div class="painel">
+                    <div class="painel-titulo"><span>Tabelas Cadastradas</span></div>
+                    <div class="painel-corpo" style="padding:0;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th style="text-align:right;">Itens</th>
+                                    <th style="text-align:right;">Clientes</th>
+                                    <th style="text-align:center;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-lista">
+                                <tr><td colspan="4" class="sem-dados">Carregando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="painel">
+                <div class="painel-titulo"><span id="titulo-detalhe">Detalhe da Tabela</span></div>
+                <div class="painel-corpo">
+                    <div id="sem-selecao" class="sem-dados">Clique em "Itens" em uma tabela ao lado para gerenciar preços.</div>
+
+                    <div id="detalhe" style="display:none;">
+                        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:14px;">
+                            <button class="btn btn-azul" onclick="alternarPadrao()">Definir como padrão</button>
+                            <button class="btn btn-mini btn-perigo" onclick="excluirTabela()">Excluir tabela</button>
+                            <span id="badge-detalhe"></span>
+                        </div>
+
+                        <div class="campo">
+                            <label>Adicionar produto à tabela</label>
+                            <select id="f-produto"></select>
+                        </div>
+                        <div class="linha">
+                            <div class="campo">
+                                <label>Qtd. mínima (opcional)</label>
+                                <input type="number" id="f-minqtd" min="0" placeholder="0 = sempre">
+                            </div>
+                            <div class="campo">
+                                <label>Preço fixo (R$)</label>
+                                <input type="number" id="f-preco" step="0.01" min="0" placeholder="Ex.: 1.90">
+                            </div>
+                            <div class="campo">
+                                <label>% ajuste (sobre o base)</label>
+                                <input type="number" id="f-percentual" step="0.01" placeholder="Ex.: -10 ou 5">
+                            </div>
+                        </div>
+                        <button class="btn btn-verde btn-block" onclick="adicionarItem()">Adicionar / Atualizar Item</button>
+
+                        <div class="divisor"></div>
+
+                        <div style="overflow-x:auto;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Produto</th>
+                                        <th style="text-align:right;">Qtd mín.</th>
+                                        <th style="text-align:right;">Regra</th>
+                                        <th style="text-align:center;">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabela-itens">
+                                    <tr><td colspan="4" class="sem-dados">Nenhum item</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="divisor"></div>
+                        <div class="painel-titulo"><span>Clientes vinculados</span></div>
+                        <div style="overflow-x:auto;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Cliente</th>
+                                        <th>Contato</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabela-clientes">
+                                    <tr><td colspan="2" class="sem-dados">Nenhum cliente</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>© 2026 JG Sistemas</footer>
+
+    <script src="/seguranca.js"></script>
+    <script>
+        const API_BASE = '';
+
+        function obterOperador() {
+            try {
+                const raw = localStorage.getItem('jg_operador');
+                return raw ? JSON.parse(raw) : null;
+            } catch (e) { return null; }
+        }
+        function tokenAuth() {
+            const op = obterOperador();
+            return op && op.token ? { 'Authorization': 'Bearer ' + op.token } : {};
+        }
+        function bloquear() {
+            const op = obterOperador();
+            if (!op) { window.location.href = '/login.html'; return true; }
+            if (op.papel === 'SELLER') { window.location.href = '/'; return true; }
+            return false;
+        }
+        async function api(url, metodo = 'GET', corpo = null) {
+            const opcoes = { method: metodo, headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()) };
+            if (corpo) opcoes.body = JSON.stringify(corpo);
+            const response = await fetch(`${API_BASE}${url}`, opcoes);
+            if (response.status === 401) {
+                localStorage.removeItem('jg_operador');
+                window.location.href = '/login.html';
+                throw new Error('Sessão expirada.');
+            }
+            const dados = await response.json();
+            if (!response.ok) throw new Error(dados.erro || 'Erro na requisição');
+            return dados;
+        }
+        bloquear();
+
+        let editandoId = null;
+        let selecionada = null;
+        let produtos = [];
+
+        async function carregarTabelas() {
+            try {
+                const tabelas = await api('/api/tabelas-preco');
+                const tbody = document.getElementById('tabela-lista');
+                if (tabelas.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="sem-dados">Nenhuma tabela cadastrada</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = tabelas.map(t => `
+                    <tr id="linha-${t.id}" class="${selecionada && selecionada.id === t.id ? 'selecionada' : ''}">
+                        <td>
+                            <strong>${esc(t.nome)}</strong>
+                            ${t.padrao ? '<br><span class="badge b-azul">Padrão</span>' : ''}
+                            ${!t.ativa ? '<br><span class="badge b-cinza">Inativa</span>' : ''}
+                        </td>
+                        <td style="text-align:right;">${t.itens}</td>
+                        <td style="text-align:right;">${t.clientes}</td>
+                        <td style="text-align:center;">
+                            <button class="btn btn-mini btn-verde" onclick="abrirDetalhe('${t.id}')">Itens</button>
+                            <button class="btn btn-mini btn-azul" onclick="editarTabela('${t.id}', '${esc(t.nome.replace(/'/g, "\\'"))}', ${t.padrao}, ${t.ativa})">Editar</button>
+                        </td>
+                    </tr>`).join('');
+            } catch (e) { alert(e.message); }
+        }
+
+        async function carregarProdutos() {
+            try {
+                produtos = await api('/api/produtos');
+                const sel = document.getElementById('f-produto');
+                sel.innerHTML = produtos.map(p => `<option value="${p.id}">${esc(p.codigo) || '?'} - ${esc(p.nome)}</option>`).join('');
+            } catch (e) { alert(e.message); }
+        }
+
+        async function salvarTabela() {
+            const nome = document.getElementById('f-nome').value.trim();
+            if (!nome) { alert('Informe o nome da tabela!'); return; }
+            const padrao = document.getElementById('f-padrao').checked;
+            try {
+                if (editandoId) {
+                    await api(`/api/tabelas-preco/${editandoId}`, 'PUT', { nome, padrao });
+                } else {
+                    await api('/api/tabelas-preco', 'POST', { nome, padrao });
+                }
+                cancelarEdicao();
+                carregarTabelas();
+                if (selecionada) abrirDetalhe(selecionada.id);
+            } catch (e) { alert(e.message); }
+        }
+
+        function editarTabela(id, nome, padrao, ativa) {
+            editandoId = id;
+            document.getElementById('f-nome').value = nome;
+            document.getElementById('f-padrao').checked = padrao;
+            document.getElementById('titulo-form').innerText = 'Editar Tabela';
+            document.getElementById('btn-cancelar-edit').style.display = 'block';
+        }
+
+        function cancelarEdicao() {
+            editandoId = null;
+            document.getElementById('f-nome').value = '';
+            document.getElementById('f-padrao').checked = false;
+            document.getElementById('titulo-form').innerText = 'Nova Tabela';
+            document.getElementById('btn-cancelar-edit').style.display = 'none';
+        }
+
+        async function abrirDetalhe(id) {
+            try {
+                const t = await api(`/api/tabelas-preco/${id}`);
+                selecionada = t;
+                document.getElementById('sem-selecao').style.display = 'none';
+                document.getElementById('detalhe').style.display = 'block';
+                document.getElementById('titulo-detalhe').innerText = `Tabela: ${t.nome}`;
+                document.getElementById('badge-detalhe').innerHTML =
+                    (t.padrao ? '<span class="badge b-azul">Padrão</span> ' : '') +
+                    (t.ativa ? '<span class="badge b-verde">Ativa</span>' : '<span class="badge b-cinza">Inativa</span>');
+
+                const tbItens = document.getElementById('tabela-itens');
+                if (t.itens.length === 0) {
+                    tbItens.innerHTML = '<tr><td colspan="4" class="sem-dados">Nenhum item nesta tabela</td></tr>';
+                } else {
+                    tbItens.innerHTML = t.itens.map(i => `
+                        <tr>
+                            <td><strong>${esc(i.produto)}</strong><br><small style="color:#8b95a1;">${esc(i.codigo ?? '')}</small></td>
+                            <td style="text-align:right;">${i.minQtd ?? '—'}</td>
+                            <td style="text-align:right;">
+                                ${i.preco !== null ? `<strong>R$ ${i.preco.toFixed(2)}</strong>` : ''}
+                                ${i.preco !== null && i.percentual !== null ? ' / ' : ''}
+                                ${i.percentual !== null ? `<strong>${i.percentual > 0 ? '+' : ''}${i.percentual}%</strong>` : ''}
+                            </td>
+                            <td style="text-align:center;">
+                                <button class="btn btn-mini btn-perigo" onclick="excluirItem('${i.id}')">Remover</button>
+                            </td>
+                        </tr>`).join('');
+                }
+
+                const tbClientes = document.getElementById('tabela-clientes');
+                if (!t.clientes || t.clientes.length === 0) {
+                    tbClientes.innerHTML = '<tr><td colspan="2" class="sem-dados">Nenhum cliente vinculado</td></tr>';
+                } else {
+                    tbClientes.innerHTML = t.clientes.map(c => `
+                        <tr><td><strong>${esc(c.name)}</strong></td><td>${esc(c.cellphone ?? '—')}</td></tr>`).join('');
+                }
+
+                document.getElementById('f-produto').value = '';
+                document.getElementById('f-minqtd').value = '';
+                document.getElementById('f-preco').value = '';
+                document.getElementById('f-percentual').value = '';
+                carregarTabelas();
+            } catch (e) { alert(e.message); }
+        }
+
+        async function adicionarItem() {
+            if (!selecionada) return;
+            const produtoId = document.getElementById('f-produto').value;
+            if (!produtoId) { alert('Selecione um produto!'); return; }
+            const minQtd = document.getElementById('f-minqtd').value;
+            const preco = document.getElementById('f-preco').value;
+            const percentual = document.getElementById('f-percentual').value;
+            if (preco === '' && percentual === '') { alert('Informe o preço fixo ou o percentual de ajuste!'); return; }
+            try {
+                await api(`/api/tabelas-preco/${selecionada.id}/itens`, 'POST', {
+                    produtoId, minQtd: minQtd === '' ? null : Number(minQtd),
+                    preco: preco === '' ? null : Number(preco),
+                    percentual: percentual === '' ? null : Number(percentual)
+                });
+                abrirDetalhe(selecionada.id);
+            } catch (e) { alert(e.message); }
+        }
+
+        async function excluirItem(itemId) {
+            if (!confirm('Remover este item da tabela?')) return;
+            try {
+                await api(`/api/tabelas-preco/${selecionada.id}/itens/${itemId}`, 'DELETE');
+                abrirDetalhe(selecionada.id);
+            } catch (e) { alert(e.message); }
+        }
+
+        async function alternarPadrao() {
+            if (!selecionada) return;
+            try {
+                await api(`/api/tabelas-preco/${selecionada.id}`, 'PUT', { padrao: true });
+                abrirDetalhe(selecionada.id);
+            } catch (e) { alert(e.message); }
+        }
+
+        async function excluirTabela() {
+            if (!selecionada) return;
+            if (!confirm(`Excluir a tabela "${selecionada.nome}"?`)) return;
+            try {
+                await api(`/api/tabelas-preco/${selecionada.id}`, 'DELETE');
+                selecionada = null;
+                document.getElementById('detalhe').style.display = 'none';
+                document.getElementById('sem-selecao').style.display = 'block';
+                document.getElementById('titulo-detalhe').innerText = 'Detalhe da Tabela';
+                carregarTabelas();
+            } catch (e) { alert(e.message); }
+        }
+
+        carregarTabelas();
+        carregarProdutos();
+    </script>
+</body>
+</html>

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>Cadastro de Fornecedores - JG Sistemas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
+        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
+        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
+        header a:hover { color: white; }
+        main { padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; }
+        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
+        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; }
+        .painel-corpo { padding: 14px; }
+        .toolbar { display: flex; gap: 10px; margin-bottom: 14px; }
+        .toolbar input { flex: 1; padding: 10px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background-color: #134074; color: white; padding: 10px; text-align: left; text-transform: uppercase; font-size: 12px; }
+        td { padding: 10px; border-bottom: 1px solid #e6e9ed; color: #333; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        tr:hover { background-color: #eef2f7; }
+        .btn { border: none; border-radius: 4px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .btn-azul { background-color: #134074; color: white; }
+        .btn-azul:hover { background-color: #0b2545; }
+        .btn-verde { background-color: #00a651; color: white; }
+        .btn-verde:hover { background-color: #007a3d; }
+        .btn-perigo { background-color: #d9534f; color: white; }
+        .btn-perigo:hover { background-color: #b0433f; }
+        .btn-mini { padding: 4px 8px; font-size: 12px; margin-right: 4px; }
+        .situacao { font-weight: bold; }
+        .situacao.ativo { color: #00a651; }
+        .situacao.inativo { color: #d9534f; }
+        .sem-dados { text-align: center; color: #8b95a1; padding: 30px; font-size: 14px; }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 100; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: white; border-radius: 6px; width: 640px; max-width: 94vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
+        .modal-head { background-color: #0b2545; color: white; padding: 14px 18px; font-weight: bold; font-size: 15px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
+        .modal-head .close { cursor: pointer; font-size: 20px; color: #aab2bd; }
+        .modal-head .close:hover { color: white; }
+        .modal-body { padding: 18px; }
+        .modal label { font-size: 12px; color: #656d78; font-weight: bold; display: block; margin: 12px 0 5px; text-transform: uppercase; }
+        .modal input, .modal select, .modal textarea { width: 100%; padding: 10px; font-size: 15px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; background: white; }
+        .modal textarea { resize: vertical; font-family: inherit; }
+        .modal .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .modal .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+        .modal-check { display: flex; align-items: center; gap: 8px; margin-top: 14px; }
+        .modal-check input { width: auto; }
+        .modal-check label { margin: 0; }
+
+        footer { background-color: #134074; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
+
+        @media (max-width: 700px) {
+            .modal .grid-2, .modal .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>JG SISTEMAS - CADASTRO DE FORNECEDORES</div>
+        <div><a href="/">← Menu Principal</a></div>
+    </header>
+
+    <main>
+        <div class="painel">
+            <div class="painel-titulo">Fornecedores</div>
+            <div class="painel-corpo">
+                <div class="toolbar">
+                    <input type="text" id="busca" placeholder="Buscar por nome, documento, contato ou cidade...">
+                    <button class="btn btn-azul" onclick="buscarFornecedores()">Buscar</button>
+                    <button class="btn btn-verde" onclick="abrirModalFornecedor()">Novo Fornecedor</button>
+                </div>
+                <div class="table-container" style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Documento</th>
+                                <th>Contato</th>
+                                <th>Telefone</th>
+                                <th>Cidade</th>
+                                <th>Produtos</th>
+                                <th>Situação</th>
+                                <th style="text-align: center;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-fornecedores">
+                            <tr><td colspan="8" class="sem-dados">Carregando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>© 2026 JG Sistemas</footer>
+
+    <!-- Modal de fornecedor -->
+    <div class="modal-overlay" id="modal-fornecedor">
+        <div class="modal">
+            <div class="modal-head">
+                <span id="modal-titulo">Novo Fornecedor</span>
+                <span class="close" onclick="fecharModalFornecedor()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="f-id">
+                <label>Nome do Fornecedor *</label>
+                <input type="text" id="f-nome" placeholder="Ex.: DISTRIBUIDORA ABC LTDA">
+
+                <div class="grid-2">
+                    <div>
+                        <label>Documento (CNPJ/CPF)</label>
+                        <input type="text" id="f-documento" placeholder="Ex.: 00.000.000/0001-00">
+                    </div>
+                    <div>
+                        <label>Contato</label>
+                        <input type="text" id="f-contato" placeholder="Ex.: João Silva">
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <label>Email</label>
+                        <input type="email" id="f-email" placeholder="fornecedor@email.com">
+                    </div>
+                    <div>
+                        <label>Telefone</label>
+                        <input type="text" id="f-telefone" placeholder="(00) 0000-0000">
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <label>Celular</label>
+                        <input type="text" id="f-celular" placeholder="(00) 00000-0000">
+                    </div>
+                    <div>
+                        <label>CEP</label>
+                        <input type="text" id="f-cep" placeholder="00000-000">
+                    </div>
+                </div>
+
+                <div class="grid-3">
+                    <div>
+                        <label>Endereço</label>
+                        <input type="text" id="f-endereco" placeholder="Rua/Av.">
+                    </div>
+                    <div>
+                        <label>Número</label>
+                        <input type="text" id="f-numero" placeholder="123">
+                    </div>
+                    <div>
+                        <label>Complemento</label>
+                        <input type="text" id="f-complemento" placeholder="Galpão 2">
+                    </div>
+                </div>
+
+                <div class="grid-3">
+                    <div>
+                        <label>Bairro</label>
+                        <input type="text" id="f-bairro" placeholder="Distrito Industrial">
+                    </div>
+                    <div>
+                        <label>Cidade</label>
+                        <input type="text" id="f-cidade" placeholder="São Paulo">
+                    </div>
+                    <div>
+                        <label>Estado (UF)</label>
+                        <input type="text" id="f-estado" placeholder="SP" maxlength="2">
+                    </div>
+                </div>
+
+                <label>Observações</label>
+                <textarea id="f-observacoes" rows="2" placeholder="Anotações sobre o fornecedor..."></textarea>
+
+                <div class="modal-check">
+                    <input type="checkbox" id="f-ativo" checked>
+                    <label for="f-ativo">Fornecedor ativo</label>
+                </div>
+
+                <button class="btn btn-azul" style="width: 100%; margin-top: 16px; padding: 13px; font-size: 15px;" onclick="salvarFornecedor()">Salvar Fornecedor</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/seguranca.js"></script>
+    <script>
+        const API_BASE = '';
+        let fornecedores = [];
+
+        function obterOperador() {
+            try {
+                const raw = localStorage.getItem('jg_operador');
+                return raw ? JSON.parse(raw) : null;
+            } catch (e) { return null; }
+        }
+
+        function tokenAuth() {
+            const op = obterOperador();
+            return op && op.token ? { 'Authorization': 'Bearer ' + op.token } : {};
+        }
+
+        function bloquearCaixa() {
+            const op = obterOperador();
+            if (!op) { window.location.href = '/login.html'; return true; }
+            if (op.papel === 'SELLER') { window.location.href = '/'; return true; }
+            return false;
+        }
+
+        async function api(url, metodo = 'GET', corpo = null) {
+            const opcoes = { method: metodo, headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()) };
+            if (corpo) opcoes.body = JSON.stringify(corpo);
+            const response = await fetch(`${API_BASE}${url}`, opcoes);
+            if (response.status === 401) {
+                localStorage.removeItem('jg_operador');
+                window.location.href = '/login.html';
+                throw new Error('Sessão expirada.');
+            }
+            const dados = await response.json();
+            if (!response.ok) throw new Error(dados.erro || 'Erro na requisição');
+            return dados;
+        }
+
+        bloquearCaixa();
+
+        async function buscarFornecedores() {
+            const busca = document.getElementById('busca').value.trim();
+            const url = busca ? `/api/fornecedores?busca=${encodeURIComponent(busca)}` : '/api/fornecedores';
+            try {
+                fornecedores = await api(url);
+                renderizarFornecedores();
+            } catch (e) { alert(e.message); }
+        }
+
+        function renderizarFornecedores() {
+            const tbody = document.getElementById('tabela-fornecedores');
+            if (fornecedores.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="sem-dados">Nenhum fornecedor encontrado</td></tr>';
+                return;
+            }
+            tbody.innerHTML = fornecedores.map(f => `
+                <tr>
+                    <td><strong>${esc(f.nome)}</strong><br><small style="color:#8b95a1;">${esc(f.email || '')}</small></td>
+                    <td>${esc(f.documento || '-')}</td>
+                    <td>${esc(f.contato || '-')}</td>
+                    <td>${esc(f.celular || f.telefone || '-')}</td>
+                    <td>${esc(f.cidade || '-')}</td>
+                    <td style="text-align: center;">${f.produtos}</td>
+                    <td><span class="situacao ${f.ativo ? 'ativo' : 'inativo'}">${f.ativo ? 'ATIVO' : 'INATIVO'}</span></td>
+                    <td style="text-align: center;">
+                        <button class="btn btn-mini btn-azul" onclick="abrirModalFornecedor('${f.id}')">Editar</button>
+                        <button class="btn btn-mini btn-perigo" onclick="excluirFornecedor('${f.id}', '${esc(f.nome)}')">Excluir</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function abrirModalFornecedor(id = null) {
+            document.getElementById('modal-titulo').innerText = id ? 'Editar Fornecedor' : 'Novo Fornecedor';
+            document.getElementById('f-id').value = id || '';
+            const campos = ['f-nome', 'f-documento', 'f-contato', 'f-email', 'f-telefone', 'f-celular', 'f-cep', 'f-endereco', 'f-numero', 'f-complemento', 'f-bairro', 'f-cidade', 'f-estado', 'f-observacoes'];
+            campos.forEach(campo => document.getElementById(campo).value = '');
+            document.getElementById('f-ativo').checked = true;
+
+            if (id) {
+                const f = fornecedores.find(x => x.id === id);
+                if (f) {
+                    document.getElementById('f-nome').value = f.nome;
+                    document.getElementById('f-documento').value = f.documento || '';
+                    document.getElementById('f-contato').value = f.contato || '';
+                    document.getElementById('f-email').value = f.email || '';
+                    document.getElementById('f-telefone').value = f.telefone || '';
+                    document.getElementById('f-celular').value = f.celular || '';
+                    document.getElementById('f-cep').value = f.cep || '';
+                    document.getElementById('f-endereco').value = f.endereco || '';
+                    document.getElementById('f-numero').value = f.numero || '';
+                    document.getElementById('f-complemento').value = f.complemento || '';
+                    document.getElementById('f-bairro').value = f.bairro || '';
+                    document.getElementById('f-cidade').value = f.cidade || '';
+                    document.getElementById('f-estado').value = f.estado || '';
+                    document.getElementById('f-observacoes').value = f.observacoes || '';
+                    document.getElementById('f-ativo').checked = f.ativo;
+                }
+            }
+
+            document.getElementById('modal-fornecedor').classList.add('active');
+        }
+
+        function fecharModalFornecedor() {
+            document.getElementById('modal-fornecedor').classList.remove('active');
+        }
+
+        async function salvarFornecedor() {
+            const id = document.getElementById('f-id').value;
+            const corpo = {
+                nome: document.getElementById('f-nome').value.trim(),
+                documento: document.getElementById('f-documento').value.trim(),
+                contato: document.getElementById('f-contato').value.trim(),
+                email: document.getElementById('f-email').value.trim(),
+                telefone: document.getElementById('f-telefone').value.trim(),
+                celular: document.getElementById('f-celular').value.trim(),
+                cep: document.getElementById('f-cep').value.trim(),
+                endereco: document.getElementById('f-endereco').value.trim(),
+                numero: document.getElementById('f-numero').value.trim(),
+                complemento: document.getElementById('f-complemento').value.trim(),
+                bairro: document.getElementById('f-bairro').value.trim(),
+                cidade: document.getElementById('f-cidade').value.trim(),
+                estado: document.getElementById('f-estado').value.trim().toUpperCase(),
+                observacoes: document.getElementById('f-observacoes').value.trim(),
+                ativo: document.getElementById('f-ativo').checked
+            };
+
+            if (!corpo.nome) { alert("Informe o nome do fornecedor!"); return; }
+
+            try {
+                if (id) {
+                    await api(`/api/fornecedores/${id}`, 'PUT', corpo);
+                } else {
+                    await api('/api/fornecedores', 'POST', corpo);
+                }
+                fecharModalFornecedor();
+                await buscarFornecedores();
+            } catch (e) { alert(e.message); }
+        }
+
+        async function excluirFornecedor(id, nome) {
+            if (!confirm(`Excluir o fornecedor "${nome}"?`)) return;
+            try {
+                await api(`/api/fornecedores/${id}`, 'DELETE');
+                await buscarFornecedores();
+            } catch (e) { alert(e.message); }
+        }
+
+        document.getElementById('busca').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') buscarFornecedores();
+        });
+
+        (async () => {
+            try {
+                await buscarFornecedores();
+            } catch (e) {
+                alert("Falha ao carregar dados: " + e.message);
+            }
+        })();
+    </script>
+</body>
+</html>

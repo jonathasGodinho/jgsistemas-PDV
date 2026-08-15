@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>PDV - Sistema Ecocentauro Clone</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #eef1f5; height: 100vh; display: grid; grid-template-rows: 104px 1fr 38px; overflow: hidden; }
+        header { background: linear-gradient(90deg, #0b2545, #2c3e91); color: white; display: flex; justify-content: space-between; align-items: center; padding: 10px 24px; }
+        .header-brand { display: flex; align-items: center; gap: 14px; min-width: 0; }
+        .header-brand img { height: 54px; width: auto; max-width: 220px; object-fit: contain; background: white; border-radius: 6px; padding: 3px; }
+        .header-nome { font-size: 30px; font-weight: 800; letter-spacing: 0.5px; line-height: 1.1; text-shadow: 0 1px 2px rgba(0,0,0,0.3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .header-right { display: flex; align-items: center; gap: 22px; }
+        .header-links { display: flex; gap: 12px; font-size: 12px; }
+        .header-links a { color: #c8d2e8; text-decoration: none; }
+        .header-links a:hover { color: white; text-decoration: underline; }
+        .relogio-box { text-align: right; }
+        .relogio-data { font-size: 13px; color: #c8d2e8; font-weight: normal; text-transform: capitalize; }
+        .relogio { font-family: 'Consolas', 'Courier New', monospace; font-size: 34px; font-weight: 800; line-height: 1.05; letter-spacing: 1px; }
+        .pdv-container { display: grid; grid-template-columns: 1fr 340px; gap: 14px; padding: 14px; height: 100%; overflow: hidden; }
+        .left-panel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; display: grid; grid-template-rows: 1fr auto 96px; overflow: hidden; }
+        .ultimo-item { background: #f8f9fa; border-top: 1px solid #e6e9ed; padding: 5px 14px; font-size: 12px; color: #656d78; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .ultimo-item .ui-label { font-weight: bold; color: #134074; margin-right: 8px; text-transform: uppercase; }
+        .ultimo-item #desc-ultimo-item { color: #333; font-weight: bold; }
+        .table-container { overflow-y: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background-color: #134074; color: white; position: sticky; top: 0; padding: 9px 10px; text-align: left; text-transform: uppercase; }
+        td { padding: 9px 10px; border-bottom: 1px solid #dde3ea; color: #333; }
+        tr:nth-child(even) { background-color: #f6f8fa; }
+        tr:hover { background-color: #eef2f7; }
+        .input-bar { background-color: #e6e9ed; padding: 12px 14px; display: grid; grid-template-columns: 1fr 140px; gap: 12px; align-items: center; border-top: 2px solid #134074; }
+        .input-bar input { width: 100%; padding: 11px; font-size: 17px; font-weight: bold; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
+        .right-panel { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+        .box-info { background: white; border: 1px solid #ccd1d9; border-radius: 4px; padding: 10px 14px; }
+        .box-info label { font-size: 11px; color: #656d78; font-weight: bold; display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
+        .box-info .value { font-size: 26px; font-weight: 700; color: #134074; text-align: center; }
+        .box-info select { width: 100%; padding: 8px; font-size: 13px; font-weight: bold; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; background: white; }
+        .total-box { background-color: #0b2545; color: #00ff66; border: none; }
+        .total-box label { color: #aab2bd; }
+        .total-box .value { color: #00ff66; font-size: 38px; }
+        footer { background-color: #134074; color: white; display: flex; align-items: center; justify-content: space-around; flex-wrap: wrap; font-size: 11px; font-weight: bold; padding: 0 10px; gap: 4px 10px; }
+        .key-hint { background: rgba(255, 255, 255, 0.2); padding: 2px 6px; border-radius: 3px; margin-right: 5px; }
+        .caixa-aviso { position: fixed; top: 50px; left: 0; right: 0; z-index: 50; background-color: #d9534f; color: white; padding: 8px 20px; font-size: 13px; font-weight: bold; display: none; }
+        .caixa-aviso a { color: #fff; margin-left: 8px; text-decoration: underline; }
+
+        /* Modal de fechamento de venda / cupom */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 100; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: white; border-radius: 6px; width: 420px; max-width: 94vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
+        .modal-head { background-color: #0b2545; color: white; padding: 14px 18px; font-weight: bold; font-size: 15px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
+        .modal-head .close { cursor: pointer; font-size: 20px; color: #aab2bd; }
+        .modal-head .close:hover { color: white; }
+        .modal-body { padding: 18px; }
+        .modal label { font-size: 12px; color: #656d78; font-weight: bold; display: block; margin: 12px 0 5px; text-transform: uppercase; }
+        .modal select, .modal input { width: 100%; padding: 11px; font-size: 16px; font-weight: bold; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; background: white; }
+        .btn-primary { background-color: #134074; color: white; border: none; padding: 13px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 16px; text-transform: uppercase; }
+        .btn-primary:hover { background-color: #0b2545; }
+        .btn-primary:disabled { background-color: #aab2bd; cursor: not-allowed; }
+        .linha-valor { display: flex; justify-content: space-between; font-size: 14px; padding: 5px 0; color: #333; }
+        .linha-valor .rotulo { color: #656d78; font-weight: bold; text-transform: uppercase; font-size: 12px; padding-top: 3px; }
+        .linha-valor.destaque { font-size: 20px; font-weight: 800; color: #0b2545; border-top: 2px solid #134074; margin-top: 8px; padding-top: 10px; }
+        .troco-info { text-align: center; font-size: 30px; font-weight: 800; color: #00a651; margin-top: 10px; }
+
+        /* Seções por forma de pagamento */
+        .pix-area { text-align: center; margin-top: 10px; }
+        .pix-area img { border: 1px solid #ccd1d9; border-radius: 6px; background: white; padding: 6px; }
+        .pix-payload { font-family: 'Courier New', monospace; font-size: 11px; background: #f4f6f8; border: 1px dashed #aab2bd; padding: 8px; margin-top: 8px; word-break: break-all; border-radius: 4px; color: #333; }
+        .btn-copiar { background-color: #0b2545; color: white; border: none; padding: 8px 14px; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 8px; text-transform: uppercase; }
+        .btn-copiar:hover { background-color: #134074; }
+        .parcelas-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+        .parcela-btn { border: 2px solid #ccd1d9; background: white; border-radius: 4px; padding: 10px 4px; cursor: pointer; text-align: center; font-size: 13px; color: #134074; font-weight: bold; }
+        .parcela-btn:hover { border-color: #134074; }
+        .parcela-btn.selecionada { border-color: #00a651; background-color: #e8f8ef; color: #007a3d; }
+        .parcela-btn .p-valor { font-size: 12px; color: #656d78; font-weight: normal; display: block; }
+        .info-unica { text-align: center; font-size: 15px; font-weight: bold; color: #134074; margin-top: 12px; padding: 14px; border: 1px dashed #aab2bd; border-radius: 4px; background: #f8f9fa; }
+        .aviso-metodo { text-align: center; font-size: 13px; color: #656d78; margin-top: 10px; }
+
+        /* Janela de Fechamento (centralizada) */
+        #modal-pagamento, #modal-sefaz { background: rgba(0, 0, 0, 0.4); align-items: center; justify-content: center; }
+        #modal-pagamento .modal { width: 780px; max-width: 97vw; max-height: 94vh; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.45); }
+        .pg-grid { display: grid; grid-template-columns: 1fr 250px; gap: 16px; }
+        .pg-formas { display: flex; flex-direction: column; gap: 8px; }
+        .pg-forma { display: flex; align-items: center; gap: 10px; border: 1px solid #ccd1d9; border-radius: 4px; padding: 7px 10px; cursor: pointer; background: #fff; }
+        .pg-forma.selecionada { border-color: #00a651; background-color: #e8f8ef; }
+        .pg-forma .tecla { background: #134074; color: white; font-weight: bold; border-radius: 3px; padding: 3px 7px; font-size: 11px; width: 42px; text-align: center; flex: none; }
+        .pg-forma.selecionada .tecla { background: #00a651; }
+        .pg-forma .nome { flex: 1; font-weight: bold; color: #333; font-size: 14px; }
+        .pg-forma input { width: 120px; text-align: right; font-weight: bold; padding: 6px 8px; font-size: 15px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; background: white; }
+        .pg-forma input:disabled { background: #f0f2f5; color: #8b95a1; }
+        .pg-totais { display: flex; flex-direction: column; gap: 12px; }
+        .pg-total-bloco { border: 1px solid #ccd1d9; border-radius: 6px; padding: 14px; text-align: center; background: white; }
+        .pg-total-bloco label { font-size: 11px; color: #656d78; font-weight: bold; text-transform: uppercase; display: block; letter-spacing: 0.4px; }
+        .pg-total-bloco .valor { font-size: 32px; font-weight: 800; color: #134074; margin-top: 4px; }
+        .pg-total-bloco.destaque { background: #0b2545; border: none; }
+        .pg-total-bloco.destaque label { color: #aab2bd; }
+        .pg-total-bloco.destaque .valor { color: #00ff66; font-size: 38px; }
+        .pg-extras { margin-top: 14px; padding-top: 12px; border-top: 1px solid #e6e9ed; }
+        .pg-rodape { display: flex; flex-wrap: wrap; gap: 10px 16px; margin-top: 14px; padding-top: 12px; border-top: 1px solid #e6e9ed; font-size: 12px; color: #656d78; align-items: center; }
+        .pg-rodape .tecla { background: #0b2545; color: white; border-radius: 3px; padding: 2px 6px; font-size: 11px; font-weight: bold; }
+
+        /* Janela de Processamento */
+        #modal-sefaz .modal { width: 420px; border-radius: 8px; box-shadow: 0 8px 30px rgba(0,0,0,0.45); margin: 0; }
+        .proc-linha { display: flex; align-items: center; gap: 14px; }
+        .proc-icone { font-size: 40px; color: #e67e22; flex: none; }
+        .proc-texto { flex: 1; }
+        #modal-sefaz .sefaz-spinner { width: 46px; height: 46px; border-width: 5px; margin: 0; flex: none; }
+
+        /* Tela de transmissão para a SEFAZ */
+        #modal-sefaz .modal { width: 360px; text-align: center; }
+        .sefaz-spinner { width: 56px; height: 56px; margin: 16px auto 14px; border: 6px solid #dbe2ea; border-top-color: #134074; border-radius: 50%; animation: girar 0.9s linear infinite; }
+        @keyframes girar { to { transform: rotate(360deg); } }
+        .sefaz-titulo { font-size: 16px; font-weight: 800; color: #0b2545; text-transform: uppercase; }
+        .sefaz-status { font-size: 13px; color: #656d78; margin-top: 8px; min-height: 18px; }
+        .sefaz-ok { color: #00a651; }
+        .sefaz-erro { color: #d9534f; }
+
+        /* Busca de produtos */
+        #busca-input { width: 100%; padding: 11px; font-size: 16px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
+        .busca-tabela-container { margin-top: 12px; max-height: 320px; overflow-y: auto; border: 1px solid #ccd1d9; border-radius: 4px; }
+        .busca-tabela { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .busca-tabela th { background-color: #134074; color: white; position: sticky; top: 0; padding: 8px; text-align: left; text-transform: uppercase; font-size: 12px; }
+        .busca-tabela td { padding: 9px; border-bottom: 1px solid #e6e9ed; color: #333; cursor: pointer; }
+        .busca-tabela tr:nth-child(even) { background-color: #f8f9fa; }
+        .busca-tabela tr:hover { background-color: #eef2f7; }
+        .busca-tabela tr.sel { background-color: #134074; }
+        .busca-tabela tr.sel td { color: white; }
+        .busca-hint { font-size: 12px; color: #656d78; margin-top: 10px; text-align: center; }
+        .btn-remover { background-color: #d9534f; color: white; border: none; padding: 5px 10px; font-size: 12px; font-weight: bold; border-radius: 3px; cursor: pointer; }
+        .btn-remover:hover { background-color: #c9302c; }
+        .modal-erro { color: #d9534f; font-size: 13px; font-weight: bold; margin-top: 10px; text-align: center; }
+
+        /* Itens sem estoque suficiente */
+        #tabela-itens tr.linha-sema-estoque td { color: #d9534f; font-weight: bold; background-color: #fdecea; }
+        #aviso-estoque { position: fixed; top: 50px; left: 0; right: 0; z-index: 49; background-color: #e67e22; color: white; padding: 8px 20px; font-size: 13px; font-weight: bold; display: none; }
+
+        /* Aviso de erro dentro do modal de pagamento */
+        #pg-erro { display: none; margin-top: 14px; padding: 10px 12px; background: #fdecea; border: 1px solid #d9534f; border-radius: 4px; color: #a32c28; font-size: 13px; }
+        #pg-erro .pg-erro-titulo { font-weight: bold; margin-bottom: 4px; }
+        #pg-erro .btn-abrir-estoque { margin-top: 8px; }
+
+        /* Cupom */
+        .cupom { font-family: 'Courier New', monospace; font-size: 12px; background: #fffef5; border: 1px dashed #999; padding: 14px; color: #222; }
+        .cupom .c-top { text-align: center; margin-bottom: 8px; }
+        .cupom .c-top .c-nome { font-size: 14px; font-weight: bold; }
+        .cupom hr { border: none; border-top: 1px dashed #999; margin: 8px 0; }
+        .cupom .c-item { display: flex; justify-content: space-between; }
+        .cupom .c-total { font-weight: bold; font-size: 14px; }
+
+        /* Responsividade: telas médias e pequenas mantêm a identidade visual */
+        @media (max-width: 1024px) {
+            .pdv-container { grid-template-columns: 1fr 300px; gap: 10px; padding: 10px; }
+            .total-box .value { font-size: 34px; }
+            .header-nome { font-size: 24px; }
+            .relogio { font-size: 28px; }
+        }
+
+        @media (max-width: 768px) {
+            body { grid-template-rows: 88px 1fr 36px; }
+            .pdv-container { grid-template-columns: 1fr; grid-template-rows: 1fr auto; overflow-y: auto; }
+            .right-panel { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto auto; gap: 10px; }
+            .right-panel .total-box { grid-column: 1 / -1; }
+            .right-panel .box-cliente { grid-column: 1 / -1; }
+            .input-bar { grid-template-columns: 1fr 110px; padding: 10px; }
+            .input-bar input { font-size: 16px; padding: 10px; }
+            footer { font-size: 10px; }
+            .pg-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 480px) {
+            header { font-size: 12px; padding: 0 10px; }
+            .pdv-container { padding: 8px; }
+            .right-panel { grid-template-columns: 1fr; }
+            .box-info .value { font-size: 24px; }
+            .total-box .value { font-size: 32px; }
+            th, td { padding: 8px; font-size: 12px; }
+            footer { flex-direction: column; gap: 2px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-brand">
+            <img id="header-logo" src="/logo-jg.png" alt="Logo">
+            <span class="header-nome" id="header-nome">JG SISTEMAS</span>
+        </div>
+        <div class="header-right">
+            <div class="relogio-box">
+                <div class="relogio-data" id="relogio-data">&nbsp;</div>
+                <div class="relogio" id="relogio">--:--:--</div>
+            </div>
+            <div class="header-links">
+                <a href="/" target="_blank" rel="noopener">MENU</a>
+                <a href="/caixa.html" target="_blank" rel="noopener">CAIXA</a>
+                <a href="/produtos.html" target="_blank" rel="noopener">GESTÃO</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="caixa-aviso" id="caixa-aviso">
+        ⚠ Caixa fechado — abra a registradora para realizar vendas. <a href="/caixa.html">Abrir Caixa</a>
+    </div>
+
+    <div id="aviso-estoque">⚠ Algum item sem estoque suficiente — ajuste na aba Estoque e confirme a venda novamente.</div>
+
+    <div class="pdv-container">
+        <div class="left-panel">
+            <div class="table-container">
+                <table id="tabela-itens">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">Item</th>
+                            <th style="width: 16%;">Código</th>
+                            <th style="width: 33%;">Descrição do Produto</th>
+                            <th style="width: 9%;">Qtd</th>
+                            <th style="width: 10%;">Preço Unit</th>
+                            <th style="width: 9%;">Desconto</th>
+                            <th style="width: 12%;">Subtotal</th>
+                            <th style="width: 6%;">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Os itens vão aparecer aqui via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="ultimo-item"><span class="ui-label">Último item</span><span id="desc-ultimo-item">NENHUM ITEM</span></div>
+
+            <div class="input-bar">
+                <input type="text" id="codigo-barras" placeholder="Digite o código e pressione ENTER" autofocus>
+                <input type="text" id="quantidade" value="1" style="text-align: center;" placeholder="Qtd">
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <select id="cliente-select" style="display:none;"></select>
+            <div class="box-info">
+                <label>Quantidade</label>
+                <div class="value" id="box-quantidade">0</div>
+            </div>
+            <div class="box-info">
+                <label>Preço</label>
+                <div class="value" id="box-preco">R$ 0,00</div>
+            </div>
+            <div class="box-info">
+                <label>Sub total preço</label>
+                <div class="value" id="box-subtotal">R$ 0,00</div>
+            </div>
+            <div class="box-info">
+                <label>Troco</label>
+                <div class="value" id="box-troco">R$ 0,00</div>
+            </div>
+            <div class="box-info total-box">
+                <label>Valor Total</label>
+                <div class="value" id="box-total">R$ 0,00</div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div><span class="key-hint">OP</span><span id="operador-lbl">DEV_MASTER</span></div>
+        <div><span class="key-hint">PDV</span><span id="footer-terminal">TERMINAL 01</span></div>
+        <div><span class="key-hint">CAIXA</span><span id="status-caixa">--</span></div>
+        <div><span class="key-hint">ITENS</span><span id="footer-itens">0</span></div>
+        <div><span class="key-hint">STATUS</span><span id="footer-status">AGUARDANDO</span></div>
+        <div><span class="key-hint">ENTER</span>Lançar</div>
+        <div><span class="key-hint">F2</span>Cliente</div>
+        <div><span class="key-hint">F3</span>Produto</div>
+        <div><span class="key-hint">F7</span>Cancelar</div>
+        <div><span class="key-hint">F8</span>Sem NFC-e</div>
+        <div><span class="key-hint">F12</span>Fechar</div>
+    </footer>
+
+    <!-- Modal de autorização do administrador (cancelamento de item) -->
+    <div class="modal-overlay" id="modal-admin">
+        <div class="modal">
+            <div class="modal-head">
+                <span>AUTORIZAÇÃO DO ADMINISTRADOR</span>
+                <span class="close" onclick="fecharModalAdmin()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <label>Item a cancelar</label>
+                <div id="cancelar-desc" style="font-size: 14px; font-weight: bold; color: #134074;"></div>
+                <label>Senha do administrador</label>
+                <input type="password" id="admin-senha" autocomplete="off">
+                <div class="modal-erro" id="modal-erro"></div>
+                <button class="btn-primary" onclick="confirmarCancelamento()">Confirmar Cancelamento</button>
+                <button class="btn-primary" style="background:#8b95a1; margin-top:8px;" onclick="fecharModalAdmin()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de pagamento -->
+    <div class="modal-overlay" id="modal-pagamento">
+        <div class="modal">
+            <div class="modal-head">
+                <span id="pg-titulo"><img id="pg-logo" src="/logo-jg.png" alt="" style="height:22px; vertical-align:middle; margin-right:8px; border-radius:3px;">Fechamento</span>
+                <span class="close" onclick="fecharModalPagamento()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="pg-grid">
+                    <div>
+                        <label>Formas de Pagamento</label>
+                        <div class="pg-formas">
+                            <div class="pg-forma selecionada" data-forma="MONEY" onclick="selecionarForma('MONEY')">
+                                <span class="tecla">F1</span><span class="nome">Dinheiro</span>
+                                <input type="text" id="pg-recebido" value="" placeholder="0,00" inputmode="decimal">
+                            </div>
+                            <div class="pg-forma" data-forma="CREDIT_CARD" onclick="selecionarForma('CREDIT_CARD')">
+                                <span class="tecla">F4</span><span class="nome">Cartão de Crédito</span>
+                                <input type="text" id="pg-valor-credito" value="" readonly>
+                            </div>
+                            <div class="pg-forma" data-forma="DEBIT_CARD" onclick="selecionarForma('DEBIT_CARD')">
+                                <span class="tecla">F5</span><span class="nome">Cartão de Débito</span>
+                                <input type="text" id="pg-valor-debito" value="" readonly>
+                            </div>
+                            <div class="pg-forma" data-forma="PIX" onclick="selecionarForma('PIX')">
+                                <span class="tecla">F6</span><span class="nome">PIX</span>
+                                <input type="text" id="pg-valor-pix" value="" readonly>
+                            </div>
+                        </div>
+
+                        <!-- Dinheiro -->
+                        <div id="sec-dinheiro">
+                            <div class="aviso-metodo">Informe o valor recebido para calcular o troco.</div>
+                        </div>
+
+                        <!-- PIX -->
+                        <div id="sec-pix" style="display:none;">
+                            <div class="pix-area">
+                                <img id="pix-qr" src="" alt="QR Code PIX">
+                                <div class="pix-payload" id="pix-payload"></div>
+                                <button type="button" class="btn-copiar" onclick="copiarPix()">Copiar Código PIX</button>
+                            </div>
+                            <div class="aviso-metodo">Aponte a câmera do celular para pagar</div>
+                        </div>
+
+                        <!-- Crédito -->
+                        <div id="sec-credito" style="display:none;">
+                            <label>Escolha o número de parcelas</label>
+                            <div class="parcelas-grid" id="parcelas-grid"></div>
+                        </div>
+
+                        <!-- Débito -->
+                        <div id="sec-debito" style="display:none;">
+                            <div class="info-unica">Pagamento em parcela única</div>
+                        </div>
+
+                        <div class="pg-extras">
+                            <div id="pg-promo-box" style="display:none; font-size:13px; font-weight:bold; color:#00a651; margin-bottom:8px;">
+                                <span id="pg-promo-nome">Desconto Promoção</span> <span id="pg-promo">- R$ 0,00</span>
+                            </div>
+
+                            <label>Desconto (R$)</label>
+                            <input type="text" id="pg-desconto" value="0" placeholder="0,00" inputmode="decimal" oninput="calcularTotalComDesconto()">
+
+                            <div id="pg-cashback-box" style="display:none;">
+                                <label>Resgatar Cashback (R$)</label>
+                                <input type="text" id="pg-cashback" value="0" placeholder="0,00" inputmode="decimal" oninput="calcularTotalComDesconto()">
+                                <div style="font-size:12px; color:#00a651; font-weight:bold; margin-top:5px;" id="pg-cashback-saldo"></div>
+                            </div>
+
+                            <div id="pg-senha-box" style="display:none;">
+                                <label>Senha do administrador</label>
+                                <input type="password" id="pg-senha-admin" autocomplete="off">
+                            </div>
+
+                            <div id="pg-erro">
+                                <div class="pg-erro-titulo" id="pg-erro-titulo">Não foi possível finalizar a venda</div>
+                                <div id="pg-erro-msg"></div>
+                                <button type="button" class="btn-primary btn-abrir-estoque" onclick="abrirEstoqueErro()">Abrir Estoque (nova aba)</button>
+                            </div>
+
+                            <button class="btn-primary" id="pg-orcamento" onclick="gerarOrcamento()" style="background:#8b95a1; margin-top:8px;">Salvar como Orçamento</button>
+                            <button class="btn-primary" id="pg-confirmar" onclick="confirmarVenda()">Confirmar Venda</button>
+                        </div>
+                    </div>
+
+                    <div class="pg-totais">
+                        <div class="pg-total-bloco">
+                            <label>Subtotal</label>
+                            <div class="valor" id="pg-subtotal">R$ 0,00</div>
+                        </div>
+                        <div class="pg-total-bloco destaque">
+                            <label>Total a pagar</label>
+                            <div class="valor" id="pg-total">R$ 0,00</div>
+                        </div>
+                        <div class="pg-total-bloco">
+                            <label>Total pago</label>
+                            <div class="valor" id="pg-total-pago">R$ 0,00</div>
+                        </div>
+                        <div class="pg-total-bloco">
+                            <label>Troco</label>
+                            <div class="valor" id="pg-troco" style="color:#00a651;">R$ 0,00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pg-rodape">
+                    <span><span class="tecla">F1</span> Dinheiro</span>
+                    <span><span class="tecla">F4</span> Crédito</span>
+                    <span><span class="tecla">F5</span> Débito</span>
+                    <span><span class="tecla">F6</span> PIX</span>
+                    <span><span class="tecla">F9</span> Confirmar</span>
+                    <span><span class="tecla">F2</span> Cliente</span>
+                    <span style="margin-left:auto;"><span class="tecla">Esc</span> Voltar</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de processamento do fechamento -->
+    <div class="modal-overlay" id="modal-sefaz">
+        <div class="modal">
+            <div class="modal-head">
+                <span>Processando...</span>
+            </div>
+            <div class="modal-body">
+                <div class="proc-linha">
+                    <div class="proc-icone">&#9888;</div>
+                    <div class="proc-texto">
+                        <div class="sefaz-titulo" id="sefaz-titulo">Aguarde!</div>
+                        <div class="sefaz-status" id="sefaz-status">Executando fechamento venda</div>
+                    </div>
+                    <div class="sefaz-spinner" id="sefaz-spinner"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de busca de produto -->
+    <div class="modal-overlay" id="modal-busca">
+        <div class="modal">
+            <div class="modal-head">
+                <span>Buscar Produto</span>
+                <span class="close" onclick="fecharBusca()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="busca-input" placeholder="Digite nome, código ou SKU..." autocomplete="off">
+                <div class="busca-tabela-container">
+                    <table class="busca-tabela">
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;">Código</th>
+                                <th>Descrição</th>
+                                <th style="width: 18%; text-align: right;">Preço</th>
+                            </tr>
+                        </thead>
+                        <tbody id="busca-resultados"></tbody>
+                    </table>
+                </div>
+                <div class="busca-hint">Seta ↑↓ para navegar · ENTER para selecionar · ESC para fechar</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de cupom -->
+    <div class="modal-overlay" id="modal-cupom">
+        <div class="modal">
+            <div class="modal-head">
+                <span>Cupom Fiscal</span>
+                <span class="close" onclick="fecharModalCupom()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="cupom" id="cupom-conteudo"></div>
+                <button class="btn-primary" onclick="imprimirCupom()">Imprimir Cupom</button>
+                <button class="btn-primary" style="background:#00a651;" onclick="fecharModalCupom()">Nova Venda</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de busca de cliente -->
+    <div class="modal-overlay" id="modal-cliente">
+        <div class="modal">
+            <div class="modal-head">
+                <span>Buscar Cliente</span>
+                <span class="close" onclick="fecharBuscaCliente()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="cliente-input" placeholder="Digite nome, documento ou telefone..." autocomplete="off">
+                <div class="busca-tabela-container">
+                    <table class="busca-tabela">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th style="width: 22%; text-align: right;">Limite</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cliente-resultados"></tbody>
+                    </table>
+                </div>
+                <button class="btn-primary" style="background:#8b95a1;" onclick="limparCliente()">Consumidor Final</button>
+                <div class="busca-hint">Seta ↑↓ para navegar · ENTER para selecionar · ESC para fechar</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/seguranca.js"></script>
+    <script>
+        const inputCodigo = document.getElementById('codigo-barras');
+        const inputQtd = document.getElementById('quantidade');
+        const tabela = document.getElementById('tabela-itens').getElementsByTagName('tbody')[0];
+
+        let itens = [];        // itens da venda atual
+        let itemContador = 1;
+        let caixaAberto = null;
+        let cupomAtual = null;
+        let janelaImpressao = null;   // janela de impressão aberta no gesto do usuário (impressão automática)
+
+        let clienteSelecionadoId = '';
+        let saldoCashbackCliente = 0;
+        let promocaoPdv = { descontos: [], totalDesconto: 0 };
+
+        // Dados da empresa (logo + identificação) usados no comprovante fiscal
+        let CONFIG = { name: 'JG SISTEMAS', tradeName: 'TESTE LTDA', document: '', address: '', number: '', city: '', state: '', phone: '', logo: null };
+        async function carregarConfig() {
+            try {
+                const r = await fetch(`${API_BASE}/api/configuracoes`, { headers: tokenAuth() });
+                if (r.ok) CONFIG = Object.assign(CONFIG, await r.json());
+            } catch (e) { console.error('Falha ao carregar configurações:', e); }
+            aplicarCabecalho();
+        }
+
+        // Nome do estabelecimento + logo no cabeçalho (migrado das Configurações)
+        function aplicarCabecalho() {
+            const nome = (CONFIG.tradeName || CONFIG.name || 'JG SISTEMAS').toUpperCase();
+            document.getElementById('header-nome').innerText = nome;
+            if (CONFIG.logo) {
+                document.getElementById('header-logo').src = CONFIG.logo;
+                document.getElementById('pg-logo').src = CONFIG.logo;
+            }
+        }
+
+        // Relógio digital ao vivo (data por extenso + horário)
+        function atualizarRelogio() {
+            const agora = new Date();
+            const dia = agora.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            const hora = agora.toLocaleTimeString('pt-BR', { hour12: false });
+            const elData = document.getElementById('relogio-data');
+            const elHora = document.getElementById('relogio');
+            if (elData) elData.innerText = dia.charAt(0).toUpperCase() + dia.slice(1);
+            if (elHora) elHora.innerText = hora;
+        }
+
+        // Funciona tanto via http://localhost:3000 quanto abrindo o arquivo direto (file://)
+        const API_BASE = window.location.protocol.startsWith('http') ? '' : 'http://localhost:3000';
+
+        function obterOperador() {
+            try {
+                const raw = localStorage.getItem('jg_operador');
+                return raw ? JSON.parse(raw) : null;
+            } catch (e) { return null; }
+        }
+
+        function tokenAuth() {
+            const op = obterOperador();
+            return op && op.token ? { 'Authorization': 'Bearer ' + op.token } : {};
+        }
+
+        function exigirLogin() {
+            const op = obterOperador();
+            if (!op) { window.location.href = '/login.html'; return false; }
+            return true;
+        }
+
+        // Verifica se há uma registradora aberta (fluxo Ecocentauro)
+        async function verificarCaixa() {
+            try {
+                const response = await fetch(`${API_BASE}/api/caixa/aberto`, { headers: tokenAuth() });
+                if (response.status === 401) { localStorage.removeItem('jg_operador'); window.location.href = '/login.html'; return; }
+                if (!response.ok) return;
+                caixaAberto = await response.json();
+                const aviso = document.getElementById('caixa-aviso');
+                const status = document.getElementById('status-caixa');
+                if (caixaAberto) {
+                    aviso.style.display = 'none';
+                    status.innerText = `| REGISTRADORA ${caixaAberto.numero} ABERTA`;
+                } else {
+                    aviso.style.display = 'block';
+                    status.innerText = '| CAIXA FECHADO';
+                }
+            } catch (e) {
+                console.error('Falha ao verificar caixa:', e);
+            }
+        }
+
+        function formatarMoeda(valor) {
+            return `R$ ${valor.toFixed(2).replace('.', ',')}`;
+        }
+
+        let clientesCache = [];
+        async function carregarClientes() {
+            try {
+                const response = await fetch(`${API_BASE}/api/clientes`, { headers: tokenAuth() });
+                if (!response.ok) return;
+                const todos = await response.json();
+                clientesCache = todos;
+                const select = document.getElementById('cliente-select');
+                const atual = select.value;
+                select.innerHTML = '<option value="">Consumidor Final (tabela padrão)</option>' + todos.map(c =>
+                    `<option value="${c.id}">${esc(c.nome)}${c.limite > 0 ? ` - Lim ${formatarMoeda(c.limite)}` : ''}${c.cashback > 0 ? ` - CB ${formatarMoeda(c.cashback)}` : ''}</option>`
+                ).join('');
+                select.value = atual;
+            } catch (e) {
+                console.warn('Falha ao carregar clientes:', e.message);
+            }
+        }
+
+        async function mudarCliente() {
+            clienteSelecionadoId = document.getElementById('cliente-select').value;
+            const cli = clientesCache.find(c => c.id === clienteSelecionadoId);
+            saldoCashbackCliente = cli ? cli.cashback || 0 : 0;
+            atualizarCashbackUi();
+            await recalcularPrecos();
+        }
+
+        async function recalcularPrecos() {
+            if (itens.length === 0) return;
+            try {
+                await Promise.all(itens.map(async (item) => {
+                    const url = `${API_BASE}/api/produtos/${encodeURIComponent(item.codigo)}?clienteId=${encodeURIComponent(clienteSelecionadoId)}&qtd=${item.quantidade}`;
+                    const response = await fetch(url, { headers: tokenAuth() });
+                    if (!response.ok) return;
+                    const produto = await response.json();
+                    item.preco = produto.preco;
+                }));
+                renderizarTabela();
+            } catch (e) {
+                console.error('Falha ao recalcular preços:', e);
+            }
+        }
+
+        function renderizarTabela() {
+            tabela.innerHTML = '';
+            itemContador = 1;
+            let subtotal = 0;
+
+            itens.forEach((item, idx) => {
+                const valorTotalItem = item.preco * item.quantidade;
+                subtotal += valorTotalItem;
+
+                const semEstoque = typeof item.estoque === 'number' && item.quantidade > item.estoque;
+                const novaLinha = tabela.insertRow();
+                if (semEstoque) novaLinha.classList.add('linha-sema-estoque');
+                novaLinha.innerHTML = `
+                    <td>${String(itemContador).padStart(3, '0')}</td>
+                    <td>${esc(item.codigo)}${semEstoque ? ' <span style="font-size:11px; color:#a32c28;">(sem estoque)</span>' : ''}</td>
+                    <td>${esc(item.descricao)}</td>
+                    <td>${item.quantidade.toFixed(2)}</td>
+                    <td>${item.preco.toFixed(2)}</td>
+                    <td>0,00</td>
+                    <td>${valorTotalItem.toFixed(2)}</td>
+                    <td><button class="btn-remover" onclick="solicitarCancelamento(${idx})">Remover</button></td>
+                `;
+                itemContador++;
+            });
+
+            const st = document.getElementById('footer-status');
+            if (st) st.innerText = itens.length > 0 ? 'EM ANDAMENTO' : 'AGUARDANDO';
+            document.getElementById('footer-itens').innerText = String(itens.length);
+            atualizarPainelValores();
+            atualizarAvisoEstoque();
+        }
+
+        // Painel lateral de valores (Quantidade / Preço / Sub total / Troco / Valor total)
+        function atualizarPainelValores() {
+            const qtdTotal = itens.reduce((s, i) => s + (Number(i.quantidade) || 0), 0);
+            const subtotal = subtotalAtual();
+            const ultimo = itens.length > 0 ? itens[itens.length - 1] : null;
+            document.getElementById('box-quantidade').innerText = qtdTotal.toFixed(2).replace('.', ',');
+            document.getElementById('box-preco').innerText = ultimo ? formatarMoeda(ultimo.preco) : formatarMoeda(0);
+            document.getElementById('box-subtotal').innerText = formatarMoeda(subtotal);
+            document.getElementById('box-total').innerText = formatarMoeda(subtotal);
+            document.getElementById('box-troco').innerText = formatarMoeda(modalPagamentoAberto ? trocoAtual() : 0);
+        }
+
+        function atualizarAvisoEstoque() {
+            const temFalta = itens.some(i => typeof i.estoque === 'number' && i.quantidade > i.estoque);
+            document.getElementById('aviso-estoque').style.display = temFalta ? 'block' : 'none';
+        }
+
+        // Consulta o estoque atual e marca os itens sem saldo suficiente (multi-tela: ao voltar para o PDV)
+        async function atualizarEstoqueItens() {
+            if (itens.length === 0) return;
+            try {
+                const response = await fetch(`${API_BASE}/api/estoque`, { headers: tokenAuth() });
+                if (!response.ok) return;
+                const lista = await response.json();
+                const mapa = {};
+                lista.forEach(p => { if (p.codigo) mapa[String(p.codigo)] = Number(p.quantidade) || 0; });
+                itens.forEach(i => { i.estoque = mapa[String(i.codigo)] !== undefined ? mapa[String(i.codigo)] : 0; });
+                renderizarTabela();
+            } catch (e) {
+                console.error('Falha ao atualizar estoque dos itens:', e);
+            }
+        }
+
+        inputCodigo.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const codigo = inputCodigo.value.trim();
+                if (!codigo) return;
+
+                // Pula automaticamente para o campo de quantidade
+                inputQtd.focus();
+                inputQtd.select();
+            }
+        });
+
+        inputQtd.addEventListener('keypress', async (e) => {
+            if (e.key === 'Enter') {
+                const codigo = inputCodigo.value.trim();
+                const qtd = parseFloat(inputQtd.value) || 1;
+
+                if (!codigo) return;
+
+                try {
+                    const response = await fetch(`${API_BASE}/api/produtos/${encodeURIComponent(codigo)}?clienteId=${encodeURIComponent(clienteSelecionadoId)}&qtd=${qtd}`, { headers: tokenAuth() });
+
+                    if (!response.ok) {
+                        alert("Produto não cadastrado no sistema!");
+                        return;
+                    }
+
+                    const produto = await response.json();
+
+                    // Se o produto já está na venda, soma a quantidade e reajusta o preço
+                    const existente = itens.find(i => i.codigo === produto.codigo);
+                    if (existente) {
+                        existente.quantidade += qtd;
+                        const novaQtd = existente.quantidade;
+                        const re = await fetch(`${API_BASE}/api/produtos/${encodeURIComponent(produto.codigo)}?clienteId=${encodeURIComponent(clienteSelecionadoId)}&qtd=${novaQtd}`, { headers: tokenAuth() });
+                        if (re.ok) {
+                            const atualizado = await re.json();
+                            existente.preco = atualizado.preco;
+                        }
+                    } else {
+                        itens.push({
+                            id: produto.id,
+                            codigo: produto.codigo,
+                            descricao: produto.descricao,
+                            quantidade: qtd,
+                            preco: produto.preco
+                        });
+                    }
+
+                    renderizarTabela();
+                    document.getElementById('desc-ultimo-item').innerText = produto.descricao;
+
+                    inputCodigo.value = '';
+                    inputQtd.value = '1';
+                    inputCodigo.focus();
+
+                } catch (error) {
+                    console.error("Erro ao conectar com o servidor do ERP:", error);
+                    alert("Não foi possível conectar ao servidor do ERP!");
+                }
+            }
+        });
+
+        // No fechamento: F1 Dinheiro | F4 Crédito | F5 Débito | F6 PIX | F2 Cliente | F9/Enter Confirmar | Esc Voltar
+        // Fora do fechamento: F2 Cliente | F3 Busca | F7 Cancela último item | F8 Venda sem NFC-e | F12 Fechar venda
+        document.addEventListener('keydown', (e) => {
+            if (modalPagamentoAberto) {
+                if (temModalSobreposto()) return;
+                if (e.key === 'F1') { e.preventDefault(); selecionarForma('MONEY'); }
+                else if (e.key === 'F4') { e.preventDefault(); selecionarForma('CREDIT_CARD'); }
+                else if (e.key === 'F5') { e.preventDefault(); selecionarForma('DEBIT_CARD'); }
+                else if (e.key === 'F6') { e.preventDefault(); selecionarForma('PIX'); }
+                else if (e.key === 'F2') { e.preventDefault(); abrirBuscaCliente(); }
+                else if (e.key === 'F9') { e.preventDefault(); confirmarVenda(); }
+                else if (e.key === 'Enter') { e.preventDefault(); confirmarVenda(); }
+                else if (e.key === 'Escape') { e.preventDefault(); fecharModalPagamento(); }
+                return;
+            }
+            if (e.key === 'F12') {
+                e.preventDefault();
+                abrirModalPagamento();
+            } else if (e.key === 'F2') {
+                e.preventDefault();
+                abrirBuscaCliente();
+            } else if (e.key === 'F3') {
+                e.preventDefault();
+                abrirBusca();
+            } else if (e.key === 'F7') {
+                e.preventDefault();
+                if (itens.length > 0) solicitarCancelamento(itens.length - 1);
+            } else if (e.key === 'F8') {
+                e.preventDefault();
+                abrirModalPagamento({ semNfe: true });
+            }
+        });
+
+        // Cancelamento de item exige a senha do administrador
+        let itemCancelarIndex = null;
+
+        function solicitarCancelamento(idx) {
+            if (idx < 0 || idx >= itens.length) return;
+            itemCancelarIndex = idx;
+            const item = itens[idx];
+            document.getElementById('cancelar-desc').innerText = `${item.codigo} - ${item.descricao}`;
+            document.getElementById('modal-erro').innerText = '';
+            document.getElementById('admin-senha').value = '';
+            document.getElementById('modal-admin').classList.add('active');
+            document.getElementById('admin-senha').focus();
+        }
+
+        function fecharModalAdmin() {
+            itemCancelarIndex = null;
+            document.getElementById('modal-admin').classList.remove('active');
+            inputCodigo.focus();
+        }
+
+        async function confirmarCancelamento() {
+            const senha = document.getElementById('admin-senha').value;
+            if (itemCancelarIndex === null || itemCancelarIndex >= itens.length) { fecharModalAdmin(); return; }
+            if (!senha) { document.getElementById('modal-erro').innerText = 'Informe a senha do administrador!'; return; }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/verificar-senha-admin`, {
+                    method: 'POST',
+                    headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()),
+                    body: JSON.stringify({ senha })
+                });
+
+                if (response.status === 401) {
+                    document.getElementById('modal-erro').innerText = 'Senha de administrador incorreta!';
+                    document.getElementById('admin-senha').value = '';
+                    document.getElementById('admin-senha').focus();
+                    return;
+                }
+                if (!response.ok) {
+                    const dados = await response.json().catch(() => ({}));
+                    document.getElementById('modal-erro').innerText = dados.erro || 'Erro na autorização!';
+                    return;
+                }
+
+                itens.splice(itemCancelarIndex, 1);
+                fecharModalAdmin();
+                renderizarTabela();
+                if (itens.length === 0) document.getElementById('desc-ultimo-item').innerText = 'NENHUM ITEM';
+            } catch (e) {
+                document.getElementById('modal-erro').innerText = 'Não foi possível conectar ao servidor!';
+            }
+        }
+
+        // Busca de produtos (igual Ecocentauro: F2 + consulta com setas)
+        let resultadosBusca = [];
+        let indiceSelecionado = -1;
+        let timerBusca = null;
+
+        function abrirBusca() {
+            document.getElementById('busca-input').value = '';
+            resultadosBusca = [];
+            indiceSelecionado = -1;
+            document.getElementById('busca-resultados').innerHTML = '<tr><td colspan="3" style="text-align:center; color:#8b95a1; padding:20px;">Digite para buscar...</td></tr>';
+            document.getElementById('modal-busca').classList.add('active');
+            document.getElementById('busca-input').focus();
+        }
+
+        function fecharBusca() {
+            document.getElementById('modal-busca').classList.remove('active');
+            inputCodigo.focus();
+        }
+
+        async function realizarBusca(termo) {
+            termo = termo.trim();
+            if (!termo) {
+                resultadosBusca = [];
+                indiceSelecionado = -1;
+                document.getElementById('busca-resultados').innerHTML = '<tr><td colspan="3" style="text-align:center; color:#8b95a1; padding:20px;">Digite para buscar...</td></tr>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/produtos?busca=${encodeURIComponent(termo)}`, { headers: tokenAuth() });
+                if (!response.ok) throw new Error();
+                const todos = await response.json();
+                resultadosBusca = todos.filter(p => p.ativo);
+                indiceSelecionado = resultadosBusca.length > 0 ? 0 : -1;
+                renderizarBusca();
+            } catch (error) {
+                resultadosBusca = [];
+                indiceSelecionado = -1;
+                renderizarBusca();
+            }
+        }
+
+        function renderizarBusca() {
+            const tbody = document.getElementById('busca-resultados');
+
+            if (resultadosBusca.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#8b95a1; padding:20px;">Nenhum produto encontrado</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = resultadosBusca.map((p, i) => `
+                <tr class="busca-linha ${i === indiceSelecionado ? 'sel' : ''}" onclick="selecionarProdutoBusca(resultadosBusca[${i}])">
+                    <td>${esc(p.codigo || p.sku || '-')}</td>
+                    <td>${esc(p.nome)}</td>
+                    <td style="text-align: right;">${formatarMoeda(p.preco)}</td>
+                </tr>
+            `).join('');
+
+            const linhaSel = tbody.querySelector('tr.sel');
+            if (linhaSel) linhaSel.scrollIntoView({ block: 'nearest' });
+        }
+
+        function moverSelecaoBusca(delta) {
+            if (resultadosBusca.length === 0) return;
+            indiceSelecionado = (indiceSelecionado + delta + resultadosBusca.length) % resultadosBusca.length;
+            renderizarBusca();
+        }
+
+        function selecionarProdutoBusca(p) {
+            fecharBusca();
+            inputCodigo.value = p.codigo || p.sku || '';
+            inputQtd.value = '1';
+            inputQtd.focus();
+            inputQtd.select();
+        }
+
+        document.getElementById('busca-input').addEventListener('input', (e) => {
+            clearTimeout(timerBusca);
+            timerBusca = setTimeout(() => realizarBusca(e.target.value), 300);
+        });
+
+        document.getElementById('busca-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (resultadosBusca.length > 0 && indiceSelecionado >= 0) {
+                    selecionarProdutoBusca(resultadosBusca[indiceSelecionado]);
+                } else {
+                    realizarBusca(e.target.value);
+                }
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                moverSelecaoBusca(1);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                moverSelecaoBusca(-1);
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                fecharBusca();
+            }
+        });
+
+        // Busca de cliente (F2)
+        let resultadosCliente = [];
+        let indiceCliente = -1;
+        let timerCliente = null;
+
+        function abrirBuscaCliente() {
+            document.getElementById('cliente-input').value = '';
+            resultadosCliente = clientesCache;
+            indiceCliente = 0;
+            renderizarBuscaCliente();
+            document.getElementById('modal-cliente').classList.add('active');
+            document.getElementById('cliente-input').focus();
+        }
+
+        function fecharBuscaCliente() {
+            document.getElementById('modal-cliente').classList.remove('active');
+            inputCodigo.focus();
+        }
+
+        function renderizarBuscaCliente() {
+            const tbody = document.getElementById('cliente-resultados');
+            if (resultadosCliente.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="2" style="text-align:center; color:#8b95a1; padding:20px;">Nenhum cliente encontrado</td></tr>';
+                return;
+            }
+            tbody.innerHTML = resultadosCliente.map((c, i) => `
+                <tr class="busca-linha ${i === indiceCliente ? 'sel' : ''}" onclick="selecionarClienteBusca(resultadosCliente[${i}])">
+                    <td>${esc(c.nome)}</td>
+                    <td style="text-align: right;">${c.limite > 0 ? formatarMoeda(c.limite) : '-'}</td>
+                </tr>
+            `).join('');
+            const linhaSel = tbody.querySelector('tr.sel');
+            if (linhaSel) linhaSel.scrollIntoView({ block: 'nearest' });
+        }
+
+        function filtrarClientes(termo) {
+            termo = (termo || '').trim().toLowerCase();
+            if (!termo) {
+                resultadosCliente = clientesCache;
+            } else {
+                resultadosCliente = clientesCache.filter(c =>
+                    (c.nome || '').toLowerCase().includes(termo) ||
+                    (c.document || '').toLowerCase().includes(termo) ||
+                    (c.phone || '').toLowerCase().includes(termo)
+                );
+            }
+            indiceCliente = resultadosCliente.length > 0 ? 0 : -1;
+            renderizarBuscaCliente();
+        }
+
+        function moverSelecaoCliente(delta) {
+            if (resultadosCliente.length === 0) return;
+            indiceCliente = (indiceCliente + delta + resultadosCliente.length) % resultadosCliente.length;
+            renderizarBuscaCliente();
+        }
+
+        function selecionarClienteBusca(c) {
+            fecharBuscaCliente();
+            document.getElementById('cliente-select').value = c.id;
+            mudarCliente();
+        }
+
+        function limparCliente() {
+            fecharBuscaCliente();
+            document.getElementById('cliente-select').value = '';
+            mudarCliente();
+        }
+
+        document.getElementById('cliente-input').addEventListener('input', (e) => {
+            clearTimeout(timerCliente);
+            timerCliente = setTimeout(() => filtrarClientes(e.target.value), 200);
+        });
+
+        document.getElementById('cliente-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (resultadosCliente.length > 0 && indiceCliente >= 0) {
+                    selecionarClienteBusca(resultadosCliente[indiceCliente]);
+                } else {
+                    filtrarClientes(e.target.value);
+                }
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                moverSelecaoCliente(1);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                moverSelecaoCliente(-1);
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                fecharBuscaCliente();
+            }
+        });
+
+        function abrirModalPagamento(modo) {
+            modo = modo || {};
+            modoPagamento = modo;
+            if (!caixaAberto) {
+                alert("Nenhuma registradora aberta! Abra o caixa antes de realizar vendas.");
+                window.location.href = '/caixa.html';
+                return;
+            }
+            if (itens.length === 0) {
+                alert("Nenhum item na venda!");
+                return;
+            }
+
+            promocaoPdv = { descontos: [], totalDesconto: 0 };
+            document.getElementById('pg-recebido').value = '';
+            document.getElementById('pg-desconto').value = '0';
+            document.getElementById('pg-cashback').value = '0';
+            document.getElementById('pg-senha-admin').value = '';
+            document.getElementById('pg-senha-box').style.display = 'none';
+            document.getElementById('pg-confirmar').disabled = false;
+            document.getElementById('pg-confirmar').innerText = modo.semNfe ? 'Confirmar Venda (sem NFC-e)' : 'Confirmar Venda';
+            document.getElementById('pg-erro').style.display = 'none';
+            document.getElementById('pg-titulo').innerText = modo.semNfe ? 'Fechamento — sem NFC-e' : 'Fechamento';
+            modalPagamentoAberto = true;
+            document.getElementById('modal-pagamento').classList.add('active');
+            document.getElementById('pg-subtotal').innerText = formatarMoeda(subtotalAtual());
+            document.getElementById('pg-total').innerText = formatarMoeda(subtotalAtual());
+            aplicarConfigPagamento();
+            selecionarForma('MONEY');
+            document.getElementById('pg-recebido').focus();
+            calcularPromocao();
+            atualizarCashbackUi();
+        }
+
+        function fecharModalPagamento() {
+            modalPagamentoAberto = false;
+            document.getElementById('modal-pagamento').classList.remove('active');
+            inputCodigo.focus();
+        }
+
+        function abrirEstoqueErro() {
+            window.open('/estoque.html', '_blank', 'noopener');
+        }
+
+        // Ao voltar para a aba do PDV, re-consulta o estoque e atualiza as marcações
+        window.addEventListener('focus', () => {
+            atualizarEstoqueItens();
+        });
+
+
+        let parcelasSelecionadas = 1;
+        let pixTxid = '';
+        let modoPagamento = {};   // { semNfe: true } quando a venda não emite NFC-e (F8)
+        let formaSelecionada = 'MONEY';   // forma de pagamento ativa no fechamento
+        let modalPagamentoAberto = false;
+
+        // Indica se algum modal de busca/autorização está sobreposto ao fechamento
+        function temModalSobreposto() {
+            return document.getElementById('modal-busca').classList.contains('active') ||
+                   document.getElementById('modal-cliente').classList.contains('active') ||
+                   document.getElementById('modal-admin').classList.contains('active');
+        }
+
+        function subtotalAtual() {
+            return itens.reduce((s, i) => s + i.preco * i.quantidade, 0);
+        }
+        function descontoAtual() {
+            const d = parseFloat(document.getElementById('pg-desconto').value.replace(',', '.')) || 0;
+            return Math.min(Math.max(0, d), subtotalAtual());
+        }
+        function descontoPromoAtual() {
+            return Math.min(promocaoPdv.totalDesconto || 0, subtotalAtual());
+        }
+        function cashbackAtual() {
+            const v = parseFloat(document.getElementById('pg-cashback').value.replace(',', '.')) || 0;
+            const max = Math.max(0, subtotalAtual() - descontoAtual() - descontoPromoAtual());
+            return Math.min(Math.max(0, v), saldoCashbackCliente, max);
+        }
+        function totalComDesconto() {
+            return Math.max(0, subtotalAtual() - descontoAtual() - descontoPromoAtual() - cashbackAtual());
+        }
+        function totalPagoAtual() {
+            const total = totalComDesconto();
+            if (formaSelecionada === 'MONEY') {
+                return parseFloat(document.getElementById('pg-recebido').value.replace(',', '.')) || 0;
+            }
+            return total;
+        }
+        function trocoAtual() {
+            return Math.max(0, totalPagoAtual() - totalComDesconto());
+        }
+
+        function atualizarCashbackUi() {
+            const box = document.getElementById('pg-cashback-box');
+            const saldoEl = document.getElementById('pg-cashback-saldo');
+            const input = document.getElementById('pg-cashback');
+            if (clienteSelecionadoId && saldoCashbackCliente > 0) {
+                box.style.display = 'block';
+                saldoEl.innerText = `Saldo disponível: ${formatarMoeda(saldoCashbackCliente)}`;
+                input.placeholder = `0,00 (máx ${saldoCashbackCliente.toFixed(2).replace('.', ',')})`;
+            } else {
+                box.style.display = 'none';
+                input.value = '0';
+            }
+            calcularTotalComDesconto();
+        }
+
+        async function calcularPromocao() {
+            if (itens.length === 0) return;
+            const box = document.getElementById('pg-promo-box');
+            const elNome = document.getElementById('pg-promo-nome');
+            const elValor = document.getElementById('pg-promo');
+            try {
+                const response = await fetch(`${API_BASE}/api/promocoes/aplicar`, {
+                    method: 'POST',
+                    headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()),
+                    body: JSON.stringify({
+                        itens: itens.map(i => ({
+                            produtoId: i.id,
+                            quantidade: i.quantidade,
+                            precoUnit: i.preco
+                        }))
+                    })
+                });
+                if (response.ok) {
+                    promocaoPdv = await response.json();
+                    const promo = descontoPromoAtual();
+                    if (promo > 0) {
+                        const nomes = [...new Set(promocaoPdv.descontos.map(d => d.nome))];
+                        elNome.innerText = nomes.length > 0 ? `Promoção (${nomes.join(', ')})` : 'Desconto Promoção';
+                        elValor.innerText = `- ${formatarMoeda(promo)}`;
+                        box.style.display = 'flex';
+                    } else {
+                        box.style.display = 'none';
+                    }
+                } else {
+                    box.style.display = 'none';
+                }
+            } catch (e) {
+                box.style.display = 'none';
+            }
+            calcularTotalComDesconto();
+        }
+
+        function calcularTotalComDesconto() {
+            document.getElementById('pg-subtotal').innerText = formatarMoeda(subtotalAtual());
+            document.getElementById('pg-total').innerText = formatarMoeda(totalComDesconto());
+            const desconto = descontoAtual();
+            const resgate = cashbackAtual();
+            const limite = Number(CONFIG.settings?.descontoLimiteSemSenha ?? 0);
+            document.getElementById('pg-senha-box').style.display = (desconto > limite || resgate > 0) ? 'block' : 'none';
+            if (formaSelecionada === 'PIX') {
+                gerarPix(totalComDesconto());
+            }
+            atualizarValoresFormas();
+            atualizarPainelValores();
+        }
+
+        // Formas de pagamento liberadas na configuração de pagamento
+        function formaPagamentoHabilitada(forma) {
+            const p = CONFIG.pagamento || {};
+            if (forma === 'MONEY') return p.dinheiro !== false;
+            if (forma === 'CREDIT_CARD') return p.credito !== false;
+            if (forma === 'DEBIT_CARD') return p.debito !== false;
+            if (forma === 'PIX') return p.pix !== false;
+            return true;
+        }
+
+        // Aplica as formas liberadas na tela de fechamento conforme o módulo Configuração de Pagamento
+        function aplicarConfigPagamento() {
+            const p = CONFIG.pagamento || {};
+            document.querySelectorAll('.pg-forma').forEach(el => {
+                const forma = el.dataset.forma;
+                const habilitada = formaPagamentoHabilitada(forma);
+                el.style.display = habilitada ? '' : 'none';
+            });
+            if (!formaPagamentoHabilitada(formaSelecionada)) {
+                const primeira = ['MONEY', 'DEBIT_CARD', 'PIX', 'CREDIT_CARD'].find(f => formaPagamentoHabilitada(f));
+                selecionarForma(primeira || 'MONEY');
+            }
+        }
+
+        // Define a forma de pagamento ativa (F1/F4/F5/F6 ou clique na caixa)
+        function selecionarForma(forma) {
+            if (!formaPagamentoHabilitada(forma)) return;
+            formaSelecionada = forma;
+            document.querySelectorAll('.pg-forma').forEach(el => {
+                el.classList.toggle('selecionada', el.dataset.forma === forma);
+            });
+
+            document.getElementById('sec-dinheiro').style.display = forma === 'MONEY' ? 'block' : 'none';
+            document.getElementById('sec-pix').style.display = forma === 'PIX' ? 'block' : 'none';
+            document.getElementById('sec-credito').style.display = forma === 'CREDIT_CARD' ? 'block' : 'none';
+            document.getElementById('sec-debito').style.display = forma === 'DEBIT_CARD' ? 'block' : 'none';
+
+            atualizarValoresFormas();
+
+            if (forma === 'MONEY') {
+                document.getElementById('pg-recebido').focus();
+            } else if (forma === 'PIX') {
+                gerarPix(totalComDesconto());
+            } else if (forma === 'CREDIT_CARD') {
+                montarParcelas(totalComDesconto());
+            }
+            atualizarPainelValores();
+        }
+
+        // Mantém o valor informado nas caixas de cada forma sincronizado com o total
+        // Mostra o valor a pagar somente na forma selecionada (Dinheiro aguarda o valor recebido)
+        function atualizarValoresFormas() {
+            const total = totalComDesconto();
+            document.getElementById('pg-valor-credito').value = '';
+            document.getElementById('pg-valor-debito').value = '';
+            document.getElementById('pg-valor-pix').value = '';
+
+            if (formaSelecionada === 'MONEY') {
+                document.getElementById('pg-total-pago').innerText = formatarMoeda(totalPagoAtual());
+                document.getElementById('pg-troco').innerText = trocoAtual() > 0 ? `TROCO R$ ${trocoAtual().toFixed(2).replace('.', ',')}` : 'R$ 0,00';
+            } else {
+                document.getElementById('pg-total-pago').innerText = formatarMoeda(total);
+                document.getElementById('pg-troco').innerText = 'R$ 0,00';
+                if (formaSelecionada === 'CREDIT_CARD') document.getElementById('pg-valor-credito').value = formatarMoeda(total);
+                else if (formaSelecionada === 'DEBIT_CARD') document.getElementById('pg-valor-debito').value = formatarMoeda(total);
+                else if (formaSelecionada === 'PIX') document.getElementById('pg-valor-pix').value = formatarMoeda(total);
+            }
+        }
+
+        function calcularTroco() {
+            if (formaSelecionada !== 'MONEY') return;
+            const recebido = parseFloat(document.getElementById('pg-recebido').value.replace(',', '.')) || 0;
+            const troco = Math.max(0, recebido - totalComDesconto());
+            document.getElementById('pg-total-pago').innerText = formatarMoeda(recebido);
+            document.getElementById('pg-troco').innerText = troco > 0 ? `TROCO R$ ${troco.toFixed(2).replace('.', ',')}` : 'R$ 0,00';
+            atualizarPainelValores();
+        }
+
+        // Calcula troco ao digitar o valor recebido
+        document.getElementById('pg-recebido').addEventListener('input', calcularTroco);
+
+        async function gerarPix(total) {
+            const img = document.getElementById('pix-qr');
+            const payloadEl = document.getElementById('pix-payload');
+            pixTxid = `JG${Date.now()}`;
+
+            img.src = '';
+            payloadEl.innerText = 'Gerando QR Code...';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/pix/qrcode`, {
+                    method: 'POST',
+                    headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()),
+                    body: JSON.stringify({ valor: total, txid: pixTxid })
+                });
+
+                if (!response.ok) {
+                    payloadEl.innerText = 'Erro ao gerar QR Code';
+                    return;
+                }
+
+                const dados = await response.json();
+                img.src = dados.qrDataUrl;
+                payloadEl.innerText = dados.payload;
+            } catch (error) {
+                console.error("Erro ao gerar PIX:", error);
+                payloadEl.innerText = 'Servidor indisponível';
+            }
+        }
+
+        function copiarPix() {
+            const payload = document.getElementById('pix-payload').innerText;
+            if (!payload) return;
+            navigator.clipboard.writeText(payload).then(() => alert("Código PIX copiado!"));
+        }
+
+        function montarParcelas(total) {
+            const grid = document.getElementById('parcelas-grid');
+            grid.innerHTML = '';
+            parcelasSelecionadas = 1;
+
+            // Número de parcelas definido no módulo Configuração de Pagamento (1 = apenas à vista)
+            const maxParcelas = Math.max(1, Number(CONFIG.pagamento?.creditoMaxParcelas ?? 1) || 1);
+            for (let n = 1; n <= maxParcelas; n++) {
+                const valorParcela = total / n;
+                const botao = document.createElement('button');
+                botao.type = 'button';
+                botao.className = 'parcela-btn' + (n === 1 ? ' selecionada' : '');
+                botao.innerHTML = `${n === 1 ? 'À vista' : `${n}x`} <span class="p-valor">${formatarMoeda(valorParcela)}</span>`;
+                botao.onclick = () => {
+                    parcelasSelecionadas = n;
+                    grid.querySelectorAll('.parcela-btn').forEach(b => b.classList.remove('selecionada'));
+                    botao.classList.add('selecionada');
+                };
+                grid.appendChild(botao);
+            }
+        }
+
+        function atraso(ms) {
+            return new Promise(r => setTimeout(r, ms));
+        }
+
+        function mostrarSefaz(titulo, status, classe) {
+            const spinner = document.getElementById('sefaz-spinner');
+            const tituloEl = document.getElementById('sefaz-titulo');
+            const statusEl = document.getElementById('sefaz-status');
+            spinner.style.display = titulo === 'Enviando...' ? 'block' : 'none';
+            tituloEl.innerText = titulo;
+            tituloEl.classList.remove('sefaz-ok', 'sefaz-erro');
+            if (classe) tituloEl.classList.add(classe);
+            statusEl.innerText = status;
+            document.getElementById('modal-sefaz').classList.add('active');
+        }
+
+        function fecharSefaz() {
+            document.getElementById('modal-sefaz').classList.remove('active');
+        }
+
+        async function confirmarVenda() {
+            const metodo = formaSelecionada;
+            const recebido = parseFloat(document.getElementById('pg-recebido').value.replace(',', '.')) || 0;
+            const botao = document.getElementById('pg-confirmar');
+            const semNfe = Boolean(modoPagamento.semNfe);
+            botao.disabled = true;
+            botao.innerText = 'Processando...';
+
+            const pagamento = { metodo };
+            if (metodo === 'MONEY') pagamento.valorRecebido = recebido;
+            if (metodo === 'CREDIT_CARD') pagamento.parcelas = parcelasSelecionadas;
+            if (metodo === 'PIX') pagamento.txid = pixTxid;
+            const desconto = descontoAtual();
+            const resgateCashback = cashbackAtual();
+            if (desconto > 0 || resgateCashback > 0) {
+                pagamento.desconto = desconto;
+                pagamento.cashbackResgate = resgateCashback;
+                pagamento.senhaAdmin = document.getElementById('pg-senha-admin').value;
+            }
+
+            // Abre a janela de impressão no gesto do usuário (evita bloqueio de popup) e, se for venda fiscal, exibe a tela SEFAZ
+            janelaImpressao = window.open('', '_blank', 'width=420,height=600');
+            if (janelaImpressao) {
+                janelaImpressao.document.write('<html><body style="margin:0;font-family:\'Courier New\',monospace;padding:12px;">AGUARDANDO...');
+            }
+            fecharModalPagamento();
+            if (!semNfe) {
+                mostrarSefaz('Enviando...', 'Transmitindo a NFC-e, aguarde...');
+            }
+
+            const inicio = Date.now();
+            try {
+                const response = await fetch(`${API_BASE}/api/vendas`, {
+                    method: 'POST',
+                    headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()),
+                    body: JSON.stringify({
+                        itens: itens.map(i => ({ codigo: i.codigo, quantidade: i.quantidade })),
+                        pagamento,
+                        clienteId: clienteSelecionadoId || null,
+                        naoEmitirNfe: semNfe
+                    })
+                });
+
+                const dados = await response.json();
+
+                if (response.status === 401) { fecharSefaz(); localStorage.removeItem('jg_operador'); window.location.href = '/login.html'; return; }
+
+                if (!response.ok) {
+                    fecharSefaz();
+                    modalPagamentoAberto = true;
+                    document.getElementById('modal-pagamento').classList.add('active');
+                    if (dados.erro && dados.erro.indexOf('senha do administrador') !== -1) {
+                        document.getElementById('pg-senha-box').style.display = 'block';
+                        document.getElementById('pg-senha-admin').focus();
+                    } else if (dados.erro && dados.erro.indexOf('Estoque insuficiente') !== -1) {
+                        document.getElementById('pg-erro-titulo').innerText = 'Falta estoque';
+                        document.getElementById('pg-erro-msg').innerText = dados.erro + ' — ajuste na aba de Estoque e clique em Confirmar Venda de novo.';
+                        document.querySelector('#pg-erro .btn-abrir-estoque').style.display = (obterOperador() && obterOperador().papel !== 'SELLER') ? 'block' : 'none';
+                        document.getElementById('pg-erro').style.display = 'block';
+                        await atualizarEstoqueItens();
+                    } else {
+                        alert(dados.erro || "Erro ao finalizar venda!");
+                    }
+                    botao.disabled = false;
+                    botao.innerText = 'Confirmar Venda';
+                    return;
+                }
+
+                if (!semNfe) {
+                    const autorizada = dados.nfe && dados.nfe.status === 'AUTORIZADA';
+                    if (autorizada) {
+                        const protocolo = dados.nfe.protocolo ? `Protocolo ${dados.nfe.protocolo}` : 'Venda registrada com sucesso.';
+                        mostrarSefaz('NFC-e autorizada', protocolo, 'sefaz-ok');
+                    } else {
+                        mostrarSefaz('Venda registrada', 'NFC-e não autorizada (cupom sem dados fiscais).', 'sefaz-erro');
+                    }
+                    const restante = 1200 - (Date.now() - inicio);
+                    if (restante > 0) await atraso(restante);
+                    fecharSefaz();
+                }
+
+                mostrarCupom(dados);
+                imprimirCupom(true);
+                promocaoPdv = { descontos: [], totalDesconto: 0 };
+                itens = [];
+                renderizarTabela();
+                document.getElementById('desc-ultimo-item').innerText = 'NENHUM ITEM';
+
+            } catch (error) {
+                fecharSefaz();
+                console.error("Erro ao finalizar venda:", error);
+                alert("Erro de conexão com o servidor!");
+                modalPagamentoAberto = true;
+                document.getElementById('modal-pagamento').classList.add('active');
+                botao.disabled = false;
+                botao.innerText = 'Confirmar Venda';
+            }
+        }
+
+        async function gerarOrcamento() {
+            if (itens.length === 0) {
+                alert("Nenhum item na venda!");
+                return;
+            }
+            const botao = document.getElementById('pg-orcamento');
+            botao.disabled = true;
+            botao.innerText = 'Salvando...';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/vendas`, {
+                    method: 'POST',
+                    headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()),
+                    body: JSON.stringify({
+                        itens: itens.map(i => ({ codigo: i.codigo, quantidade: i.quantidade })),
+                        orcamento: true,
+                        pagamento: {},
+                        clienteId: clienteSelecionadoId || null
+                    })
+                });
+
+                const dados = await response.json();
+                if (response.status === 401) { localStorage.removeItem('jg_operador'); window.location.href = '/login.html'; return; }
+                if (!response.ok) {
+                    alert(dados.erro || "Erro ao salvar orçamento!");
+                    botao.disabled = false;
+                    botao.innerText = 'Salvar como Orçamento';
+                    return;
+                }
+
+                fecharModalPagamento();
+                alert(`Orçamento ${dados.numero} salvo! Você pode efetivá-lo na tela de Orçamentos.`);
+                itens = [];
+                renderizarTabela();
+                document.getElementById('desc-ultimo-item').innerText = 'NENHUM ITEM';
+            } catch (error) {
+                console.error("Erro ao salvar orçamento:", error);
+                alert("Erro de conexão com o servidor!");
+                botao.disabled = false;
+                botao.innerText = 'Salvar como Orçamento';
+            }
+        }
+
+        const NOMES_PAGAMENTO = {
+            MONEY: 'DINHEIRO',
+            PIX: 'PIX',
+            CREDIT_CARD: 'CRÉDITO',
+            DEBIT_CARD: 'DÉBITO'
+        };
+
+        function mostrarCupom(dados) {
+            const cupom = document.getElementById('cupom-conteudo');
+            const data = new Date(dados.data);
+            const dataStr = data.toLocaleString('pt-BR');
+            cupomAtual = dados;
+            cupomAtual.itens = itens.map(i => ({ ...i }));
+
+            const nomeEmpresa = (CONFIG.tradeName || CONFIG.name || 'JG SISTEMAS').toUpperCase();
+            const docEmpresa = CONFIG.document ? `CNPJ ${esc(CONFIG.document)}` : '';
+            const logo = CONFIG.logo
+                ? `<img src="${esc(CONFIG.logo)}" style="max-width:120px; max-height:60px; display:block; margin:0 auto 6px;" alt="logo">`
+                : '';
+
+            let linhasItens = itens.map(i => `
+                <div class="c-item">
+                    <span>${i.quantidade} x ${esc(i.descricao)}</span>
+                    <span>${formatarMoeda(i.preco * i.quantidade)}</span>
+                </div>
+            `).join('');
+
+            const nomePagamento = NOMES_PAGAMENTO[dados.pagamento] || dados.pagamento;
+            const detalhePagamento = dados.pagamento === 'CREDIT_CARD' && dados.parcelas > 1
+                ? `${nomePagamento} ${dados.parcelas}x de ${formatarMoeda(dados.total / dados.parcelas)}`
+                : nomePagamento;
+
+            cupom.innerHTML = `
+                <div class="c-top">
+                    ${logo}
+                    <div class="c-nome">${esc(nomeEmpresa)}</div>
+                    ${docEmpresa ? `<div>${docEmpresa}</div>` : ''}
+                    <div>Venda Nº ${esc(dados.numero)}</div>
+                    <div>${dataStr}</div>
+                </div>
+                <hr>
+                ${linhasItens}
+                <hr>
+                <div class="c-item"><span>Subtotal</span><span>${formatarMoeda(dados.subtotal)}</span></div>
+                <div class="c-item"><span>Desconto</span><span>${formatarMoeda(dados.desconto)}</span></div>
+                ${dados.cashbackResgate > 0 ? `<div class="c-item"><span>Cashback</span><span>${formatarMoeda(-dados.cashbackResgate)}</span></div>` : ''}
+                <div class="c-item c-total"><span>TOTAL</span><span>${formatarMoeda(dados.total)}</span></div>
+                <div class="c-item"><span>Pagamento</span><span>${detalhePagamento}</span></div>
+                ${dados.troco > 0 ? `<div class="c-item"><span>Troco</span><span>${formatarMoeda(dados.troco)}</span></div>` : ''}
+                ${dados.pix && dados.pix.payload ? `<div class="c-item" style="font-size:10px;word-break:break-all;"><span>Código PIX:</span></div><div class="c-item" style="font-size:10px;word-break:break-all;">${esc(dados.pix.payload)}</div>` : ''}
+                ${nfceFooterHtml(dados.nfe)}
+                <hr>
+                <div class="c-top">OBRIGADO PELA PREFERÊNCIA!</div>
+            `;
+            document.getElementById('modal-cupom').classList.add('active');
+        }
+
+        // ===== Impressão do cupom no padrão de impressora térmica (80mm) =====
+        const LARGURA_CUPOM = 42;
+        function sepCupom() { return '-'.repeat(LARGURA_CUPOM); }
+        function centroCupom(t) {
+            if (!t) return '';
+            t = String(t);
+            if (t.length >= LARGURA_CUPOM) return t;
+            return ' '.repeat(Math.floor((LARGURA_CUPOM - t.length) / 2)) + t;
+        }
+        function quebrarCupom(t) {
+            t = String(t);
+            if (t.length <= LARGURA_CUPOM) return t;
+            const linhas = [];
+            for (let i = 0; i < t.length; i += LARGURA_CUPOM) linhas.push(t.slice(i, i + LARGURA_CUPOM));
+            return linhas.join('\n');
+        }
+        function linhaValor(label, valor) {
+            const v = formatarMoeda(valor);
+            return label.padEnd(Math.max(1, LARGURA_CUPOM - v.length - 1)) + ' ' + v;
+        }
+        function linhaTexto(label, texto) {
+            const t = String(texto);
+            return label.padEnd(Math.max(1, LARGURA_CUPOM - t.length - 1)) + ' ' + t;
+        }
+
+        function imprimirCupom(auto) {
+            if (!cupomAtual) return;
+            const v = cupomAtual;
+            const itensVenda = v.itens && v.itens.length > 0 ? v.itens : itens;
+            const data = new Date(v.data);
+            const dataStr = data.toLocaleString('pt-BR', {
+                day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+
+            const nomeEmpresa = (CONFIG.tradeName || CONFIG.name || 'JG SISTEMAS').toUpperCase();
+            const endereco = [CONFIG.address, CONFIG.number ? `nº ${esc(CONFIG.number)}` : ''].filter(Boolean).join(', ');
+            const cidade = [CONFIG.city, CONFIG.state].filter(Boolean).join('/');
+
+            const cabecalho = [
+                centroCupom(nomeEmpresa),
+                CONFIG.document ? centroCupom(`CNPJ: ${esc(CONFIG.document)}`) : null,
+                endereco ? centroCupom(endereco) : null,
+                (CONFIG.neighborhood && cidade) ? centroCupom(`${esc(CONFIG.neighborhood)} - ${esc(cidade)}`) : (cidade ? centroCupom(cidade) : null),
+                CONFIG.phone ? centroCupom(`Tel: ${esc(CONFIG.phone)}`) : null,
+                ''
+            ].filter(Boolean);
+
+            const linhasItens = itensVenda.map(i => {
+                const qtd = Number(i.quantidade) || 1;
+                const preco = Number(i.preco) || 0;
+                const totalItem = preco * qtd;
+                const d2 = `${qtd} x ${preco.toFixed(2).replace('.', ',')}`;
+                const tot = `R$ ${totalItem.toFixed(2).replace('.', ',')}`;
+                const linha2 = d2 + ' '.repeat(Math.max(1, LARGURA_CUPOM - 10 - d2.length - tot.length)) + tot;
+                return quebrarCupom(i.descricao || i.nome || 'PRODUTO') + '\n' + linha2;
+            }).join('\n');
+
+            const nomePagamento = NOMES_PAGAMENTO[v.pagamento] || v.pagamento;
+            const detalhePagamento = v.pagamento === 'CREDIT_CARD' && v.parcelas > 1
+                ? `${nomePagamento} ${v.parcelas}x de ${formatarMoeda(v.total / v.parcelas)}`
+                : nomePagamento;
+
+            const corpo = [
+                sepCupom(),
+                centroCupom(`VENDA Nº ${esc(v.numero)}`),
+                centroCupom(`DATA: ${dataStr}`),
+                centroCupom(`OP: ${esc((obterOperador()?.nome || 'OPERADOR').toUpperCase())}`),
+                sepCupom(),
+                linhasItens,
+                sepCupom(),
+                linhaTexto('QTD. ITENS:', itensVenda.reduce((s, i) => s + (Number(i.quantidade) || 0), 0)),
+                linhaValor('SUBTOTAL', v.subtotal),
+                v.desconto > 0 ? linhaValor('DESCONTO', -v.desconto) : null,
+                v.cashbackResgate > 0 ? linhaValor('CASHBACK', -v.cashbackResgate) : null,
+                linhaValor('TOTAL', v.total),
+                sepCupom(),
+                linhaTexto('PAGAMENTO', detalhePagamento),
+                v.troco > 0 ? linhaValor('TROCO', v.troco) : null,
+                v.pix && v.pix.payload ? quebrarCupom(`PIX: ${esc(v.pix.payload)}`) : null,
+                v.cashbackCreditado > 0 ? `${sepCupom()}\n${centroCupom('VOCE GANHOU ' + formatarMoeda(v.cashbackCreditado))}\n${centroCupom('DE CASHBACK!')}` : null,
+                sepCupom(),
+                '',
+                centroCupom('OBRIGADO PELA'),
+                centroCupom('PREFERENCIA!'),
+                ''
+            ].filter(l => l !== null).join('\n');
+
+            const w = auto ? janelaImpressao : null;
+            const janela = (w && !w.closed) ? w : window.open('', '_blank', 'width=420,height=600');
+            janela.document.write(`<html><body style="margin:0;"><div style="padding:10px;"><pre style="font-family:'Courier New',monospace; font-size:11px; margin:0; line-height:1.25;">${cabecalho.join('\n')}\n${corpo}</pre>${nfceFooterPrintHtml(v.nfe)}</div></body></html>`);
+            janela.document.close();
+            janela.print();
+            janelaImpressao = null;
+            fecharModalCupom();
+        }
+
+        function fecharModalCupom() {
+            document.getElementById('modal-cupom').classList.remove('active');
+            inputCodigo.focus();
+        }
+
+        (() => {
+            const operador = obterOperador();
+            if (operador) {
+                document.getElementById('operador-lbl').innerText = `OPERADOR: ${operador.nome || operador.email}`;
+                if (operador.caixaNumber) {
+                    const titulo = document.querySelector('header div');
+                    const texto = titulo && titulo.childNodes[0];
+                    if (texto && texto.nodeType === 3) {
+                        texto.textContent = `CAIXA LIVRE - TERMINAL ${String(operador.caixaNumber).padStart(2, '0')} `;
+                    }
+                }
+            } else {
+                window.location.href = '/login.html';
+            }
+        })();
+
+        exigirLogin();
+        verificarCaixa();
+        carregarConfig();
+        carregarClientes();
+        atualizarEstoqueItens();
+        atualizarRelogio();
+        setInterval(atualizarRelogio, 1000);
+    </script>
+    <script src="qrcode.js"></script>
+    <script src="nfce.js"></script>
+</body>
+</html>

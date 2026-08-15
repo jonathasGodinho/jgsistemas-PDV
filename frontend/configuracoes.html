@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>Configurações - JG Sistemas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
+        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
+        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
+        header a:hover { color: white; }
+        main { padding: 20px; max-width: 1000px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
+        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
+        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; }
+        .painel-corpo { padding: 20px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .form-grid .campo { display: flex; flex-direction: column; gap: 5px; }
+        .form-grid .campo.full { grid-column: 1 / -1; }
+        .form-grid label { font-size: 12px; color: #656d78; font-weight: bold; text-transform: uppercase; }
+        .form-grid input { padding: 11px; font-size: 15px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background-color: #134074; color: white; padding: 8px 10px; text-align: left; text-transform: uppercase; font-size: 11px; }
+        td { padding: 8px 10px; border-bottom: 1px solid #e6e9ed; color: #333; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        .sem-dados { text-align: center; color: #8b95a1; padding: 16px; }
+        .btn-mini { padding: 5px 10px; font-size: 12px; }
+        .logo-area { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+        .logo-preview { width: 130px; height: 130px; border: 2px dashed #aab2bd; border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #f8f9fa; color: #8b95a1; font-size: 12px; text-align: center; }
+        .logo-preview img { max-width: 100%; max-height: 100%; }
+        .logo-controles { display: flex; flex-direction: column; gap: 8px; }
+        .btn { border: none; border-radius: 4px; padding: 11px 18px; font-size: 14px; font-weight: bold; cursor: pointer; }
+        .btn-verde { background-color: #00a651; color: white; }
+        .btn-verde:hover { background-color: #007a3d; }
+        .btn-cinza { background-color: #8b95a1; color: white; }
+        .btn-cinza:hover { background-color: #6f7885; }
+        .acoes { display: flex; gap: 10px; margin-top: 20px; }
+        .aviso { background: #fdf3d7; border: 1px solid #f0ad4e; color: #8a6d3b; padding: 12px 14px; border-radius: 4px; font-size: 13px; }
+        .aviso-ok { background: #e3f7ec; border-color: #00a651; color: #007a3d; }
+        footer { background-color: #134074; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
+        @media (max-width: 768px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .form-grid .campo.full { grid-column: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>JG SISTEMAS - CONFIGURAÇÕES</div>
+        <div><a href="/">← Menu Principal</a></div>
+    </header>
+
+    <main>
+        <div class="painel">
+            <div class="painel-titulo">Identidade Visual</div>
+            <div class="painel-corpo">
+                <div class="logo-area">
+                    <div class="logo-preview" id="logo-preview">Sem logo</div>
+                    <div class="logo-controles">
+                        <label class="btn btn-cinza" style="text-align:center; cursor:pointer;">Escolher Arquivo
+                            <input type="file" id="logo-input" accept="image/*" style="display:none;">
+                        </label>
+                        <button class="btn btn-cinza" onclick="removerLogo()">Remover Logo</button>
+                        <span style="font-size:12px; color:#8b95a1;">JPG, PNG ou GIF. Aparece no comprovante do PDV e nos recibos de sangria/suprimento.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="painel">
+            <div class="painel-titulo">Dados da Empresa</div>
+            <div class="painel-corpo">
+                <div class="form-grid">
+                    <div class="campo"><label>Razão Social *</label><input type="text" id="c-name"></div>
+                    <div class="campo"><label>Nome Fantasia</label><input type="text" id="c-tradeName"></div>
+                    <div class="campo"><label>CNPJ</label><input type="text" id="c-document" placeholder="00.000.000/0000-00"></div>
+                    <div class="campo"><label>Inscrição Estadual</label><input type="text" id="c-stateReg"></div>
+                    <div class="campo full"><label>Inscrição Municipal</label><input type="text" id="c-cityReg"></div>
+                    <div class="campo">
+                        <label>Regime Tributário</label>
+                        <select id="c-crt" style="padding:11px; font-size:15px; border:1px solid #aab2bd; border-radius:4px; color:#134074; background:white;">
+                            <option value="1">Simples Nacional</option>
+                            <option value="2">Simples Nacional - Excesso de sublimite</option>
+                            <option value="3">Regime Normal (Lucro)</option>
+                        </select>
+                    </div>
+                    <div class="campo"><label>CNAE Principal</label><input type="text" id="c-cnae" placeholder="0000000" maxlength="7"></div>
+                    <div class="campo full"><label>Endereço</label><input type="text" id="c-address"></div>
+                    <div class="campo"><label>Número</label><input type="text" id="c-number"></div>
+                    <div class="campo"><label>Complemento</label><input type="text" id="c-complement"></div>
+                    <div class="campo"><label>Bairro</label><input type="text" id="c-neighborhood"></div>
+                    <div class="campo"><label>Cidade</label><input type="text" id="c-city"></div>
+                    <div class="campo"><label>Estado (UF)</label><input type="text" id="c-state" maxlength="2"></div>
+                    <div class="campo"><label>CEP</label><input type="text" id="c-zipCode"></div>
+                    <div class="campo"><label>Telefone</label><input type="text" id="c-phone"></div>
+                    <div class="campo"><label>E-mail</label><input type="text" id="c-email"></div>
+                </div>
+                <div class="acoes">
+                    <button class="btn btn-verde" onclick="salvar()">Salvar Configurações</button>
+                    <button class="btn btn-cinza" onclick="carregar()">Descartar Alterações</button>
+                </div>
+                <div class="aviso" id="aviso" style="display:none; margin-top:16px;"></div>
+            </div>
+        </div>
+
+        <div class="painel">
+            <div class="painel-titulo">Regras de Venda</div>
+            <div class="painel-corpo">
+                <div class="form-grid">
+                    <div class="campo">
+                        <label>Limite de desconto sem senha (R$)</label>
+                        <input type="number" id="s-descontoLimite" min="0" step="0.01" value="0">
+                        <span style="font-size:11px; color:#8b95a1;">Descontos acima deste valor exigem a senha do administrador. 0 = sempre exigir.</span>
+                    </div>
+                    <div class="campo">
+                        <label>Cashback nas vendas a prazo (%)</label>
+                        <input type="number" id="s-cashback" min="0" max="100" step="0.5" value="0">
+                        <span style="font-size:11px; color:#8b95a1;">Percentual creditado ao cliente nas vendas a prazo.</span>
+                    </div>
+                    <div class="campo full" style="display:flex; flex-direction:row; align-items:center; gap:8px;">
+                        <input type="checkbox" id="s-bloquearLimite" style="width:auto;">
+                        <label style="margin:0;">Bloquear venda quando o cliente exceder o limite de crédito</label>
+                    </div>
+                </div>
+                <div class="acoes">
+                    <button class="btn btn-verde" onclick="salvarRegras()">Salvar Regras</button>
+                </div>
+                <div class="aviso" id="aviso-regras" style="display:none; margin-top:16px;"></div>
+            </div>
+        </div>
+
+        <div class="painel">
+            <div class="painel-titulo">Segurança</div>
+            <div class="painel-corpo">
+                <div class="aviso" style="margin-bottom:14px;">Proteção contra força bruta (tentativas de senha), validade da sessão e política de senha dos operadores.</div>
+                <div class="form-grid">
+                    <div class="campo">
+                        <label>Máximo de tentativas de login</label>
+                        <input type="number" id="g-loginMax" min="1" max="20" value="5">
+                        <span style="font-size:11px; color:#8b95a1;">Após este nº de senhas erradas, a conta é bloqueada.</span>
+                    </div>
+                    <div class="campo">
+                        <label>Tempo de bloqueio (min)</label>
+                        <input type="number" id="g-travamento" min="1" max="1440" value="15">
+                        <span style="font-size:11px; color:#8b95a1;">Tempo que a conta fica bloqueada após as tentativas.</span>
+                    </div>
+                    <div class="campo">
+                        <label>Sessão por inatividade (horas)</label>
+                        <input type="number" id="g-sessaoHoras" min="1" max="168" value="12">
+                        <span style="font-size:11px; color:#8b95a1;">Loga o operador automaticamente após esse tempo sem uso.</span>
+                    </div>
+                    <div class="campo">
+                        <label>Mínimo de caracteres na senha</label>
+                        <input type="number" id="g-senhaMin" min="4" max="32" value="8">
+                    </div>
+                    <div class="campo full" style="display:flex; flex-direction:row; align-items:center; gap:8px;">
+                        <input type="checkbox" id="g-senhaNumero" style="width:auto;">
+                        <label style="margin:0;">Exigir pelo menos um número na senha</label>
+                    </div>
+                    <div class="campo full" style="display:flex; flex-direction:row; align-items:center; gap:8px;">
+                        <input type="checkbox" id="g-senhaMaiuscula" style="width:auto;">
+                        <label style="margin:0;">Exigir pelo menos uma letra maiúscula</label>
+                    </div>
+                    <div class="campo full" style="display:flex; flex-direction:row; align-items:center; gap:8px;">
+                        <input type="checkbox" id="g-senhaSimbolo" style="width:auto;">
+                        <label style="margin:0;">Exigir pelo menos um símbolo (!@#...)</label>
+                    </div>
+                </div>
+                <div class="acoes">
+                    <button class="btn btn-verde" onclick="salvarSeguranca()">Salvar Segurança</button>
+                </div>
+                <div class="aviso" id="aviso-seguranca" style="display:none; margin-top:16px;"></div>
+            </div>
+        </div>
+
+        <div class="painel">
+            <div class="painel-titulo">Cupom Fiscal (NFC-e)</div>
+            <div class="painel-corpo">
+                <div class="aviso" style="margin-bottom:14px;">Emissão de NFC-e (modelo 65) junto à SEFAZ-AM. Antes de ativar, preencha os dados da empresa, os campos fiscais dos produtos (NCM, CFOP, CSOSN) e configure o certificado digital no arquivo <b>.env</b> do servidor.</div>
+                <div class="form-grid">
+                    <div class="campo full" style="display:flex; flex-direction:row; align-items:center; gap:8px;">
+                        <input type="checkbox" id="n-habilitado" style="width:auto;">
+                        <label style="margin:0;">Emitir cupom fiscal (NFC-e) nas vendas do PDV</label>
+                    </div>
+                    <div class="campo">
+                        <label>Ambiente</label>
+                        <select id="n-tpAmb" style="padding:11px; font-size:15px; border:1px solid #aab2bd; border-radius:4px; color:#134074; background:white;">
+                            <option value="1">Produção</option>
+                            <option value="2">Homologação (testes)</option>
+                        </select>
+                    </div>
+                    <div class="campo"><label>Série</label><input type="number" id="n-serie" min="1" max="999" value="1"></div>
+                    <div class="campo"><label>Próximo Número</label><input type="number" id="n-proximoNumero" min="1" value="1"></div>
+                    <div class="campo"><label>CFOP Padrão</label><input type="text" id="n-cfopPadrao" placeholder="5102" maxlength="4"></div>
+                    <div class="campo"><label>CSOSN Padrão</label><input type="text" id="n-csosnPadrao" placeholder="102" maxlength="3"></div>
+                    <div class="campo full">
+                        <label>CSC (Código de Segurança do Contribuinte)</label>
+                        <div id="n-csc-status" style="font-size:13px; font-weight:bold;">—</div>
+                        <input type="password" id="n-csc" placeholder="Novo CSC — preencha apenas para alterar" autocomplete="new-password" style="margin-top:6px;">
+                    </div>
+                    <div class="campo"><label>ID do CSC</label><input type="text" id="n-cscId" placeholder="Novo ID — preencha apenas para alterar" autocomplete="off"></div>
+                    <div class="campo full"><label>URL do QR Code</label><input type="text" id="n-qrcodeUrl" value="https://www.sefaz.am.gov.br/nfce/consulta"></div>
+                </div>
+                <div class="acoes">
+                    <button class="btn btn-verde" onclick="salvarNfe()">Salvar Configuração Fiscal</button>
+                </div>
+                <div class="aviso" id="aviso-nfe" style="display:none; margin-top:16px;"></div>
+            </div>
+        </div>
+
+        <div class="painel">
+            <div class="painel-titulo">Operadores e Comissão</div>
+            <div class="painel-corpo">
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Operador</th>
+                                <th>E-mail</th>
+                                <th>Papel</th>
+                                <th>Caixa</th>
+                                <th style="text-align:right;">Comissão (%)</th>
+                                <th>Ativo</th>
+                                <th style="text-align:center;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-operadores">
+                            <tr><td colspan="7" class="sem-dados">Carregando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="aviso" id="aviso-operadores" style="display:none; margin-top:16px;"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer>© 2026 JG Sistemas</footer>
+
+<script src="/seguranca.js"></script>
+    <script>
+        const API_BASE = window.location.protocol.startsWith('http') ? '' : 'http://localhost:3000';
+        const IDs = ['name','tradeName','document','stateReg','cityReg','crt','cnae','address','number','complement','neighborhood','city','state','zipCode','phone','email'];
+        let logo = null;
+
+        function obterOperador() {
+            try {
+                const raw = localStorage.getItem('jg_operador');
+                return raw ? JSON.parse(raw) : null;
+            } catch (e) { return null; }
+        }
+
+        function tokenAuth() {
+            const op = obterOperador();
+            return op && op.token ? { 'Authorization': 'Bearer ' + op.token } : {};
+        }
+
+        function bloquearCaixa() {
+            const op = obterOperador();
+            if (!op) { window.location.href = '/login.html'; return true; }
+            if (['ADMIN', 'MANAGER', 'SUPERVISOR'].indexOf(op.papel) === -1) { window.location.href = '/'; return true; }
+            return false;
+        }
+
+        async function api(url, metodo = 'GET', corpo = null) {
+            const opcoes = { method: metodo, headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()) };
+            if (corpo) opcoes.body = JSON.stringify(corpo);
+            const response = await fetch(`${API_BASE}${url}`, opcoes);
+            if (response.status === 401) {
+                localStorage.removeItem('jg_operador');
+                window.location.href = '/login.html';
+                throw new Error('Sessão expirada.');
+            }
+            const dados = await response.json();
+            if (!response.ok) throw new Error(dados.erro || 'Erro na requisição');
+            return dados;
+        }
+
+        bloquearCaixa();
+
+        function mostrarAviso(msg, ok) {
+            const a = document.getElementById('aviso');
+            a.className = 'aviso' + (ok ? ' aviso-ok' : '');
+            a.innerText = msg;
+            a.style.display = '';
+            setTimeout(() => { a.style.display = 'none'; }, 4000);
+        }
+
+        function mostrarLogo(src) {
+            const p = document.getElementById('logo-preview');
+            p.innerHTML = src ? `<img src="${src}" alt="Logo">` : 'Sem logo';
+        }
+
+        async function carregar() {
+            try {
+                const c = await api('/api/configuracoes');
+                for (const id of IDs) {
+                    document.getElementById(`c-${id}`).value = c[id] || '';
+                }
+                logo = c.logo || null;
+                mostrarLogo(logo);
+
+                const s = c.settings || {};
+                document.getElementById('s-descontoLimite').value = s.descontoLimiteSemSenha ?? 0;
+                document.getElementById('s-cashback').value = s.cashbackPercentual ?? 0;
+                document.getElementById('s-bloquearLimite').checked = s.bloquearCrediarioLimite !== false;
+
+                const n = c.nfe || {};
+                document.getElementById('n-habilitado').checked = !!n.habilitado;
+                document.getElementById('n-tpAmb').value = n.tpAmb === 2 ? '2' : '1';
+                document.getElementById('n-serie').value = Number(n.serie) || 1;
+                document.getElementById('n-proximoNumero').value = n.proximoNumero || 1;
+                document.getElementById('n-cfopPadrao').value = n.cfopPadrao || '5102';
+                document.getElementById('n-csosnPadrao').value = n.csosnPadrao || '102';
+                document.getElementById('n-csc').value = '';
+                document.getElementById('n-cscId').value = '';
+                document.getElementById('n-csc-status').textContent = n.cscConfigurado
+                    ? 'CSC configurado. Para trocar, digite o novo valor abaixo.'
+                    : 'CSC não configurado. Digite o código e o ID abaixo.';
+                document.getElementById('n-qrcodeUrl').value = n.qrcodeUrl || 'https://www.sefaz.am.gov.br/nfce/consulta';
+
+                const g = c.seguranca || {};
+                document.getElementById('g-loginMax').value = g.loginMaxTentativas ?? 5;
+                document.getElementById('g-travamento').value = g.loginTravamentoMin ?? 15;
+                document.getElementById('g-sessaoHoras').value = g.sessaoHoras ?? 12;
+                document.getElementById('g-senhaMin').value = g.senhaMinimo ?? 8;
+                document.getElementById('g-senhaNumero').checked = g.senhaExigeNumero !== false;
+                document.getElementById('g-senhaMaiuscula').checked = g.senhaExigeMaiuscula !== false;
+                document.getElementById('g-senhaSimbolo').checked = !!g.senhaExigeSimbolo;
+            } catch (e) {
+                mostrarAviso(e.message, false);
+            }
+        }
+
+        async function salvarSeguranca() {
+            try {
+                await api('/api/configuracoes', 'POST', {
+                    seguranca: {
+                        loginMaxTentativas: Number(document.getElementById('g-loginMax').value) || 5,
+                        loginTravamentoMin: Number(document.getElementById('g-travamento').value) || 15,
+                        sessaoHoras: Number(document.getElementById('g-sessaoHoras').value) || 12,
+                        senhaMinimo: Number(document.getElementById('g-senhaMin').value) || 8,
+                        senhaExigeNumero: document.getElementById('g-senhaNumero').checked,
+                        senhaExigeMaiuscula: document.getElementById('g-senhaMaiuscula').checked,
+                        senhaExigeSimbolo: document.getElementById('g-senhaSimbolo').checked
+                    }
+                });
+                mostrarAviso2('aviso-seguranca', 'Configurações de segurança salvas com sucesso!', true);
+            } catch (e) {
+                mostrarAviso2('aviso-seguranca', e.message, false);
+            }
+        }
+
+        async function salvarNfe() {
+            try {
+                const corpoNfe = {
+                    habilitado: document.getElementById('n-habilitado').checked,
+                    tpAmb: Number(document.getElementById('n-tpAmb').value) || 1,
+                    serie: Number(document.getElementById('n-serie').value) || 1,
+                    proximoNumero: Number(document.getElementById('n-proximoNumero').value) || 1,
+                    cfopPadrao: document.getElementById('n-cfopPadrao').value.trim(),
+                    csosnPadrao: document.getElementById('n-csosnPadrao').value.trim(),
+                    qrcodeUrl: document.getElementById('n-qrcodeUrl').value.trim()
+                };
+                const novoCsc = document.getElementById('n-csc').value.trim();
+                const novoCscId = document.getElementById('n-cscId').value.trim();
+                if (novoCsc || novoCscId) {
+                    corpoNfe.csc = novoCsc;
+                    corpoNfe.cscId = novoCscId;
+                }
+                await api('/api/configuracoes', 'POST', { nfe: corpoNfe });
+                mostrarAviso2('aviso-nfe', 'Configuração fiscal salva com sucesso!', true);
+                carregar();
+            } catch (e) {
+                mostrarAviso2('aviso-nfe', e.message, false);
+            }
+        }
+
+        function mostrarAviso2(id, msg, ok) {
+            const a = document.getElementById(id);
+            a.className = 'aviso' + (ok ? ' aviso-ok' : '');
+            a.innerText = msg;
+            a.style.display = '';
+            setTimeout(() => { a.style.display = 'none'; }, 4000);
+        }
+
+        async function salvarRegras() {
+            try {
+                await api('/api/configuracoes', 'POST', {
+                    settings: {
+                        descontoLimiteSemSenha: Number(document.getElementById('s-descontoLimite').value) || 0,
+                        cashbackPercentual: Number(document.getElementById('s-cashback').value) || 0,
+                        bloquearCrediarioLimite: document.getElementById('s-bloquearLimite').checked
+                    }
+                });
+                mostrarAviso2('aviso-regras', 'Regras de venda salvas com sucesso!', true);
+            } catch (e) {
+                mostrarAviso2('aviso-regras', e.message, false);
+            }
+        }
+
+        async function carregarOperadores() {
+            try {
+                const ops = await api('/api/auth/operadores');
+                const tbody = document.getElementById('tabela-operadores');
+                if (ops.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="sem-dados">Nenhum operador cadastrado</td></tr>';
+                    return;
+                }
+                const papeis = { ADMIN: 'Administrador', MANAGER: 'Gerente', SELLER: 'Vendedor', SUPERVISOR: 'Supervisor' };
+                tbody.innerHTML = ops.map(op => `
+                    <tr>
+                        <td><strong>${esc(op.nome)}</strong></td>
+                        <td>${esc(op.email)}</td>
+                        <td>${papeis[op.papel] || op.papel}</td>
+                        <td>${op.caixaNumber ? 'Nº ' + op.caixaNumber : '-'}</td>
+                        <td style="text-align:right;"><input type="number" id="op-comissao-${op.id}" min="0" max="100" step="0.1" value="${op.commissionRate}" style="width:70px; padding:5px; border:1px solid #aab2bd; border-radius:3px; text-align:right;"></td>
+                        <td><input type="checkbox" id="op-ativo-${op.id}" ${op.papel === 'ADMIN' ? 'checked disabled' : 'checked'}></td>
+                        <td style="text-align:center;">
+                            <button class="btn btn-mini btn-verde" onclick="salvarOperador('${op.id}')">Salvar</button>
+                        </td>
+                    </tr>`).join('');
+            } catch (e) {
+                mostrarAviso2('aviso-operadores', e.message, false);
+            }
+        }
+
+        async function salvarOperador(id) {
+            try {
+                const corpo = {
+                    comissao: Number(document.getElementById(`op-comissao-${id}`).value) || 0
+                };
+                const chk = document.getElementById(`op-ativo-${id}`);
+                if (chk && !chk.disabled) corpo.ativo = chk.checked;
+                await api(`/api/auth/operadores/${id}`, 'PUT', corpo);
+                mostrarAviso2('aviso-operadores', 'Operador atualizado com sucesso!', true);
+            } catch (e) {
+                mostrarAviso2('aviso-operadores', e.message, false);
+            }
+        }
+
+        document.getElementById('logo-input').addEventListener('change', (e) => {
+            const arquivo = e.target.files[0];
+            if (!arquivo) return;
+            const leitor = new FileReader();
+            leitor.onload = () => {
+                logo = leitor.result;
+                mostrarLogo(logo);
+            };
+            leitor.readAsDataURL(arquivo);
+        });
+
+        function removerLogo() {
+            logo = null;
+            document.getElementById('logo-input').value = '';
+            mostrarLogo(null);
+        }
+
+        async function salvar() {
+            const corpo = {};
+            for (const id of IDs) {
+                corpo[id] = document.getElementById(`c-${id}`).value.trim();
+            }
+            corpo.logo = logo;
+            try {
+                await api('/api/configuracoes', 'POST', corpo);
+                mostrarAviso('Configurações salvas com sucesso!', true);
+            } catch (e) {
+                mostrarAviso(e.message, false);
+            }
+        }
+
+        carregar();
+        carregarOperadores();
+    </script>
+</body>
+</html>

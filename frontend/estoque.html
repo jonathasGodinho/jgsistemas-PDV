@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>Controle de Estoque - JG Sistemas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
+        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
+        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
+        header a:hover { color: white; }
+        main { padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
+        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
+        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+        .painel-titulo .resumo { font-size: 12px; color: #aab2bd; font-weight: normal; }
+        .painel-corpo { padding: 14px; }
+        .toolbar { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+        .toolbar input { flex: 1; min-width: 200px; padding: 10px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background-color: #134074; color: white; padding: 10px; text-align: left; text-transform: uppercase; font-size: 12px; }
+        td { padding: 10px; border-bottom: 1px solid #e6e9ed; color: #333; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        tr:hover { background-color: #eef2f7; }
+        .btn { border: none; border-radius: 4px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .btn-azul { background-color: #134074; color: white; }
+        .btn-azul:hover { background-color: #0b2545; }
+        .btn-verde { background-color: #00a651; color: white; }
+        .btn-verde:hover { background-color: #007a3d; }
+        .btn-vermelho { background-color: #d9534f; color: white; }
+        .btn-vermelho:hover { background-color: #b0433f; }
+        .btn-amarelo { background-color: #f0ad4e; color: white; }
+        .btn-amarelo:hover { background-color: #c98a2b; }
+        .btn-mini { padding: 4px 8px; font-size: 12px; margin-right: 4px; }
+        .sem-dados { text-align: center; color: #8b95a1; padding: 30px; font-size: 14px; }
+        .situacao { font-weight: bold; padding: 3px 8px; border-radius: 3px; font-size: 11px; }
+        .situacao.ok { color: #00a651; background: #e3f7ec; }
+        .situacao.baixo { color: #c98a2b; background: #fdf3e3; }
+        .situacao.sem { color: #d9534f; background: #fdeaea; }
+        .num { text-align: right; font-weight: bold; }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 100; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: white; border-radius: 6px; width: 520px; max-width: 94vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
+        .modal-head { background-color: #0b2545; color: white; padding: 14px 18px; font-weight: bold; font-size: 15px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
+        .modal-head .close { cursor: pointer; font-size: 20px; color: #aab2bd; }
+        .modal-head .close:hover { color: white; }
+        .modal-body { padding: 18px; }
+        .modal label { font-size: 12px; color: #656d78; font-weight: bold; display: block; margin: 12px 0 5px; text-transform: uppercase; }
+        .modal input, .modal select { width: 100%; padding: 10px; font-size: 15px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; background: white; }
+        .modal input[type="number"] { -moz-appearance: textfield; }
+        .modal input::-webkit-outer-spin-button, .modal input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+        footer { background-color: #134074; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>JG SISTEMAS - CONTROLE DE ESTOQUE</div>
+        <div><a href="/">← Menu Principal</a></div>
+    </header>
+
+    <main>
+        <div class="painel">
+            <div class="painel-titulo">
+                <span>Posição de Estoque</span>
+                <span class="resumo" id="resumo-estoque"></span>
+            </div>
+            <div class="painel-corpo">
+                <div class="toolbar">
+                    <input type="text" id="busca" placeholder="Buscar por código, SKU ou nome do produto...">
+                    <button class="btn btn-azul" onclick="buscarEstoque()">Buscar</button>
+                    <button class="btn btn-amarelo" onclick="filtrarFalta()" id="btn-falta">Somente em Falta</button>
+                    <button class="btn btn-verde" onclick="abrirModalMovimento('entrada')">Entrada</button>
+                    <button class="btn btn-vermelho" onclick="abrirModalMovimento('saida')">Saída</button>
+                    <button class="btn btn-azul" onclick="abrirModalMovimento('ajuste')">Ajuste</button>
+                </div>
+                <div class="table-container" style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Produto</th>
+                                <th style="text-align: right;">Estoque</th>
+                                <th style="text-align: right;">Mínimo</th>
+                                <th style="text-align: right;">Máximo</th>
+                                <th style="text-align: center;">Situação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-estoque">
+                            <tr><td colspan="6" class="sem-dados">Carregando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="painel">
+            <div class="painel-titulo">Últimas Movimentações</div>
+            <div class="painel-corpo">
+                <div class="table-container" style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Produto</th>
+                                <th style="text-align: right;">Quantidade</th>
+                                <th>Motivo</th>
+                                <th>Data</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-movimentos">
+                            <tr><td colspan="5" class="sem-dados">Carregando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>© 2026 JG Sistemas</footer>
+
+    <!-- Modal de movimentação -->
+    <div class="modal-overlay" id="modal-movimento">
+        <div class="modal">
+            <div class="modal-head">
+                <span id="modal-titulo">Entrada de Estoque</span>
+                <span class="close" onclick="fecharModalMovimento()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="m-tipo">
+                <label>Produto *</label>
+                <select id="m-produto"></select>
+                <label id="m-label-qtd">Quantidade *</label>
+                <input type="number" id="m-quantidade" min="1" step="1" placeholder="0">
+                <label>Motivo</label>
+                <input type="text" id="m-motivo" placeholder="Ex.: Reposição, Quebra, Contagem...">
+                <button class="btn btn-azul" style="width: 100%; margin-top: 16px; padding: 13px; font-size: 15px;" onclick="salvarMovimento()" id="btn-salvar">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/seguranca.js"></script>
+    <script>
+        const API_BASE = '';
+        let estoque = [];
+        let somenteFalta = false;
+
+        function formatarQtd(n) { return String(Number(n).toFixed(0)).padStart(6, '0'); }
+
+        function obterOperador() {
+            try {
+                const raw = localStorage.getItem('jg_operador');
+                return raw ? JSON.parse(raw) : null;
+            } catch (e) { return null; }
+        }
+
+        function tokenAuth() {
+            const op = obterOperador();
+            return op && op.token ? { 'Authorization': 'Bearer ' + op.token } : {};
+        }
+
+        function bloquearCaixa() {
+            const op = obterOperador();
+            if (!op) { window.location.href = '/login.html'; return true; }
+            if (op.papel === 'SELLER') { window.location.href = '/'; return true; }
+            return false;
+        }
+
+        async function api(url, metodo = 'GET', corpo = null) {
+            const opcoes = { method: metodo, headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()) };
+            if (corpo) opcoes.body = JSON.stringify(corpo);
+            const response = await fetch(`${API_BASE}${url}`, opcoes);
+            if (response.status === 401) {
+                localStorage.removeItem('jg_operador');
+                window.location.href = '/login.html';
+                throw new Error('Sessão expirada.');
+            }
+            const dados = await response.json();
+            if (!response.ok) throw new Error(dados.erro || 'Erro na requisição');
+            return dados;
+        }
+
+        bloquearCaixa();
+
+        async function buscarEstoque() {
+            const busca = document.getElementById('busca').value.trim();
+            let url = '/api/estoque';
+            const params = [];
+            if (busca) params.push(`busca=${encodeURIComponent(busca)}`);
+            if (somenteFalta) params.push('baixo=true');
+            if (params.length) url += '?' + params.join('&');
+            try {
+                estoque = await api(url);
+                renderizarEstoque();
+            } catch (e) { alert(e.message); }
+        }
+
+        function renderizarEstoque() {
+            const tbody = document.getElementById('tabela-estoque');
+            if (estoque.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="sem-dados">Nenhum produto encontrado</td></tr>';
+                document.getElementById('resumo-estoque').innerText = '';
+                return;
+            }
+            const emFalta = estoque.filter(p => p.situacao !== 'OK').length;
+            document.getElementById('resumo-estoque').innerText = `${estoque.length} produto(s) | ${emFalta} em falta`;
+            tbody.innerHTML = estoque.map(p => {
+                const sit = p.situacao === 'OK' ? '<span class="situacao ok">OK</span>'
+                    : p.situacao === 'BAIXO' ? '<span class="situacao baixo">BAIXO</span>'
+                    : '<span class="situacao sem">SEM ESTOQUE</span>';
+                return `
+                <tr>
+                    <td>${esc(p.codigo || '-')}</td>
+                    <td><strong>${esc(p.nome)}</strong><br><small style="color:#8b95a1;">${esc(p.sku || '')}</small></td>
+                    <td class="num">${formatarQtd(p.quantidade)}</td>
+                    <td class="num">${formatarQtd(p.minimo)}</td>
+                    <td class="num">${formatarQtd(p.maximo)}</td>
+                    <td style="text-align: center;">${sit}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        function filtrarFalta() {
+            somenteFalta = !somenteFalta;
+            document.getElementById('btn-falta').style.backgroundColor = somenteFalta ? '#0b2545' : '#f0ad4e';
+            buscarEstoque();
+        }
+
+        const TIPOS = {
+            entrada: { titulo: 'Entrada de Estoque', btn: 'Confirmar Entrada', qtd: 'Quantidade a entrar *' },
+            saida: { titulo: 'Saída de Estoque', btn: 'Confirmar Saída', qtd: 'Quantidade a sair *' },
+            ajuste: { titulo: 'Ajuste de Estoque', btn: 'Confirmar Ajuste', qtd: 'Nova quantidade em estoque *' }
+        };
+
+        async function abrirModalMovimento(tipo) {
+            document.getElementById('m-tipo').value = tipo;
+            const conf = TIPOS[tipo];
+            document.getElementById('modal-titulo').innerText = conf.titulo;
+            document.getElementById('btn-salvar').innerText = conf.btn;
+            document.getElementById('m-label-qtd').innerText = conf.qtd;
+            document.getElementById('m-quantidade').value = '';
+            document.getElementById('m-motivo').value = '';
+
+            const select = document.getElementById('m-produto');
+            if (select.options.length === 0) {
+                try {
+                    const produtos = await api('/api/produtos?todos=1');
+                    select.innerHTML = '<option value="">Selecione o produto...</option>' + produtos.map(p =>
+                        `<option value="${p.id}">${esc(p.codigo || '')} - ${esc(p.nome)}</option>`
+                    ).join('');
+                } catch (e) { alert(e.message); return; }
+            }
+            select.value = '';
+            document.getElementById('modal-movimento').classList.add('active');
+            document.getElementById('m-quantidade').focus();
+        }
+
+        function fecharModalMovimento() {
+            document.getElementById('modal-movimento').classList.remove('active');
+        }
+
+        async function salvarMovimento() {
+            const tipo = document.getElementById('m-tipo').value;
+            const corpo = {
+                produtoId: document.getElementById('m-produto').value,
+                quantidade: Number(document.getElementById('m-quantidade').value),
+                motivo: document.getElementById('m-motivo').value.trim()
+            };
+            if (!corpo.produtoId) { alert("Selecione o produto!"); return; }
+            if (!corpo.quantidade || corpo.quantidade <= 0) { alert("Informe a quantidade!"); return; }
+
+            try {
+                const r = await api(`/api/estoque/${tipo}`, 'POST', corpo);
+                alert(`${TIPOS[tipo].titulo} realizado. Novo estoque: ${formatarQtd(r.novaQuantidade)}`);
+                fecharModalMovimento();
+                await Promise.all([buscarEstoque(), buscarMovimentos()]);
+            } catch (e) { alert(e.message); }
+        }
+
+        const TIPOS_MOV = {
+            IN: { txt: 'ENTRADA', cor: '#00a651' },
+            OUT: { txt: 'SAÍDA', cor: '#d9534f' },
+            ADJUSTMENT: { txt: 'AJUSTE', cor: '#f0ad4e' },
+            SALE: { txt: 'VENDA', cor: '#134074' },
+            PURCHASE: { txt: 'COMPRA', cor: '#00a651' },
+            RETURN: { txt: 'DEVOLUÇÃO', cor: '#f0ad4e' },
+            TRANSFER_IN: { txt: 'TRANSF. ENTRADA', cor: '#00a651' },
+            TRANSFER_OUT: { txt: 'TRANSF. SAÍDA', cor: '#d9534f' }
+        };
+
+        async function buscarMovimentos() {
+            try {
+                const movs = await api('/api/estoque/movimentacoes');
+                const tbody = document.getElementById('tabela-movimentos');
+                if (movs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="sem-dados">Nenhuma movimentação registrada</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = movs.map(m => {
+                    const t = TIPOS_MOV[m.tipo] || { txt: m.tipo, cor: '#8b95a1' };
+                    const sinal = m.quantidade > 0 ? '+' : '';
+                    const data = new Date(m.data).toLocaleString('pt-BR');
+                    return `
+                    <tr>
+                        <td><strong style="color:${t.cor};">${t.txt}</strong></td>
+                        <td>${esc(m.produto)}</td>
+                        <td class="num" style="color:${t.cor};">${sinal}${m.quantidade}</td>
+                        <td>${esc(m.motivo || '-')}</td>
+                        <td>${data}</td>
+                    </tr>`;
+                }).join('');
+            } catch (e) { /* não bloqueia a tela */ }
+        }
+
+        document.getElementById('busca').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') buscarEstoque();
+        });
+
+        (async () => {
+            try {
+                await Promise.all([buscarEstoque(), buscarMovimentos()]);
+            } catch (e) {
+                alert("Falha ao carregar dados: " + e.message);
+            }
+        })();
+    </script>
+</body>
+</html>

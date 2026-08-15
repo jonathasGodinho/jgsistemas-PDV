@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>Abertura de Caixa - JG Sistemas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
+        header { background: linear-gradient(90deg, #0b2545, #134074); color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
+        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
+        header a:hover { color: white; }
+        main { padding: 20px; max-width: 900px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
+        .painel { background: white; border: 1px solid #c9d2e0; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 4px rgba(11,37,69,0.08); }
+        .painel-titulo { background: linear-gradient(90deg, #0b2545, #134074); color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+        .painel-corpo { padding: 20px; }
+        .status-banner { padding: 10px 14px; font-weight: bold; font-size: 14px; border-radius: 6px; margin-bottom: 18px; text-transform: uppercase; }
+        .status-banner.aberto { background: #e3f7ec; color: #1d9d55; border: 1px solid #1d9d55; }
+        .status-banner.fechado { background: #fdeaea; color: #c0392b; border: 1px solid #c0392b; }
+        .aviso-mensalidade { background: #fde8c8; color: #b26b00; border: 1px solid #e6c47a; border-radius: 6px; padding: 12px 16px; font-size: 14px; font-weight: bold; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+        .aviso-mensalidade .fechar-aviso { background: none; border: 1px solid #b26b00; color: #b26b00; border-radius: 4px; padding: 4px 10px; font-size: 12px; font-weight: bold; cursor: pointer; flex: 0 0 auto; }
+        .aviso-mensalidade .fechar-aviso:hover { background: #b26b00; color: white; }
+        .form-linha { display: flex; gap: 14px; margin-bottom: 14px; }
+        .form-linha .campo { display: flex; flex-direction: column; gap: 5px; flex: 1; }
+        .form-linha label { font-size: 12px; color: #5b6b83; font-weight: bold; text-transform: uppercase; }
+        .form-linha input, .form-linha select { padding: 11px; font-size: 16px; border: 1px solid #b6c2d4; border-radius: 5px; color: #134074; outline: none; }
+        .form-linha input:focus { border-color: #134074; box-shadow: 0 0 0 3px rgba(19,64,116,0.12); }
+        .form-linha .campo-numero { position: relative; flex: 0 0 220px; }
+        .form-linha .campo-numero .lupa { position: absolute; right: 6px; top: 31px; background: #134074; color: white; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer; font-weight: bold; }
+        .info-fixa { display: flex; gap: 14px; }
+        .info-fixa .campo { flex: 1; }
+        .info-fixa .valor { font-size: 16px; font-weight: bold; color: #134074; padding: 11px 0; }
+        .info-fixa .campo.campo-fundo { flex: 0 0 220px; display: flex; flex-direction: column; gap: 5px; }
+        .info-fixa .campo.campo-fundo label { font-size: 12px; color: #5b6b83; font-weight: bold; text-transform: uppercase; }
+        .info-fixa .campo.campo-fundo input { width: 100%; padding: 11px; font-size: 16px; border: 1px solid #b6c2d4; border-radius: 5px; color: #134074; outline: none; }
+        .info-fixa .campo.campo-fundo input:focus { border-color: #134074; box-shadow: 0 0 0 3px rgba(19,64,116,0.12); }
+        .info-fixa .campo.campo-fundo input.confirmado { color: #008c45; font-weight: bold; background: #e3f7ec; border-color: #008c45; }
+        .acoes { display: flex; gap: 10px; margin-top: 20px; }
+        .btn { border: none; border-radius: 5px; padding: 11px 18px; font-size: 14px; font-weight: bold; cursor: pointer; }
+        .btn-verde { background: linear-gradient(135deg, #2ecc71, #1d9d55); color: white; }
+        .btn-verde:hover { filter: brightness(1.08); }
+        .btn-azul { background-color: #134074; color: white; }
+        .btn-azul:hover { background-color: #0b2545; }
+        .btn-vermelho { background-color: #d9534f; color: white; }
+        .btn-vermelho:hover { background-color: #b0433f; }
+        .btn-amarelo { background-color: #f0ad4e; color: white; }
+        .btn-amarelo:hover { background-color: #c98a2b; }
+        .btn-cinza { background-color: #8b95a1; color: white; }
+        .btn-cinza:hover { background-color: #6f7885; }
+        .btn-mini { padding: 4px 8px; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background: linear-gradient(90deg, #0b2545, #134074); color: white; padding: 10px; text-align: left; text-transform: uppercase; font-size: 12px; }
+        td { padding: 10px; border-bottom: 1px solid #e6e9ed; color: #333; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        .status { font-weight: bold; padding: 3px 8px; border-radius: 3px; font-size: 11px; }
+        .status.OPEN { color: #1d9d55; background: #e3f7ec; }
+        .status.CLOSED { color: #8b95a1; background: #eceff1; }
+        .sem-dados { text-align: center; color: #8b95a1; padding: 20px; font-size: 14px; }
+        .resumo-caixa { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+        .resumo-caixa .item { background: #f8f9fa; border: 1px solid #e6e9ed; border-radius: 5px; padding: 12px; }
+        .resumo-caixa .item .rotulo { font-size: 11px; color: #8b95a1; font-weight: bold; text-transform: uppercase; }
+        .resumo-caixa .item .valor { font-size: 18px; font-weight: bold; color: #134074; margin-top: 4px; }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 100; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: white; border-radius: 8px; width: 480px; max-width: 94vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
+        .modal-head { background: linear-gradient(90deg, #0b2545, #134074); color: white; padding: 14px 18px; font-weight: bold; font-size: 15px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
+        .modal-head .close { cursor: pointer; font-size: 20px; color: #aab2bd; }
+        .modal-head .close:hover { color: white; }
+        .modal-body { padding: 18px; }
+        .modal label { font-size: 12px; color: #5b6b83; font-weight: bold; display: block; margin: 12px 0 5px; text-transform: uppercase; }
+        .modal input { width: 100%; padding: 10px; font-size: 16px; border: 1px solid #b6c2d4; border-radius: 5px; color: #134074; outline: none; }
+        .modal input:focus { border-color: #134074; }
+        .modal .lista-numeros { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 10px; }
+        .modal .lista-numeros button { padding: 12px; font-size: 16px; font-weight: bold; border: 1px solid #b6c2d4; border-radius: 5px; background: white; color: #134074; cursor: pointer; }
+        .modal .lista-numeros button:hover { background: #134074; color: white; }
+
+        footer { background: linear-gradient(90deg, #0b2545, #134074); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>JG SISTEMAS - ABERTURA DE CAIXA</div>
+        <div style="display:flex; gap:14px; align-items:center;">
+            <span id="header-operador" style="color:#aab2bd; font-weight:normal;">OPERADOR</span>
+            <a href="#" onclick="sair(); return false;" style="color:#f0ad4e;">Trocar Operador</a>
+            <a href="/">← Menu Principal</a>
+        </div>
+    </header>
+
+    <main>
+        <div class="aviso-mensalidade" id="aviso-mensalidade" style="display:none;"></div>
+        <div class="painel">
+            <div class="painel-titulo"><span>Abertura de Registradora</span><span id="status-horario" style="font-weight:normal; font-size:12px;"></span></div>
+            <div class="painel-corpo">
+                <div class="status-banner fechado" id="status-banner">Registradora Fechada</div>
+
+                <div class="form-linha">
+                    <div class="campo campo-numero">
+                        <label>Número do Caixa *</label>
+                        <input type="text" id="c-numero" placeholder="0" inputmode="numeric">
+                        <button class="lupa" onclick="abrirBuscaCaixas()">F2</button>
+                    </div>
+                    <div class="campo">
+                        <label>Operador</label>
+                        <input type="text" id="c-operador" readonly>
+                    </div>
+                </div>
+
+                <div class="info-fixa">
+                    <div class="campo">
+                        <label>Data</label>
+                        <div class="valor" id="c-data"></div>
+                    </div>
+                    <div class="campo">
+                        <label>Hora</label>
+                        <div class="valor" id="c-hora"></div>
+                    </div>
+                    <div class="campo campo-fundo">
+                        <label>Fundo de Caixa (R$)</label>
+                        <input type="text" id="c-fundo" placeholder="0,00" inputmode="decimal">
+                    </div>
+                </div>
+
+                <div class="acoes">
+                    <button class="btn btn-verde" id="btn-abrir" onclick="abrirCaixa()">Abrir Caixa</button>
+                    <a class="btn btn-cinza" href="/">Cancelar</a>
+                    <button class="btn btn-amarelo" id="btn-ir-pdv" onclick="location.href='/pdv.html'">Ir para o PDV</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="painel" id="painel-caixa-aberto" style="display:none;">
+            <div class="painel-titulo"><span>Registradora Aberta</span><span class="resumo" style="font-size:12px; color:#aab2bd; font-weight:normal;">Nº <span id="aberto-numero"></span></span></div>
+            <div class="painel-corpo">
+                <div class="resumo-caixa">
+                    <div class="item"><div class="rotulo">Abertura</div><div class="valor" id="aberto-abertura">R$ 0,00</div></div>
+                    <div class="item"><div class="rotulo">Vendas</div><div class="valor" id="aberto-vendas">R$ 0,00</div></div>
+                    <div class="item"><div class="rotulo">Suprimentos</div><div class="valor" id="aberto-entradas">R$ 0,00</div></div>
+                    <div class="item"><div class="rotulo">Sangrias</div><div class="valor" id="aberto-saidas">R$ 0,00</div></div>
+                    <div class="item"><div class="rotulo">Previsão</div><div class="valor" id="aberto-previsao">R$ 0,00</div></div>
+                </div>
+                <div class="acoes">
+                    <button class="btn btn-azul" onclick="abrirModalMovimento('suprimento')">Suprimento</button>
+                    <button class="btn btn-amarelo" onclick="abrirModalMovimento('sangria')">Sangria</button>
+                    <button class="btn btn-vermelho" onclick="abrirModalFechamento()">Fechar Caixa</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="painel">
+            <div class="painel-titulo">Últimos Caixas / Fechamentos</div>
+            <div class="painel-corpo">
+                <div class="table-container" style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nº</th>
+                                <th>Operador</th>
+                                <th>Abertura</th>
+                                <th>Fechamento</th>
+                                <th style="text-align: right;">Fundo</th>
+                                <th style="text-align: right;">Fechamento</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-historico">
+                            <tr><td colspan="7" class="sem-dados">Carregando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>© 2026 JG Sistemas</footer>
+
+    <!-- Modal busca registradora (F2) -->
+    <div class="modal-overlay" id="modal-busca">
+        <div class="modal">
+            <div class="modal-head">
+                <span>Selecionar Registradora (F2)</span>
+                <span class="close" onclick="fecharModalBusca()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="lista-numeros" id="lista-numeros"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal sangria/suprimento -->
+    <div class="modal-overlay" id="modal-movimento">
+        <div class="modal">
+            <div class="modal-head">
+                <span id="movimento-titulo">Suprimento</span>
+                <span class="close" onclick="fecharModalMovimento()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="m-tipo">
+                <label id="m-label-valor">Valor *</label>
+                <input type="text" id="m-valor" placeholder="0,00" inputmode="decimal">
+                <label>Observações</label>
+                <input type="text" id="m-observacoes" placeholder="Motivo...">
+                <button class="btn btn-azul" style="width:100%; margin-top:16px; padding:13px; font-size:15px;" onclick="salvarMovimento()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal comprovante de sangria/suprimento -->
+    <div class="modal-overlay" id="modal-comprovante">
+        <div class="modal" style="width: 380px;">
+            <div class="modal-head">
+                <span>Comprovante</span>
+                <span class="close" onclick="fecharModalComprovante()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="comprovante-conteudo" style="font-size: 13px; line-height: 1.5; color: #333; margin: 0;"></div>
+                <button class="btn btn-verde" style="width:100%; margin-top:16px; padding:13px; font-size:15px;" onclick="imprimirComprovante()">Imprimir</button>
+                <button class="btn btn-cinza" style="width:100%; margin-top:8px; padding:13px; font-size:15px;" onclick="fecharModalComprovante()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal fechamento -->
+    <div class="modal-overlay" id="modal-fechamento">
+        <div class="modal">
+            <div class="modal-head">
+                <span>Fechamento de Caixa</span>
+                <span class="close" onclick="fecharModalFechamento()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="resumo-caixa" style="margin-bottom: 6px;">
+                    <div class="item"><div class="rotulo">Previsão</div><div class="valor" id="fech-previsao">R$ 0,00</div></div>
+                </div>
+                <label>Valor existente no caixa *</label>
+                <input type="text" id="fech-valor" placeholder="0,00" inputmode="decimal">
+                <label>Senha do Usuário *</label>
+                <input type="password" id="fech-senha" placeholder="••••••">
+                <label>Observações</label>
+                <input type="text" id="fech-obs" placeholder="Opcional...">
+                <button class="btn btn-vermelho" style="width:100%; margin-top:16px; padding:13px; font-size:15px;" onclick="confirmarFechamento()">Confirmar Fechamento</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/seguranca.js"></script>
+    <script>
+        const API_BASE = '';
+        const formatarMoeda = v => `R$ ${Number(v).toFixed(2).replace('.', ',')}`;
+        const parseMoeda = v => parseFloat(String(v).replace(',', '.')) || 0;
+
+        let aberto = null;
+        let numeros = [];
+        let OPERADOR = null;
+
+        function obterOperador() {
+            try {
+                const raw = localStorage.getItem('jg_operador');
+                return raw ? JSON.parse(raw) : null;
+            } catch (e) { return null; }
+        }
+
+        function tokenAuth() {
+            const op = obterOperador();
+            return op && op.token ? { 'Authorization': 'Bearer ' + op.token } : {};
+        }
+
+        function exibirAvisoMensalidade() {
+            let aviso = null;
+            try { aviso = JSON.parse(localStorage.getItem('jg_aviso_mensalidade')); } catch (e) { aviso = null; }
+            const el = document.getElementById('aviso-mensalidade');
+            if (!aviso || !aviso.mensagem) { el.style.display = 'none'; return; }
+            // Exibe o banner no máximo uma vez por hora.
+            const HORA_MS = 3600000;
+            const ultima = Number(localStorage.getItem('jg_aviso_mensalidade_ultima') || 0);
+            if (Date.now() - ultima < HORA_MS) { el.style.display = 'none'; return; }
+            localStorage.setItem('jg_aviso_mensalidade_ultima', String(Date.now()));
+            el.innerHTML = '';
+            const texto = document.createElement('div');
+            texto.innerText = `⚠ ${aviso.mensagem}`;
+            el.appendChild(texto);
+            const btn = document.createElement('button');
+            btn.className = 'fechar-aviso';
+            btn.innerText = 'Entendi';
+            btn.onclick = () => { el.style.display = 'none'; };
+            el.appendChild(btn);
+            el.style.display = 'flex';
+        }
+
+        function sair() {
+            fetch(`${API_BASE}/api/auth/logout`, { method: 'POST', headers: tokenAuth() }).catch(() => {});
+            localStorage.removeItem('jg_operador');
+            window.location.href = '/login.html';
+        }
+
+        // Dados da empresa usados nos comprovantes de sangria/suprimento
+        let CONFIG = { name: 'JG SISTEMAS', tradeName: 'TESTE LTDA', document: '', logo: null };
+        async function carregarConfig() {
+            try {
+                const r = await fetch(`${API_BASE}/api/configuracoes`, { headers: tokenAuth() });
+                if (r.ok) CONFIG = Object.assign(CONFIG, await r.json());
+            } catch (e) { console.error('Falha ao carregar configurações:', e); }
+        }
+
+        async function api(url, metodo = 'GET', corpo = null) {
+            const opcoes = { method: metodo, headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()) };
+            if (corpo) opcoes.body = JSON.stringify(corpo);
+            const response = await fetch(`${API_BASE}${url}`, opcoes);
+            if (response.status === 401) {
+                localStorage.removeItem('jg_operador');
+                window.location.href = '/login.html';
+                throw new Error('Sessão expirada.');
+            }
+            const dados = await response.json();
+            if (!response.ok) throw new Error(dados.erro || 'Erro na requisição');
+            return dados;
+        }
+
+        function atualizarHorario() {
+            const agora = new Date();
+            document.getElementById('c-data').innerText = agora.toLocaleDateString('pt-BR');
+            document.getElementById('c-hora').innerText = agora.toLocaleTimeString('pt-BR');
+            document.getElementById('status-horario').innerText = agora.toLocaleString('pt-BR');
+        }
+
+        async function carregarCaixa() {
+            try {
+                const r = await api('/api/caixa');
+                aberto = r.aberto;
+                numeros = r.numeros;
+
+                const banner = document.getElementById('status-banner');
+                if (aberto) {
+                    banner.className = 'status-banner aberto';
+                    banner.innerText = `Registradora ${aberto.numero} Aberta`;
+                    document.getElementById('painel-caixa-aberto').style.display = '';
+                    document.getElementById('aberto-numero').innerText = aberto.numero;
+                    document.getElementById('aberto-abertura').innerText = formatarMoeda(aberto.abertura);
+                    document.getElementById('aberto-vendas').innerText = formatarMoeda(aberto.vendas);
+                    document.getElementById('aberto-entradas').innerText = formatarMoeda(aberto.entradas);
+                    document.getElementById('aberto-saidas').innerText = formatarMoeda(aberto.saidas);
+                    document.getElementById('aberto-previsao').innerText = formatarMoeda(aberto.previsao);
+                    document.getElementById('btn-abrir').disabled = true;
+                    document.getElementById('c-numero').value = aberto.numero;
+                    document.getElementById('c-operador').value = aberto.operador || '';
+                } else {
+                    banner.className = 'status-banner fechado';
+                    banner.innerText = 'Registradora Fechada';
+                    document.getElementById('painel-caixa-aberto').style.display = 'none';
+                    document.getElementById('btn-abrir').disabled = false;
+                    document.getElementById('c-operador').value = '';
+                    // Nova abertura: fundo sempre limpo (não reaproveita valor de fechamento anterior)
+                    const campoFundo = document.getElementById('c-fundo');
+                    campoFundo.value = '';
+                    campoFundo.readOnly = false;
+                    campoFundo.classList.remove('confirmado');
+                }
+                renderizarHistorico(r.historico);
+            } catch (e) { alert(e.message); }
+        }
+
+        function renderizarHistorico(historico) {
+            const tbody = document.getElementById('tabela-historico');
+            if (!historico || historico.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="sem-dados">Nenhum caixa registrado</td></tr>';
+                return;
+            }
+            tbody.innerHTML = historico.map(h => `
+                <tr>
+                    <td><strong>${h.numero}</strong></td>
+                    <td>${esc(h.operador || '-')}</td>
+                    <td>${h.abertoEm ? new Date(h.abertoEm).toLocaleString('pt-BR') : '-'}</td>
+                    <td>${h.fechadoEm ? new Date(h.fechadoEm).toLocaleString('pt-BR') : '-'}</td>
+                    <td style="text-align:right;">${formatarMoeda(h.abertura)}</td>
+                    <td style="text-align:right;">${h.fechamento !== null ? formatarMoeda(h.fechamento) : '-'}</td>
+                    <td><span class="status ${h.status}">${h.status === 'OPEN' ? 'ABERTO' : 'FECHADO'}</span></td>
+                </tr>`).join('');
+        }
+
+        function abrirBuscaCaixas() {
+            if (numeros.length === 0) {
+                alert("Nenhuma registradora disponível para abertura.");
+                return;
+            }
+            const lista = document.getElementById('lista-numeros');
+            lista.innerHTML = numeros.map(n => `<button onclick="selecionarNumero(${n})">${n}</button>`).join('');
+            document.getElementById('modal-busca').classList.add('active');
+        }
+
+        function selecionarNumero(n) {
+            document.getElementById('c-numero').value = n;
+            document.getElementById('modal-busca').classList.remove('active');
+            document.getElementById('c-fundo').focus();
+        }
+
+        function fecharModalBusca() {
+            document.getElementById('modal-busca').classList.remove('active');
+        }
+
+        function confirmarFundo() {
+            const campo = document.getElementById('c-fundo');
+            if (campo.value.trim() === '') { campo.focus(); return; }
+            const valor = parseMoeda(campo.value);
+            campo.value = valor.toFixed(2).replace('.', ',');
+            campo.readOnly = true;
+            campo.classList.add('confirmado');
+            campo.blur();
+            document.getElementById('btn-abrir').focus();
+        }
+
+        async function abrirCaixa() {
+            const numero = parseInt(document.getElementById('c-numero').value) || 0;
+            if (!numero) { alert("Informe o número do caixa (F2 para localizar)!"); return; }
+
+            const campoFundo = document.getElementById('c-fundo');
+            if (campoFundo.value.trim() === '') {
+                alert("Informe o valor do fundo de caixa para abertura!");
+                campoFundo.focus();
+                return;
+            }
+            const fundo = parseMoeda(campoFundo.value);
+            if (fundo < 0) {
+                alert("O valor do fundo de caixa não pode ser negativo!");
+                campoFundo.focus();
+                return;
+            }
+
+            try {
+                const r = await api('/api/caixa/abrir', 'POST', {
+                    numero,
+                    valorInicial: fundo
+                });
+                alert(`Registradora ${r.numero} aberta com ${formatarMoeda(r.abertura)}`);
+                await carregarCaixa();
+            } catch (e) { alert(e.message); }
+        }
+
+        function abrirModalMovimento(tipo) {
+            document.getElementById('m-tipo').value = tipo;
+            document.getElementById('movimento-titulo').innerText = tipo === 'sangria' ? 'Sangria' : 'Suprimento';
+            document.getElementById('m-label-valor').innerText = tipo === 'sangria' ? 'Valor da sangria *' : 'Valor do suprimento *';
+            document.getElementById('m-valor').value = '';
+            document.getElementById('m-observacoes').value = '';
+            document.getElementById('modal-movimento').classList.add('active');
+        }
+
+        function fecharModalMovimento() {
+            document.getElementById('modal-movimento').classList.remove('active');
+        }
+
+        async function salvarMovimento() {
+            const tipo = document.getElementById('m-tipo').value;
+            const corpo = {
+                numero: aberto.numero,
+                valor: parseMoeda(document.getElementById('m-valor').value),
+                observacoes: document.getElementById('m-observacoes').value.trim()
+            };
+            if (!corpo.valor || corpo.valor <= 0) { alert("Informe um valor válido!"); return; }
+            try {
+                const r = await api(`/api/caixa/${tipo}`, 'POST', corpo);
+                fecharModalMovimento();
+                await carregarCaixa();
+                if (r.movimento) mostrarComprovante(r.movimento);
+            } catch (e) { alert(e.message); }
+        }
+
+        const LARGURA_COMPROVANTE = 42;
+        function sepComp() { return '-'.repeat(LARGURA_COMPROVANTE); }
+        function centroComp(t) {
+            if (!t) return '';
+            t = String(t);
+            if (t.length >= LARGURA_COMPROVANTE) return t;
+            return ' '.repeat(Math.floor((LARGURA_COMPROVANTE - t.length) / 2)) + t;
+        }
+
+        function mostrarComprovante(mov) {
+            const titulo = mov.tipo === 'SANGRIAS' ? 'COMPROVANTE DE SANGRIA' : 'COMPROVANTE DE SUPRIMENTO';
+            const data = new Date(mov.data);
+            const nomeEmpresa = (CONFIG.tradeName || CONFIG.name || 'JG SISTEMAS').toUpperCase();
+            const endereco = [CONFIG.address, CONFIG.number ? `nº ${esc(CONFIG.number)}` : ''].filter(Boolean).join(', ');
+            const cidade = [CONFIG.city, CONFIG.state].filter(Boolean).join('/');
+            const logo = CONFIG.logo
+                ? `<img src="${esc(CONFIG.logo)}" style="max-width:160px; max-height:80px; display:block; margin:0 auto 6px;" alt="logo">`
+                : '';
+
+            const cabecalho = [
+                centroComp(nomeEmpresa),
+                CONFIG.document ? centroComp(`CNPJ: ${esc(CONFIG.document)}`) : null,
+                endereco ? centroComp(endereco) : null,
+                (CONFIG.neighborhood && cidade) ? centroComp(`${esc(CONFIG.neighborhood)} - ${esc(cidade)}`) : (cidade ? centroComp(cidade) : null),
+                CONFIG.phone ? centroComp(`Tel: ${esc(CONFIG.phone)}`) : null,
+                ''
+            ].filter(Boolean);
+
+            const linha = (label, valor) => `${String(label).padEnd(15)}: ${esc(valor)}`;
+            const corpo = [
+                sepComp(),
+                centroComp(titulo),
+                sepComp(),
+                linha('Registradora', `Nº ${mov.numero}`),
+                linha('Data', `${data.toLocaleDateString('pt-BR')} ${data.toLocaleTimeString('pt-BR')}`),
+                linha('Operador', aberto?.operador || 'Admin'),
+                sepComp(),
+                linha('Valor', formatarMoeda(mov.valor)),
+                mov.observacoes ? linha('Motivo', mov.observacoes) : null,
+                sepComp(),
+                'Assinatura: ______________________',
+                ''
+            ].filter(l => l !== null).join('\n');
+
+            document.getElementById('comprovante-conteudo').innerHTML = `
+                <div style="text-align:center;">
+                    ${logo}
+                </div>
+                <pre style="font-family:'Courier New',monospace; font-size:12px; margin:6px 0 0;">${cabecalho.join('\n')}\n${corpo}</pre>`;
+            document.getElementById('modal-comprovante').classList.add('active');
+        }
+
+        function fecharModalComprovante() {
+            document.getElementById('modal-comprovante').classList.remove('active');
+        }
+
+        function imprimirComprovante() {
+            const conteudo = document.getElementById('comprovante-conteudo').innerHTML;
+            if (!conteudo) return;
+            const w = window.open('', '_blank', 'width=380,height=500');
+            w.document.write(`<body style="margin:0;"><div style="padding:12px;">${conteudo}</div></body>`);
+            w.document.close();
+            w.print();
+        }
+
+        async function abrirModalFechamento() {
+            try {
+                document.getElementById('fech-previsao').innerText = formatarMoeda(aberto.previsao);
+                document.getElementById('fech-valor').value = '';
+                document.getElementById('fech-senha').value = '';
+                document.getElementById('fech-obs').value = '';
+                document.getElementById('modal-fechamento').classList.add('active');
+                document.getElementById('fech-valor').focus();
+            } catch (e) { alert(e.message); }
+        }
+
+        function fecharModalFechamento() {
+            document.getElementById('modal-fechamento').classList.remove('active');
+        }
+
+        async function confirmarFechamento() {
+            const valor = parseMoeda(document.getElementById('fech-valor').value);
+            const senha = document.getElementById('fech-senha').value;
+            const obs = document.getElementById('fech-obs').value.trim();
+            if (valor <= 0) { alert("Informe o valor existente no caixa!"); return; }
+            if (!senha) { alert("Informe a senha do usuário!"); return; }
+            if (!confirm("Confirmar o fechamento da registradora?")) return;
+            try {
+                const r = await api('/api/caixa/fechar', 'POST', { numero: aberto.numero, senha, valorExistente: valor, observacoes: obs });
+                let msg = `Registradora ${r.numero} fechada.\nPrevisão: ${formatarMoeda(r.previsao)}\nFechamento: ${formatarMoeda(r.fechamento)}`;
+                if (Math.abs(r.divergencia) > 0.01) msg += `\nDivergência: ${formatarMoeda(r.divergencia)}`;
+                alert(msg);
+                fecharModalFechamento();
+                await carregarCaixa();
+            } catch (e) { alert(e.message); }
+        }
+
+        document.getElementById('c-numero').addEventListener('keydown', (e) => {
+            if (e.key === 'F2') {
+                e.preventDefault();
+                abrirBuscaCaixas();
+            }
+        });
+
+        document.getElementById('c-fundo').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                confirmarFundo();
+            }
+        });
+
+        document.getElementById('c-fundo').addEventListener('blur', () => {
+            const campo = document.getElementById('c-fundo');
+            if (campo.readOnly || campo.value.trim() === '') return;
+            const valor = parseMoeda(campo.value);
+            campo.value = valor.toFixed(2).replace('.', ',');
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'F2' && document.getElementById('modal-busca').classList.contains('active')) {
+                e.preventDefault();
+            }
+        });
+
+        setInterval(atualizarHorario, 1000);
+
+        (async () => {
+            try {
+                OPERADOR = obterOperador();
+                if (!OPERADOR) { window.location.href = '/login.html'; return; }
+                if (OPERADOR.trocarSenha) { localStorage.removeItem('jg_operador'); window.location.href = '/login.html'; return; }
+                exibirAvisoMensalidade();
+                document.getElementById('header-operador').innerText = `OPERADOR: ${OPERADOR.nome || OPERADOR.email}`;
+                atualizarHorario();
+                document.getElementById('c-operador').value = OPERADOR.nome || OPERADOR.email;
+                if (OPERADOR.caixaNumber) {
+                    document.getElementById('c-numero').value = OPERADOR.caixaNumber;
+                }
+                await carregarConfig();
+                await carregarCaixa();
+            } catch (e) {
+                alert("Falha ao carregar dados: " + e.message);
+            }
+        })();
+    </script>
+</body>
+</html>

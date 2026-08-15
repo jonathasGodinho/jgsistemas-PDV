@@ -1,0 +1,19 @@
+# Segredos e ambiente — nunca versionar
+**/.env
+!**/.env.example
+
+# Dados do Painel SaaS (clientes, senhas de instalação, logs de instâncias)
+dados/
+
+# Logs
+*.log
+
+# Node.js
+node_modules/
+
+# Sistema de arquivos
+.DS_Store
+Thumbs.db
+
+# Backups locais
+*.bak

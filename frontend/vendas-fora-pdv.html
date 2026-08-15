@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>Vendas Fora do PDV - JG Sistemas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f0f2f5; height: 100vh; display: grid; grid-template-rows: 50px 1fr 40px; overflow: hidden; }
+        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
+        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
+        header a:hover { color: white; }
+        .btn-cabecalho { background-color: #134074; color: white; border: none; border-radius: 4px; padding: 7px 14px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .btn-cabecalho:hover { background-color: #00a651; }
+
+        .pdv-container { display: grid; grid-template-columns: 1fr 400px; gap: 15px; padding: 15px; height: 100%; overflow: hidden; }
+        .left-panel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; display: grid; grid-template-rows: 1fr 90px; overflow: hidden; }
+        .table-container { overflow-y: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background-color: #134074; color: white; position: sticky; top: 0; padding: 10px; text-align: left; text-transform: uppercase; }
+        td { padding: 10px; border-bottom: 1px solid #e6e9ed; color: #333; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        .input-bar { background-color: #e6e9ed; padding: 12px 15px; display: grid; grid-template-columns: 1fr 120px; gap: 12px; align-items: center; border-top: 2px solid #134074; }
+        .input-bar input { width: 100%; padding: 12px; font-size: 18px; font-weight: bold; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
+
+        .right-panel { display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
+        .box-info { background: white; border: 1px solid #ccd1d9; border-radius: 4px; padding: 12px 14px; }
+        .box-info label { font-size: 11px; color: #656d78; font-weight: bold; display: block; margin-bottom: 5px; text-transform: uppercase; }
+        .box-info .value { font-size: 24px; font-weight: 700; color: #134074; text-align: right; }
+        .box-info input { width: 100%; padding: 9px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
+        .linha2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .linha-cliente { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+        .lupa-btn { border: 1px solid #aab2bd; border-radius: 4px; background: #134074; color: white; padding: 9px 12px; cursor: pointer; font-weight: bold; font-size: 13px; }
+        .lupa-btn:hover { background-color: #0b2545; }
+        .total-box { background-color: #0b2545; border: none; }
+        .total-box label { color: #aab2bd; }
+        .total-box .value { color: #00ff66; font-size: 36px; }
+        .btn-registrar { background-color: #00a651; color: white; border: none; border-radius: 4px; padding: 14px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; text-transform: uppercase; }
+        .btn-registrar:hover { background-color: #008c45; }
+        .info-cliente { font-size: 12px; color: #134074; background: #eef4fb; border: 1px solid #c8d8ec; border-radius: 4px; padding: 8px 10px; margin-top: 8px; display: none; }
+        .tabela-parcelas { margin-top: 8px; }
+        .tabela-parcelas table { font-size: 12px; }
+        .tabela-parcelas th, .tabela-parcelas td { padding: 6px 8px; }
+        tr.sel-remover { background-color: #fbe3e3 !important; }
+        tr.sel-remover td { color: #d9534f; font-weight: bold; }
+        .sem-dados { text-align: center; color: #8b95a1; padding: 26px; font-size: 13px; }
+
+        footer { background-color: #134074; color: white; display: flex; align-items: center; justify-content: space-around; font-size: 12px; font-weight: bold; padding: 0 10px; }
+        .key-hint { background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 3px; margin-right: 5px; }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 100; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: white; border-radius: 6px; width: 720px; max-width: 94vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
+        .modal-head { background-color: #0b2545; color: white; padding: 14px 18px; font-weight: bold; font-size: 15px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
+        .modal-head .close { cursor: pointer; font-size: 20px; color: #aab2bd; }
+        .modal-head .close:hover { color: white; }
+        .modal-body { padding: 18px; }
+        .busca-input { width: 100%; padding: 11px; font-size: 16px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; margin-bottom: 12px; }
+        .busca-tabela-container { max-height: 320px; overflow-y: auto; border: 1px solid #ccd1d9; border-radius: 4px; }
+        .busca-tabela { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .busca-tabela th { background-color: #134074; color: white; position: sticky; top: 0; padding: 8px; text-align: left; text-transform: uppercase; font-size: 12px; }
+        .busca-tabela td { padding: 9px; border-bottom: 1px solid #e6e9ed; color: #333; cursor: pointer; }
+        .busca-tabela tr:nth-child(even) { background-color: #f8f9fa; }
+        .busca-tabela tr.sel { background-color: #134074; }
+        .busca-tabela tr.sel td { color: white; }
+        .busca-hint { font-size: 12px; color: #656d78; margin-top: 10px; text-align: center; }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .b-verde { background: #d8f3e3; color: #008c45; }
+        .b-azul { background: #d6e6f7; color: #134074; }
+        .b-vermelho { background: #fbe3e3; color: #d9534f; }
+        .info-venda { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 13px; margin-bottom: 14px; }
+        .total-painel { display: flex; justify-content: space-between; align-items: center; background: #f0f2f5; border-radius: 4px; padding: 12px; margin-top: 6px; font-weight: bold; font-size: 16px; }
+        .verde { color: #00a651; }
+        .btn-mini { padding: 5px 10px; font-size: 12px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        .btn-azul { background-color: #134074; color: white; }
+        .btn-azul:hover { background-color: #0b2545; }
+        .btn-verde { background-color: #00a651; color: white; }
+        .btn-verde:hover { background-color: #008c45; }
+
+        @media (max-width: 1024px) {
+            .pdv-container { grid-template-columns: 1fr 330px; gap: 10px; padding: 10px; }
+            .total-box .value { font-size: 30px; }
+        }
+        @media (max-width: 768px) {
+            body { grid-template-rows: 46px 1fr 36px; }
+            .pdv-container { grid-template-columns: 1fr; grid-template-rows: 1fr auto; overflow-y: auto; }
+            .input-bar { grid-template-columns: 1fr 100px; padding: 10px; }
+            .input-bar input { font-size: 16px; padding: 10px; }
+            footer { font-size: 11px; flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>JG SISTEMAS - VENDAS FORA DO PDV</div>
+        <div style="display:flex; align-items:center;">
+            <button class="btn-cabecalho" onclick="abrirModalVendas()">Vendas a Prazo</button>
+            <a href="/" style="margin-left:14px;">← Menu</a>
+        </div>
+    </header>
+
+    <div class="pdv-container">
+        <div class="left-panel">
+            <div class="table-container">
+                <table id="tabela-itens">
+                    <thead>
+                        <tr>
+                            <th style="width:5%;">Item</th>
+                            <th style="width:16%;">Código</th>
+                            <th style="width:38%;">Produto</th>
+                            <th style="width:9%;">Qtd</th>
+                            <th style="width:12%;">Unit.</th>
+                            <th style="width:15%;">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="6" class="sem-dados">Nenhum item adicionado</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="input-bar">
+                <input type="text" id="f-codigo" placeholder="Código de barras ou SKU — F3 busca produto" autofocus>
+                <input type="number" id="f-qtd" value="1" min="1" style="text-align:center;" placeholder="Qtd">
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="box-info">
+                <label>Cliente</label>
+                <div class="linha-cliente">
+                    <input type="text" id="f-cliente" placeholder="Nome do cliente" oninput="limparClienteSelecao()">
+                    <button class="lupa-btn" onclick="abrirModalClientes()" title="Buscar cliente (F2)">🔍</button>
+                </div>
+                <div style="margin-top:8px;">
+                    <label>Celular</label>
+                    <input type="text" id="f-celular" placeholder="(00) 00000-0000">
+                </div>
+                <div class="info-cliente" id="info-cliente"></div>
+            </div>
+
+            <div class="box-info">
+                <label>Parcelamento</label>
+                <div class="linha2">
+                    <div>
+                        <label>Nº de Parcelas</label>
+                        <input type="number" id="f-parcelas" min="1" max="24" value="1" oninput="renderizarParcelas()">
+                    </div>
+                    <div>
+                        <label>1ª Parcela</label>
+                        <input type="date" id="f-primeira" onchange="renderizarParcelas()">
+                    </div>
+                </div>
+                <div class="tabela-parcelas">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:34px;">Nº</th>
+                                <th>Vencimento</th>
+                                <th style="text-align:right;">Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-parcelas">
+                            <tr><td colspan="3" class="sem-dados" style="padding:12px;">Informe a data da 1ª parcela</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="box-info">
+                <label>Desconto e Cashback</label>
+                <div class="linha2">
+                    <div>
+                        <label>Desconto (R$)</label>
+                        <input type="number" id="f-desconto" min="0" step="0.01" value="0" oninput="renderizarParcelas()">
+                    </div>
+                    <div>
+                        <label>Resgatar Cashback (R$)</label>
+                        <input type="number" id="f-cashback" min="0" step="0.01" value="0" oninput="renderizarParcelas()">
+                    </div>
+                </div>
+                <div style="margin-top:8px;">
+                    <label>Senha do administrador <span style="text-transform:none; font-weight:normal; color:#8b95a1;">(exigida p/ desconto)</span></label>
+                    <input type="password" id="f-senha-admin" autocomplete="off" placeholder="Senha do administrador">
+                </div>
+            </div>
+
+            <div class="box-info">
+                <label>Observações</label>
+                <input type="text" id="f-obs" placeholder="Opcional">
+            </div>
+
+            <div class="box-info total-box">
+                <label>Total da Venda</label>
+                <div class="value" id="lbl-total">R$ 0,00</div>
+            </div>
+
+            <button class="btn-registrar" onclick="registrarVenda()">Registrar Venda a Prazo</button>
+        </div>
+    </div>
+
+    <footer>
+        <div><span class="key-hint">ENTER</span>Lançar Item</div>
+        <div><span class="key-hint">F2</span>Buscar Cliente</div>
+        <div><span class="key-hint">F3</span>Buscar Produto</div>
+        <div><span class="key-hint">F7</span>Remover Item (↑↓ + ENTER)</div>
+        <div><span class="key-hint">F12</span>Registrar Venda</div>
+    </footer>
+
+    <!-- Modal busca de produtos -->
+    <div class="modal-overlay" id="modal-produtos">
+        <div class="modal">
+            <div class="modal-head">
+                <span>Buscar Produto</span>
+                <span class="close" onclick="fecharModal('modal-produtos')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="busca-input" id="p-busca" placeholder="Digite nome, código ou SKU..." autocomplete="off">
+                <div class="busca-tabela-container">
+                    <table class="busca-tabela">
+                        <thead>
+                            <tr>
+                                <th style="width:30%;">Código</th>
+                                <th>Produto</th>
+                                <th style="width:18%; text-align:right;">Preço</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-produtos">
+                            <tr><td colspan="3" style="text-align:center; color:#8b95a1; padding:20px;">Digite para buscar...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="busca-hint">Seta ↑↓ para navegar · ENTER para selecionar · ESC para fechar</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal busca de clientes -->
+    <div class="modal-overlay" id="modal-clientes">
+        <div class="modal">
+            <div class="modal-head">
+                <span>Buscar Cliente</span>
+                <span class="close" onclick="fecharModal('modal-clientes')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="busca-input" id="c-busca" placeholder="Nome, documento ou telefone..." autocomplete="off">
+                <div class="busca-tabela-container">
+                    <table class="busca-tabela">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th style="width:25%;">Celular</th>
+                                <th style="width:22%;">Documento</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-clientes">
+                            <tr><td colspan="3" style="text-align:center; color:#8b95a1; padding:20px;">Digite para buscar...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="busca-hint">Seta ↑↓ para navegar · ENTER para selecionar · ESC para fechar</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal lista de vendas a prazo -->
+    <div class="modal-overlay" id="modal-vendas">
+        <div class="modal" style="width:940px;">
+            <div class="modal-head">
+                <span>Vendas a Prazo <span id="resumo-lista" style="font-size:12px; color:#aab2bd; font-weight:normal;"></span></span>
+                <span class="close" onclick="fecharModal('modal-vendas')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nº</th>
+                                <th>Data</th>
+                                <th>Cliente</th>
+                                <th style="text-align:right;">Itens</th>
+                                <th style="text-align:right;">Total</th>
+                                <th>Parcelas</th>
+                                <th>Status</th>
+                                <th style="text-align:center;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-vendas">
+                            <tr><td colspan="8" class="sem-dados">Carregando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal detalhe / impressão -->
+    <div class="modal-overlay" id="modal-detalhe">
+        <div class="modal">
+            <div class="modal-head">
+                <span>Venda a Prazo - Nº <span id="md-numero">-</span></span>
+                <span class="close" onclick="fecharDetalhe()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="detalhe-conteudo"></div>
+                <button class="btn-verde" style="width:100%; margin-top:16px; padding:13px; font-size:15px;" onclick="imprimirContrato()">Imprimir Venda a Prazo</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/seguranca.js"></script>
+    <script>
+
+const API_BASE = '';
+const formatarMoeda = v => `R$ ${Number(v).toFixed(2).replace('.', ',')}`;
+const formatarData = d => new Date(d).toLocaleDateString('pt-BR');
+const formatarDataHora = d => new Date(d).toLocaleString('pt-BR');
+
+function obterOperador() {
+    try {
+        const raw = localStorage.getItem('jg_operador');
+        return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
+}
+
+function tokenAuth() {
+    const op = obterOperador();
+    return op && op.token ? { 'Authorization': 'Bearer ' + op.token } : {};
+}
+
+const NOMES_STATUS = { PENDING: 'Em Aberto', PAID: 'Paga', OVERDUE: 'Atrasada', CANCELLED: 'Cancelada' };
+const CORES_STATUS = { PENDING: 'b-azul', PAID: 'b-verde', OVERDUE: 'b-vermelho', CANCELLED: 'b-vermelho' };
+
+async function api(url, metodo = 'GET', corpo = null) {
+    const opcoes = { method: metodo, headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()) };
+    if (corpo) opcoes.body = JSON.stringify(corpo);
+    const response = await fetch(`${API_BASE}${url}`, opcoes);
+    if (response.status === 401) {
+        localStorage.removeItem('jg_operador');
+        window.location.href = '/login.html';
+        throw new Error('Sessão expirada.');
+    }
+    const dados = await response.json();
+    if (!response.ok) throw new Error(dados.erro || 'Erro na requisição');
+    return dados;
+}
+
+let CONFIG = { name: 'JG SISTEMAS', tradeName: 'TESTE LTDA', document: '', logo: null };
+async function carregarConfig() {
+    try {
+        const r = await fetch('/api/configuracoes', { headers: tokenAuth() });
+        if (r.ok) CONFIG = Object.assign(CONFIG, await r.json());
+    } catch (e) { console.error('Falha ao carregar configurações:', e); }
+}
+
+// ---------- Itens da venda ----------
+let itens = [];
+let clienteSelecionadoId = null;
+let codigoPendente = null;
+let modoRemover = false;
+let indiceRemover = -1;
+
+function renderizarTabela() {
+    const tbody = document.getElementById('tabela-itens').getElementsByTagName('tbody')[0];
+    if (itens.length === 0) {
+        modoRemover = false;
+        indiceRemover = -1;
+        tbody.innerHTML = '<tr><td colspan="6" class="sem-dados">Nenhum item adicionado</td></tr>';
+    } else {
+        tbody.innerHTML = itens.map((i, idx) => `
+            <tr class="${modoRemover && indiceRemover === idx ? 'sel-remover' : ''}">
+                <td>${String(idx + 1).padStart(3, '0')}</td>
+                <td>${esc(i.codigo)}</td>
+                <td>${esc(i.nome)}</td>
+                <td style="text-align:center;">${i.quantidade}</td>
+                <td style="text-align:center;">${formatarMoeda(i.unitario)}</td>
+                <td style="text-align:right; font-weight:bold;">${formatarMoeda(i.unitario * i.quantidade)}</td>
+            </tr>`).join('');
+    }
+    renderizarParcelas();
+}
+
+function adicionarItem(qtdLancada) {
+    let codigo = (codigoPendente || document.getElementById('f-codigo').value || '').trim();
+    codigoPendente = null;
+    if (!codigo) { alert('Informe o código do produto!'); return; }
+    api(`/api/produtos/${encodeURIComponent(codigo)}?clienteId=${encodeURIComponent(clienteSelecionadoId || '')}&qtd=1`).then(p => {
+        const existente = itens.find(i => i.codigo === p.codigo);
+        let idx;
+        if (existente) {
+            existente.quantidade += qtdLancada;
+            idx = itens.indexOf(existente);
+        } else {
+            itens.push({ codigo: p.codigo, nome: p.descricao, quantidade: qtdLancada, unitario: Number(p.preco) });
+            idx = itens.length - 1;
+        }
+        document.getElementById('f-codigo').value = '';
+        document.getElementById('f-qtd').value = '1';
+        renderizarTabela();
+        document.getElementById('f-codigo').focus();
+        if (clienteSelecionadoId) recalcularPrecoItem(idx);
+    }).catch(e => alert(e.message));
+}
+
+async function recalcularPrecoItem(idx) {
+    const item = itens[idx];
+    try {
+        const p = await api(`/api/produtos/${encodeURIComponent(item.codigo)}?clienteId=${encodeURIComponent(clienteSelecionadoId)}&qtd=${item.quantidade}`);
+        item.unitario = Number(p.preco);
+        renderizarTabela();
+    } catch (e) { /* mantém o preço atual */ }
+}
+
+function entrarModoRemover() {
+    if (itens.length === 0) return;
+    modoRemover = true;
+    indiceRemover = itens.length - 1;
+    renderizarTabela();
+}
+
+function sairModoRemover() {
+    modoRemover = false;
+    indiceRemover = -1;
+    renderizarTabela();
+    document.getElementById('f-codigo').focus();
+}
+
+function moverRemover(delta) {
+    if (!modoRemover || itens.length === 0) return;
+    indiceRemover = (indiceRemover + delta + itens.length) % itens.length;
+    renderizarTabela();
+}
+
+function removerSelecionado() {
+    if (!modoRemover || itens.length === 0) return;
+    itens.splice(indiceRemover, 1);
+    if (itens.length === 0) {
+        sairModoRemover();
+        return;
+    }
+    if (indiceRemover >= itens.length) indiceRemover = itens.length - 1;
+    renderizarTabela();
+}
+
+// ---------- Pesquisa de produtos (F3, estilo PDV) ----------
+let produtosPesquisa = [];
+let indiceProduto = -1;
+let timerProduto = null;
+
+function fecharModal(id) {
+    document.getElementById(id).classList.remove('active');
+}
+
+function abrirModalProdutos() {
+    document.getElementById('modal-produtos').classList.add('active');
+    document.getElementById('p-busca').value = '';
+    produtosPesquisa = [];
+    indiceProduto = -1;
+    document.getElementById('tabela-produtos').innerHTML = '<tr><td colspan="3" style="text-align:center; color:#8b95a1; padding:20px;">Digite para buscar...</td></tr>';
+    setTimeout(() => document.getElementById('p-busca').focus(), 100);
+}
+
+async function buscarProdutos(termo) {
+    termo = (termo || '').trim();
+    try {
+        const lista = await api('/api/produtos' + (termo ? `?busca=${encodeURIComponent(termo)}` : ''));
+        produtosPesquisa = lista.filter(p => p.ativo !== false);
+        indiceProduto = produtosPesquisa.length > 0 ? 0 : -1;
+        renderizarProdutos();
+    } catch (e) { alert(e.message); }
+}
+
+function renderizarProdutos() {
+    const tbody = document.getElementById('tabela-produtos');
+    if (produtosPesquisa.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#8b95a1; padding:20px;">Nenhum produto encontrado</td></tr>';
+        return;
+    }
+    tbody.innerHTML = produtosPesquisa.map((p, i) => `
+        <tr class="busca-linha ${i === indiceProduto ? 'sel' : ''}" onclick="selecionarProduto(${i})">
+            <td>${esc(p.codigo || p.sku || '-')}</td>
+            <td>${esc(p.nome)}</td>
+            <td style="text-align:right;">${formatarMoeda(p.preco)}</td>
+        </tr>`).join('');
+    const linhaSel = tbody.querySelector('tr.sel');
+    if (linhaSel) linhaSel.scrollIntoView({ block: 'nearest' });
+}
+
+function moverSelecaoProduto(delta) {
+    if (produtosPesquisa.length === 0) return;
+    indiceProduto = (indiceProduto + delta + produtosPesquisa.length) % produtosPesquisa.length;
+    renderizarProdutos();
+}
+
+function selecionarProduto(idx) {
+    const p = produtosPesquisa[idx];
+    if (!p) return;
+    codigoPendente = p.codigo || p.sku;
+    fecharModal('modal-produtos');
+    document.getElementById('f-qtd').focus();
+    document.getElementById('f-qtd').select();
+    if (clienteSelecionadoId) renderizarParcelas();
+}
+
+// ---------- Pesquisa de clientes (F2) ----------
+let clientesPesquisa = [];
+let indiceCliente = -1;
+let timerCliente = null;
+
+function abrirModalClientes() {
+    document.getElementById('modal-clientes').classList.add('active');
+    document.getElementById('c-busca').value = '';
+    clientesPesquisa = [];
+    indiceCliente = -1;
+    document.getElementById('tabela-clientes').innerHTML = '<tr><td colspan="3" style="text-align:center; color:#8b95a1; padding:20px;">Digite para buscar...</td></tr>';
+    setTimeout(() => document.getElementById('c-busca').focus(), 100);
+}
+
+async function buscarClientes(termo) {
+    termo = (termo || '').trim();
+    try {
+        clientesPesquisa = await api('/api/clientes' + (termo ? `?busca=${encodeURIComponent(termo)}` : ''));
+        indiceCliente = clientesPesquisa.length > 0 ? 0 : -1;
+        renderizarClientes();
+    } catch (e) { alert(e.message); }
+}
+
+function renderizarClientes() {
+    const tbody = document.getElementById('tabela-clientes');
+    if (clientesPesquisa.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#8b95a1; padding:20px;">Nenhum cliente encontrado</td></tr>';
+        return;
+    }
+    tbody.innerHTML = clientesPesquisa.map((c, i) => `
+        <tr class="busca-linha ${i === indiceCliente ? 'sel' : ''}" onclick="selecionarCliente(${i})">
+            <td>${esc(c.nome)}</td>
+            <td>${esc(c.celular || c.telefone || '-')}</td>
+            <td>${esc(c.documento || '-')}</td>
+        </tr>`).join('');
+    const linhaSel = tbody.querySelector('tr.sel');
+    if (linhaSel) linhaSel.scrollIntoView({ block: 'nearest' });
+}
+
+function moverSelecaoCliente(delta) {
+    if (clientesPesquisa.length === 0) return;
+    indiceCliente = (indiceCliente + delta + clientesPesquisa.length) % clientesPesquisa.length;
+    renderizarClientes();
+}
+
+function selecionarCliente(idx) {
+    const c = clientesPesquisa[idx];
+    if (!c) return;
+    clienteSelecionadoId = c.id || null;
+    document.getElementById('f-cliente').value = c.nome;
+    document.getElementById('f-celular').value = c.celular || c.telefone || '';
+    fecharModal('modal-clientes');
+    if (c.id) carregarSituacaoCliente(c.id);
+    if (itens.length && clienteSelecionadoId) {
+        itens.forEach((_, i) => recalcularPrecoItem(i));
+    }
+    document.getElementById('f-codigo').focus();
+}
+
+function limparClienteSelecao() {
+    clienteSelecionadoId = null;
+    document.getElementById('info-cliente').style.display = 'none';
+}
+
+async function carregarSituacaoCliente(clienteId) {
+    try {
+        const s = await api(`/api/clientes/${clienteId}/situacao`);
+        const partes = [];
+        if (s.limite > 0) {
+            partes.push(`Limite: ${formatarMoeda(s.limite)}`);
+            partes.push(`Em aberto: ${formatarMoeda(s.emAberto)}`);
+            const restante = Math.max(0, s.limite - s.emAberto);
+            partes.push(`Disponível: ${formatarMoeda(restante)}`);
+        } else {
+            partes.push('Sem limite de crédito');
+        }
+        if (s.cashback > 0) partes.push(`Cashback disponível: ${formatarMoeda(s.cashback)}`);
+        const info = document.getElementById('info-cliente');
+        if (partes.length) {
+            info.style.display = 'block';
+            info.innerHTML = `<strong>${esc(s.nome)}</strong> · ${partes.join(' · ')}`;
+        }
+    } catch (e) { /* cliente sem vínculo identificado ainda */ }
+}
+
+function somaMes(data, meses) {
+    const d = new Date(data);
+    const dia = d.getDate();
+    d.setMonth(d.getMonth() + meses, 1);
+    const ultimo = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+    d.setDate(Math.min(dia, ultimo));
+    return d;
+}
+
+function calcularSubtotal() {
+    return itens.reduce((s, i) => s + (Number(i.unitario) || 0) * (Number(i.quantidade) || 0), 0);
+}
+
+function calcularTotal() {
+    const desconto = Number(document.getElementById('f-desconto').value) || 0;
+    const cashback = Number(document.getElementById('f-cashback').value) || 0;
+    return Math.max(0, calcularSubtotal() - desconto - cashback);
+}
+
+function renderizarParcelas() {
+    const total = calcularTotal();
+    document.getElementById('lbl-total').innerText = formatarMoeda(total);
+
+    const n = Math.max(1, Math.min(24, Math.round(Number(document.getElementById('f-parcelas').value) || 1)));
+    const primeira = document.getElementById('f-primeira').value;
+
+    const tbody = document.getElementById('tabela-parcelas');
+    if (!primeira) {
+        tbody.innerHTML = '<tr><td colspan="3" class="sem-dados" style="padding:12px;">Informe a data da 1ª parcela</td></tr>';
+        return;
+    }
+
+    const totalCents = Math.round(total * 100);
+    const baseCents = Math.floor(totalCents / n);
+    let resto = totalCents - baseCents * n;
+
+    const linhas = [];
+    for (let i = 1; i <= n; i++) {
+        let valorCents = baseCents;
+        if (resto > 0) { valorCents += 1; resto -= 1; }
+        const venc = somaMes(new Date(primeira + 'T00:00:00'), i - 1);
+        linhas.push(`
+            <tr>
+                <td>${i}</td>
+                <td>${formatarData(venc)}</td>
+                <td style="text-align:right;">${formatarMoeda(valorCents / 100)}</td>
+            </tr>`);
+    }
+    tbody.innerHTML = linhas.join('');
+}
+
+async function registrarVenda() {
+    const cliente = document.getElementById('f-cliente').value.trim();
+    if (!cliente) { alert('Informe o nome do cliente!'); return; }
+    if (itens.length === 0) { alert('Adicione pelo menos um item!'); return; }
+    const primeira = document.getElementById('f-primeira').value;
+    if (!primeira) { alert('Informe a data da primeira parcela!'); return; }
+
+    const payload = {
+        cliente,
+        clienteId: clienteSelecionadoId || null,
+        celular: document.getElementById('f-celular').value.trim(),
+        itens: itens.map(i => ({ codigo: i.codigo, quantidade: i.quantidade })),
+        parcelas: Number(document.getElementById('f-parcelas').value) || 1,
+        primeiraVencimento: primeira,
+        desconto: Number(document.getElementById('f-desconto').value) || 0,
+        cashbackResgate: Number(document.getElementById('f-cashback').value) || 0,
+        senhaAdmin: document.getElementById('f-senha-admin').value.trim() || undefined,
+        observacoes: document.getElementById('f-obs').value.trim() || null
+    };
+
+    try {
+        const r = await api('/api/vendas-fora-pdv', 'POST', payload);
+        alert(`Venda a prazo Nº ${r.numero} registrada com sucesso!\nCliente: ${r.cliente}\nTotal: ${formatarMoeda(r.total)}\nParcelas: ${r.parcelas}x`);
+        itens = [];
+        clienteSelecionadoId = null;
+        document.getElementById('f-cliente').value = '';
+        document.getElementById('f-celular').value = '';
+        document.getElementById('f-obs').value = '';
+        document.getElementById('f-desconto').value = '0';
+        document.getElementById('f-cashback').value = '0';
+        document.getElementById('f-senha-admin').value = '';
+        document.getElementById('info-cliente').style.display = 'none';
+        document.getElementById('f-parcelas').value = '1';
+        renderizarTabela();
+        document.getElementById('f-codigo').focus();
+        try {
+            const detalhe = await api(`/api/vendas-fora-pdv/${r.id}`);
+            imprimirContrato(detalhe);
+        } catch (e) { /* impressão é opcional */ }
+    } catch (e) {
+        if (e.message && e.message.indexOf('senha do administrador') !== -1) {
+            document.getElementById('f-senha-admin').focus();
+        }
+        alert(e.message);
+    }
+}
+
+// ---------- Lista de vendas a prazo (modal) ----------
+function abrirModalVendas() {
+    document.getElementById('modal-vendas').classList.add('active');
+    carregarVendas();
+}
+
+async function carregarVendas() {
+    try {
+        const vendas = await api('/api/vendas-fora-pdv');
+        const tbody = document.getElementById('tabela-vendas');
+        document.getElementById('resumo-lista').innerText = vendas.length ? `${vendas.length} venda(s)` : '';
+
+        if (vendas.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" class="sem-dados">Nenhuma venda a prazo registrada</td></tr>';
+            return;
+        }
+
+        const statusClass = v => v.status === 'QUITADO' ? 'b-verde' : v.status === 'EM ATRASO' ? 'b-vermelho' : 'b-azul';
+
+        tbody.innerHTML = vendas.map(v => `
+            <tr>
+                <td><strong>${esc(v.numero)}</strong></td>
+                <td>${formatarDataHora(v.data)}</td>
+                <td>${esc(v.cliente || '-')}</td>
+                <td style="text-align:right;">${v.qtdItens}</td>
+                <td style="text-align:right;"><strong>${formatarMoeda(v.total)}</strong></td>
+                <td>${v.parcelasPagas}/${v.parcelas}</td>
+                <td><span class="badge ${statusClass(v)}">${esc(v.status)}</span></td>
+                <td style="text-align:center;">
+                    <button class="btn-mini btn-azul" onclick="abrirDetalhe('${v.id}')">Detalhes</button>
+                    <button class="btn-mini btn-verde" onclick="abrirDetalhe('${v.id}', true)">Imprimir</button>
+                </td>
+            </tr>`).join('');
+    } catch (e) { alert(e.message); }
+}
+
+// ---------- Detalhe e impressão ----------
+let vendaAtual = null;
+
+async function abrirDetalhe(id, imprimir = false) {
+    try {
+        vendaAtual = await api(`/api/vendas-fora-pdv/${id}`);
+        document.getElementById('md-numero').innerText = vendaAtual.numero;
+        renderizarDetalhe();
+        document.getElementById('modal-detalhe').classList.add('active');
+        if (imprimir) setTimeout(() => imprimirContrato(), 300);
+    } catch (e) { alert(e.message); }
+}
+
+function fecharDetalhe() {
+    document.getElementById('modal-detalhe').classList.remove('active');
+    vendaAtual = null;
+}
+
+function renderizarDetalhe() {
+    const v = vendaAtual;
+    const itens = v.itens.map(i => `
+        <tr>
+            <td>${esc(i.codigo)}</td>
+            <td>${esc(i.nome)}</td>
+            <td style="text-align:right;">${i.quantidade}</td>
+            <td style="text-align:right;">${formatarMoeda(i.unitario)}</td>
+            <td style="text-align:right;">${formatarMoeda(i.unitario * i.quantidade)}</td>
+        </tr>`).join('');
+
+    const parcelas = v.parcelas.map(p => `
+        <tr>
+            <td>${p.numero}</td>
+            <td>${formatarData(p.vencimento)}</td>
+            <td style="text-align:right;">${formatarMoeda(p.valor)}</td>
+            <td><span class="badge ${CORES_STATUS[p.status]}">${NOMES_STATUS[p.status] || esc(p.status)}</span></td>
+            <td style="text-align:center;">
+                ${p.status === 'PAID'
+                    ? `<span class="verde" style="font-weight:bold;">✓ ${formatarData(p.dataPagamento)}</span>`
+                    : `<button class="btn-mini btn-verde" onclick="baixarParcela('${v.id}', '${p.id}')">Baixar</button>`}
+            </td>
+        </tr>`).join('');
+
+    document.getElementById('detalhe-conteudo').innerHTML = `
+        <div class="info-venda">
+            <span><strong>Venda ${esc(v.numero)}</strong></span>
+            <span>${formatarDataHora(v.data)}</span>
+            <span>Operador: ${esc(v.operador)}</span>
+            <span>Cliente: <strong>${esc(v.cliente || '-')}</strong>${v.celular ? ` (${esc(v.celular)})` : ''}</span>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Produto</th>
+                    <th style="text-align:right;">Qtd</th>
+                    <th style="text-align:right;">Unit.</th>
+                    <th style="text-align:right;">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>${itens}</tbody>
+        </table>
+        <div style="text-align:right; margin-top:10px; font-size:13px;">
+            <div>Subtotal: ${formatarMoeda(v.subtotal)}</div>
+            ${v.desconto > 0 ? `<div>Desconto: -${formatarMoeda(v.desconto)}</div>` : ''}
+        </div>
+        <div class="total-painel" style="margin-bottom:14px;">
+            <span>Total</span>
+            <span class="verde">${formatarMoeda(v.total)}</span>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Parcela</th>
+                    <th>Vencimento</th>
+                    <th style="text-align:right;">Valor</th>
+                    <th>Status</th>
+                    <th style="text-align:center;">Recebimento</th>
+                </tr>
+            </thead>
+            <tbody>${parcelas}</tbody>
+        </table>
+        ${v.observacoes ? `<div style="margin-top:10px; font-size:12px; color:#656d78;">Obs.: ${esc(v.observacoes)}</div>` : ''}
+    `;
+}
+
+async function baixarParcela(saleId, parcelaId) {
+    if (!confirm('Confirmar o recebimento desta parcela?')) return;
+    try {
+        await api(`/api/vendas-fora-pdv/${saleId}/parcela/${parcelaId}/baixar`, 'POST');
+        alert('Parcela baixada com sucesso!');
+        await abrirDetalhe(saleId);
+        carregarVendas();
+    } catch (e) { alert(e.message); }
+}
+
+// ---------- Impressão (A4: contrato em 2 vias + carnê) ----------
+function cabecalhoEmpresaHTML(compacto) {
+    const nomeEmpresa = (CONFIG.tradeName || CONFIG.name || 'JG SISTEMAS').toUpperCase();
+    const endereco = [CONFIG.address, CONFIG.number ? `nº ${CONFIG.number}` : null, CONFIG.complement].filter(Boolean).join(', ');
+    const bairroCidade = [CONFIG.neighborhood, [CONFIG.city, CONFIG.state].filter(Boolean).join('/')].filter(Boolean).join(' - ');
+    const contato = [CONFIG.phone ? `Tel: ${CONFIG.phone}` : null, CONFIG.email ? CONFIG.email : null].filter(Boolean).join(' · ');
+    const logo = CONFIG.logo ? `<img src="${esc(CONFIG.logo)}" class="logo" alt="logo">` : '';
+
+    if (compacto) {
+        const linha = [CONFIG.document ? `CNPJ: ${esc(CONFIG.document)}` : null, endereco, bairroCidade, contato].filter(Boolean).join(' · ');
+        return `
+            <div class="cabecalho compacto">
+                ${logo}
+                <div class="dados">
+                    <div class="nome">${esc(nomeEmpresa)}</div>
+                    ${linha ? `<div class="linha">${esc(linha)}</div>` : ''}
+                </div>
+            </div>`;
+    }
+
+    return `
+        <div class="cabecalho">
+            ${logo}
+            <div class="dados">
+                <div class="nome">${esc(nomeEmpresa)}</div>
+                ${CONFIG.document ? `<div class="linha">CNPJ: ${esc(CONFIG.document)}</div>` : ''}
+                ${endereco ? `<div class="linha">${esc(endereco)}</div>` : ''}
+                ${bairroCidade ? `<div class="linha">${esc(bairroCidade)}</div>` : ''}
+                ${contato ? `<div class="linha">${esc(contato)}</div>` : ''}
+            </div>
+        </div>`;
+}
+
+function paginaContratoHTML(v, via) {
+    const itensLinhas = v.itens.map(i => `
+        <tr>
+            <td>${esc(i.codigo)}</td>
+            <td>${esc(i.nome)}</td>
+            <td class="r">${i.quantidade}</td>
+            <td class="r">${formatarMoeda(i.unitario)}</td>
+            <td class="r">${formatarMoeda(i.subtotal)}</td>
+        </tr>`).join('');
+
+    const parcelasLinhas = v.parcelas.map(p => `
+        <tr>
+            <td class="c">${p.numero}</td>
+            <td class="c">${formatarData(p.vencimento)}</td>
+            <td class="r">${formatarMoeda(p.valor)}</td>
+        </tr>`).join('');
+
+    const declaracao = `O(A) COMPRADOR(A) <b>${esc((v.cliente || '________________________').toUpperCase())}</b> declara ter recebido as mercadorias descritas neste contrato, em perfeitas condições de uso e qualidade, e se obriga a pagar o valor de <b>${formatarMoeda(v.total)}</b> em <b>${v.parcelas.length}x</b> parcela(s), nas datas de vencimento indicadas neste documento. Em caso de atraso, o valor da parcela vencida estará sujeito à multa e aos juros de mora previstos em lei.`;
+
+    return `
+    <div class="pagina">
+        ${cabecalhoEmpresaHTML(false)}
+        <h1>CONTRATO DE VENDA A PRAZO</h1>
+        <div class="via">${esc(via)}</div>
+
+        <table class="info">
+            <tr>
+                <td class="rotulo">VENDA Nº</td>
+                <td class="valor">${esc(v.numero)}</td>
+                <td class="rotulo">DATA</td>
+                <td class="valor">${formatarDataHora(v.data)}</td>
+            </tr>
+            <tr>
+                <td class="rotulo">CLIENTE</td>
+                <td class="valor" colspan="3">${esc(v.cliente || '-')}${v.celular ? ` · Cel.: ${esc(v.celular)}` : ''}</td>
+            </tr>
+            <tr>
+                <td class="rotulo">OPERADOR</td>
+                <td class="valor" colspan="3">${esc(v.operador || '-')}</td>
+            </tr>
+        </table>
+
+        <h2>Itens da Venda</h2>
+        <table class="dados">
+            <thead>
+                <tr><th>Código</th><th>Produto</th><th class="r">Qtd</th><th class="r">Unit.</th><th class="r">Subtotal</th></tr>
+            </thead>
+            <tbody>${itensLinhas}</tbody>
+        </table>
+
+        <div class="totais">
+            <div><span>Subtotal</span><span>${formatarMoeda(v.subtotal)}</span></div>
+            ${v.desconto > 0 ? `<div><span>Desconto</span><span>-${formatarMoeda(v.desconto)}</span></div>` : ''}
+            <div class="total"><span>TOTAL</span><span>${formatarMoeda(v.total)}</span></div>
+        </div>
+
+        <h2>Plano de Pagamento</h2>
+        <table class="dados">
+            <thead>
+                <tr><th class="c">Parcela</th><th class="c">Vencimento</th><th class="r">Valor</th></tr>
+            </thead>
+            <tbody>${parcelasLinhas}</tbody>
+        </table>
+
+        <p class="declaracao">${declaracao}</p>
+
+        <div class="assinaturas">
+            <div class="assinatura">
+                <div class="rotulo">COMPRADOR</div>
+                <div class="linha-assinatura"></div>
+                <div class="campos">Nome: ______________________________</div>
+                <div class="campos">CPF/CNPJ: ____________________ · Data: ___/___/______</div>
+            </div>
+            <div class="assinatura">
+                <div class="rotulo">VENDEDOR (LOJISTA)</div>
+                <div class="linha-assinatura"></div>
+                <div class="campos">Nome: ${esc(CONFIG.tradeName || CONFIG.name || '')}</div>
+                <div class="campos">Data: ___/___/______</div>
+            </div>
+        </div>
+    </div>`;
+}
+
+function fichaCarneHTML(v, p) {
+    const condicao = `${v.parcelas.length}x de ${formatarMoeda(v.total / v.parcelas.length)}`;
+    return `
+    <div class="ficha">
+        <div class="recibo">
+            <div class="ficha-titulo">RECIBO - PARCELA ${p.numero}/${v.parcelas.length}</div>
+            <div class="recibo-campos">
+                <div><span class="rotulo">Vencimento:</span> <b>${formatarData(p.vencimento)}</b></div>
+                <div><span class="rotulo">Valor:</span> <b>${formatarMoeda(p.valor)}</b></div>
+            </div>
+            <div class="recibo-texto">Recebemos de <b>${esc((v.cliente || '________').toUpperCase())}</b> o valor de <b>${formatarMoeda(p.valor)}</b>, referente à Venda Nº ${esc(v.numero)}, parcela ${p.numero}/${v.parcelas.length}.</div>
+            <div class="recibo-campos">
+                <div><span class="rotulo">Data do pagamento:</span> ___/___/______</div>
+                <div><span class="rotulo">Forma de pagamento:</span> ____________________</div>
+            </div>
+            <div class="recibo-ass">Assinatura do lojista: _________________________________</div>
+        </div>
+        <div class="dobra"></div>
+        <div class="cobranca">
+            <div class="ficha-titulo">CARNÊ DE VENDA A PRAZO</div>
+            <div class="cobranca-grid">
+                <div class="grande">
+                    <div class="rotulo">PARCELA</div>
+                    <div>${p.numero}/${v.parcelas.length}</div>
+                </div>
+                <div class="grande">
+                    <div class="rotulo">VENCIMENTO</div>
+                    <div>${formatarData(p.vencimento)}</div>
+                </div>
+                <div class="grande valor">
+                    <div class="rotulo">VALOR A PAGAR</div>
+                    <div>${formatarMoeda(p.valor)}</div>
+                </div>
+            </div>
+            <div class="cobranca-info">
+                <div><span class="rotulo">Venda Nº:</span> ${esc(v.numero)}</div>
+                <div><span class="rotulo">Cliente:</span> ${esc(v.cliente || '-')}</div>
+                <div><span class="rotulo">Data da venda:</span> ${formatarData(v.data)}</div>
+                <div><span class="rotulo">Condição:</span> ${condicao}</div>
+                ${v.observacoes ? `<div style="grid-column:1 / -1;"><span class="rotulo">Obs.:</span> ${esc(v.observacoes)}</div>` : ''}
+            </div>
+        </div>
+    </div>`;
+}
+
+function carneHTML(v) {
+    const paginas = [];
+    for (let i = 0; i < v.parcelas.length; i += 3) {
+        const grupo = v.parcelas.slice(i, i + 3);
+        const fichas = grupo.map((p, gi) =>
+            fichaCarneHTML(v, p) + (gi < grupo.length - 1 ? '<div class="corte"><span>CORTE AQUI</span></div>' : '')
+        ).join('');
+        paginas.push(`
+            <div class="pagina">
+                ${cabecalhoEmpresaHTML(true)}
+                ${fichas}
+            </div>`);
+    }
+    return paginas.join('');
+}
+
+function imprimirContrato(v) {
+    v = v || vendaAtual;
+    if (!v) return;
+
+    const paginas =
+        paginaContratoHTML(v, '1ª VIA - LOJA') +
+        paginaContratoHTML(v, '2ª VIA - CLIENTE') +
+        (v.parcelas.length > 1 ? carneHTML(v) : '');
+
+    const html = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Venda a Prazo ${esc(v.numero)}</title>
+    <style>
+        @page { size: A4 portrait; margin: 10mm; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; color: #111; margin: 0; font-size: 12px; }
+        .pagina { page-break-after: always; }
+        .pagina:last-child { page-break-after: auto; }
+
+        .cabecalho { display: flex; align-items: center; gap: 14px; border-bottom: 3px double #0b2545; padding-bottom: 8px; margin-bottom: 10px; }
+        .cabecalho.compacto { border-bottom: 1px solid #ccc; padding-bottom: 6px; margin-bottom: 8px; }
+        .cabecalho .logo { max-width: 100px; max-height: 65px; object-fit: contain; }
+        .cabecalho.compacto .logo { max-width: 65px; max-height: 42px; }
+        .cabecalho .nome { font-size: 18px; font-weight: 800; color: #0b2545; text-transform: uppercase; }
+        .cabecalho.compacto .nome { font-size: 14px; }
+        .cabecalho .linha { font-size: 11px; color: #444; }
+
+        h1 { font-size: 16px; color: #0b2545; text-align: center; text-transform: uppercase; letter-spacing: 1px; margin: 4px 0 2px; }
+        .via { text-align: center; font-size: 12px; font-weight: bold; color: #666; margin-bottom: 12px; }
+
+        table { width: 100%; border-collapse: collapse; }
+        .rotulo { text-transform: uppercase; font-weight: bold; font-size: 9px; color: #666; }
+        h2 { font-size: 11px; color: #0b2545; text-transform: uppercase; margin: 14px 0 4px; border-bottom: 1px solid #ddd; padding-bottom: 2px; }
+
+        table.info td { padding: 4px 6px; border: 1px solid #ccc; }
+        table.info .rotulo { background: #eef1f5; width: 90px; }
+
+        table.dados { font-size: 11px; }
+        table.dados th { background: #0b2545; color: #fff; padding: 4px 6px; text-align: left; font-size: 10px; text-transform: uppercase; }
+        table.dados td { padding: 4px 6px; border-bottom: 1px solid #ccc; }
+        .r { text-align: right; }
+        .c { text-align: center; }
+
+        .totais { margin: 8px 0 2px; text-align: right; }
+        .totais div { display: flex; justify-content: flex-end; gap: 30px; padding: 2px 6px; }
+        .totais .total { font-size: 15px; font-weight: 800; color: #0b2545; border-top: 2px solid #0b2545; margin-top: 4px; }
+
+        .declaracao { font-size: 11px; line-height: 1.6; text-align: justify; margin: 14px 0; }
+
+        .assinaturas { display: flex; gap: 40px; margin-top: 46px; }
+        .assinatura { flex: 1; }
+        .assinatura .rotulo { margin-bottom: 2px; }
+        .assinatura .linha-assinatura { border-bottom: 1px solid #111; height: 26px; }
+        .assinatura .campos { font-size: 11px; margin-top: 4px; color: #333; }
+
+        .ficha { border: 1px solid #bbb; page-break-inside: avoid; margin-bottom: 0; }
+        .ficha .recibo, .ficha .cobranca { padding: 8px 10px; }
+        .ficha-titulo { font-size: 12px; font-weight: 800; color: #0b2545; text-transform: uppercase; text-align: center; letter-spacing: 1px; }
+        .dobra { border-top: 1px dotted #000; height: 1px; margin: 0 10px; }
+        .cobranca-grid { display: flex; gap: 10px; margin-top: 6px; }
+        .grande { flex: 1; border: 1px solid #0b2545; border-radius: 4px; padding: 5px 8px; text-align: center; font-size: 15px; font-weight: 800; color: #0b2545; }
+        .grande .rotulo { display: block; font-size: 8px; }
+        .grande.valor { background: #eef4fb; }
+        .cobranca-info { font-size: 11px; margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px 16px; }
+        .recibo-campos { display: flex; justify-content: space-between; gap: 12px; margin-top: 6px; font-size: 11px; }
+        .recibo-texto { font-size: 11px; margin-top: 6px; text-align: justify; }
+        .recibo-ass { font-size: 11px; margin-top: 8px; }
+        .corte { display: flex; align-items: center; gap: 10px; margin: 10px 0; text-align: center; font-size: 9px; font-weight: bold; color: #333; }
+        .corte::before, .corte::after { content: ''; flex: 1; border-top: 2px dotted #000; }
+    </style>
+</head>
+<body>
+${paginas}
+</body>
+</html>`;
+
+    let ifr = document.getElementById('impressao-a4');
+    if (!ifr) {
+        ifr = document.createElement('iframe');
+        ifr.id = 'impressao-a4';
+        ifr.setAttribute('aria-hidden', 'true');
+        ifr.style.position = 'fixed';
+        ifr.style.right = '0';
+        ifr.style.bottom = '0';
+        ifr.style.width = '0';
+        ifr.style.height = '0';
+        ifr.style.border = '0';
+        document.body.appendChild(ifr);
+    }
+    const win = ifr.contentWindow;
+    const doc = win.document;
+    doc.open();
+    doc.write(html);
+    doc.close();
+    imprimirQuandoPronto(win, 0);
+}
+
+function imprimirQuandoPronto(win, tentativa) {
+    try {
+        const doc = win.document;
+        const pronto = doc.readyState === 'complete' && [...doc.images].every(im => im.complete);
+        if (pronto || tentativa >= 15) {
+            win.focus();
+            win.print();
+            return;
+        }
+    } catch (e) { /* documento ainda não disponível */ }
+    setTimeout(() => imprimirQuandoPronto(win, tentativa + 1), 100);
+}
+
+// ---------- Atalhos de teclado ----------
+document.addEventListener('keydown', (e) => {
+    if (modoRemover) {
+        if (e.key === 'ArrowDown') { e.preventDefault(); moverRemover(1); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); moverRemover(-1); }
+        else if (e.key === 'Enter') { e.preventDefault(); removerSelecionado(); }
+        else if (e.key === 'Escape' || e.key === 'F7') { e.preventDefault(); sairModoRemover(); }
+        return;
+    }
+    if (e.key === 'F2') { e.preventDefault(); abrirModalClientes(); }
+    else if (e.key === 'F3') { e.preventDefault(); abrirModalProdutos(); }
+    else if (e.key === 'F7') {
+        e.preventDefault();
+        entrarModoRemover();
+    } else if (e.key === 'F12') {
+        e.preventDefault();
+        registrarVenda();
+    }
+});
+
+document.getElementById('f-codigo').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('f-qtd').focus();
+        document.getElementById('f-qtd').select();
+    }
+});
+
+document.getElementById('f-codigo').addEventListener('input', () => {
+    codigoPendente = null;
+});
+
+document.getElementById('f-qtd').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        const qtd = Math.max(1, Math.round(Number(document.getElementById('f-qtd').value) || 1));
+        adicionarItem(qtd);
+    }
+});
+
+document.getElementById('p-busca').addEventListener('input', (e) => {
+    clearTimeout(timerProduto);
+    timerProduto = setTimeout(() => buscarProdutos(e.target.value), 300);
+});
+
+document.getElementById('p-busca').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        if (produtosPesquisa.length > 0 && indiceProduto >= 0) {
+            selecionarProduto(indiceProduto);
+        } else {
+            buscarProdutos(e.target.value);
+        }
+    } else if (e.key === 'ArrowDown') { e.preventDefault(); moverSelecaoProduto(1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); moverSelecaoProduto(-1); }
+    else if (e.key === 'Escape') { e.preventDefault(); fecharModal('modal-produtos'); }
+});
+
+document.getElementById('c-busca').addEventListener('input', (e) => {
+    clearTimeout(timerCliente);
+    timerCliente = setTimeout(() => buscarClientes(e.target.value), 300);
+});
+
+document.getElementById('c-busca').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        if (clientesPesquisa.length > 0 && indiceCliente >= 0) {
+            selecionarCliente(indiceCliente);
+        } else {
+            buscarClientes(e.target.value);
+        }
+    } else if (e.key === 'ArrowDown') { e.preventDefault(); moverSelecaoCliente(1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); moverSelecaoCliente(-1); }
+    else if (e.key === 'Escape') { e.preventDefault(); fecharModal('modal-clientes'); }
+});
+
+// ---------- Inicialização ----------
+document.getElementById('f-primeira').value = new Date().toISOString().slice(0, 10);
+
+(async () => {
+    try {
+        if (!obterOperador()) { window.location.href = '/login.html'; return; }
+        await carregarConfig();
+        renderizarParcelas();
+    } catch (e) {
+        alert("Falha ao carregar dados: " + e.message);
+    }
+})();
+
+    </script>
+</body>
+</html>

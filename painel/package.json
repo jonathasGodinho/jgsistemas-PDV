@@ -1,0 +1,15 @@
+{
+  "name": "jg-painel",
+  "version": "1.0.0",
+  "description": "Painel de Gestão JG Sistemas - multi-cliente SaaS",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  }
+}

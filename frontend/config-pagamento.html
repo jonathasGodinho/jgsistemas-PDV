@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>Configuração de Pagamento - JG Sistemas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
+        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
+        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
+        header a:hover { color: white; }
+        main { padding: 20px; max-width: 760px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
+        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
+        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; }
+        .painel-corpo { padding: 20px; }
+        .forma { display: flex; align-items: center; gap: 12px; border: 1px solid #ccd1d9; border-radius: 4px; padding: 14px; margin-bottom: 10px; background: #f8f9fa; }
+        .forma .tecla { background: #134074; color: white; font-weight: bold; border-radius: 3px; padding: 3px 7px; font-size: 11px; width: 42px; text-align: center; flex: none; }
+        .forma .nome { flex: 1; font-weight: bold; color: #333; font-size: 14px; }
+        .forma .desc { font-size: 12px; color: #8b95a1; display: block; font-weight: normal; }
+        .forma input[type="checkbox"] { width: 22px; height: 22px; flex: none; }
+        .campo { display: flex; flex-direction: column; gap: 5px; margin-top: 6px; }
+        .campo label { font-size: 12px; color: #656d78; font-weight: bold; text-transform: uppercase; }
+        .campo input { padding: 11px; font-size: 15px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
+        .aviso { background: #fdf3d7; border: 1px solid #f0ad4e; color: #8a6d3b; padding: 12px 14px; border-radius: 4px; font-size: 13px; }
+        .aviso-ok { background: #e3f7ec; border-color: #00a651; color: #007a3d; }
+        .acoes { display: flex; gap: 10px; margin-top: 20px; }
+        .btn { border: none; border-radius: 4px; padding: 11px 18px; font-size: 14px; font-weight: bold; cursor: pointer; }
+        .btn-verde { background-color: #00a651; color: white; }
+        .btn-verde:hover { background-color: #007a3d; }
+        .btn-cinza { background-color: #8b95a1; color: white; }
+        .btn-cinza:hover { background-color: #6f7885; }
+        footer { background-color: #134074; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>JG SISTEMAS - CONFIGURAÇÃO DE PAGAMENTO</div>
+        <div><a href="/">← Menu Principal</a></div>
+    </header>
+
+    <main>
+        <div class="painel">
+            <div class="painel-titulo">Formas de Pagamento no PDV</div>
+            <div class="painel-corpo">
+                <div class="aviso" style="margin-bottom:14px;">Ative apenas as formas de pagamento aceitas no caixa. As formas desativadas não aparecem na tela de fechamento da venda.</div>
+
+                <div class="forma">
+                    <input type="checkbox" id="p-dinheiro">
+                    <span class="tecla">F1</span>
+                    <span class="nome">Dinheiro<span class="desc">Recebe o valor pago e calcula o troco.</span></span>
+                </div>
+                <div class="forma">
+                    <input type="checkbox" id="p-debito">
+                    <span class="tecla">F5</span>
+                    <span class="nome">Cartão de Débito<span class="desc">Pagamento à vista; o total pago é exibido automaticamente.</span></span>
+                </div>
+                <div class="forma">
+                    <input type="checkbox" id="p-pix">
+                    <span class="tecla">F6</span>
+                    <span class="nome">PIX<span class="desc">Gera o QR Code para pagamento na tela de fechamento.</span></span>
+                </div>
+                <div class="forma">
+                    <input type="checkbox" id="p-credito">
+                    <span class="tecla">F4</span>
+                    <span class="nome">Cartão de Crédito<span class="desc">Permite configurar o parcelamento abaixo.</span></span>
+                </div>
+
+                <div class="campo" id="campo-parcelas">
+                    <label>Crédito - Máximo de parcelas</label>
+                    <input type="number" id="p-creditoMaxParcelas" min="1" max="12" step="1" value="1">
+                    <span style="font-size:11px; color:#8b95a1;">1 = pagamento em uma vez (à vista). Defina até 12 parcelas se desejar parcelar no crédito.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="acoes">
+            <button class="btn btn-verde" onclick="salvar()">Salvar Configuração</button>
+            <button class="btn btn-cinza" onclick="carregar()">Descartar Alterações</button>
+        </div>
+        <div class="aviso" id="aviso" style="display:none;"></div>
+    </main>
+
+    <footer>© 2026 JG Sistemas</footer>
+
+    <script>
+        const API_BASE = window.location.protocol.startsWith('http') ? '' : 'http://localhost:3000';
+
+        function obterOperador() {
+            try {
+                const raw = localStorage.getItem('jg_operador');
+                return raw ? JSON.parse(raw) : null;
+            } catch (e) { return null; }
+        }
+
+        function tokenAuth() {
+            const op = obterOperador();
+            return op && op.token ? { 'Authorization': 'Bearer ' + op.token } : {};
+        }
+
+        function bloquearCaixa() {
+            const op = obterOperador();
+            if (!op) { window.location.href = '/login.html'; return true; }
+            if (op.papel === 'SELLER') { window.location.href = '/'; return true; }
+            return false;
+        }
+
+        async function api(url, metodo = 'GET', corpo = null) {
+            const opcoes = { method: metodo, headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()) };
+            if (corpo) opcoes.body = JSON.stringify(corpo);
+            const response = await fetch(`${API_BASE}${url}`, opcoes);
+            if (response.status === 401) {
+                localStorage.removeItem('jg_operador');
+                window.location.href = '/login.html';
+                throw new Error('Sessão expirada.');
+            }
+            const dados = await response.json();
+            if (!response.ok) throw new Error(dados.erro || 'Erro na requisição');
+            return dados;
+        }
+
+        bloquearCaixa();
+
+        function mostrarAviso(msg, ok) {
+            const a = document.getElementById('aviso');
+            a.className = 'aviso' + (ok ? ' aviso-ok' : '');
+            a.innerText = msg;
+            a.style.display = '';
+            setTimeout(() => { a.style.display = 'none'; }, 4000);
+        }
+
+        async function carregar() {
+            try {
+                const c = await api('/api/configuracoes');
+                const p = c.pagamento || {};
+                document.getElementById('p-dinheiro').checked = p.dinheiro !== false;
+                document.getElementById('p-debito').checked = p.debito !== false;
+                document.getElementById('p-pix').checked = p.pix !== false;
+                document.getElementById('p-credito').checked = p.credito !== false;
+                document.getElementById('p-creditoMaxParcelas').value = Math.max(1, Number(p.creditoMaxParcelas) || 1);
+            } catch (e) {
+                mostrarAviso(e.message, false);
+            }
+        }
+
+        async function salvar() {
+            try {
+                await api('/api/configuracoes', 'POST', {
+                    pagamento: {
+                        dinheiro: document.getElementById('p-dinheiro').checked,
+                        debito: document.getElementById('p-debito').checked,
+                        pix: document.getElementById('p-pix').checked,
+                        credito: document.getElementById('p-credito').checked,
+                        creditoMaxParcelas: Number(document.getElementById('p-creditoMaxParcelas').value) || 1
+                    }
+                });
+                mostrarAviso('Configuração de pagamento salva com sucesso!', true);
+            } catch (e) {
+                mostrarAviso(e.message, false);
+            }
+        }
+
+        carregar();
+    </script>
+</body>
+</html>

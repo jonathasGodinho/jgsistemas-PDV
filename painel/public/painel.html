@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Painel de Gestão - JG Sistemas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
+        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
+        main { padding: 20px; max-width: 1100px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
+        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
+        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+        .painel-corpo { padding: 14px; }
+        .campo { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+        .campo label { font-size: 11px; color: #656d78; font-weight: bold; text-transform: uppercase; }
+        .campo input, .campo select { padding: 9px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; width: 100%; }
+        .linha { display: flex; gap: 10px; align-items: flex-end; }
+        .linha .campo { flex: 1; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background-color: #134074; color: white; padding: 8px; text-align: left; text-transform: uppercase; font-size: 11px; }
+        td { padding: 8px; border-bottom: 1px solid #e6e9ed; color: #333; vertical-align: middle; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        .btn { border: none; border-radius: 4px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        a.btn { display: inline-block; text-decoration: none; }
+        .btn-azul { background-color: #134074; color: white; }
+        .btn-verde { background-color: #00a651; color: white; }
+        .btn-vermelho { background-color: #d9534f; color: white; }
+        .btn-mini { padding: 4px 8px; font-size: 12px; }
+        .sem-dados { text-align: center; color: #8b95a1; padding: 24px; font-size: 14px; }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .b-verde { background: #d4edda; color: #155724; }
+        .b-vermelho { background: #f8d7da; color: #b02a37; }
+        .b-amarelo { background: #fde8c8; color: #b26b00; }
+        .b-cinza { background: #e2e3e5; color: #383d41; }
+        .venc-ok { color: #1d9d55; font-weight: bold; }
+        .venc-em-breve { color: #b26b00; font-weight: bold; }
+        .venc-vencido { color: #b02a37; font-weight: bold; }
+        .modal-fundo { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: none; align-items: center; justify-content: center; z-index: 50; }
+        .modal-fundo.aberto { display: flex; }
+        .modal { background: white; border-radius: 6px; width: 480px; max-width: 94vw; padding: 18px; }
+        .modal h3 { color: #134074; margin-bottom: 12px; }
+        .credenciais { background: #f8f9fa; border: 1px dashed #aab2bd; border-radius: 4px; padding: 10px; font-size: 13px; margin-bottom: 10px; }
+        .msg { padding: 10px 14px; border-radius: 4px; font-size: 13px; font-weight: bold; display: none; }
+        .msg-erro { background: #f8d7da; color: #b02a37; }
+        .msg-ok { background: #d4edda; color: #155724; }
+        .link { color: #134074; text-decoration: none; font-weight: bold; }
+        .link:hover { text-decoration: underline; }
+        footer { text-align: center; color: #8b95a1; font-size: 12px; display: flex; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>JG SISTEMAS - PAINEL DE GESTÃO</div>
+        <div><a href="javascript:sair()" style="color:#aab2bd; text-decoration:none;">Sair</a></div>
+    </header>
+
+    <main id="view-login">
+        <div class="painel" style="max-width:380px; margin:60px auto;">
+            <div class="painel-titulo"><span>Acesso ao Painel</span></div>
+            <div class="painel-corpo">
+                <div class="msg" id="msg-login"></div>
+                <div class="campo">
+                    <label>Senha do painel</label>
+                    <input type="password" id="inp-senha" placeholder="Digite sua senha" onkeydown="if(event.key==='Enter')logar()">
+                </div>
+                <button class="btn btn-azul btn-mini" style="width:100%; padding:12px; font-size:15px;" onclick="logar()">Entrar</button>
+            </div>
+        </div>
+    </main>
+
+    <main id="view-clientes" style="display:none;">
+        <div class="msg" id="msg"></div>
+        <div class="painel">
+            <div class="painel-titulo">
+                <span>Clientes</span>
+                <div style="display:flex; gap:8px;">
+                    <button class="btn btn-mini btn-azul" onclick="carregar()">Atualizar</button>
+                    <button class="btn btn-mini btn-verde" onclick="abrirModal()">+ Novo Cliente</button>
+                </div>
+            </div>
+            <div class="painel-corpo" style="padding:0;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Banco</th>
+                            <th>Porta</th>
+                            <th>Status</th>
+                            <th>Vencimento</th>
+                            <th style="text-align:right;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-clientes">
+                        <tr><td colspan="6" class="sem-dados">Carregando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-fundo" id="modal-novo">
+        <div class="modal">
+            <h3>Novo Cliente</h3>
+            <div class="campo">
+                <label>Nome da empresa *</label>
+                <input type="text" id="n-nome" placeholder="Ex.: Mercadinho Silva">
+            </div>
+            <div class="campo">
+                <label>Nome fantasia</label>
+                <input type="text" id="n-fantasia" placeholder="Ex.: Silva Supermercados">
+            </div>
+            <div class="linha">
+                <div class="campo">
+                    <label>CNPJ</label>
+                    <input type="text" id="n-cnpj" placeholder="Somente números">
+                </div>
+                <div class="campo">
+                    <label>Valor mensal (R$)</label>
+                    <input type="number" id="n-valor" step="0.01" value="99.00">
+                </div>
+            </div>
+            <div class="campo">
+                <label>Vencimento da mensalidade</label>
+                <input type="date" id="n-vencimento">
+                <small style="color:#8b95a1; font-size:12px;">Após o vencimento o cliente tem 3 dias de tolerância; depois o acesso é bloqueado automaticamente.</small>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:6px;">
+                <button class="btn btn-azul" style="flex:1;" onclick="fecharModal()">Cancelar</button>
+                <button class="btn btn-verde" style="flex:1;" onclick="criarCliente()">Cadastrar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-fundo" id="modal-editar">
+        <div class="modal">
+            <h3 id="editar-titulo">Editar Cliente</h3>
+            <div class="campo">
+                <label>Nome da empresa *</label>
+                <input type="text" id="e-nome">
+            </div>
+            <div class="campo">
+                <label>Nome fantasia</label>
+                <input type="text" id="e-fantasia">
+            </div>
+            <div class="linha">
+                <div class="campo">
+                    <label>CNPJ</label>
+                    <input type="text" id="e-cnpj">
+                </div>
+                <div class="campo">
+                    <label>Valor mensal (R$)</label>
+                    <input type="number" id="e-valor" step="0.01">
+                </div>
+            </div>
+            <div class="campo">
+                <label>Vencimento da mensalidade</label>
+                <input type="date" id="e-vencimento">
+                <small style="color:#8b95a1; font-size:12px;">Vazio = sem controle de vencimento. Deixe a data em branco para remover.</small>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:6px;">
+                <button class="btn btn-azul" style="flex:1;" onclick="fecharModalEditar()">Cancelar</button>
+                <button class="btn btn-verde" style="flex:1;" onclick="salvarEdicao()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-fundo" id="modal-credenciais">
+        <div class="modal">
+            <h3>Cliente provisionado!</h3>
+            <div class="credenciais" id="cred-info"></div>
+            <button class="btn btn-azul btn-mini" style="width:100%;" onclick="fecharModalCred()">Ok</button>
+        </div>
+    </div>
+
+    <footer>© 2026 JG Sistemas - Painel de Gestão</footer>
+
+    <script>
+        const API_BASE = '';
+
+        // Sessão em cookie httpOnly — nenhum token fica no navegador.
+        // A flag abaixo só controla a interface (mostrar login ou lista).
+        function token() {
+            return {};
+        }
+
+        function mostrarMsg(id, texto, tipo) {
+            const el = document.getElementById(id);
+            el.textContent = texto;
+            el.className = 'msg ' + (tipo === 'erro' ? 'msg-erro' : 'msg-ok');
+            el.style.display = 'block';
+        }
+
+        async function api(url, metodo = 'GET', corpo = null) {
+            const opcoes = { method: metodo, headers: Object.assign({ 'Content-Type': 'application/json' }, token()) };
+            if (corpo) opcoes.body = JSON.stringify(corpo);
+            const response = await fetch(`${API_BASE}${url}`, opcoes);
+            if (response.status === 401) {
+                localStorage.removeItem('jg_painel_logado');
+                window.location.reload();
+                throw new Error('Sessão expirada.');
+            }
+            const dados = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(dados.erro || 'Erro na requisição');
+            return dados;
+        }
+
+        async function logar() {
+            const senha = document.getElementById('inp-senha').value;
+            try {
+                const r = await fetch(`${API_BASE}/api/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ senha })
+                });
+                const dados = await r.json();
+                if (!r.ok) throw new Error(dados.erro || 'Falha no login');
+                localStorage.setItem('jg_painel_logado', '1');
+                document.getElementById('view-login').style.display = 'none';
+                document.getElementById('view-clientes').style.display = 'flex';
+                carregar();
+            } catch (e) {
+                mostrarMsg('msg-login', e.message, 'erro');
+            }
+        }
+
+        async function sair() {
+            try { await fetch(`${API_BASE}/api/logout`, { method: 'POST' }); } catch (e) {}
+            localStorage.removeItem('jg_painel_logado');
+            window.location.reload();
+        }
+
+        function statusBadge(c) {
+            if (c.tipo === 'escola') {
+                return c.rodando
+                    ? '<span class="badge b-verde">RODANDO</span>'
+                    : '<span class="badge b-cinza">PARADO</span>';
+            }
+            const map = { 'ATIVO': 'b-verde', 'SUSPENSO': 'b-vermelho', 'CADASTRADO': 'b-amarelo' };
+            const classe = map[c.status] || 'b-cinza';
+            let texto = c.status;
+            if (c.status === 'ATIVO' && !c.rodando) texto = 'ATIVO (parado)';
+            return `<span class="badge ${classe}">${texto}</span>`;
+        }
+
+        // Dias até o fim da janela de tolerância (3 dias após o vencimento).
+        function diasTolerancia(c) {
+            if (!c.vencimento) return null;
+            const fim = new Date(`${c.vencimento.slice(0, 10)}T00:00:00`);
+            fim.setDate(fim.getDate() + 3);
+            return Math.ceil((fim.getTime() - Date.now()) / 86400000);
+        }
+
+        function vencBadge(c) {
+            if (!c.vencimento) return '<span style="color:#8b95a1;">—</span>';
+            const dias = diasTolerancia(c);
+            const d = c.vencimento.slice(0, 10).split('-').reverse().join('/');
+            if (dias < 0) return `<span class="venc-vencido">${d} (vencido)</span>`;
+            if (dias === 0) return `<span class="venc-vencido">${d} (bloqueia hoje)</span>`;
+            if (dias <= 3) return `<span class="venc-em-breve">${d} (últimos ${dias} dia${dias > 1 ? 's' : ''})</span>`;
+            return `<span class="venc-ok">${d}</span>`;
+        }
+
+        function acoes(c) {
+            let b = '';
+            const url = `http://localhost:${c.porta}`;
+            if (c.tipo === 'escola') {
+                b += `<a class="btn btn-mini btn-verde" href="${url}" target="_blank">Abrir</a> `;
+                if (c.rodando) {
+                    b += `<button class="btn btn-mini btn-vermelho" onclick="pararServico('${c.id}')">Parar</button> `;
+                } else {
+                    b += `<button class="btn btn-mini btn-verde" onclick="iniciarServico('${c.id}')">Iniciar</button> `;
+                }
+                return b;
+            }
+            if (c.status === 'CADASTRADO') {
+                b += `<button class="btn btn-mini btn-azul" onclick="editarCliente('${c.id}')">Editar</button> `;
+                b += `<button class="btn btn-mini btn-verde" onclick="provisionar('${c.id}')">Provisionar</button> `;
+            } else {
+                b += `<a class="btn btn-mini btn-verde" href="${url}" target="_blank">Abrir</a> `;
+                b += `<button class="btn btn-mini btn-azul" onclick="editarCliente('${c.id}')">Editar</button> `;
+                if (c.status === 'SUSPENSO') {
+                    b += `<button class="btn btn-mini btn-verde" onclick="reativar('${c.id}')">Reativar</button> `;
+                } else {
+                    b += `<button class="btn btn-mini btn-vermelho" onclick="suspender('${c.id}')">Suspender</button> `;
+                }
+                b += `<button class="btn btn-mini btn-azul" onclick="provisionar('${c.id}')">Re-provisionar</button> `;
+            }
+            return b;
+        }
+
+        let clientesCache = [];
+
+        async function carregar() {
+            try {
+                clientesCache = await api('/api/clientes');
+                const lista = clientesCache;
+                const tbody = document.getElementById('tabela-clientes');
+                if (!lista.length) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="sem-dados">Nenhum cliente cadastrado.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = lista.map((c) => `
+                    <tr>
+                        <td><strong>${c.nome}</strong><br><small>${c.slug} · ${c.plano} · R$ ${Number(c.valor).toFixed(2)}</small></td>
+                        <td>${c.banco}</td>
+                        <td>${c.porta}</td>
+                        <td>${statusBadge(c)}</td>
+                        <td>${vencBadge(c)}</td>
+                        <td style="text-align:right;">${acoes(c)}</td>
+                    </tr>`).join('');
+            } catch (e) {
+                mostrarMsg('msg', e.message, 'erro');
+            }
+        }
+
+        function abrirModal() { document.getElementById('modal-novo').classList.add('aberto'); }
+        function fecharModal() { document.getElementById('modal-novo').classList.remove('aberto'); }
+
+        async function criarCliente() {
+            const corpo = {
+                nome: document.getElementById('n-nome').value,
+                fantasia: document.getElementById('n-fantasia').value,
+                cnpj: document.getElementById('n-cnpj').value,
+                valor: document.getElementById('n-valor').value,
+                vencimento: document.getElementById('n-vencimento').value || null
+            };
+            try {
+                await api('/api/clientes', 'POST', corpo);
+                fecharModal();
+                ['n-nome', 'n-fantasia', 'n-cnpj', 'n-vencimento'].forEach((i) => document.getElementById(i).value = '');
+                carregar();
+            } catch (e) {
+                mostrarMsg('msg', e.message, 'erro');
+            }
+        }
+
+        function editarCliente(id) {
+            const c = clientesCache.find((x) => x.id === id);
+            if (!c) return;
+            document.getElementById('e-nome').value = c.nome || '';
+            document.getElementById('e-fantasia').value = c.fantasia || '';
+            document.getElementById('e-cnpj').value = c.cnpj || '';
+            document.getElementById('e-valor').value = c.valor ?? '';
+            document.getElementById('e-vencimento').value = c.vencimento ? c.vencimento.slice(0, 10) : '';
+            document.getElementById('modal-editar').dataset.id = id;
+            document.getElementById('modal-editar').classList.add('aberto');
+        }
+
+        function fecharModalEditar() {
+            document.getElementById('modal-editar').classList.remove('aberto');
+        }
+
+        async function salvarEdicao() {
+            const id = document.getElementById('modal-editar').dataset.id;
+            const corpo = {
+                nome: document.getElementById('e-nome').value,
+                fantasia: document.getElementById('e-fantasia').value,
+                cnpj: document.getElementById('e-cnpj').value,
+                valor: document.getElementById('e-valor').value,
+                vencimento: document.getElementById('e-vencimento').value || null
+            };
+            try {
+                await api(`/api/clientes/${id}`, 'PUT', corpo);
+                fecharModalEditar();
+                carregar();
+            } catch (e) {
+                mostrarMsg('msg', e.message, 'erro');
+            }
+        }
+
+        async function provisionar(id) {
+            if (!confirm('Provisionar este cliente? Isso cria o banco, aplica o schema e inicia a instância.')) return;
+            try {
+                const c = await api(`/api/clientes/${id}/provisionar`, 'POST');
+                document.getElementById('cred-info').innerHTML =
+                    `<strong>${c.nome}</strong><br>
+                     URL: <a href="http://localhost:${c.porta}" target="_blank">http://localhost:${c.porta}</a><br>
+                     Admin: <b>${c.adminEmail}</b><br>
+                     Senha: <b>${c.adminSenha}</b><br>
+                     <small>Guarde a senha — mostrada apenas uma vez.</small>`;
+                document.getElementById('modal-credenciais').classList.add('aberto');
+                carregar();
+            } catch (e) {
+                mostrarMsg('msg', e.message, 'erro');
+            }
+        }
+
+        function fecharModalCred() { document.getElementById('modal-credenciais').classList.remove('aberto'); }
+
+        async function suspender(id) {
+            if (!confirm('Suspender este cliente? O acesso dele será bloqueado imediatamente.')) return;
+            try { await api(`/api/clientes/${id}/suspender`, 'POST'); carregar(); }
+            catch (e) { mostrarMsg('msg', e.message, 'erro'); }
+        }
+
+        async function reativar(id) {
+            try { await api(`/api/clientes/${id}/reativar`, 'POST'); carregar(); }
+            catch (e) { mostrarMsg('msg', e.message, 'erro'); }
+        }
+
+        async function iniciarServico(id) {
+            try {
+                const c = await api(`/api/clientes/${id}/iniciar`, 'POST');
+                if (c.adminSenha) {
+                    document.getElementById('cred-info').innerHTML =
+                        `<strong>${c.nome}</strong><br>
+                         URL: <a href="http://localhost:${c.porta}" target="_blank">http://localhost:${c.porta}</a><br>
+                         Admin: <b>${c.adminEmail}</b><br>
+                         Senha: <b>${c.adminSenha}</b><br>
+                         <small>Guarde a senha — mostrada apenas uma vez.</small>`;
+                    document.getElementById('modal-credenciais').classList.add('aberto');
+                }
+                carregar();
+            } catch (e) {
+                mostrarMsg('msg', e.message, 'erro');
+            }
+        }
+
+        async function pararServico(id) {
+            try { await api(`/api/clientes/${id}/parar`, 'POST'); carregar(); }
+            catch (e) { mostrarMsg('msg', e.message, 'erro'); }
+        }
+
+        if (localStorage.getItem('jg_painel_logado')) {
+            document.getElementById('view-login').style.display = 'none';
+            document.getElementById('view-clientes').style.display = 'flex';
+            carregar();
+        }
+    </script>
+</body>
+</html>

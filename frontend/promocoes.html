@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>Promoções - JG Sistemas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
+        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
+        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
+        header a:hover { color: white; }
+        main { padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+        @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
+        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+        .painel-corpo { padding: 14px; }
+        .campo { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+        .campo label { font-size: 11px; color: #656d78; font-weight: bold; text-transform: uppercase; }
+        .campo input, .campo select { padding: 9px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; width: 100%; }
+        .campo select[multiple] { min-height: 120px; }
+        .linha { display: flex; gap: 10px; }
+        .linha .campo { flex: 1; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background-color: #134074; color: white; padding: 8px; text-align: left; text-transform: uppercase; font-size: 11px; }
+        td { padding: 8px; border-bottom: 1px solid #e6e9ed; color: #333; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        .btn { border: none; border-radius: 4px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .btn-azul { background-color: #134074; color: white; }
+        .btn-verde { background-color: #00a651; color: white; }
+        .btn-perigo { background-color: #d9534f; color: white; }
+        .btn-amarelo { background-color: #f0ad4e; color: white; }
+        .btn-mini { padding: 4px 8px; font-size: 12px; }
+        .btn-block { width: 100%; padding: 12px; font-size: 15px; }
+        .sem-dados { text-align: center; color: #8b95a1; padding: 24px; font-size: 14px; }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .b-verde { background: #d8f3e3; color: #008c45; }
+        .b-cinza { background: #e6e9ed; color: #656d78; }
+        .b-azul { background: #dbeafe; color: #134074; }
+        .b-laranja { background: #fde8c8; color: #b26b00; }
+        .regra { display: none; }
+        .alvo { display: none; }
+        .dica { font-size: 11px; color: #8b95a1; margin-top: 4px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>JG SISTEMAS - PROMOÇÕES</div>
+        <div><a href="/">← Menu Principal</a></div>
+    </header>
+
+    <main>
+        <div class="grid">
+            <div class="painel">
+                <div class="painel-titulo"><span id="titulo-form">Nova Promoção</span></div>
+                <div class="painel-corpo">
+                    <div class="campo">
+                        <label>Nome da promoção *</label>
+                        <input type="text" id="f-nome" placeholder="Ex.: LEVE 3 PAGUE 2">
+                    </div>
+                    <div class="linha">
+                        <div class="campo">
+                            <label>Tipo *</label>
+                            <select id="f-tipo" onchange="mudarTipo()">
+                                <option value="LEVE_PAGUE">Leve X, pague Y</option>
+                                <option value="BRINDE">Compre X, leve grátis</option>
+                                <option value="DESCONTO_PERCENTUAL">Desconto % na compra</option>
+                                <option value="DESCONTO_VALOR">Desconto em R$</option>
+                                <option value="DESCONTO_PROGRESSIVO">Desconto progressivo por quantidade</option>
+                            </select>
+                        </div>
+                        <div class="campo">
+                            <label>Escopo *</label>
+                            <select id="f-escopo" onchange="mudarEscopo()">
+                                <option value="PRODUCT">Produtos específicos</option>
+                                <option value="CATEGORY">Categoria</option>
+                                <option value="BRAND">Marca</option>
+                                <option value="ALL">Todos os produtos</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="regra-leve" class="regra">
+                        <div class="linha">
+                            <div class="campo"><label>Comprar (qtd)</label><input type="number" id="f-buy" min="1" value="3"></div>
+                            <div class="campo"><label>Pagar (qtd)</label><input type="number" id="f-pay" min="1" value="2"></div>
+                        </div>
+                    </div>
+                    <div id="regra-brinde" class="regra">
+                        <div class="linha">
+                            <div class="campo"><label>Comprar (qtd)</label><input type="number" id="f-buy2" min="1" value="1"></div>
+                            <div class="campo"><label>Levar grátis (qtd)</label><input type="number" id="f-free" min="1" value="1"></div>
+                        </div>
+                    </div>
+                    <div id="regra-pct" class="regra">
+                        <div class="campo"><label>Percentual de desconto (%)</label><input type="number" id="f-pct" step="0.01" min="0" max="90" value="10"></div>
+                    </div>
+                    <div id="regra-valor" class="regra">
+                        <div class="campo"><label>Desconto em R$</label><input type="number" id="f-valor" step="0.01" min="0" placeholder="Ex.: 5.00"></div>
+                    </div>
+
+                    <div class="campo">
+                        <label>Quantidade mínima p/ valer (minQuantity)</label>
+                        <input type="number" id="f-minqtd" min="1" value="1">
+                    </div>
+
+                    <div id="alvo-product" class="alvo">
+                        <div class="campo">
+                            <label>Produtos alvo (multiselect)</label>
+                            <select id="f-produtos" multiple></select>
+                            <div class="dica">Segure Ctrl (ou Cmd) para selecionar vários.</div>
+                        </div>
+                    </div>
+                    <div id="alvo-categoria" class="alvo">
+                        <div class="campo">
+                            <label>Categorias alvo (multiselect)</label>
+                            <select id="f-categorias" multiple></select>
+                        </div>
+                    </div>
+                    <div id="alvo-marca" class="alvo">
+                        <div class="campo">
+                            <label>Marcas alvo (multiselect)</label>
+                            <select id="f-marcas" multiple></select>
+                        </div>
+                    </div>
+
+                    <div class="linha">
+                        <div class="campo">
+                            <label>Data de início</label>
+                            <input type="date" id="f-inicio">
+                        </div>
+                        <div class="campo">
+                            <label>Data de fim (opcional)</label>
+                            <input type="date" id="f-fim">
+                        </div>
+                    </div>
+                    <div class="check" style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                        <input type="checkbox" id="f-ativa" checked style="width:auto;">
+                        <label for="f-ativa" style="font-size:12px; color:#333;">Ativa imediatamente</label>
+                    </div>
+
+                    <button class="btn btn-verde btn-block" onclick="salvarPromocao()">Salvar Promoção</button>
+                    <button class="btn btn-azul btn-block" id="btn-cancelar-edit" onclick="cancelarEdicao()" style="display:none;">Cancelar edição</button>
+                </div>
+            </div>
+
+            <div class="painel">
+                <div class="painel-titulo"><span>Promoções Cadastradas</span></div>
+                <div class="painel-corpo" style="padding:0;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Tipo</th>
+                                <th>Status</th>
+                                <th style="text-align:center;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-promos">
+                            <tr><td colspan="4" class="sem-dados">Carregando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>© 2026 JG Sistemas</footer>
+
+    <script src="/seguranca.js"></script>
+    <script>
+        const API_BASE = '';
+
+        function obterOperador() {
+            try {
+                const raw = localStorage.getItem('jg_operador');
+                return raw ? JSON.parse(raw) : null;
+            } catch (e) { return null; }
+        }
+        function tokenAuth() {
+            const op = obterOperador();
+            return op && op.token ? { 'Authorization': 'Bearer ' + op.token } : {};
+        }
+        function bloquear() {
+            const op = obterOperador();
+            if (!op) { window.location.href = '/login.html'; return true; }
+            if (op.papel === 'SELLER') { window.location.href = '/'; return true; }
+            return false;
+        }
+        async function api(url, metodo = 'GET', corpo = null) {
+            const opcoes = { method: metodo, headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()) };
+            if (corpo) opcoes.body = JSON.stringify(corpo);
+            const response = await fetch(`${API_BASE}${url}`, opcoes);
+            if (response.status === 401) {
+                localStorage.removeItem('jg_operador');
+                window.location.href = '/login.html';
+                throw new Error('Sessão expirada.');
+            }
+            const dados = await response.json();
+            if (!response.ok) throw new Error(dados.erro || 'Erro na requisição');
+            return dados;
+        }
+        bloquear();
+
+        let editandoId = null;
+        const TIPOS = {
+            'LEVE_PAGUE': 'Leve X, pague Y',
+            'BRINDE': 'Compre X, leve grátis',
+            'DESCONTO_PERCENTUAL': 'Desconto %',
+            'DESCONTO_VALOR': 'Desconto R$',
+            'DESCONTO_PROGRESSIVO': 'Progressivo'
+        };
+
+        function selecionados(selId) {
+            const sel = document.getElementById(selId);
+            return Array.from(sel.selectedOptions).map(o => o.value);
+        }
+
+        function mudarTipo() {
+            const tipo = document.getElementById('f-tipo').value;
+            document.querySelectorAll('.regra').forEach(el => el.style.display = 'none');
+            const mapa = {
+                'LEVE_PAGUE': 'regra-leve',
+                'BRINDE': 'regra-brinde',
+                'DESCONTO_PERCENTUAL': 'regra-pct',
+                'DESCONTO_VALOR': 'regra-valor',
+                'DESCONTO_PROGRESSIVO': 'regra-pct'
+            };
+            const el = document.getElementById(mapa[tipo]);
+            if (el) el.style.display = 'flex';
+            if (tipo === 'DESCONTO_PROGRESSIVO') {
+                document.getElementById('f-pct').setAttribute('title', 'Percentual por nível (a cada minQuantity unidades)');
+            }
+        }
+
+        function mudarEscopo() {
+            const escopo = document.getElementById('f-escopo').value;
+            document.querySelectorAll('.alvo').forEach(el => el.style.display = 'none');
+            const mapa = { 'PRODUCT': 'alvo-product', 'CATEGORY': 'alvo-categoria', 'BRAND': 'alvo-marca' };
+            const el = document.getElementById(mapa[escopo]);
+            if (el) el.style.display = 'block';
+        }
+
+        function hoje() {
+            return new Date().toISOString().slice(0, 10);
+        }
+
+        async function carregarOpcoes() {
+            try {
+                const [produtos, categorias, marcas] = await Promise.all([
+                    api('/api/produtos'), api('/api/categorias'), api('/api/marcas')
+                ]);
+                document.getElementById('f-produtos').innerHTML = produtos.map(p => `<option value="${p.id}">${esc(p.codigo) || '?'} - ${esc(p.nome)}</option>`).join('');
+                document.getElementById('f-categorias').innerHTML = categorias.map(c => `<option value="${c.id}">${esc(c.nome)}</option>`).join('');
+                document.getElementById('f-marcas').innerHTML = marcas.map(m => `<option value="${m.id}">${esc(m.nome)}</option>`).join('');
+            } catch (e) { alert(e.message); }
+        }
+
+        async function carregarPromos() {
+            try {
+                const promos = await api('/api/promocoes');
+                const tbody = document.getElementById('tabela-promos');
+                if (promos.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="sem-dados">Nenhuma promoção cadastrada</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = promos.map(p => `
+                    <tr>
+                        <td>
+                            <strong>${esc(p.nome)}</strong><br>
+                            <small style="color:#8b95a1;">${new Date(p.startDate).toLocaleDateString('pt-BR')} → ${p.endDate ? new Date(p.endDate).toLocaleDateString('pt-BR') : 'sem fim'}</small>
+                        </td>
+                        <td>${TIPOS[p.tipo] ?? p.tipo}<br><small style="color:#8b95a1;">${p.escopo}</small></td>
+                        <td>
+                            ${p.pausada ? '<span class="badge b-laranja">Pausada</span>'
+                                : p.ativa ? '<span class="badge b-verde">Ativa</span>'
+                                : '<span class="badge b-cinza">Fora do período</span>'}
+                        </td>
+                        <td style="text-align:center; white-space:nowrap;">
+                            <button class="btn btn-mini btn-azul" onclick="editarPromocao('${p.id}')">Editar</button>
+                            ${p.pausada
+                                ? `<button class="btn btn-mini btn-verde" onclick="alternarAtiva('${p.id}', true)">Ativar</button>`
+                                : `<button class="btn btn-mini btn-amarelo" onclick="alternarAtiva('${p.id}', false)">Pausar</button>`}
+                            <button class="btn btn-mini btn-perigo" onclick="excluirPromocao('${p.id}', '${esc(p.nome.replace(/'/g, "\\'"))}')">Excluir</button>
+                        </td>
+                    </tr>`).join('');
+            } catch (e) { alert(e.message); }
+        }
+
+        function limparForm() {
+            document.getElementById('f-nome').value = '';
+            document.getElementById('f-tipo').value = 'LEVE_PAGUE';
+            document.getElementById('f-escopo').value = 'PRODUCT';
+            document.getElementById('f-buy').value = '3';
+            document.getElementById('f-pay').value = '2';
+            document.getElementById('f-buy2').value = '1';
+            document.getElementById('f-free').value = '1';
+            document.getElementById('f-pct').value = '10';
+            document.getElementById('f-valor').value = '';
+            document.getElementById('f-minqtd').value = '1';
+            document.getElementById('f-produtos').selectedIndex = -1;
+            document.getElementById('f-categorias').selectedIndex = -1;
+            document.getElementById('f-marcas').selectedIndex = -1;
+            document.getElementById('f-inicio').value = hoje();
+            document.getElementById('f-fim').value = '';
+            document.getElementById('f-ativa').checked = true;
+            mudarTipo();
+            mudarEscopo();
+        }
+
+        async function salvarPromocao() {
+            const nome = document.getElementById('f-nome').value.trim();
+            if (!nome) { alert('Informe o nome da promoção!'); return; }
+            const tipo = document.getElementById('f-tipo').value;
+            const escopo = document.getElementById('f-escopo').value;
+            const minQuantity = Number(document.getElementById('f-minqtd').value) || 1;
+
+            const corpo = {
+                nome,
+                tipo,
+                escopo,
+                produtos: escopo === 'PRODUCT' ? selecionados('f-produtos') : [],
+                categorias: escopo === 'CATEGORY' ? selecionados('f-categorias') : [],
+                marcas: escopo === 'BRAND' ? selecionados('f-marcas') : [],
+                minQuantity,
+                startDate: document.getElementById('f-inicio').value || hoje(),
+                endDate: document.getElementById('f-fim').value || null,
+                ativa: document.getElementById('f-ativa').checked
+            };
+
+            if (tipo === 'LEVE_PAGUE') {
+                corpo.buyQuantity = Number(document.getElementById('f-buy').value) || 1;
+                corpo.payQuantity = Number(document.getElementById('f-pay').value) || 1;
+            } else if (tipo === 'BRINDE') {
+                corpo.buyQuantity = Number(document.getElementById('f-buy2').value) || 1;
+                corpo.freeQuantity = Number(document.getElementById('f-free').value) || 1;
+            } else if (tipo === 'DESCONTO_PERCENTUAL' || tipo === 'DESCONTO_PROGRESSIVO') {
+                corpo.discountPercent = Number(document.getElementById('f-pct').value) || 0;
+            } else if (tipo === 'DESCONTO_VALOR') {
+                corpo.discountValue = Number(document.getElementById('f-valor').value) || 0;
+            }
+
+            if (escopo === 'PRODUCT' && corpo.produtos.length === 0) {
+                alert('Selecione ao menos um produto alvo (ou use escopo Categoria/Marca/Todos)!');
+                return;
+            }
+            if (escopo === 'CATEGORY' && corpo.categorias.length === 0) {
+                alert('Selecione ao menos uma categoria!');
+                return;
+            }
+            if (escopo === 'BRAND' && corpo.marcas.length === 0) {
+                alert('Selecione ao menos uma marca!');
+                return;
+            }
+
+            try {
+                if (editandoId) {
+                    await api(`/api/promocoes/${editandoId}`, 'PUT', corpo);
+                } else {
+                    await api('/api/promocoes', 'POST', corpo);
+                }
+                editandoId = null;
+                document.getElementById('titulo-form').innerText = 'Nova Promoção';
+                document.getElementById('btn-cancelar-edit').style.display = 'none';
+                limparForm();
+                carregarPromos();
+            } catch (e) { alert(e.message); }
+        }
+
+        async function editarPromocao(id) {
+            try {
+                const p = await api(`/api/promocoes/${id}`);
+                editandoId = id;
+                document.getElementById('titulo-form').innerText = `Editar: ${p.nome}`;
+                document.getElementById('btn-cancelar-edit').style.display = 'block';
+
+                document.getElementById('f-nome').value = p.nome;
+                document.getElementById('f-tipo').value = p.tipo;
+                document.getElementById('f-escopo').value = p.escopo;
+                document.getElementById('f-minqtd').value = p.minQuantity ?? 1;
+                document.getElementById('f-buy').value = p.buyQuantity ?? 1;
+                document.getElementById('f-pay').value = p.payQuantity ?? 1;
+                document.getElementById('f-buy2').value = p.buyQuantity ?? 1;
+                document.getElementById('f-free').value = p.freeQuantity ?? 1;
+                document.getElementById('f-pct').value = p.discountPercent ?? 0;
+                document.getElementById('f-valor').value = p.discountValue ?? '';
+                document.getElementById('f-inicio').value = p.startDate ? p.startDate.slice(0, 10) : hoje();
+                document.getElementById('f-fim').value = p.endDate ? p.endDate.slice(0, 10) : '';
+                document.getElementById('f-ativa').checked = p.ativa;
+
+                const setSel = (selId, valores) => {
+                    const sel = document.getElementById(selId);
+                    Array.from(sel.options).forEach(o => {
+                        o.selected = valores.includes(o.value);
+                    });
+                };
+                setSel('f-produtos', p.produtos.map(x => x.produtoId));
+                setSel('f-categorias', p.categorias || []);
+                setSel('f-marcas', p.marcas || []);
+
+                mudarTipo();
+                mudarEscopo();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } catch (e) { alert(e.message); }
+        }
+
+        function cancelarEdicao() {
+            editandoId = null;
+            document.getElementById('titulo-form').innerText = 'Nova Promoção';
+            document.getElementById('btn-cancelar-edit').style.display = 'none';
+            limparForm();
+        }
+
+        async function alternarAtiva(id, ativa) {
+            try {
+                await api(`/api/promocoes/${id}`, 'PUT', { ativa });
+                carregarPromos();
+            } catch (e) { alert(e.message); }
+        }
+
+        async function excluirPromocao(id, nome) {
+            if (!confirm(`Excluir a promoção "${nome}"?`)) return;
+            try {
+                await api(`/api/promocoes/${id}`, 'DELETE');
+                carregarPromos();
+            } catch (e) { alert(e.message); }
+        }
+
+        carregarOpcoes();
+        carregarPromos();
+        limparForm();
+    </script>
+</body>
+</html>

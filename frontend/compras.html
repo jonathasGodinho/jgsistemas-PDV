@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>Compras - JG Sistemas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
+        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
+        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
+        header a:hover { color: white; }
+        main { padding: 20px; max-width: 1300px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
+        .grid { display: grid; grid-template-columns: 380px 1fr; gap: 20px; align-items: start; }
+        @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
+        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+        .painel-corpo { padding: 14px; }
+        .campo { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+        .campo label { font-size: 11px; color: #656d78; font-weight: bold; text-transform: uppercase; }
+        .campo input, .campo select { padding: 9px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; width: 100%; background: white; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background-color: #134074; color: white; padding: 8px; text-align: left; text-transform: uppercase; font-size: 11px; }
+        td { padding: 8px; border-bottom: 1px solid #e6e9ed; color: #333; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        .btn { border: none; border-radius: 4px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .btn-azul { background-color: #134074; color: white; }
+        .btn-verde { background-color: #00a651; color: white; }
+        .btn-verde:hover { background-color: #008c45; }
+        .btn-cinza { background-color: #8b95a1; color: white; }
+        .btn-perigo { background-color: #d9534f; color: white; }
+        .btn-mini { padding: 4px 8px; font-size: 12px; }
+        .btn-block { width: 100%; padding: 12px; font-size: 15px; margin-top: 4px; }
+        .sem-dados { text-align: center; color: #8b95a1; padding: 24px; font-size: 14px; }
+        .total-painel { display: flex; justify-content: space-between; align-items: center; background: #f0f2f5; border-radius: 4px; padding: 12px; margin-top: 6px; font-weight: bold; font-size: 16px; }
+        .verde { color: #00a651; }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .b-verde { background: #d8f3e3; color: #008c45; }
+        .b-azul { background: #d6e6f7; color: #134074; }
+        .b-vermelho { background: #fbe3e3; color: #d9534f; }
+        .excluir { color: #d9534f; cursor: pointer; font-weight: bold; font-size: 15px; }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 100; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: white; border-radius: 6px; width: 700px; max-width: 94vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
+        .modal-head { background-color: #0b2545; color: white; padding: 14px 18px; font-weight: bold; font-size: 15px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
+        .modal-head .close { cursor: pointer; font-size: 20px; color: #aab2bd; }
+        .modal-head .close:hover { color: white; }
+        .modal-body { padding: 18px; }
+
+        footer { background-color: #134074; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>JG SISTEMAS - COMPRAS</div>
+        <div><a href="/">← Menu Principal</a></div>
+    </header>
+
+    <main>
+        <div class="grid">
+            <div class="painel">
+                <div class="painel-titulo"><span>Novo Pedido de Compra</span></div>
+                <div class="painel-corpo">
+                    <div class="campo">
+                        <label>Fornecedor *</label>
+                        <select id="f-fornecedor"><option value="">Selecione...</option></select>
+                    </div>
+
+                    <div class="campo">
+                        <label>Produto</label>
+                        <div style="display:flex; gap:8px;">
+                            <input type="text" id="f-busca" placeholder="Buscar produto..." style="flex:1;">
+                            <button class="btn btn-azul" onclick="buscarProdutos()">Buscar</button>
+                        </div>
+                    </div>
+                    <div id="lista-produtos" style="max-height:200px; overflow-y:auto; border:1px solid #ccd1d9; border-radius:4px; margin-bottom:12px;">
+                        <div class="sem-dados">Digite para buscar produtos</div>
+                    </div>
+
+                    <div style="margin-bottom:12px;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th style="width:52px;">Qtd</th>
+                                    <th style="width:70px;">Custo</th>
+                                    <th style="width:28px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-itens">
+                                <tr><td colspan="4" class="sem-dados">Nenhum item</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="total-painel">
+                        <span>Total do Pedido</span>
+                        <span class="verde" id="lbl-total">R$ 0,00</span>
+                    </div>
+
+                    <button class="btn btn-verde btn-block" onclick="criarCompra()">Registrar Pedido</button>
+                </div>
+            </div>
+
+            <div class="painel">
+                <div class="painel-titulo"><span>Pedidos de Compra</span></div>
+                <div class="painel-corpo">
+                    <div style="overflow-x:auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nº</th>
+                                    <th>Data</th>
+                                    <th>Fornecedor</th>
+                                    <th style="text-align:right;">Itens</th>
+                                    <th style="text-align:right;">Total</th>
+                                    <th>Status</th>
+                                    <th style="text-align:center;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-compras">
+                                <tr><td colspan="7" class="sem-dados">Carregando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>© 2026 JG Sistemas</footer>
+
+    <!-- Modal detalhe -->
+    <div class="modal-overlay" id="modal-detalhe">
+        <div class="modal">
+            <div class="modal-head">
+                <span>Pedido de Compra - Nº <span id="md-numero">-</span></span>
+                <span class="close" onclick="fecharModal('modal-detalhe')">&times;</span>
+            </div>
+            <div class="modal-body" id="detalhe-conteudo"></div>
+        </div>
+    </div>
+
+    <!-- Modal receber -->
+    <div class="modal-overlay" id="modal-receber">
+        <div class="modal">
+            <div class="modal-head">
+                <span>Receber Pedido - Nº <span id="mr-numero">-</span></span>
+                <span class="close" onclick="fecharModal('modal-receber')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="campo">
+                    <label>Vencimento da conta a pagar</label>
+                    <input type="date" id="mr-vencimento">
+                </div>
+                <div class="campo">
+                    <label>Observações</label>
+                    <input type="text" id="mr-obs" placeholder="Opcional">
+                </div>
+                <button class="btn btn-verde" style="width:100%; padding:12px; font-size:15px;" onclick="confirmarRecebimento()">Confirmar Recebimento</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/seguranca.js"></script>
+    <script>
+        const API_BASE = '';
+        const formatarMoeda = v => `R$ ${Number(v).toFixed(2).replace('.', ',')}`;
+        const formatarDataHora = d => new Date(d).toLocaleString('pt-BR');
+        const NOMES_STATUS = { PENDING: 'Pendente', RECEIVED: 'Recebido' };
+        const CORES_STATUS = { PENDING: 'b-azul', RECEIVED: 'b-verde' };
+
+        function obterOperador() {
+            try {
+                const raw = localStorage.getItem('jg_operador');
+                return raw ? JSON.parse(raw) : null;
+            } catch (e) { return null; }
+        }
+        function tokenAuth() {
+            const op = obterOperador();
+            return op && op.token ? { 'Authorization': 'Bearer ' + op.token } : {};
+        }
+        function bloquearCaixa() {
+            const op = obterOperador();
+            if (!op) { window.location.href = '/login.html'; return true; }
+            if (op.papel === 'SELLER') { window.location.href = '/'; return true; }
+            return false;
+        }
+        async function api(url, metodo = 'GET', corpo = null) {
+            const opcoes = { method: metodo, headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()) };
+            if (corpo) opcoes.body = JSON.stringify(corpo);
+            const response = await fetch(`${API_BASE}${url}`, opcoes);
+            if (response.status === 401) {
+                localStorage.removeItem('jg_operador');
+                window.location.href = '/login.html';
+                throw new Error('Sessão expirada.');
+            }
+            const dados = await response.json();
+            if (!response.ok) throw new Error(dados.erro || 'Erro na requisição');
+            return dados;
+        }
+        bloquearCaixa();
+
+        let itens = [];
+        let produtosBusca = [];
+        let compraReceberId = null;
+
+        async function carregarFornecedores() {
+            try {
+                const forn = await api('/api/fornecedores');
+                const select = document.getElementById('f-fornecedor');
+                select.innerHTML = '<option value="">Selecione...</option>';
+                forn.forEach(f => {
+                    select.innerHTML += `<option value="${f.id}">${esc(f.nome)}</option>`;
+                });
+            } catch (e) { alert(e.message); }
+        }
+
+        async function buscarProdutos() {
+            const termo = document.getElementById('f-busca').value.trim();
+            try {
+                produtosBusca = await api('/api/produtos' + (termo ? `?busca=${encodeURIComponent(termo)}` : ''));
+                const area = document.getElementById('lista-produtos');
+                if (produtosBusca.length === 0) {
+                    area.innerHTML = '<div class="sem-dados">Nenhum produto encontrado</div>';
+                    return;
+                }
+                area.innerHTML = produtosBusca.slice(0, 20).map((p, idx) => `
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; border-bottom:1px solid #e6e9ed;">
+                        <div>
+                            <strong>${esc(p.nome)}</strong><br>
+                            <small style="color:#8b95a1;">${esc(p.codigo || p.sku || '-')}</small>
+                        </div>
+                        <button class="btn btn-mini btn-verde" onclick="adicionarItem(${idx})">Adicionar</button>
+                    </div>`).join('');
+            } catch (e) { alert(e.message); }
+        }
+
+        function adicionarItem(idx) {
+            const p = produtosBusca[idx];
+            if (!p) return;
+            let indiceItem = itens.findIndex(i => i.produtoId === p.id);
+            if (indiceItem >= 0) {
+                itens[indiceItem].quantidade += 1;
+            } else {
+                itens.push({ produtoId: p.id, nome: p.nome, codigo: p.codigo || p.sku || '-', quantidade: 1, custoUnitario: Number(p.custo) || 0 });
+                indiceItem = itens.length - 1;
+            }
+            renderizarItens();
+            const inputQtd = document.getElementById(`qtd-${indiceItem}`);
+            if (inputQtd) {
+                inputQtd.focus();
+                inputQtd.select();
+            }
+        }
+
+        function renderizarItens() {
+            const tbody = document.getElementById('tabela-itens');
+            if (itens.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="sem-dados">Nenhum item</td></tr>';
+                document.getElementById('lbl-total').innerText = 'R$ 0,00';
+                return;
+            }
+            const total = itens.reduce((s, i) => s + i.quantidade * i.custoUnitario, 0);
+            document.getElementById('lbl-total').innerText = formatarMoeda(total);
+            tbody.innerHTML = itens.map((i, idx) => `
+                <tr>
+                    <td>${esc(i.nome)}</td>
+                    <td><input type="number" id="qtd-${idx}" min="1" value="${i.quantidade}" style="width:48px; padding:4px; border:1px solid #aab2bd; border-radius:3px;" onchange="editarQtd(${idx}, this.value)"></td>
+                    <td><input type="number" min="0" step="0.01" value="${i.custoUnitario}" style="width:64px; padding:4px; border:1px solid #aab2bd; border-radius:3px;" onchange="editarCusto(${idx}, this.value)"></td>
+                    <td style="text-align:center;"><span class="excluir" onclick="removerItem(${idx})">&times;</span></td>
+                </tr>`).join('');
+        }
+
+        function editarQtd(idx, valor) {
+            itens[idx].quantidade = Math.max(1, Math.round(Number(valor) || 1));
+            renderizarItens();
+        }
+        function editarCusto(idx, valor) {
+            itens[idx].custoUnitario = Number(String(valor).replace(',', '.')) || 0;
+            renderizarItens();
+        }
+        function removerItem(idx) {
+            itens.splice(idx, 1);
+            renderizarItens();
+        }
+
+        async function criarCompra() {
+            const fornecedorId = document.getElementById('f-fornecedor').value;
+            if (!fornecedorId) { alert('Selecione o fornecedor!'); return; }
+            if (itens.length === 0) { alert('Adicione pelo menos um item!'); return; }
+            try {
+                const r = await api('/api/compras', 'POST', {
+                    fornecedorId,
+                    itens: itens.map(i => ({ produtoId: i.produtoId, quantidade: i.quantidade, custoUnitario: i.custoUnitario }))
+                });
+                alert(`Pedido de compra Nº ${r.numero} registrado!`);
+                itens = [];
+                renderizarItens();
+                carregarCompras();
+            } catch (e) { alert(e.message); }
+        }
+
+        async function carregarCompras() {
+            try {
+                const compras = await api('/api/compras');
+                const tbody = document.getElementById('tabela-compras');
+                if (compras.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="sem-dados">Nenhum pedido de compra</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = compras.map(c => `
+                    <tr>
+                        <td><strong>${esc(c.numero)}</strong></td>
+                        <td>${formatarDataHora(c.data)}</td>
+                        <td>${esc(c.fornecedor || '-')}</td>
+                        <td style="text-align:right;">${c.qtdItens}</td>
+                        <td style="text-align:right;"><strong>${formatarMoeda(c.total)}</strong></td>
+                        <td><span class="badge ${CORES_STATUS[c.status]}">${esc(NOMES_STATUS[c.status] || c.status)}</span></td>
+                        <td style="text-align:center;">
+                            <button class="btn btn-mini btn-azul" onclick="abrirDetalhe('${c.id}')">Ver</button>
+                            ${c.status === 'PENDING' ? `
+                                <button class="btn btn-mini btn-verde" onclick="abrirReceber('${c.id}', '${esc(c.numero)}')">Receber</button>
+                                <button class="btn btn-mini btn-perigo" onclick="cancelarCompra('${c.id}', '${esc(c.numero)}')">Cancelar</button>` : ''}
+                        </td>
+                    </tr>`).join('');
+            } catch (e) { alert(e.message); }
+        }
+
+        function fecharModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        async function abrirDetalhe(id) {
+            try {
+                const c = await api(`/api/compras/${id}`);
+                document.getElementById('md-numero').innerText = c.numero;
+                const itensHtml = c.itens.map(i => `
+                    <tr>
+                        <td>${esc(i.codigo)}</td>
+                        <td>${esc(i.nome)}</td>
+                        <td style="text-align:right;">${i.quantidade}</td>
+                        <td style="text-align:right;">${formatarMoeda(i.custoUnitario)}</td>
+                        <td style="text-align:right;">${formatarMoeda(i.total)}</td>
+                    </tr>`).join('');
+                document.getElementById('detalhe-conteudo').innerHTML = `
+                    <div style="margin-bottom:12px; font-size:13px;">
+                        Fornecedor: <strong>${esc(c.fornecedor?.nome || '-')}</strong> ·
+                        Status: <strong>${esc(NOMES_STATUS[c.status] || c.status)}</strong> ·
+                        Data: ${formatarDataHora(c.data)}
+                    </div>
+                    <table>
+                        <thead><tr><th>Código</th><th>Produto</th><th style="text-align:right;">Qtd</th><th style="text-align:right;">Custo</th><th style="text-align:right;">Total</th></tr></thead>
+                        <tbody>${itensHtml}</tbody>
+                    </table>
+                    <div style="text-align:right; margin-top:10px; font-weight:bold; font-size:16px;">Total: ${formatarMoeda(c.total)}</div>`;
+                document.getElementById('modal-detalhe').classList.add('active');
+            } catch (e) { alert(e.message); }
+        }
+
+        function abrirReceber(id, numero) {
+            compraReceberId = id;
+            document.getElementById('mr-numero').innerText = numero;
+            document.getElementById('mr-vencimento').value = '';
+            document.getElementById('mr-obs').value = '';
+            document.getElementById('modal-receber').classList.add('active');
+        }
+
+        async function confirmarRecebimento() {
+            if (!compraReceberId) return;
+            try {
+                await api(`/api/compras/${compraReceberId}/receber`, 'POST', {
+                    vencimento: document.getElementById('mr-vencimento').value || undefined,
+                    observacoes: document.getElementById('mr-obs').value.trim() || undefined
+                });
+                alert('Pedido recebido! Estoque atualizado e conta a pagar gerada.');
+                fecharModal('modal-receber');
+                compraReceberId = null;
+                carregarCompras();
+            } catch (e) { alert(e.message); }
+        }
+
+        async function cancelarCompra(id, numero) {
+            if (!confirm(`Cancelar o pedido de compra ${numero}?`)) return;
+            try {
+                await api(`/api/compras/${id}`, 'DELETE');
+                carregarCompras();
+            } catch (e) { alert(e.message); }
+        }
+
+        document.getElementById('f-busca').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') buscarProdutos();
+        });
+
+        carregarFornecedores();
+        carregarCompras();
+    </script>
+</body>
+</html>

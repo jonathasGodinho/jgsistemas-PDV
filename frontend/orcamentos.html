@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>Orçamentos - JG Sistemas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
+        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
+        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
+        header a:hover { color: white; }
+        main { padding: 20px; max-width: 1100px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
+        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
+        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+        .painel-corpo { padding: 14px; }
+        .campo { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+        .campo label { font-size: 11px; color: #656d78; font-weight: bold; text-transform: uppercase; }
+        .campo input, .campo select { padding: 9px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; width: 100%; background: white; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background-color: #134074; color: white; padding: 8px; text-align: left; text-transform: uppercase; font-size: 11px; }
+        td { padding: 8px; border-bottom: 1px solid #e6e9ed; color: #333; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        .btn { border: none; border-radius: 4px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .btn-azul { background-color: #134074; color: white; }
+        .btn-verde { background-color: #00a651; color: white; }
+        .btn-mini { padding: 4px 8px; font-size: 12px; }
+        .btn-block { width: 100%; padding: 12px; font-size: 15px; }
+        .sem-dados { text-align: center; color: #8b95a1; padding: 24px; font-size: 14px; }
+        .verde { color: #00a651; }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .b-azul { background: #d6e6f7; color: #134074; }
+        .b-verde { background: #d8f3e3; color: #008c45; }
+        .resumo { display: flex; gap: 12px; flex-wrap: wrap; }
+        .resumo div { flex: 1; min-width: 180px; background: #f0f2f5; border-radius: 4px; padding: 12px; text-align: center; }
+        .resumo .v { font-size: 20px; font-weight: bold; color: #134074; }
+        .resumo .r { font-size: 11px; color: #656d78; text-transform: uppercase; }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 100; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: white; border-radius: 6px; width: 640px; max-width: 94vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
+        .modal-head { background-color: #0b2545; color: white; padding: 14px 18px; font-weight: bold; font-size: 15px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
+        .modal-head .close { cursor: pointer; font-size: 20px; color: #aab2bd; }
+        .modal-head .close:hover { color: white; }
+        .modal-body { padding: 18px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>JG SISTEMAS - ORÇAMENTOS</div>
+        <div><a href="/">← Menu Principal</a></div>
+    </header>
+
+    <main>
+        <div class="painel">
+            <div class="painel-titulo"><span>Orçamentos Pendentes</span></div>
+            <div class="painel-corpo">
+                <div class="resumo" id="box-resumo"></div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nº</th>
+                                <th>Data</th>
+                                <th>Operador</th>
+                                <th style="text-align:right;">Itens</th>
+                                <th style="text-align:right;">Subtotal</th>
+                                <th style="text-align:right;">Desconto</th>
+                                <th style="text-align:right;">Total</th>
+                                <th style="text-align:center;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-orcamentos">
+                            <tr><td colspan="8" class="sem-dados">Carregando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>© 2026 JG Sistemas</footer>
+
+    <!-- Modal efetivar -->
+    <div class="modal-overlay" id="modal-efetivar">
+        <div class="modal">
+            <div class="modal-head">
+                <span>Efetivar Orçamento - Nº <span id="me-numero">-</span></span>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="me-itens" style="margin-bottom:14px;"></div>
+                <div class="campo">
+                    <label>Forma de pagamento</label>
+                    <select id="me-metodo">
+                        <option value="MONEY">Dinheiro</option>
+                        <option value="PIX">PIX</option>
+                        <option value="CREDIT_CARD">Crédito</option>
+                        <option value="DEBIT_CARD">Débito</option>
+                        <option value="CREDIARIO">Crediário</option>
+                    </select>
+                </div>
+                <div id="box-parcelas" class="campo" style="display:none;">
+                    <label>Parcelas</label>
+                    <input type="number" id="me-parcelas" min="1" max="12" value="1">
+                </div>
+                <div class="campo">
+                    <label>Valor recebido (Dinheiro)</label>
+                    <input type="number" id="me-recebido" step="0.01" placeholder="0,00">
+                </div>
+                <button class="btn btn-verde btn-block" onclick="confirmarEfetivar()">Efetivar Venda</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/seguranca.js"></script>
+    <script>
+        const API_BASE = '';
+        const formatarMoeda = v => `R$ ${Number(v).toFixed(2).replace('.', ',')}`;
+        const formatarDataHora = d => new Date(d).toLocaleString('pt-BR');
+
+        function obterOperador() {
+            try {
+                const raw = localStorage.getItem('jg_operador');
+                return raw ? JSON.parse(raw) : null;
+            } catch (e) { return null; }
+        }
+        function tokenAuth() {
+            const op = obterOperador();
+            return op && op.token ? { 'Authorization': 'Bearer ' + op.token } : {};
+        }
+        async function api(url, metodo = 'GET', corpo = null) {
+            const opcoes = { method: metodo, headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()) };
+            if (corpo) opcoes.body = JSON.stringify(corpo);
+            const response = await fetch(`${API_BASE}${url}`, opcoes);
+            if (response.status === 401) {
+                localStorage.removeItem('jg_operador');
+                window.location.href = '/login.html';
+                throw new Error('Sessão expirada.');
+            }
+            const dados = await response.json();
+            if (!response.ok) throw new Error(dados.erro || 'Erro na requisição');
+            return dados;
+        }
+
+        const op = obterOperador();
+        if (!op) { window.location.href = '/login.html'; }
+        const ehCaixa = op.papel === 'SELLER';
+
+        let orcamentoEfetivarId = null;
+        let orcamentosCache = [];
+
+        async function carregarOrcamentos() {
+            try {
+                const dados = await api('/api/vendas/consulta?status=PENDING');
+                const orcs = dados.vendas;
+                orcamentosCache = orcs;
+
+                document.getElementById('box-resumo').innerHTML = `
+                    <div><div class="v">${orcs.length}</div><div class="r">Orçamentos pendentes</div></div>
+                    <div><div class="v">${formatarMoeda(dados.resumo.total)}</div><div class="r">Total em orçamentos</div></div>`;
+
+                const tbody = document.getElementById('tabela-orcamentos');
+                if (orcs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" class="sem-dados">Nenhum orçamento pendente</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = orcs.map(v => `
+                    <tr>
+                        <td><strong>${v.numero}</strong></td>
+                        <td>${formatarDataHora(v.data)}</td>
+                        <td>${esc(v.operador)}</td>
+                        <td style="text-align:right;">${v.qtdItens}</td>
+                        <td style="text-align:right;">${formatarMoeda(v.subtotal)}</td>
+                        <td style="text-align:right;">${formatarMoeda(v.desconto)}</td>
+                        <td style="text-align:right;"><strong>${formatarMoeda(v.total)}</strong></td>
+                        <td style="text-align:center;">
+                            <button class="btn btn-mini btn-verde" onclick="abrirEfetivar('${v.id}', '${v.numero}')">Efetivar</button>
+                            <button class="btn btn-mini btn-azul" onclick="verItens(${orcs.indexOf(v)})">Itens</button>
+                        </td>
+                    </tr>`).join('');
+            } catch (e) { alert(e.message); }
+        }
+
+        function verItens(idx) {
+            const v = orcamentosCache[idx];
+            if (!v) return;
+            const itens = v.itensDetalhe;
+            const linhas = itens.map(i => `
+                <tr>
+                    <td>${esc(i.codigo)}</td>
+                    <td>${esc(i.nome)}</td>
+                    <td style="text-align:right;">${i.quantidade}</td>
+                    <td style="text-align:right;">${formatarMoeda(i.unitario)}</td>
+                    <td style="text-align:right;">${formatarMoeda(i.subtotal)}</td>
+                </tr>`).join('');
+            const modal = document.getElementById('modal-efetivar');
+            document.getElementById('me-numero').innerText = '-';
+            document.getElementById('me-itens').innerHTML = `
+                <table>
+                    <thead><tr><th>Código</th><th>Produto</th><th style="text-align:right;">Qtd</th><th style="text-align:right;">Unit.</th><th style="text-align:right;">Subtotal</th></tr></thead>
+                    <tbody>${linhas}</tbody>
+                </table>
+                <div style="text-align:right; margin-top:10px; font-weight:bold;">Total: ${formatarMoeda(v.total)}</div>`;
+            modal.classList.add('active');
+        }
+
+        function abrirEfetivar(id, numero) {
+            orcamentoEfetivarId = id;
+            document.getElementById('me-numero').innerText = numero;
+            document.getElementById('me-metodo').value = 'MONEY';
+            document.getElementById('me-parcelas').value = '1';
+            document.getElementById('me-recebido').value = '';
+            document.getElementById('box-parcelas').style.display = 'none';
+            document.getElementById('modal-efetivar').classList.add('active');
+        }
+
+        document.getElementById('me-metodo').addEventListener('change', (e) => {
+            document.getElementById('box-parcelas').style.display = e.target.value === 'CREDIT_CARD' ? 'flex' : 'none';
+        });
+
+        function fecharModal() {
+            document.getElementById('modal-efetivar').classList.remove('active');
+            orcamentoEfetivarId = null;
+        }
+
+        async function confirmarEfetivar() {
+            if (!orcamentoEfetivarId) return;
+            const metodo = document.getElementById('me-metodo').value;
+            try {
+                const r = await api(`/api/vendas/${orcamentoEfetivarId}/efetivar`, 'POST', {
+                    pagamento: {
+                        metodo,
+                        parcelas: metodo === 'CREDIT_CARD' ? Number(document.getElementById('me-parcelas').value) || 1 : 1,
+                        valorRecebido: Number(String(document.getElementById('me-recebido').value).replace(',', '.')) || 0
+                    }
+                });
+                let msg = `Orçamento ${r.numero} efetivado com sucesso! Total: ${formatarMoeda(r.total)}`;
+                if (r.troco > 0) msg += `\nTroco: ${formatarMoeda(r.troco)}`;
+                if (r.pix && r.pix.payload) {
+                    try {
+                        const janela = window.open('', '_blank', 'width=480,height=560');
+                        janela.document.write(`<html><head><title>PIX</title></head><body style="font-family:sans-serif;text-align:center;padding:20px;">
+                            <h2>Cobrança PIX</h2><p>Valor: ${formatarMoeda(r.total)}</p>
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(r.pix.payload)}" alt="QR Code PIX"><br>
+                            <textarea style="width:100%;height:80px;margin-top:10px;" readonly>${esc(r.pix.payload)}</textarea></body></html>`);
+                    } catch (e) { }
+                }
+                alert(msg);
+                fecharModal();
+                carregarOrcamentos();
+            } catch (e) { alert(e.message); }
+        }
+
+        carregarOrcamentos();
+    </script>
+</body>
+</html>

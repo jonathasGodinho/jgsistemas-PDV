@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Login de Operador - JG Sistemas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(160deg, #0a1f44 0%, #123069 55%, #0d1f3c 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .topo { text-align: center; margin-bottom: 28px; }
+        .logo-box {
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px;
+            background: white;
+            border-radius: 12px;
+            width: 240px; height: 240px;
+            overflow: hidden;
+            box-shadow: 0 8px 26px rgba(0,0,0,0.35);
+        }
+        .logo-box img { width: 100%; height: 100%; object-fit: cover; }
+        .topo p { color: #9fb3d1; font-size: 13px; margin-top: 4px; letter-spacing: 2px; text-transform: uppercase; }
+        .topo .suporte { color: #9fb3d1; font-size: 14px; margin-top: 10px; letter-spacing: 1px; text-transform: none; }
+        .topo .suporte b { color: #2ecc71; }
+
+        .card {
+            background: #f4f6fa;
+            border-radius: 10px;
+            width: 400px;
+            max-width: 94vw;
+            box-shadow: 0 16px 50px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+        .card-titulo {
+            background: linear-gradient(90deg, #0b2545, #134074);
+            color: white; padding: 14px 20px;
+            font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .card-titulo .numero { background: #2ecc71; color: #0b2545; border-radius: 4px; padding: 2px 8px; font-weight: 800; }
+        .card-corpo { padding: 26px 26px 24px; }
+
+        .campo { margin-bottom: 18px; }
+        .campo label { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #5b6b83; font-weight: bold; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+        .campo label .f2 { color: #2ecc71; font-size: 10px; border: 1px solid #2ecc71; border-radius: 3px; padding: 1px 5px; }
+        .campo .input-wrap { position: relative; }
+        .campo input {
+            width: 100%; padding: 12px 14px; font-size: 18px; color: #0b2545;
+            border: 1px solid #b6c2d4; border-radius: 6px; background: white; outline: none;
+        }
+        .campo input:focus { border-color: #134074; box-shadow: 0 0 0 3px rgba(19,64,116,0.15); }
+        .campo .lupa {
+            position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+            background: #134074; color: white; border: none; border-radius: 4px;
+            padding: 7px 10px; font-size: 11px; font-weight: bold; cursor: pointer;
+        }
+        .campo .lupa:hover { background: #0b2545; }
+
+        .erro {
+            background: #fdeaea; color: #c0392b; border: 1px solid #e8a09b;
+            border-radius: 6px; padding: 10px 12px; font-size: 13px; font-weight: bold;
+            margin-bottom: 16px; display: none; text-align: center;
+        }
+
+        .acoes { display: flex; gap: 10px; }
+        .btn {
+            border: none; border-radius: 6px; padding: 13px; font-size: 15px;
+            font-weight: bold; cursor: pointer; flex: 1; color: white;
+            transition: filter .15s ease;
+        }
+        .btn:hover { filter: brightness(1.1); }
+        .btn-entrar { background: linear-gradient(135deg, #2ecc71, #1d9d55); box-shadow: 0 4px 14px rgba(46,204,113,0.4); }
+        .btn-limpar { background: #8b95a1; flex: 0 0 110px; }
+        .btn-nova-senha { background: none; color: #134074; width: 100%; margin-top: 14px; font-size: 12px; text-decoration: underline; cursor: pointer; border: none; }
+
+        .rodape { margin-top: 26px; text-align: center; color: #5e7291; font-size: 12px; letter-spacing: 1px; }
+        .rodape b { color: #9fb3d1; }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 100; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: white; border-radius: 8px; width: 460px; max-width: 94vw; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 14px 44px rgba(0,0,0,0.5); overflow: hidden; }
+        .modal-head { background: linear-gradient(90deg, #0b2545, #134074); color: white; padding: 13px 18px; font-weight: bold; font-size: 14px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
+        .modal-head .close { cursor: pointer; font-size: 20px; color: #9fb3d1; }
+        .modal-head .close:hover { color: white; }
+        .modal-busca { padding: 12px 18px; border-bottom: 1px solid #e6e9ed; }
+        .modal-busca input { width: 100%; padding: 10px 12px; font-size: 15px; border: 1px solid #b6c2d4; border-radius: 5px; color: #0b2545; outline: none; }
+        .modal-corpo { padding: 20px 22px; overflow-y: auto; }
+        .modal-corpo .campo input { width: 100%; padding: 11px 13px; font-size: 15px; border: 1px solid #b6c2d4; border-radius: 5px; color: #0b2545; outline: none; }
+        .modal-corpo .erro { margin-bottom: 12px; }
+        .lista-operadores { overflow-y: auto; padding: 8px; }
+        .operador-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 14px; border-radius: 6px; cursor: pointer; transition: background .12s;
+            border-bottom: 1px solid #eef1f5;
+        }
+        .operador-item:hover { background: #eaf0f9; }
+        .operador-item .nome { font-weight: bold; color: #0b2545; font-size: 15px; }
+        .operador-item .email { font-size: 12px; color: #8b95a1; }
+        .operador-item .papel { font-size: 10px; font-weight: bold; color: #2ecc71; background: #e3f7ec; border-radius: 3px; padding: 2px 7px; text-transform: uppercase; }
+        .sem-operador { text-align: center; color: #8b95a1; padding: 22px; font-size: 14px; }
+
+        @media (max-width: 480px) {
+            .logo-box { width: 200px; height: 200px; }
+            .card-corpo { padding: 20px 18px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topo">
+        <div class="logo-box"><img id="logo-jg" src="logo-jg.png" alt="JG Sistemas"></div>
+        <p>Sistema de Gestão Comercial</p>
+        <p class="suporte">Suporte: <b>(62) 98219-9003</b></p>
+    </div>
+
+    <div class="card">
+        <div class="card-titulo"><span class="numero">1</span> Identificação do Operador</div>
+        <div class="card-corpo">
+            <div class="erro" id="erro"></div>
+
+            <div class="campo">
+                <label>Operador <span class="f2">F2</span></label>
+                <div class="input-wrap">
+                    <input type="text" id="operador" placeholder="Nome ou e-mail" autocomplete="off" autofocus>
+                    <button class="lupa" onclick="abrirListaOperadores()">F2</button>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label>Senha</label>
+                <div class="input-wrap">
+                    <input type="password" id="senha" placeholder="••••••" autocomplete="off">
+                </div>
+            </div>
+
+            <div class="acoes">
+                <button class="btn btn-entrar" onclick="entrar()">Entrar</button>
+                <button class="btn btn-limpar" onclick="limpar()">Limpar</button>
+            </div>
+
+            <button class="btn-nova-senha" onclick="esqueciSenha()">Esqueci minha senha</button>
+        </div>
+    </div>
+
+    <div class="rodape">JG SISTEMAS — <b>v1.0</b> · Controle de Operadores e Caixa</div>
+
+    <!-- Modal seleção de operador (F2) -->
+    <div class="modal-overlay" id="modal-operadores">
+        <div class="modal">
+            <div class="modal-head">
+                <span>Selecionar Operador</span>
+                <span class="close" onclick="fecharListaOperadores()">&times;</span>
+            </div>
+            <div class="modal-busca">
+                <input type="text" id="busca-operador" placeholder="Digite para filtrar..." oninput="filtrarOperadores()">
+            </div>
+            <div class="lista-operadores" id="lista-operadores"></div>
+        </div>
+    </div>
+
+    <!-- Modal troca obrigatória de senha -->
+    <div class="modal-overlay" id="modal-trocar-senha">
+        <div class="modal">
+            <div class="modal-head">
+                <span>Troca de Senha Obrigatória</span>
+            </div>
+            <div class="modal-corpo">
+                <div class="erro" id="erro-trocar"></div>
+                <div class="campo">
+                    <label>Senha Atual</label>
+                    <div class="input-wrap">
+                        <input type="password" id="trocar-senha-atual" autocomplete="off">
+                    </div>
+                </div>
+                <div class="campo">
+                    <label>Nova Senha</label>
+                    <div class="input-wrap">
+                        <input type="password" id="trocar-nova-senha" placeholder="Mín. 8 chars, número e maiúscula" autocomplete="new-password">
+                    </div>
+                </div>
+                <div class="campo">
+                    <label>Confirmar Nova Senha</label>
+                    <div class="input-wrap">
+                        <input type="password" id="trocar-confirma-senha" autocomplete="new-password">
+                    </div>
+                </div>
+                <div class="acoes">
+                    <button class="btn btn-entrar" onclick="confirmarTrocarSenha()">Salvar Senha</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal aviso de mensalidade -->
+    <div class="modal-overlay" id="modal-aviso-mensalidade">
+        <div class="modal">
+            <div class="modal-head">
+                <span>Aviso de Mensalidade</span>
+            </div>
+            <div class="modal-corpo">
+                <div class="erro" id="aviso-mensalidade-texto" style="display:block; background:#fde8c8; color:#b26b00; border-color:#e6c47a; font-size:14px; line-height:1.5;"></div>
+                <div class="acoes">
+                    <button class="btn btn-entrar" onclick="confirmarAvisoMensalidade()">Entendi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/seguranca.js"></script>
+    <script>
+        const API_BASE = '';
+        let operadores = [];
+
+        function mostrarErro(msg) {
+            const el = document.getElementById('erro');
+            el.innerText = msg;
+            el.style.display = 'block';
+        }
+
+        function limpar() {
+            document.getElementById('erro').style.display = 'none';
+            document.getElementById('operador').value = '';
+            document.getElementById('senha').value = '';
+            document.getElementById('operador').focus();
+        }
+
+        async function carregarOperadores() {
+            try {
+                const r = await fetch(`${API_BASE}/api/auth/operadores`);
+                if (r.ok) operadores = await r.json();
+            } catch (e) { /* offline: mantém lista vazia */ }
+        }
+
+        function abrirListaOperadores() {
+            if (operadores.length === 0) {
+                mostrarErro("Nenhum operador disponível. Fale com o administrador.");
+                return;
+            }
+            document.getElementById('busca-operador').value = '';
+            document.getElementById('busca-operador').focus();
+            document.getElementById('modal-operadores').classList.add('active');
+            filtrarOperadores();
+        }
+
+        function fecharListaOperadores() {
+            document.getElementById('modal-operadores').classList.remove('active');
+        }
+
+        function filtrarOperadores() {
+            const q = document.getElementById('busca-operador').value.trim().toLowerCase();
+            const lista = operadores.filter(o =>
+                !q || o.nome.toLowerCase().includes(q) || o.email.toLowerCase().includes(q)
+            );
+            const box = document.getElementById('lista-operadores');
+            if (lista.length === 0) {
+                box.innerHTML = '<div class="sem-operador">Nenhum operador encontrado.</div>';
+                return;
+            }
+            box.innerHTML = lista.map(o => `
+                <div class="operador-item" onclick="selecionarOperador('${esc(o.email)}')">
+                    <div>
+                        <div class="nome">${esc(o.nome)}</div>
+                        <div class="email">${esc(o.email)}</div>
+                    </div>
+                    <span class="papel">${o.papel || 'OPERADOR'}</span>
+                </div>`).join('');
+        }
+
+        function selecionarOperador(email) {
+            document.getElementById('operador').value = email;
+            document.getElementById('senha').value = '';
+            document.getElementById('senha').focus();
+            document.getElementById('erro').style.display = 'none';
+            fecharListaOperadores();
+        }
+
+        async function entrar() {
+            const identificador = document.getElementById('operador').value.trim();
+            const senha = document.getElementById('senha').value;
+            if (!identificador) { mostrarErro("Informe o operador!"); return; }
+            if (!senha) { mostrarErro("Informe a senha!"); return; }
+
+            try {
+                const r = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ identificador, senha })
+                });
+                const dados = await r.json();
+                if (!r.ok) {
+                    mostrarErro(dados.erro || "Falha no login!");
+                    document.getElementById('senha').value = '';
+                    document.getElementById('senha').focus();
+                    return;
+                }
+                // A sessão fica em cookie httpOnly (não acessível via JS).
+                // Guardamos apenas os dados do operador, sem o token.
+                const { token: _token, ...operador } = dados;
+                localStorage.setItem('jg_operador', JSON.stringify(operador));
+                // Aviso de mensalidade: aparece no login, no máximo uma vez por hora.
+                if (dados.avisoMensalidade) {
+                    localStorage.setItem('jg_aviso_mensalidade', JSON.stringify(dados.avisoMensalidade));
+                    const HORA_MS = 3600000;
+                    const ultima = Number(localStorage.getItem('jg_aviso_mensalidade_ultima') || 0);
+                    if (Date.now() - ultima >= HORA_MS) {
+                        abrirAvisoMensalidade(dados.avisoMensalidade, senha);
+                        return;
+                    }
+                } else {
+                    localStorage.removeItem('jg_aviso_mensalidade');
+                }
+                if (dados.trocarSenha) {
+                    abrirTrocarSenha(senha);
+                    return;
+                }
+                window.location.href = '/';
+            } catch (e) {
+                mostrarErro("Falha de conexão com o servidor.");
+            }
+        }
+
+        function abrirTrocarSenha(senhaAtual) {
+            document.getElementById('trocar-senha-atual').value = senhaAtual || '';
+            document.getElementById('trocar-nova-senha').value = '';
+            document.getElementById('trocar-confirma-senha').value = '';
+            document.getElementById('erro-trocar').style.display = 'none';
+            document.getElementById('modal-trocar-senha').classList.add('active');
+            document.getElementById('trocar-nova-senha').focus();
+        }
+
+        function fecharTrocarSenha() {
+            document.getElementById('modal-trocar-senha').classList.remove('active');
+        }
+
+        let senhaAtualLogin = '';
+
+        function abrirAvisoMensalidade(aviso, senha) {
+            senhaAtualLogin = senha || '';
+            document.getElementById('aviso-mensalidade-texto').innerText = `⚠ ${aviso.mensagem}`;
+            document.getElementById('modal-aviso-mensalidade').classList.add('active');
+        }
+
+        function confirmarAvisoMensalidade() {
+            localStorage.setItem('jg_aviso_mensalidade_ultima', String(Date.now()));
+            document.getElementById('modal-aviso-mensalidade').classList.remove('active');
+            const op = obterOperador();
+            if (op && op.trocarSenha) {
+                abrirTrocarSenha(senhaAtualLogin);
+                return;
+            }
+            window.location.href = '/';
+        }
+
+        function mostrarErroTrocar(msg) {
+            const el = document.getElementById('erro-trocar');
+            el.innerText = msg;
+            el.style.display = 'block';
+        }
+
+        async function confirmarTrocarSenha() {
+            const senhaAtual = document.getElementById('trocar-senha-atual').value;
+            const nova = document.getElementById('trocar-nova-senha').value;
+            const confirma = document.getElementById('trocar-confirma-senha').value;
+            if (!nova || !confirma) { mostrarErroTrocar("Informe a nova senha e a confirmação."); return; }
+            if (nova !== confirma) { mostrarErroTrocar("As senhas não conferem!"); return; }
+
+            try {
+                const op = obterOperador();
+                const r = await fetch(`${API_BASE}/api/auth/trocar-senha`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ senhaAtual, novaSenha: nova })
+                });
+                const dados = await r.json();
+                if (!r.ok) {
+                    mostrarErroTrocar(dados.erro || "Não foi possível trocar a senha.");
+                    return;
+                }
+                if (op) { op.trocarSenha = false; localStorage.setItem('jg_operador', JSON.stringify(op)); }
+                fecharTrocarSenha();
+                window.location.href = '/';
+            } catch (e) {
+                mostrarErroTrocar("Falha de conexão com o servidor.");
+            }
+        }
+
+        function obterOperador() {
+            try { const raw = localStorage.getItem('jg_operador'); return raw ? JSON.parse(raw) : null; } catch (e) { return null; }
+        }
+
+        function esqueciSenha() {
+            mostrarErro("Procure o administrador para redefinir sua senha.");
+        }
+
+        document.getElementById('operador').addEventListener('keydown', (e) => {
+            if (e.key === 'F2') { e.preventDefault(); abrirListaOperadores(); }
+            if (e.key === 'Enter') document.getElementById('senha').focus();
+        });
+
+        document.getElementById('senha').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') entrar();
+        });
+
+        document.getElementById('busca-operador').addEventListener('keydown', (e) => {
+            if (e.key === 'F2' || e.key === 'Escape') { e.preventDefault(); fecharListaOperadores(); }
+        });
+
+        (async () => {
+            await carregarOperadores();
+        })();
+    </script>
+</body>
+</html>

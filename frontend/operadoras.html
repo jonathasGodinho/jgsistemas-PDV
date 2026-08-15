@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>Operadoras de Cartão - JG Sistemas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
+        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
+        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
+        header a:hover { color: white; }
+        main { padding: 20px; max-width: 1100px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
+        footer { text-align: center; font-size: 11px; color: #8b95a1; }
+        .abas { display: flex; gap: 6px; }
+        .aba { padding: 10px 18px; background: #e6e9ed; border: none; border-radius: 4px 4px 0 0; font-size: 13px; font-weight: bold; color: #134074; cursor: pointer; }
+        .aba.ativa { background: white; border-bottom: 3px solid #00a651; }
+        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 0 4px 4px 4px; overflow: hidden; display: none; }
+        .painel.ativa { display: block; }
+        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; }
+        .painel-corpo { padding: 14px; }
+        .grid { display: grid; grid-template-columns: 320px 1fr; gap: 20px; align-items: start; }
+        @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+        .campo { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+        .campo label { font-size: 11px; color: #656d78; font-weight: bold; text-transform: uppercase; }
+        .campo input, .campo select { padding: 9px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; width: 100%; }
+        .linha { display: flex; gap: 10px; }
+        .linha .campo { flex: 1; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background-color: #134074; color: white; padding: 8px; text-align: left; text-transform: uppercase; font-size: 11px; }
+        td { padding: 8px; border-bottom: 1px solid #e6e9ed; color: #333; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        .btn { border: none; border-radius: 4px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .btn-azul { background-color: #134074; color: white; }
+        .btn-verde { background-color: #00a651; color: white; }
+        .btn-perigo { background-color: #d9534f; color: white; }
+        .btn-amarelo { background-color: #f0ad4e; color: white; }
+        .btn-mini { padding: 4px 8px; font-size: 12px; }
+        .btn-block { width: 100%; padding: 12px; font-size: 15px; }
+        .sem-dados { text-align: center; color: #8b95a1; padding: 24px; font-size: 14px; }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .b-verde { background: #d8f3e3; color: #008c45; }
+        .b-cinza { background: #e6e9ed; color: #656d78; }
+        .dica { font-size: 11px; color: #8b95a1; margin-top: 4px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>JG SISTEMAS - OPERADORAS DE CARTÃO</div>
+        <div><a href="/">← Menu Principal</a> &nbsp;|&nbsp; <a href="/recebiveis.html">Recebíveis</a></div>
+    </header>
+
+    <main>
+        <div class="abas">
+            <button class="aba ativa" onclick="trocarAba('operadoras', this)">Operadoras</button>
+            <button class="aba" onclick="trocarAba('bandeiras', this)">Bandeiras</button>
+            <button class="aba" onclick="trocarAba('taxas', this)">Taxas (MDR)</button>
+        </div>
+
+        <!-- OPERADORAS -->
+        <div class="painel ativa" id="painel-operadoras">
+            <div class="painel-titulo"><span id="titulo-operadora-form">Nova Operadora</span></div>
+            <div class="painel-corpo">
+                <div class="grid">
+                    <div>
+                        <div class="campo">
+                            <label>Nome da operadora *</label>
+                            <input type="text" id="op-nome" placeholder="Ex.: CIELO, REDE, GETNET">
+                        </div>
+                        <div class="linha">
+                            <div class="campo">
+                                <label>Repasse débito (dias)</label>
+                                <input type="number" id="op-dias-debito" value="1" min="0" step="1">
+                            </div>
+                            <div class="campo">
+                                <label>Repasse crédito (dias)</label>
+                                <input type="number" id="op-dias-credito" value="30" min="0" step="1">
+                            </div>
+                        </div>
+                        <button class="btn btn-verde btn-block" onclick="salvarOperadora()">Salvar Operadora</button>
+                        <div class="dica">Os dias definem o vencimento dos recebíveis (D+ crédito / D+ débito).</div>
+                    </div>
+                    <div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Operadora</th>
+                                    <th style="text-align:right;">D+ Débito</th>
+                                    <th style="text-align:right;">D+ Crédito</th>
+                                    <th>Status</th>
+                                    <th style="text-align:right;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-operadoras"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BANDEIRAS -->
+        <div class="painel" id="painel-bandeiras">
+            <div class="painel-titulo"><span>Bandeiras de Cartão</span></div>
+            <div class="painel-corpo">
+                <div class="grid">
+                    <div>
+                        <div class="campo">
+                            <label>Nome da bandeira *</label>
+                            <input type="text" id="bd-nome" placeholder="Ex.: VISA, MASTERCARD, ELO">
+                        </div>
+                        <button class="btn btn-verde btn-block" onclick="salvarBandeira()">Salvar Bandeira</button>
+                    </div>
+                    <div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Bandeira</th>
+                                    <th>Status</th>
+                                    <th style="text-align:right;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-bandeiras"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAXAS -->
+        <div class="painel" id="painel-taxas">
+            <div class="painel-titulo"><span>Taxas por Operadora (MDR)</span></div>
+            <div class="painel-corpo">
+                <div class="grid">
+                    <div>
+                        <div class="campo">
+                            <label>Operadora *</label>
+                            <select id="tx-operadora" onchange="carregarTaxas()"></select>
+                        </div>
+                        <div class="campo">
+                            <label>Bandeira (em branco = genérica)</label>
+                            <select id="tx-bandeira">
+                                <option value="">Genérica</option>
+                            </select>
+                        </div>
+                        <div class="linha">
+                            <div class="campo">
+                                <label>Método *</label>
+                                <select id="tx-metodo">
+                                    <option value="CREDIT">Crédito</option>
+                                    <option value="DEBIT">Débito</option>
+                                </select>
+                            </div>
+                            <div class="campo">
+                                <label>Parcelas *</label>
+                                <input type="number" id="tx-parcelas" value="1" min="1" step="1">
+                            </div>
+                            <div class="campo">
+                                <label>Taxa (%) *</label>
+                                <input type="number" id="tx-taxa" value="3" min="0" step="0.01">
+                            </div>
+                        </div>
+                        <button class="btn btn-verde btn-block" onclick="salvarTaxa()">Salvar Taxa</button>
+                        <div class="dica">Ex.: crédito 3x = taxa de MDR para vendas de crédito em 3 parcelas.</div>
+                    </div>
+                    <div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Operadora</th>
+                                    <th>Bandeira</th>
+                                    <th>Método</th>
+                                    <th style="text-align:right;">Parcelas</th>
+                                    <th style="text-align:right;">Taxa %</th>
+                                    <th style="text-align:right;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-taxas"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>JG Sistemas</footer>
+
+    <script src="/seguranca.js"></script>
+    <script>
+        const API_BASE = window.location.protocol.startsWith('http') ? '' : 'http://localhost:3000';
+
+        function obterOperador() {
+            try { const raw = localStorage.getItem('jg_operador'); return raw ? JSON.parse(raw) : null; } catch (e) { return null; }
+        }
+        function tokenAuth() {
+            const op = obterOperador();
+            return op && op.token ? { 'Authorization': 'Bearer ' + op.token } : {};
+        }
+        function bloquear() {
+            const op = obterOperador();
+            if (!op || ['ADMIN', 'MANAGER', 'SUPERVISOR'].indexOf(op.papel) === -1) {
+                window.location.href = '/login.html';
+            }
+        }
+        async function api(url, metodo = 'GET', corpo = null) {
+            const opcoes = { method: metodo, headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()) };
+            if (corpo) opcoes.body = JSON.stringify(corpo);
+            const response = await fetch(`${API_BASE}${url}`, opcoes);
+            if (response.status === 401) {
+                localStorage.removeItem('jg_operador');
+                window.location.href = '/login.html';
+                throw new Error('Sessão expirada.');
+            }
+            const dados = await response.json();
+            if (!response.ok) throw new Error(dados.erro || 'Erro na requisição');
+            return dados;
+        }
+        bloquear();
+
+        let operadoraEditando = null;
+
+        function trocarAba(nome, btn) {
+            document.querySelectorAll('.aba').forEach(a => a.classList.remove('ativa'));
+            document.querySelectorAll('.painel').forEach(p => p.classList.remove('ativa'));
+            btn.classList.add('ativa');
+            document.getElementById('painel-' + nome).classList.add('ativa');
+            if (nome === 'operadoras') carregarOperadoras();
+            if (nome === 'bandeiras') carregarBandeiras();
+            if (nome === 'taxas') { carregarOperadoras(); carregarTaxas(); }
+        }
+
+        async function carregarOperadoras() {
+            try {
+                const operadoras = await api('/api/cartoes/operadoras');
+                const tbody = document.getElementById('tabela-operadoras');
+                const txSel = document.getElementById('tx-operadora');
+                const atualTx = txSel.value;
+                txSel.innerHTML = '<option value="">Selecione...</option>' +
+                    operadoras.filter(o => o.ativo).map(o => `<option value="${o.id}">${esc(o.nome)}</option>`).join('');
+                if (atualTx) txSel.value = atualTx;
+
+                if (operadoras.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="sem-dados">Nenhuma operadora cadastrada.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = operadoras.map(o => `
+                    <tr>
+                        <td><strong>${esc(o.nome)}</strong></td>
+                        <td style="text-align:right;">${o.diasDebito}</td>
+                        <td style="text-align:right;">${o.diasCredito}</td>
+                        <td><span class="badge ${o.ativo ? 'b-verde' : 'b-cinza'}">${o.ativo ? 'ATIVA' : 'INATIVA'}</span></td>
+                        <td style="text-align:right;">
+                            <button class="btn btn-azul btn-mini" onclick="editarOperadora('${o.id}','${esc(o.nome)}','${o.diasDebito}','${o.diasCredito}')">Editar</button>
+                            <button class="btn btn-perigo btn-mini" onclick="excluirOperadora('${o.id}','${esc(o.nome)}')">Excluir</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) { alert(e.message); }
+        }
+
+        async function salvarOperadora() {
+            const nome = document.getElementById('op-nome').value;
+            const diasDebito = document.getElementById('op-dias-debito').value;
+            const diasCredito = document.getElementById('op-dias-credito').value;
+            if (!nome.trim()) { alert('Informe o nome da operadora!'); return; }
+            try {
+                if (operadoraEditando) {
+                    await api(`/api/cartoes/operadoras/${operadoraEditando}`, 'PUT', { nome, diasDebito, diasCredito });
+                } else {
+                    await api('/api/cartoes/operadoras', 'POST', { nome, diasDebito, diasCredito });
+                }
+                document.getElementById('op-nome').value = '';
+                operadoraEditando = null;
+                document.getElementById('titulo-operadora-form').innerText = 'Nova Operadora';
+                carregarOperadoras();
+            } catch (e) { alert(e.message); }
+        }
+
+        function editarOperadora(id, nome, diasDebito, diasCredito) {
+            operadoraEditando = id;
+            document.getElementById('op-nome').value = nome;
+            document.getElementById('op-dias-debito').value = diasDebito;
+            document.getElementById('op-dias-credito').value = diasCredito;
+            document.getElementById('titulo-operadora-form').innerText = 'Editar Operadora';
+        }
+
+        async function excluirOperadora(id, nome) {
+            if (!confirm(`Excluir a operadora ${nome}?`)) return;
+            try {
+                await api(`/api/cartoes/operadoras/${id}`, 'DELETE');
+                carregarOperadoras();
+                carregarTaxas();
+            } catch (e) { alert(e.message); }
+        }
+
+        async function carregarBandeiras() {
+            try {
+                const bandeiras = await api('/api/cartoes/bandeiras');
+                const tbody = document.getElementById('tabela-bandeiras');
+                const txSel = document.getElementById('tx-bandeira');
+                txSel.innerHTML = '<option value="">Genérica</option>' +
+                    bandeiras.filter(b => b.ativo).map(b => `<option value="${b.id}">${esc(b.nome)}</option>`).join('');
+
+                if (bandeiras.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" class="sem-dados">Nenhuma bandeira cadastrada.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = bandeiras.map(b => `
+                    <tr>
+                        <td><strong>${esc(b.nome)}</strong></td>
+                        <td><span class="badge ${b.ativo ? 'b-verde' : 'b-cinza'}">${b.ativo ? 'ATIVA' : 'INATIVA'}</span></td>
+                        <td style="text-align:right;">
+                            <button class="btn btn-azul btn-mini" onclick="excluirBandeira('${b.id}','${esc(b.nome)}')">Excluir</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) { alert(e.message); }
+        }
+
+        async function salvarBandeira() {
+            const nome = document.getElementById('bd-nome').value;
+            if (!nome.trim()) { alert('Informe o nome da bandeira!'); return; }
+            try {
+                await api('/api/cartoes/bandeiras', 'POST', { nome });
+                document.getElementById('bd-nome').value = '';
+                carregarBandeiras();
+            } catch (e) { alert(e.message); }
+        }
+
+        async function excluirBandeira(id, nome) {
+            if (!confirm(`Excluir a bandeira ${nome}?`)) return;
+            try {
+                await api(`/api/cartoes/bandeiras/${id}`, 'DELETE');
+                carregarBandeiras();
+                carregarTaxas();
+            } catch (e) { alert(e.message); }
+        }
+
+        async function carregarTaxas() {
+            try {
+                const operadoraId = document.getElementById('tx-operadora').value;
+                const url = operadoraId ? `/api/cartoes/taxas?operadoraId=${operadoraId}` : '/api/cartoes/taxas';
+                const taxas = await api(url);
+                const tbody = document.getElementById('tabela-taxas');
+                if (taxas.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="sem-dados">Nenhuma taxa cadastrada.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = taxas.map(t => `
+                    <tr>
+                        <td><strong>${esc(t.operadora)}</strong></td>
+                        <td>${esc(t.bandeira ?? 'Genérica')}</td>
+                        <td>${t.metodo === 'CREDIT' ? 'CRÉDITO' : 'DÉBITO'}</td>
+                        <td style="text-align:right;">${t.parcelas}</td>
+                        <td style="text-align:right;"><strong>${t.taxa.toFixed(2)}%</strong></td>
+                        <td style="text-align:right;">
+                            <button class="btn btn-perigo btn-mini" onclick="excluirTaxa('${t.id}')">Excluir</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) { alert(e.message); }
+        }
+
+        async function salvarTaxa() {
+            const operadoraId = document.getElementById('tx-operadora').value;
+            const bandeiraId = document.getElementById('tx-bandeira').value;
+            const metodo = document.getElementById('tx-metodo').value;
+            const parcelas = document.getElementById('tx-parcelas').value;
+            const taxa = document.getElementById('tx-taxa').value;
+            if (!operadoraId) { alert('Selecione a operadora!'); return; }
+            if (!taxa || Number(taxa) < 0) { alert('Informe um percentual de taxa válido!'); return; }
+            try {
+                await api('/api/cartoes/taxas', 'POST', { operadoraId, bandeiraId: bandeiraId || null, metodo, parcelas, taxa });
+                carregarTaxas();
+            } catch (e) { alert(e.message); }
+        }
+
+        async function excluirTaxa(id) {
+            if (!confirm('Excluir esta taxa?')) return;
+            try {
+                await api(`/api/cartoes/taxas/${id}`, 'DELETE');
+                carregarTaxas();
+            } catch (e) { alert(e.message); }
+        }
+
+        carregarOperadoras();
+        carregarBandeiras();
+    </script>
+</body>
+</html>

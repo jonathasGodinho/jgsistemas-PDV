@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>Cadastro de Funcionários - JG Sistemas</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
+        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
+        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
+        header a:hover { color: white; }
+        main { padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; }
+        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
+        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; }
+        .painel-corpo { padding: 14px; }
+        .toolbar { display: flex; gap: 10px; margin-bottom: 14px; }
+        .toolbar input { flex: 1; padding: 10px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background-color: #134074; color: white; padding: 10px; text-align: left; text-transform: uppercase; font-size: 12px; }
+        td { padding: 10px; border-bottom: 1px solid #e6e9ed; color: #333; }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        tr:hover { background-color: #eef2f7; }
+        .btn { border: none; border-radius: 4px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .btn-azul { background-color: #134074; color: white; }
+        .btn-azul:hover { background-color: #0b2545; }
+        .btn-verde { background-color: #00a651; color: white; }
+        .btn-verde:hover { background-color: #007a3d; }
+        .btn-perigo { background-color: #d9534f; color: white; }
+        .btn-perigo:hover { background-color: #b0433f; }
+        .btn-mini { padding: 4px 8px; font-size: 12px; margin-right: 4px; }
+        .situacao { font-weight: bold; }
+        .situacao.ativo { color: #00a651; }
+        .situacao.inativo { color: #d9534f; }
+        .sem-dados { text-align: center; color: #8b95a1; padding: 30px; font-size: 14px; }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 100; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: white; border-radius: 6px; width: 780px; max-width: 96vw; max-height: 92vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
+        .modal-head { background-color: #0b2545; color: white; padding: 14px 18px; font-weight: bold; font-size: 15px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; }
+        .modal-head .close { cursor: pointer; font-size: 20px; color: #aab2bd; }
+        .modal-head .close:hover { color: white; }
+        .modal-body { padding: 18px; }
+        .modal .secao { background: #eef2f7; border-left: 4px solid #134074; padding: 8px 12px; font-size: 12px; font-weight: bold; text-transform: uppercase; color: #134074; margin: 18px 0 10px; }
+        .modal label { font-size: 12px; color: #656d78; font-weight: bold; display: block; margin: 10px 0 4px; text-transform: uppercase; }
+        .modal input, .modal select, .modal textarea { width: 100%; padding: 9px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; background: white; }
+        .modal textarea { resize: vertical; font-family: inherit; }
+        .modal .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .modal .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+        .modal .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
+        .modal-check { display: flex; align-items: center; gap: 8px; margin-top: 14px; }
+        .modal-check input { width: auto; }
+        .modal-check label { margin: 0; }
+
+        footer { background-color: #134074; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
+
+        @media (max-width: 800px) {
+            .modal .grid-2, .modal .grid-3, .modal .grid-4 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>JG SISTEMAS - CADASTRO DE FUNCIONÁRIOS</div>
+        <div><a href="/">← Menu Principal</a></div>
+    </header>
+
+    <main>
+        <div class="painel">
+            <div class="painel-titulo">Funcionários</div>
+            <div class="painel-corpo">
+                <div class="toolbar">
+                    <input type="text" id="busca" placeholder="Buscar por nome, matrícula, CPF, cargo ou departamento...">
+                    <button class="btn btn-azul" onclick="buscarFuncionarios()">Buscar</button>
+                    <button class="btn btn-verde" onclick="abrirModalFuncionario()">Novo Funcionário</button>
+                </div>
+                <div class="table-container" style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Matrícula</th>
+                                <th>Nome</th>
+                                <th>Cargo</th>
+                                <th>Departamento</th>
+                                <th>Admissão</th>
+                                <th style="text-align: right;">Salário</th>
+                                <th>Situação</th>
+                                <th style="text-align: center;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-funcionarios">
+                            <tr><td colspan="8" class="sem-dados">Carregando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>© 2026 JG Sistemas</footer>
+
+    <!-- Modal de funcionário -->
+    <div class="modal-overlay" id="modal-funcionario">
+        <div class="modal">
+            <div class="modal-head">
+                <span id="modal-titulo">Novo Funcionário</span>
+                <span class="close" onclick="fecharModalFuncionario()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="e-id">
+
+                <div class="secao">Dados Pessoais</div>
+                <div class="grid-3">
+                    <div>
+                        <label>Matrícula</label>
+                        <input type="text" id="e-codigo" placeholder="Ex.: 001">
+                    </div>
+                    <div>
+                        <label>Nome do Funcionário *</label>
+                        <input type="text" id="e-nome" placeholder="Nome completo">
+                    </div>
+                    <div>
+                        <label>Data de Nascimento</label>
+                        <input type="date" id="e-nascimento">
+                    </div>
+                </div>
+                <div class="grid-3">
+                    <div>
+                        <label>CPF</label>
+                        <input type="text" id="e-documento" placeholder="000.000.000-00">
+                    </div>
+                    <div>
+                        <label>RG</label>
+                        <input type="text" id="e-rg" placeholder="00.000.000-0">
+                    </div>
+                    <div>
+                        <label>Sexo</label>
+                        <select id="e-sexo">
+                            <option value="">Selecione...</option>
+                            <option value="M">Masculino</option>
+                            <option value="F">Feminino</option>
+                            <option value="O">Outro</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div>
+                        <label>Estado Civil</label>
+                        <select id="e-estadoCivil">
+                            <option value="">Selecione...</option>
+                            <option value="SOLTEIRO">Solteiro(a)</option>
+                            <option value="CASADO">Casado(a)</option>
+                            <option value="DIVORCIADO">Divorciado(a)</option>
+                            <option value="VIUVO">Viúvo(a)</option>
+                            <option value="UNIAO_ESTAVEL">União Estável</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Email</label>
+                        <input type="email" id="e-email" placeholder="funcionario@email.com">
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div>
+                        <label>Telefone</label>
+                        <input type="text" id="e-telefone" placeholder="(00) 0000-0000">
+                    </div>
+                    <div>
+                        <label>Celular</label>
+                        <input type="text" id="e-celular" placeholder="(00) 00000-0000">
+                    </div>
+                </div>
+
+                <div class="secao">Endereço</div>
+                <div class="grid-4">
+                    <div>
+                        <label>CEP</label>
+                        <input type="text" id="e-cep" placeholder="00000-000">
+                    </div>
+                    <div>
+                        <label>Endereço</label>
+                        <input type="text" id="e-endereco" placeholder="Rua/Av.">
+                    </div>
+                    <div>
+                        <label>Número</label>
+                        <input type="text" id="e-numero" placeholder="123">
+                    </div>
+                    <div>
+                        <label>Complemento</label>
+                        <input type="text" id="e-complemento" placeholder="Apto, bloco...">
+                    </div>
+                </div>
+                <div class="grid-3">
+                    <div>
+                        <label>Bairro</label>
+                        <input type="text" id="e-bairro" placeholder="Centro">
+                    </div>
+                    <div>
+                        <label>Cidade</label>
+                        <input type="text" id="e-cidade" placeholder="São Paulo">
+                    </div>
+                    <div>
+                        <label>Estado (UF)</label>
+                        <input type="text" id="e-estado" placeholder="SP" maxlength="2">
+                    </div>
+                </div>
+
+                <div class="secao">Dados Profissionais</div>
+                <div class="grid-3">
+                    <div>
+                        <label>Cargo</label>
+                        <input type="text" id="e-cargo" placeholder="Ex.: Vendedor">
+                    </div>
+                    <div>
+                        <label>Departamento</label>
+                        <input type="text" id="e-departamento" placeholder="Ex.: Vendas">
+                    </div>
+                    <div>
+                        <label>Data de Admissão</label>
+                        <input type="date" id="e-admissao">
+                    </div>
+                </div>
+
+                <div class="secao">Salário e Benefícios</div>
+                <div class="grid-4">
+                    <div>
+                        <label>Salário Base (R$)</label>
+                        <input type="text" id="e-salario" placeholder="0,00" inputmode="decimal">
+                    </div>
+                    <div>
+                        <label>Comissão (%)</label>
+                        <input type="text" id="e-comissao" placeholder="0,00" inputmode="decimal">
+                    </div>
+                    <div>
+                        <label>Vale Transporte (R$)</label>
+                        <input type="text" id="e-valeTransporte" placeholder="0,00" inputmode="decimal">
+                    </div>
+                    <div>
+                        <label>Vale Alimentação (R$)</label>
+                        <input type="text" id="e-valeAlimentacao" placeholder="0,00" inputmode="decimal">
+                    </div>
+                </div>
+                <div class="grid-4">
+                    <div>
+                        <label>Forma de Pagamento</label>
+                        <select id="e-formaPagamento">
+                            <option value="">Selecione...</option>
+                            <option value="BANCO">Crédito em Conta</option>
+                            <option value="DINHEIRO">Dinheiro</option>
+                            <option value="CHEQUE">Cheque</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Banco</label>
+                        <input type="text" id="e-banco" placeholder="Ex.: Banco do Brasil">
+                    </div>
+                    <div>
+                        <label>Agência</label>
+                        <input type="text" id="e-agencia" placeholder="0000">
+                    </div>
+                    <div>
+                        <label>Conta</label>
+                        <input type="text" id="e-conta" placeholder="00000-0">
+                    </div>
+                </div>
+                <div>
+                    <label>Tipo de Conta</label>
+                    <select id="e-tipoConta">
+                        <option value="">Selecione...</option>
+                        <option value="CORRENTE">Conta Corrente</option>
+                        <option value="POUPANCA">Poupança</option>
+                        <option value="SALARIO">Conta Salário</option>
+                    </select>
+                </div>
+
+                <div class="secao">Observações</div>
+                <textarea id="e-observacoes" rows="2" placeholder="Anotações sobre o funcionário..."></textarea>
+
+                <div class="modal-check">
+                    <input type="checkbox" id="e-ativo" checked>
+                    <label for="e-ativo">Funcionário ativo</label>
+                </div>
+
+                <button class="btn btn-azul" style="width: 100%; margin-top: 16px; padding: 13px; font-size: 15px;" onclick="salvarFuncionario()">Salvar Funcionário</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/seguranca.js"></script>
+    <script>
+        const API_BASE = '';
+        let funcionarios = [];
+
+        function formatarMoeda(valor) {
+            return `R$ ${Number(valor).toFixed(2).replace('.', ',')}`;
+        }
+
+        function obterOperador() {
+            try {
+                const raw = localStorage.getItem('jg_operador');
+                return raw ? JSON.parse(raw) : null;
+            } catch (e) { return null; }
+        }
+
+        function tokenAuth() {
+            const op = obterOperador();
+            return op && op.token ? { 'Authorization': 'Bearer ' + op.token } : {};
+        }
+
+        function bloquearCaixa() {
+            const op = obterOperador();
+            if (!op) { window.location.href = '/login.html'; return true; }
+            if (op.papel === 'SELLER') { window.location.href = '/'; return true; }
+            return false;
+        }
+
+        async function api(url, metodo = 'GET', corpo = null) {
+            const opcoes = { method: metodo, headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()) };
+            if (corpo) opcoes.body = JSON.stringify(corpo);
+            const response = await fetch(`${API_BASE}${url}`, opcoes);
+            if (response.status === 401) {
+                localStorage.removeItem('jg_operador');
+                window.location.href = '/login.html';
+                throw new Error('Sessão expirada.');
+            }
+            const dados = await response.json();
+            if (!response.ok) throw new Error(dados.erro || 'Erro na requisição');
+            return dados;
+        }
+
+        bloquearCaixa();
+
+        async function buscarFuncionarios() {
+            const busca = document.getElementById('busca').value.trim();
+            const url = busca ? `/api/funcionarios?busca=${encodeURIComponent(busca)}` : '/api/funcionarios';
+            try {
+                funcionarios = await api(url);
+                renderizarFuncionarios();
+            } catch (e) { alert(e.message); }
+        }
+
+        function renderizarFuncionarios() {
+            const tbody = document.getElementById('tabela-funcionarios');
+            if (funcionarios.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="sem-dados">Nenhum funcionário encontrado</td></tr>';
+                return;
+            }
+            tbody.innerHTML = funcionarios.map(f => `
+                <tr>
+                    <td>${esc(f.codigo || '-')}</td>
+                    <td><strong>${esc(f.nome)}</strong><br><small style="color:#8b95a1;">${esc(f.email || '')}</small></td>
+                    <td>${esc(f.cargo || '-')}</td>
+                    <td>${esc(f.departamento || '-')}</td>
+                    <td>${f.admissao ? new Date(f.admissao).toLocaleDateString('pt-BR') : '-'}</td>
+                    <td style="text-align: right;"><strong>${formatarMoeda(f.salario)}</strong></td>
+                    <td><span class="situacao ${f.ativo ? 'ativo' : 'inativo'}">${f.ativo ? 'ATIVO' : 'INATIVO'}</span></td>
+                    <td style="text-align: center;">
+                        <button class="btn btn-mini btn-azul" onclick="abrirModalFuncionario('${f.id}')">Editar</button>
+                        <button class="btn btn-mini btn-perigo" onclick="excluirFuncionario('${f.id}', '${esc(f.nome)}')">Excluir</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function abrirModalFuncionario(id = null) {
+            document.getElementById('modal-titulo').innerText = id ? 'Editar Funcionário' : 'Novo Funcionário';
+            document.getElementById('e-id').value = id || '';
+            const campos = ['e-codigo', 'e-nome', 'e-nascimento', 'e-documento', 'e-rg', 'e-sexo', 'e-estadoCivil', 'e-email', 'e-telefone', 'e-celular', 'e-cep', 'e-endereco', 'e-numero', 'e-complemento', 'e-bairro', 'e-cidade', 'e-estado', 'e-cargo', 'e-departamento', 'e-admissao', 'e-salario', 'e-comissao', 'e-valeTransporte', 'e-valeAlimentacao', 'e-formaPagamento', 'e-banco', 'e-agencia', 'e-conta', 'e-tipoConta', 'e-observacoes'];
+            campos.forEach(campo => document.getElementById(campo).value = '');
+            document.getElementById('e-ativo').checked = true;
+
+            if (id) {
+                const f = funcionarios.find(x => x.id === id);
+                if (f) {
+                    document.getElementById('e-codigo').value = f.codigo || '';
+                    document.getElementById('e-nome').value = f.nome;
+                    if (f.nascimento) document.getElementById('e-nascimento').value = new Date(f.nascimento).toISOString().slice(0, 10);
+                    document.getElementById('e-documento').value = f.documento || '';
+                    document.getElementById('e-rg').value = f.rg || '';
+                    document.getElementById('e-sexo').value = f.sexo || '';
+                    document.getElementById('e-estadoCivil').value = f.estadoCivil || '';
+                    document.getElementById('e-email').value = f.email || '';
+                    document.getElementById('e-telefone').value = f.telefone || '';
+                    document.getElementById('e-celular').value = f.celular || '';
+                    document.getElementById('e-cep').value = f.cep || '';
+                    document.getElementById('e-endereco').value = f.endereco || '';
+                    document.getElementById('e-numero').value = f.numero || '';
+                    document.getElementById('e-complemento').value = f.complemento || '';
+                    document.getElementById('e-bairro').value = f.bairro || '';
+                    document.getElementById('e-cidade').value = f.cidade || '';
+                    document.getElementById('e-estado').value = f.estado || '';
+                    document.getElementById('e-cargo').value = f.cargo || '';
+                    document.getElementById('e-departamento').value = f.departamento || '';
+                    if (f.admissao) document.getElementById('e-admissao').value = new Date(f.admissao).toISOString().slice(0, 10);
+                    document.getElementById('e-salario').value = String(f.salario).replace('.', ',');
+                    document.getElementById('e-comissao').value = String(f.comissao).replace('.', ',');
+                    document.getElementById('e-valeTransporte').value = String(f.valeTransporte).replace('.', ',');
+                    document.getElementById('e-valeAlimentacao').value = String(f.valeAlimentacao).replace('.', ',');
+                    document.getElementById('e-formaPagamento').value = f.formaPagamento || '';
+                    document.getElementById('e-banco').value = f.banco || '';
+                    document.getElementById('e-agencia').value = f.agencia || '';
+                    document.getElementById('e-conta').value = f.conta || '';
+                    document.getElementById('e-tipoConta').value = f.tipoConta || '';
+                    document.getElementById('e-observacoes').value = f.observacoes || '';
+                    document.getElementById('e-ativo').checked = f.ativo;
+                }
+            }
+
+            document.getElementById('modal-funcionario').classList.add('active');
+        }
+
+        function fecharModalFuncionario() {
+            document.getElementById('modal-funcionario').classList.remove('active');
+        }
+
+        function parseMoeda(valor) {
+            return parseFloat(String(valor).replace(',', '.')) || 0;
+        }
+
+        async function salvarFuncionario() {
+            const id = document.getElementById('e-id').value;
+            const corpo = {
+                codigo: document.getElementById('e-codigo').value.trim(),
+                nome: document.getElementById('e-nome').value.trim(),
+                nascimento: document.getElementById('e-nascimento').value || null,
+                documento: document.getElementById('e-documento').value.trim(),
+                rg: document.getElementById('e-rg').value.trim(),
+                sexo: document.getElementById('e-sexo').value,
+                estadoCivil: document.getElementById('e-estadoCivil').value,
+                email: document.getElementById('e-email').value.trim(),
+                telefone: document.getElementById('e-telefone').value.trim(),
+                celular: document.getElementById('e-celular').value.trim(),
+                cep: document.getElementById('e-cep').value.trim(),
+                endereco: document.getElementById('e-endereco').value.trim(),
+                numero: document.getElementById('e-numero').value.trim(),
+                complemento: document.getElementById('e-complemento').value.trim(),
+                bairro: document.getElementById('e-bairro').value.trim(),
+                cidade: document.getElementById('e-cidade').value.trim(),
+                estado: document.getElementById('e-estado').value.trim().toUpperCase(),
+                cargo: document.getElementById('e-cargo').value.trim(),
+                departamento: document.getElementById('e-departamento').value.trim(),
+                admissao: document.getElementById('e-admissao').value || null,
+                salario: parseMoeda(document.getElementById('e-salario').value),
+                comissao: parseMoeda(document.getElementById('e-comissao').value),
+                valeTransporte: parseMoeda(document.getElementById('e-valeTransporte').value),
+                valeAlimentacao: parseMoeda(document.getElementById('e-valeAlimentacao').value),
+                formaPagamento: document.getElementById('e-formaPagamento').value,
+                banco: document.getElementById('e-banco').value.trim(),
+                agencia: document.getElementById('e-agencia').value.trim(),
+                conta: document.getElementById('e-conta').value.trim(),
+                tipoConta: document.getElementById('e-tipoConta').value,
+                observacoes: document.getElementById('e-observacoes').value.trim(),
+                ativo: document.getElementById('e-ativo').checked
+            };
+
+            if (!corpo.nome) { alert("Informe o nome do funcionário!"); return; }
+
+            try {
+                if (id) {
+                    await api(`/api/funcionarios/${id}`, 'PUT', corpo);
+                } else {
+                    await api('/api/funcionarios', 'POST', corpo);
+                }
+                fecharModalFuncionario();
+                await buscarFuncionarios();
+            } catch (e) { alert(e.message); }
+        }
+
+        async function excluirFuncionario(id, nome) {
+            if (!confirm(`Excluir o funcionário "${nome}"?`)) return;
+            try {
+                await api(`/api/funcionarios/${id}`, 'DELETE');
+                await buscarFuncionarios();
+            } catch (e) { alert(e.message); }
+        }
+
+        document.getElementById('busca').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') buscarFuncionarios();
+        });
+
+        (async () => {
+            try {
+                await buscarFuncionarios();
+            } catch (e) {
+                alert("Falha ao carregar dados: " + e.message);
+            }
+        })();
+    </script>
+</body>
+</html>
