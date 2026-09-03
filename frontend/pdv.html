@@ -355,11 +355,11 @@
                             </div>
 
                             <label>Desconto (R$)</label>
-                            <input type="text" id="pg-desconto" value="0" placeholder="0,00" inputmode="decimal" oninput="calcularTotalComDesconto()">
+                            <input type="text" id="pg-desconto" value="" placeholder="0,00" inputmode="decimal" oninput="calcularTotalComDesconto()">
 
                             <div id="pg-cashback-box" style="display:none;">
                                 <label>Resgatar Cashback (R$)</label>
-                                <input type="text" id="pg-cashback" value="0" placeholder="0,00" inputmode="decimal" oninput="calcularTotalComDesconto()">
+                                <input type="text" id="pg-cashback" value="" placeholder="0,00" inputmode="decimal" oninput="calcularTotalComDesconto()">
                                 <div style="font-size:12px; color:#00a651; font-weight:bold; margin-top:5px;" id="pg-cashback-saldo"></div>
                             </div>
 
@@ -1055,8 +1055,8 @@
 
             promocaoPdv = { descontos: [], totalDesconto: 0 };
             document.getElementById('pg-recebido').value = '';
-            document.getElementById('pg-desconto').value = '0';
-            document.getElementById('pg-cashback').value = '0';
+            document.getElementById('pg-desconto').value = '';
+            document.getElementById('pg-cashback').value = '';
             document.getElementById('pg-senha-admin').value = '';
             document.getElementById('pg-senha-box').style.display = 'none';
             document.getElementById('pg-confirmar').disabled = false;
@@ -1142,7 +1142,7 @@
                 input.placeholder = `0,00 (máx ${saldoCashbackCliente.toFixed(2).replace('.', ',')})`;
             } else {
                 box.style.display = 'none';
-                input.value = '0';
+                input.value = '';
             }
             calcularTotalComDesconto();
         }

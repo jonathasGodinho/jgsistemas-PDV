@@ -356,7 +356,7 @@ router.post('/operadores', autenticar, requerPermissao('ADMIN', 'MANAGER'), asyn
         return res.status(400).json({ erro: erroPolitica });
     }
 
-    const empresa = await prisma.company.findFirst();
+    const empresa = await prisma.company.findUnique({ where: { id: req.operador.companyId } });
     if (!empresa) {
         return res.status(400).json({ erro: "Empresa não configurada!" });
     }

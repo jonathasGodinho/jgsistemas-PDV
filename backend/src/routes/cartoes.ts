@@ -44,7 +44,7 @@ router.post('/operadoras', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), as
     if (!nome || !String(nome).trim()) {
         return res.status(400).json({ erro: "Informe o nome da operadora!" });
     }
-    const empresa = await prisma.company.findFirst();
+    const empresa = await prisma.company.findUnique({ where: { id: req.operador.companyId } });
     if (!empresa) {
         return res.status(400).json({ erro: "Empresa não configurada!" });
     }
@@ -115,7 +115,7 @@ router.post('/bandeiras', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), asy
     if (!nome || !String(nome).trim()) {
         return res.status(400).json({ erro: "Informe o nome da bandeira!" });
     }
-    const empresa = await prisma.company.findFirst();
+    const empresa = await prisma.company.findUnique({ where: { id: req.operador.companyId } });
     if (!empresa) {
         return res.status(400).json({ erro: "Empresa não configurada!" });
     }
@@ -536,6 +536,9 @@ router.post('/recebiveis/:id/antecipar', requerPermissao('ADMIN', 'MANAGER', 'SU
     const { id } = req.params;
     const { taxa } = req.body;
     const taxaNum = converterNumero(taxa) ?? 0;
+    if (!Number.isFinite(taxaNum) || taxaNum < 0 || taxaNum > 100) {
+        return res.status(400).json({ erro: "Taxa de antecipação deve estar entre 0 e 100!" });
+    }
     const recebivel = await prisma.cardReceivable.findUnique({ where: { id } });
     if (!recebivel) {
         return res.status(404).json({ erro: "Recebível não encontrado!" });
@@ -581,6 +584,9 @@ router.post('/recebiveis/:id/antecipar', requerPermissao('ADMIN', 'MANAGER', 'SU
 router.post('/recebiveis/antecipar-pendentes', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR', 'FINANCIAL'), async (req: any, res: any) => {
     const { taxa, operadoraId } = req.body;
     const taxaNum = converterNumero(taxa) ?? 0;
+    if (!Number.isFinite(taxaNum) || taxaNum < 0 || taxaNum > 100) {
+        return res.status(400).json({ erro: "Taxa de antecipação deve estar entre 0 e 100!" });
+    }
     const where: any = { status: 'PENDING' };
     if (operadoraId) where.operatorId = String(operadoraId);
 

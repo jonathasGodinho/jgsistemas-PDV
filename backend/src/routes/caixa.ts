@@ -127,8 +127,10 @@ router.post('/abrir', async (req: any, res: any) => {
         return res.status(400).json({ erro: `A registradora ${num} já está aberta!` });
     }
 
-    const empresa = await prisma.company.findFirst();
-    const filial = await prisma.branch.findFirst();
+    const empresa = await prisma.company.findUnique({ where: { id: req.operador.companyId } });
+    const filial = req.operador.branchId
+        ? await prisma.branch.findUnique({ where: { id: req.operador.branchId } })
+        : await prisma.branch.findFirst({ where: { companyId: req.operador.companyId } });
     const operador = await prisma.user.findFirst({ where: { id: req.operador.id, isActive: true } });
     if (!empresa || !filial || !operador) {
         return res.status(400).json({ erro: "Empresa, filial ou operador não configurados!" });

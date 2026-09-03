@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { randomUUID } from 'crypto';
 import prisma from '../db';
+import { requerPermissao } from '../middlewares/auth';
 
 const router = Router();
 
@@ -21,12 +22,12 @@ router.get('/', async (_req: any, res: any) => {
 });
 
 // POST /api/colecoes - Cria coleção
-router.post('/', async (req: any, res: any) => {
+router.post('/', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     const { nome, temporada, ano } = req.body;
     if (!nome || !String(nome).trim()) {
         return res.status(400).json({ erro: "Informe o nome da coleção!" });
     }
-    const empresa = await prisma.company.findFirst();
+    const empresa = await prisma.company.findUnique({ where: { id: req.operador.companyId } });
     if (!empresa) {
         return res.status(400).json({ erro: "Empresa não configurada!" });
     }
@@ -46,7 +47,7 @@ router.post('/', async (req: any, res: any) => {
 });
 
 // PUT /api/colecoes/:id - Atualiza coleção
-router.put('/:id', async (req: any, res: any) => {
+router.put('/:id', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     const { id } = req.params;
     const { nome, temporada, ano, ativo } = req.body;
     const existente = await prisma.collection.findUnique({ where: { id } });
@@ -67,7 +68,7 @@ router.put('/:id', async (req: any, res: any) => {
 });
 
 // DELETE /api/colecoes/:id - Exclui coleção (se não tiver produtos)
-router.delete('/:id', async (req: any, res: any) => {
+router.delete('/:id', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     const { id } = req.params;
     const count = await prisma.product.count({ where: { collectionId: id } });
     if (count > 0) {

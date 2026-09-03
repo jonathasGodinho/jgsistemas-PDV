@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { randomUUID } from 'crypto';
 import prisma from '../db';
+import { requerPermissao } from '../middlewares/auth';
 
 const router = Router();
 
@@ -50,7 +51,7 @@ router.get('/', async (req: any, res: any) => {
 });
 
 // POST /api/fornecedores - Cria um novo fornecedor
-router.post('/', async (req: any, res: any) => {
+router.post('/', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     const { nome, documento, email, telefone, celular, contato, endereco, numero, complemento, bairro, cidade, estado, cep, observacoes, ativo } = req.body;
 
     if (!nome || nome.trim() === '') {
@@ -64,7 +65,7 @@ router.post('/', async (req: any, res: any) => {
         }
     }
 
-    const empresa = await prisma.company.findFirst();
+    const empresa = await prisma.company.findUnique({ where: { id: req.operador.companyId } });
     if (!empresa) {
         return res.status(400).json({ erro: "Empresa não configurada!" });
     }
@@ -97,7 +98,7 @@ router.post('/', async (req: any, res: any) => {
 });
 
 // PUT /api/fornecedores/:id - Atualiza um fornecedor
-router.put('/:id', async (req: any, res: any) => {
+router.put('/:id', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     const { id } = req.params;
     const { nome, documento, email, telefone, celular, contato, endereco, numero, complemento, bairro, cidade, estado, cep, observacoes, ativo } = req.body;
 
@@ -139,7 +140,7 @@ router.put('/:id', async (req: any, res: any) => {
 });
 
 // DELETE /api/fornecedores/:id - Exclui fornecedor (com proteção)
-router.delete('/:id', async (req: any, res: any) => {
+router.delete('/:id', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     const { id } = req.params;
 
     const fornecedor = await prisma.supplier.findUnique({

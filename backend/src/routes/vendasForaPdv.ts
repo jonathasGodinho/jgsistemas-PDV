@@ -63,8 +63,10 @@ router.post('/', async (req: any, res: any) => {
         }
 
         const result = await prisma.$transaction(async (tx) => {
-            const empresa = await tx.company.findFirst();
-            const filial = await tx.branch.findFirst();
+            const empresa = await tx.company.findUnique({ where: { id: req.operador.companyId } });
+            const filial = req.operador.branchId
+                ? await tx.branch.findUnique({ where: { id: req.operador.branchId } })
+                : await tx.branch.findFirst({ where: { companyId: req.operador.companyId } });
             const operador = await tx.user.findFirst({ where: { id: req.operador.id, isActive: true } });
 
             if (!empresa || !filial || !operador) {

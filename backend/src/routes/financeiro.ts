@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { randomUUID } from 'crypto';
 import prisma from '../db';
+import { requerPermissao } from '../middlewares/auth';
 
 const router = Router();
 
@@ -112,7 +113,7 @@ router.get('/pagar', async (req: any, res: any) => {
 });
 
 // POST /api/financeiro/transacao - Lança nova conta (RECEIVE ou PAY)
-router.post('/transacao', async (req: any, res: any) => {
+router.post('/transacao', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR', 'FINANCIAL'), async (req: any, res: any) => {
     const { tipo, descricao, valor, vencimento, categoria, documento, notas } = req.body;
 
     if (!['RECEIVE', 'PAY'].includes(tipo)) {
@@ -130,7 +131,7 @@ router.post('/transacao', async (req: any, res: any) => {
         return res.status(400).json({ erro: "Informe a data de vencimento!" });
     }
 
-    const empresa = await prisma.company.findFirst();
+    const empresa = await prisma.company.findUnique({ where: { id: req.operador.companyId } });
     if (!empresa) {
         return res.status(400).json({ erro: "Empresa não configurada!" });
     }
@@ -156,7 +157,7 @@ router.post('/transacao', async (req: any, res: any) => {
 });
 
 // POST /api/financeiro/baixar/:id - Recebe/paga a conta
-router.post('/baixar/:id', async (req: any, res: any) => {
+router.post('/baixar/:id', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR', 'FINANCIAL'), async (req: any, res: any) => {
     const { id } = req.params;
     const conta = await prisma.financialTransaction.findUnique({ where: { id } });
 
@@ -192,7 +193,7 @@ router.post('/baixar/:id', async (req: any, res: any) => {
 });
 
 // DELETE /api/financeiro/transacao/:id - Cancela uma conta pendente
-router.delete('/transacao/:id', async (req: any, res: any) => {
+router.delete('/transacao/:id', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR', 'FINANCIAL'), async (req: any, res: any) => {
     const { id } = req.params;
     const conta = await prisma.financialTransaction.findUnique({ where: { id } });
 

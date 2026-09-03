@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import { cancelarNfce, emitirNfce } from '../nfe';
+import { requerPermissao } from '../middlewares/auth';
 
 const router = Router();
 
 // POST /api/nfe/emitir/:id - Emite a NFC-e de uma venda COMPLETED
-router.post('/emitir/:id', async (req: any, res: any) => {
+router.post('/emitir/:id', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     try {
         const resultado = await emitirNfce(req.params.id);
         if (!resultado.ok) return res.status(422).json(resultado);
@@ -15,7 +16,7 @@ router.post('/emitir/:id', async (req: any, res: any) => {
 });
 
 // POST /api/nfe/cancelar/:id - Cancela (evento 110111) uma NFC-e autorizada
-router.post('/cancelar/:id', async (req: any, res: any) => {
+router.post('/cancelar/:id', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     try {
         const resultado = await cancelarNfce(req.params.id, req.body?.justificativa ?? '');
         if (!resultado.ok) return res.status(422).json(resultado);

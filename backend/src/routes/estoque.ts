@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { randomUUID } from 'crypto';
 import prisma from '../db';
+import { requerPermissao } from '../middlewares/auth';
 
 const router = Router();
 
@@ -102,7 +103,7 @@ router.get('/movimentacoes', async (_req: any, res: any) => {
 });
 
 // POST /api/estoque/entrada - Entrada manual de estoque
-router.post('/entrada', async (req: any, res: any) => {
+router.post('/entrada', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR', 'STOCKIST'), async (req: any, res: any) => {
     const { produtoId, quantidade, motivo } = req.body;
     const qtd = Math.round(Number(quantidade) || 0);
 
@@ -122,8 +123,6 @@ router.post('/entrada', async (req: any, res: any) => {
         return res.status(400).json({ erro: "Produto sem estoque cadastrado!" });
     }
 
-    const operador = await prisma.user.findFirst({ where: { isActive: true } });
-
     await prisma.inventory.update({
         where: { id: inv.id },
         data: { quantity: inv.quantity + qtd, updatedAt: new Date() }
@@ -136,7 +135,7 @@ router.post('/entrada', async (req: any, res: any) => {
             type: 'IN',
             quantity: qtd,
             reason: motivo || 'ENTRADA MANUAL',
-            userId: operador?.id ?? null,
+            userId: req.operador?.id ?? null,
             createdAt: new Date()
         }
     });
@@ -145,7 +144,7 @@ router.post('/entrada', async (req: any, res: any) => {
 });
 
 // POST /api/estoque/saida - Saída manual de estoque
-router.post('/saida', async (req: any, res: any) => {
+router.post('/saida', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR', 'STOCKIST'), async (req: any, res: any) => {
     const { produtoId, quantidade, motivo } = req.body;
     const qtd = Math.round(Number(quantidade) || 0);
 
@@ -169,8 +168,6 @@ router.post('/saida', async (req: any, res: any) => {
         return res.status(400).json({ erro: "Estoque insuficiente para a saída!" });
     }
 
-    const operador = await prisma.user.findFirst({ where: { isActive: true } });
-
     await prisma.inventory.update({
         where: { id: inv.id },
         data: { quantity: inv.quantity - qtd, updatedAt: new Date() }
@@ -183,7 +180,7 @@ router.post('/saida', async (req: any, res: any) => {
             type: 'OUT',
             quantity: -qtd,
             reason: motivo || 'SAIDA MANUAL',
-            userId: operador?.id ?? null,
+            userId: req.operador?.id ?? null,
             createdAt: new Date()
         }
     });
@@ -192,7 +189,7 @@ router.post('/saida', async (req: any, res: any) => {
 });
 
 // POST /api/estoque/ajuste - Ajusta estoque para um valor específico
-router.post('/ajuste', async (req: any, res: any) => {
+router.post('/ajuste', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR', 'STOCKIST'), async (req: any, res: any) => {
     const { produtoId, quantidade, motivo } = req.body;
     const novaQtd = Math.round(Number(quantidade) || 0);
 
@@ -213,7 +210,6 @@ router.post('/ajuste', async (req: any, res: any) => {
     }
 
     const delta = novaQtd - inv.quantity;
-    const operador = await prisma.user.findFirst({ where: { isActive: true } });
 
     await prisma.inventory.update({
         where: { id: inv.id },
@@ -227,7 +223,7 @@ router.post('/ajuste', async (req: any, res: any) => {
             type: 'ADJUSTMENT',
             quantity: delta,
             reason: motivo || 'AJUSTE DE INVENTÁRIO',
-            userId: operador?.id ?? null,
+            userId: req.operador?.id ?? null,
             createdAt: new Date()
         }
     });

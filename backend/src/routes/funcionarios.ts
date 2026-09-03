@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { randomUUID } from 'crypto';
 import prisma from '../db';
+import { requerPermissao } from '../middlewares/auth';
 
 const router = Router();
 
@@ -11,7 +12,7 @@ const parseData = (v: any) => {
 };
 
 // GET /api/funcionarios - Lista funcionários (com busca)
-router.get('/', async (req: any, res: any) => {
+router.get('/', requerPermissao('ADMIN', 'MANAGER'), async (req: any, res: any) => {
     const { busca } = req.query;
 
     const where = busca
@@ -69,11 +70,20 @@ router.get('/', async (req: any, res: any) => {
 });
 
 // POST /api/funcionarios - Cria um novo funcionário
-router.post('/', async (req: any, res: any) => {
+router.post('/', requerPermissao('ADMIN', 'MANAGER'), async (req: any, res: any) => {
     const { codigo, nome, documento, rg, nascimento, sexo, estadoCivil, email, telefone, celular, endereco, numero, complemento, bairro, cidade, estado, cep, cargo, departamento, admissao, salario, comissao, valeTransporte, valeAlimentacao, banco, agencia, conta, tipoConta, formaPagamento, observacoes } = req.body;
 
     if (!nome || nome.trim() === '') {
         return res.status(400).json({ erro: "Informe o nome do funcionário!" });
+    }
+
+    const salarioNum = Number(salario) || 0;
+    const comissaoNum = Number(comissao) || 0;
+    if (!Number.isFinite(salarioNum) || salarioNum < 0) {
+        return res.status(400).json({ erro: "Salário inválido!" });
+    }
+    if (!Number.isFinite(comissaoNum) || comissaoNum < 0) {
+        return res.status(400).json({ erro: "Comissão inválida!" });
     }
 
     if (documento) {
@@ -83,7 +93,7 @@ router.post('/', async (req: any, res: any) => {
         }
     }
 
-    const empresa = await prisma.company.findFirst();
+    const empresa = await prisma.company.findUnique({ where: { id: req.operador.companyId } });
     if (!empresa) {
         return res.status(400).json({ erro: "Empresa não configurada!" });
     }
@@ -112,8 +122,8 @@ router.post('/', async (req: any, res: any) => {
             role: cargo || null,
             department: departamento || null,
             hireDate: parseData(admissao),
-            salary: Number(salario) || 0,
-            commissionRate: Number(comissao) || 0,
+            salary: salarioNum,
+            commissionRate: comissaoNum,
             valeTransport: Number(valeTransporte) || 0,
             valeAlimentacao: Number(valeAlimentacao) || 0,
             bank: banco || null,
@@ -132,13 +142,22 @@ router.post('/', async (req: any, res: any) => {
 });
 
 // PUT /api/funcionarios/:id - Atualiza um funcionário
-router.put('/:id', async (req: any, res: any) => {
+router.put('/:id', requerPermissao('ADMIN', 'MANAGER'), async (req: any, res: any) => {
     const { id } = req.params;
     const { codigo, nome, documento, rg, nascimento, sexo, estadoCivil, email, telefone, celular, endereco, numero, complemento, bairro, cidade, estado, cep, cargo, departamento, admissao, demissao, salario, comissao, valeTransporte, valeAlimentacao, banco, agencia, conta, tipoConta, formaPagamento, observacoes, ativo } = req.body;
 
     const existente = await prisma.employee.findUnique({ where: { id } });
     if (!existente) {
         return res.status(404).json({ erro: "Funcionário não encontrado!" });
+    }
+
+    const salarioNum = salario !== undefined ? (Number(salario) || 0) : Number(existente.salary);
+    const comissaoNum = comissao !== undefined ? (Number(comissao) || 0) : Number(existente.commissionRate);
+    if (!Number.isFinite(salarioNum) || salarioNum < 0) {
+        return res.status(400).json({ erro: "Salário inválido!" });
+    }
+    if (!Number.isFinite(comissaoNum) || comissaoNum < 0) {
+        return res.status(400).json({ erro: "Comissão inválida!" });
     }
 
     if (documento && documento !== existente.document) {
@@ -172,8 +191,8 @@ router.put('/:id', async (req: any, res: any) => {
             department: departamento !== undefined ? (departamento || null) : existente.department,
             hireDate: admissao !== undefined ? parseData(admissao) : existente.hireDate,
             terminationDate: demissao !== undefined ? parseData(demissao) : existente.terminationDate,
-            salary: salario !== undefined ? (Number(salario) || 0) : existente.salary,
-            commissionRate: comissao !== undefined ? (Number(comissao) || 0) : existente.commissionRate,
+            salary: salarioNum,
+            commissionRate: comissaoNum,
             valeTransport: valeTransporte !== undefined ? (Number(valeTransporte) || 0) : existente.valeTransport,
             valeAlimentacao: valeAlimentacao !== undefined ? (Number(valeAlimentacao) || 0) : existente.valeAlimentacao,
             bank: banco !== undefined ? (banco || null) : existente.bank,
@@ -191,7 +210,7 @@ router.put('/:id', async (req: any, res: any) => {
 });
 
 // DELETE /api/funcionarios/:id - Exclui um funcionário
-router.delete('/:id', async (req: any, res: any) => {
+router.delete('/:id', requerPermissao('ADMIN', 'MANAGER'), async (req: any, res: any) => {
     const { id } = req.params;
 
     const existente = await prisma.employee.findUnique({ where: { id } });

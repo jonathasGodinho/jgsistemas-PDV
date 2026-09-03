@@ -60,7 +60,7 @@ router.post('/:id/renegociar', async (req: any, res: any) => {
     let restoCents = totalCents - baseCents * qtdParcelas;
 
     const result = await prisma.$transaction(async (tx) => {
-        const empresa = await tx.company.findFirst();
+        const empresa = await tx.company.findUnique({ where: { id: req.operador.companyId } });
         if (!empresa) {
             throw new Error("Empresa não configurada!");
         }

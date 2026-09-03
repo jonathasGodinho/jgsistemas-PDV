@@ -173,11 +173,11 @@
                 <div class="linha2">
                     <div>
                         <label>Desconto (R$)</label>
-                        <input type="number" id="f-desconto" min="0" step="0.01" value="0" oninput="renderizarParcelas()">
+                        <input type="number" id="f-desconto" min="0" step="0.01" value="" placeholder="0,00" oninput="renderizarParcelas()">
                     </div>
                     <div>
                         <label>Resgatar Cashback (R$)</label>
-                        <input type="number" id="f-cashback" min="0" step="0.01" value="0" oninput="renderizarParcelas()">
+                        <input type="number" id="f-cashback" min="0" step="0.01" value="" placeholder="0,00" oninput="renderizarParcelas()">
                     </div>
                 </div>
                 <div style="margin-top:8px;">
@@ -667,8 +667,8 @@ async function registrarVenda() {
         document.getElementById('f-cliente').value = '';
         document.getElementById('f-celular').value = '';
         document.getElementById('f-obs').value = '';
-        document.getElementById('f-desconto').value = '0';
-        document.getElementById('f-cashback').value = '0';
+        document.getElementById('f-desconto').value = '';
+        document.getElementById('f-cashback').value = '';
         document.getElementById('f-senha-admin').value = '';
         document.getElementById('info-cliente').style.display = 'none';
         document.getElementById('f-parcelas').value = '1';

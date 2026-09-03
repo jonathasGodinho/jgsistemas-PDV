@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { randomUUID } from 'crypto';
 import prisma from '../db';
 import { resolverPreco } from '../utils/preco';
+import { requerPermissao } from '../middlewares/auth';
 
 const router = Router();
 
@@ -109,7 +110,7 @@ router.get('/:codigo', async (req: any, res: any) => {
 });
 
 // POST /api/produtos - Cria um novo produto com estoque inicial e variantes opcionais
-router.post('/', async (req: any, res: any) => {
+router.post('/', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     const { nome, codigo, sku, preco, custo, categoriaId, marcaId, colecaoId, estoque, unidade, variantes } = req.body;
 
     if (!nome || nome.trim() === '') {
@@ -117,21 +118,30 @@ router.post('/', async (req: any, res: any) => {
     }
 
     const precoNum = Number(preco);
-    if (!precoNum || precoNum <= 0) {
+    if (!Number.isFinite(precoNum) || precoNum <= 0) {
         return res.status(400).json({ erro: "Preço de venda inválido!" });
+    }
+
+    let custoNum = 0;
+    if (custo !== undefined && custo !== null && custo !== '') {
+        custoNum = Number(custo);
+        if (!Number.isFinite(custoNum) || custoNum < 0) {
+            return res.status(400).json({ erro: "Custo inválido!" });
+        }
     }
 
     if (codigo && await prisma.product.findFirst({ where: { barcode: codigo } })) {
         return res.status(400).json({ erro: "Código de barras já cadastrado!" });
     }
 
-    const empresa = await prisma.company.findFirst();
-    const filial = await prisma.branch.findFirst();
+    const empresa = await prisma.company.findUnique({ where: { id: req.operador.companyId } });
+    const filial = req.operador.branchId
+        ? await prisma.branch.findUnique({ where: { id: req.operador.branchId } })
+        : await prisma.branch.findFirst({ where: { companyId: req.operador.companyId } });
     if (!empresa || !filial) {
         return res.status(400).json({ erro: "Empresa ou filial não configuradas!" });
     }
 
-    const custoNum = Number(custo) || 0;
     const margem = precoNum > 0 ? ((precoNum - custoNum) / precoNum * 100) : 0;
 
     const produto = await prisma.product.create({
@@ -159,6 +169,14 @@ router.post('/', async (req: any, res: any) => {
 
     if (temVariantes) {
         for (const v of variantesArr) {
+            const vPreco = v.preco !== undefined && v.preco !== null && v.preco !== '' ? Number(v.preco) : precoNum;
+            const vCusto = v.custo !== undefined && v.custo !== null && v.custo !== '' ? Number(v.custo) : custoNum;
+            if (!Number.isFinite(vPreco) || vPreco <= 0) {
+                return res.status(400).json({ erro: "Preço de variante inválido!" });
+            }
+            if (!Number.isFinite(vCusto) || vCusto < 0) {
+                return res.status(400).json({ erro: "Custo de variante inválido!" });
+            }
             const idV = randomUUID();
             await prisma.productVariant.create({
                 data: {
@@ -168,8 +186,8 @@ router.post('/', async (req: any, res: any) => {
                     size: v.tamanho ? String(v.tamanho).trim() : null,
                     sku: v.sku ? String(v.sku).trim() : null,
                     barcode: v.codigo ? String(v.codigo).trim() : null,
-                    costPrice: Number(v.custo ?? custoNum),
-                    salePrice: Number(v.preco ?? precoNum),
+                    costPrice: vCusto,
+                    salePrice: vPreco,
                     image: null
                 }
             });
@@ -208,7 +226,7 @@ router.post('/', async (req: any, res: any) => {
 });
 
 // PUT /api/produtos/:id - Atualiza produto e/ou estoque
-router.put('/:id', async (req: any, res: any) => {
+router.put('/:id', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     const { id } = req.params;
     const { nome, codigo, sku, preco, custo, categoriaId, marcaId, colecaoId, estoque, unidade, ativo, variantes } = req.body;
 
@@ -225,11 +243,18 @@ router.put('/:id', async (req: any, res: any) => {
     }
 
     const precoNum = preco !== undefined ? Number(preco) : Number(produtoExistente.salePrice);
-    if (precoNum <= 0) {
+    if (!Number.isFinite(precoNum) || precoNum <= 0) {
         return res.status(400).json({ erro: "Preço de venda inválido!" });
     }
 
-    const custoNum = custo !== undefined ? Number(custo) : Number(produtoExistente.costPrice);
+    let custoNum = Number(produtoExistente.costPrice);
+    if (custo !== undefined && custo !== null && custo !== '') {
+        custoNum = Number(custo);
+        if (!Number.isFinite(custoNum) || custoNum < 0) {
+            return res.status(400).json({ erro: "Custo inválido!" });
+        }
+    }
+
     const margem = precoNum > 0 ? ((precoNum - custoNum) / precoNum * 100) : 0;
 
     const produto = await prisma.product.update({
@@ -262,6 +287,14 @@ router.put('/:id', async (req: any, res: any) => {
         await prisma.inventory.deleteMany({ where: { productId: id, variantId: { not: null } } });
 
         for (const v of variantes) {
+            const vPreco = v.preco !== undefined && v.preco !== null && v.preco !== '' ? Number(v.preco) : precoNum;
+            const vCusto = v.custo !== undefined && v.custo !== null && v.custo !== '' ? Number(v.custo) : custoNum;
+            if (!Number.isFinite(vPreco) || vPreco <= 0) {
+                return res.status(400).json({ erro: "Preço de variante inválido!" });
+            }
+            if (!Number.isFinite(vCusto) || vCusto < 0) {
+                return res.status(400).json({ erro: "Custo de variante inválido!" });
+            }
             const idV = randomUUID();
             await prisma.productVariant.create({
                 data: {
@@ -271,8 +304,8 @@ router.put('/:id', async (req: any, res: any) => {
                     size: v.tamanho ? String(v.tamanho).trim() : null,
                     sku: v.sku ? String(v.sku).trim() : null,
                     barcode: v.codigo ? String(v.codigo).trim() : null,
-                    costPrice: Number(v.custo ?? custoNum),
-                    salePrice: Number(v.preco ?? precoNum),
+                    costPrice: vCusto,
+                    salePrice: vPreco,
                     image: null
                 }
             });
@@ -323,7 +356,7 @@ router.put('/:id', async (req: any, res: any) => {
 });
 
 // DELETE /api/produtos/:id - Exclui produto (e estoque em cascata)
-router.delete('/:id', async (req: any, res: any) => {
+router.delete('/:id', requerPermissao('ADMIN', 'MANAGER'), async (req: any, res: any) => {
     const { id } = req.params;
 
     const vendas = await prisma.saleItem.count({ where: { productId: id } });

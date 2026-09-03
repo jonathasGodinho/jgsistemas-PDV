@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { randomUUID } from 'crypto';
 import prisma from '../db';
+import { requerPermissao } from '../middlewares/auth';
 
 const router = Router();
 
@@ -20,14 +21,14 @@ router.get('/', async (_req: any, res: any) => {
 });
 
 // POST /api/categorias - Cria uma nova categoria
-router.post('/', async (req: any, res: any) => {
+router.post('/', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     const { nome } = req.body;
 
     if (!nome || nome.trim() === '') {
         return res.status(400).json({ erro: "Informe o nome da categoria!" });
     }
 
-    const empresa = await prisma.company.findFirst();
+    const empresa = await prisma.company.findUnique({ where: { id: req.operador.companyId } });
     if (!empresa) {
         return res.status(400).json({ erro: "Empresa não configurada!" });
     }
@@ -53,7 +54,7 @@ router.post('/', async (req: any, res: any) => {
 });
 
 // PUT /api/categorias/:id - Renomeia categoria
-router.put('/:id', async (req: any, res: any) => {
+router.put('/:id', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     const { id } = req.params;
     const { nome } = req.body;
 
@@ -83,7 +84,7 @@ router.put('/:id', async (req: any, res: any) => {
 });
 
 // DELETE /api/categorias/:id - Exclui categoria (produtos ficam sem categoria)
-router.delete('/:id', async (req: any, res: any) => {
+router.delete('/:id', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     const { id } = req.params;
 
     const categoria = await prisma.category.findUnique({ where: { id } });

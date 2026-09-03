@@ -65,7 +65,7 @@ router.get('/:id', async (req: any, res: any) => {
 });
 
 // POST /api/compras - Cria pedido de compra (PENDING)
-router.post('/', async (req: any, res: any) => {
+router.post('/', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     const { fornecedorId, itens, observacoes, vencimento } = req.body;
 
     if (!fornecedorId) {
@@ -75,8 +75,10 @@ router.post('/', async (req: any, res: any) => {
         return res.status(400).json({ erro: "Informe pelo menos um item!" });
     }
 
-    const empresa = await prisma.company.findFirst();
-    const filial = await prisma.branch.findFirst();
+    const empresa = await prisma.company.findUnique({ where: { id: req.operador.companyId } });
+    const filial = req.operador.branchId
+        ? await prisma.branch.findUnique({ where: { id: req.operador.branchId } })
+        : await prisma.branch.findFirst({ where: { companyId: req.operador.companyId } });
     if (!empresa || !filial) {
         return res.status(400).json({ erro: "Empresa ou filial não configuradas!" });
     }
@@ -130,7 +132,7 @@ router.post('/', async (req: any, res: any) => {
 });
 
 // POST /api/compras/:id/receber - Recebe a mercadoria: entra no estoque e gera contas a pagar
-router.post('/:id/receber', async (req: any, res: any) => {
+router.post('/:id/receber', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     const { id } = req.params;
     const { vencimento, observacoes } = req.body;
 

@@ -4,6 +4,7 @@ import prisma from '../db';
 import { validarSenhaAdmin } from '../utils/autorizacao';
 import { calcularAnaliseCredito } from '../utils/credito';
 import { registrarAuditoria } from '../utils/auditoria';
+import { requerPermissao } from '../middlewares/auth';
 
 const router = Router();
 
@@ -53,14 +54,22 @@ router.get('/', async (req: any, res: any) => {
 });
 
 // POST /api/clientes - Cria um novo cliente
-router.post('/', async (req: any, res: any) => {
+router.post('/', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR', 'SELLER'), async (req: any, res: any) => {
     const { nome, documento, email, telefone, celular, nascimento, endereco, numero, complemento, bairro, cidade, estado, cep, limite, observacoes, priceTableId } = req.body;
 
     if (!nome || nome.trim() === '') {
         return res.status(400).json({ erro: "Informe o nome do cliente!" });
     }
 
-    const empresa = await prisma.company.findFirst();
+    let limiteNum = 0;
+    if (limite !== undefined && limite !== null && limite !== '') {
+        limiteNum = Number(limite);
+        if (!Number.isFinite(limiteNum) || limiteNum < 0) {
+            return res.status(400).json({ erro: "Limite de crédito inválido!" });
+        }
+    }
+
+    const empresa = await prisma.company.findUnique({ where: { id: req.operador.companyId } });
     if (!empresa) {
         return res.status(400).json({ erro: "Empresa não configurada!" });
     }
@@ -86,7 +95,7 @@ router.post('/', async (req: any, res: any) => {
             city: cidade || null,
             state: estado || null,
             zipCode: cep || null,
-            creditLimit: Number(limite) || 0,
+            creditLimit: limiteNum,
             notes: observacoes || null,
             priceTableId: priceTableId || null,
             isActive: true,
@@ -99,13 +108,20 @@ router.post('/', async (req: any, res: any) => {
 });
 
 // PUT /api/clientes/:id - Atualiza um cliente
-router.put('/:id', async (req: any, res: any) => {
+router.put('/:id', requerPermissao('ADMIN', 'MANAGER'), async (req: any, res: any) => {
     const { id } = req.params;
     const { nome, documento, email, telefone, celular, nascimento, endereco, numero, complemento, bairro, cidade, estado, cep, limite, observacoes, ativo, priceTableId } = req.body;
 
     const clienteExistente = await prisma.customer.findUnique({ where: { id } });
     if (!clienteExistente) {
         return res.status(404).json({ erro: "Cliente não encontrado!" });
+    }
+
+    if (limite !== undefined && limite !== null && limite !== '') {
+        const limiteNum = Number(limite);
+        if (!Number.isFinite(limiteNum) || limiteNum < 0) {
+            return res.status(400).json({ erro: "Limite de crédito inválido!" });
+        }
     }
 
     if (documento && documento !== clienteExistente.document) {
@@ -200,7 +216,7 @@ router.get('/:id/analise-credito', async (req: any, res: any) => {
 });
 
 // POST /api/clientes/:id/analise-credito/aplicar - Aplica o limite sugerido (exige senha admin)
-router.post('/:id/analise-credito/aplicar', async (req: any, res: any) => {
+router.post('/:id/analise-credito/aplicar', requerPermissao('ADMIN', 'MANAGER'), async (req: any, res: any) => {
     const { id } = req.params;
     const { senhaAdmin } = req.body;
 
@@ -243,7 +259,7 @@ router.post('/:id/analise-credito/aplicar', async (req: any, res: any) => {
 });
 
 // DELETE /api/clientes/:id - Exclui cliente (bloqueado se tiver vendas)
-router.delete('/:id', async (req: any, res: any) => {
+router.delete('/:id', requerPermissao('ADMIN', 'MANAGER'), async (req: any, res: any) => {
     const { id } = req.params;
 
     const vendas = await prisma.sale.count({ where: { customerId: id } });

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { randomUUID } from 'crypto';
 import prisma from '../db';
+import { requerPermissao } from '../middlewares/auth';
 
 const router = Router();
 
@@ -25,14 +26,14 @@ router.get('/', async (_req: any, res: any) => {
 });
 
 // POST /api/tabelas-preco - Cria tabela (apenas uma pode ser padrão)
-router.post('/', async (req: any, res: any) => {
+router.post('/', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     const { nome, padrao, ativa } = req.body;
 
     if (!nome || !String(nome).trim()) {
         return res.status(400).json({ erro: "Informe o nome da tabela!" });
     }
 
-    const empresa = await prisma.company.findFirst();
+    const empresa = await prisma.company.findUnique({ where: { id: req.operador.companyId } });
     if (!empresa) {
         return res.status(400).json({ erro: "Empresa não configurada!" });
     }
@@ -96,7 +97,7 @@ router.get('/:id', async (req: any, res: any) => {
 });
 
 // PUT /api/tabelas-preco/:id - Renomeia / marca como padrão / ativa-desativa
-router.put('/:id', async (req: any, res: any) => {
+router.put('/:id', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     const { id } = req.params;
     const { nome, padrao, ativa } = req.body;
 
@@ -128,7 +129,7 @@ router.put('/:id', async (req: any, res: any) => {
 });
 
 // DELETE /api/tabelas-preco/:id - Exclui tabela (bloqueia se houver clientes vinculados)
-router.delete('/:id', async (req: any, res: any) => {
+router.delete('/:id', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     const { id } = req.params;
     const clientes = await prisma.customer.count({ where: { priceTableId: id } });
     if (clientes > 0) {
@@ -139,7 +140,7 @@ router.delete('/:id', async (req: any, res: any) => {
 });
 
 // POST /api/tabelas-preco/:id/itens - Cria ou atualiza um item da tabela
-router.post('/:id/itens', async (req: any, res: any) => {
+router.post('/:id/itens', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     const { id } = req.params;
     const { produtoId, varianteId, minQtd, preco, percentual } = req.body;
 
@@ -157,8 +158,14 @@ router.post('/:id/itens', async (req: any, res: any) => {
     if (precoNum === null && pctNum === null) {
         return res.status(400).json({ erro: "Informe o preço fixo ou o percentual de ajuste!" });
     }
-    if (precoNum !== null && precoNum <= 0) {
-        return res.status(400).json({ erro: "Preço fixo deve ser maior que zero!" });
+    if (precoNum !== null && (!Number.isFinite(precoNum) || precoNum <= 0)) {
+        return res.status(400).json({ erro: "Preço fixo deve ser um número válido maior que zero!" });
+    }
+    if (pctNum !== null && !Number.isFinite(pctNum)) {
+        return res.status(400).json({ erro: "Percentual de ajuste inválido!" });
+    }
+    if (pctNum !== null && (pctNum < -50 || pctNum > 1000)) {
+        return res.status(400).json({ erro: "Percentual de ajuste deve estar entre -50 e 1000!" });
     }
 
     const existente = await prisma.priceTableItem.findFirst({
@@ -196,7 +203,7 @@ router.post('/:id/itens', async (req: any, res: any) => {
 });
 
 // DELETE /api/tabelas-preco/:id/itens/:itemId - Remove um item da tabela
-router.delete('/:id/itens/:itemId', async (req: any, res: any) => {
+router.delete('/:id/itens/:itemId', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     await prisma.priceTableItem.delete({ where: { id: req.params.itemId } });
     return res.json({ ok: true });
 });

@@ -3,11 +3,27 @@ import { randomUUID } from 'crypto';
 import prisma from '../db';
 import { calcularPromocoes } from '../utils/promocoes';
 import { registrarAuditoria } from '../utils/auditoria';
+import { requerPermissao } from '../middlewares/auth';
 
 const router = Router();
 
 const TIPOS = ['LEVE_PAGUE', 'BRINDE', 'DESCONTO_PROGRESSIVO', 'DESCONTO_VALOR', 'DESCONTO_PERCENTUAL'];
 const ESCOPOS = ['PRODUCT', 'CATEGORY', 'BRAND', 'ALL'];
+
+const validarValoresPromocao = (body: any): string | null => {
+    const { discountValue, discountPercent } = body;
+    if (discountValue !== undefined && discountValue !== null && discountValue !== '') {
+        const v = Number(discountValue);
+        if (!Number.isFinite(v)) return 'Valor de desconto inválido!';
+        if (v < 0) return 'O desconto em valor não pode ser negativo!';
+    }
+    if (discountPercent !== undefined && discountPercent !== null && discountPercent !== '') {
+        const p = Number(discountPercent);
+        if (!Number.isFinite(p)) return 'Percentual de desconto inválido!';
+        if (p < 0 || p > 90) return 'Percentual de desconto deve estar entre 0 e 90!';
+    }
+    return null;
+};
 
 // GET /api/promocoes - Lista promoções (com situação atual de validade)
 router.get('/', async (_req: any, res: any) => {
@@ -31,7 +47,7 @@ router.get('/', async (_req: any, res: any) => {
 });
 
 // POST /api/promocoes - Cria promoção com regras e alvos
-router.post('/', async (req: any, res: any) => {
+router.post('/', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     const { nome, tipo, escopo, produtos, categorias, marcas, buyQuantity, payQuantity, freeQuantity, discountValue, discountPercent, minQuantity, startDate, endDate, ativa } = req.body;
 
     if (!nome || !String(nome).trim()) {
@@ -43,8 +59,12 @@ router.post('/', async (req: any, res: any) => {
     if (escopo && !ESCOPOS.includes(escopo)) {
         return res.status(400).json({ erro: "Escopo de promoção inválido!" });
     }
+    const erroValores = validarValoresPromocao(req.body);
+    if (erroValores) {
+        return res.status(400).json({ erro: erroValores });
+    }
 
-    const empresa = await prisma.company.findFirst();
+    const empresa = await prisma.company.findUnique({ where: { id: req.operador.companyId } });
     if (!empresa) {
         return res.status(400).json({ erro: "Empresa não configurada!" });
     }
@@ -142,13 +162,17 @@ router.get('/:id', async (req: any, res: any) => {
 });
 
 // PUT /api/promocoes/:id - Atualiza promoção (substitui produtos-alvo se informados)
-router.put('/:id', async (req: any, res: any) => {
+router.put('/:id', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     const { id } = req.params;
     const body = req.body;
 
     const p = await prisma.promotion.findUnique({ where: { id } });
     if (!p) {
         return res.status(404).json({ erro: "Promoção não encontrada!" });
+    }
+    const erroValores = validarValoresPromocao(body);
+    if (erroValores) {
+        return res.status(400).json({ erro: erroValores });
     }
 
     const numOrNull = (v: any) => (v !== undefined && v !== null && v !== '' ? Number(v) : null);
@@ -205,7 +229,7 @@ router.put('/:id', async (req: any, res: any) => {
 });
 
 // DELETE /api/promocoes/:id
-router.delete('/:id', async (req: any, res: any) => {
+router.delete('/:id', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     await prisma.promotion.delete({ where: { id: req.params.id } });
 
     registrarAuditoria({
