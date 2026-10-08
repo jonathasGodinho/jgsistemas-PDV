@@ -29,6 +29,13 @@
         .segmento { border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; display: flex; gap: 10px; align-items: center; }
         .segmento.ativo { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary); background: var(--primary-soft); }
         .segmento .ms { font-size: 26px; color: var(--primary); }
+        .pendencias { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 18px; }
+        .pend { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px dashed var(--border); font-size: 13.5px; }
+        .pend .ms { font-size: 20px; }
+        .pend.ok .ms { color: var(--green); }
+        .pend.nok .ms { color: var(--amber); }
+        .pend small { display: block; color: var(--text-2); font-size: 12px; }
+        @media (max-width: 1000px) { .pendencias { grid-template-columns: 1fr; } }
         @media (max-width: 1000px) { .cfg-grid { grid-template-columns: 1fr; } .cfg-menu { position: static; } .segmentos { grid-template-columns: 1fr; } }
     </style>
     <link rel="stylesheet" href="/ui/jg.css">
@@ -86,6 +93,7 @@
                                 <div class="campo"><label for="c-neighborhood">Bairro</label><input type="text" id="c-neighborhood"></div>
                                 <div class="campo"><label for="c-city">Cidade</label><input type="text" id="c-city"></div>
                                 <div class="campo"><label for="c-state">UF</label><input type="text" id="c-state" maxlength="2"></div>
+                                <div class="campo"><label for="c-cityCode">Código IBGE do município</label><input type="text" id="c-cityCode" maxlength="7" placeholder="Ex.: 1302603 (Manaus)"></div>
                                 <div class="campo"><label for="c-phone">Telefone</label><input type="text" id="c-phone"></div>
                                 <div class="campo"><label for="c-email">E-mail</label><input type="text" id="c-email"></div>
                             </div>
@@ -174,23 +182,48 @@
 
                 <!-- FISCAL -->
                 <div class="secao-cfg" id="secao-fiscal">
-                    <div class="card">
-                        <div class="card-head"><h3>NFC-e (cupom fiscal eletrônico)</h3></div>
+                    <div class="card mb-16">
+                        <div class="card-head"><div><h3>Situação da NFC-e</h3><div class="sub" id="nf-resumo">Carregando...</div></div><span id="nf-selo"></span></div>
                         <div class="card-body">
-                            <div class="alerta mb-16"><span class="ms">info</span><div>Emissão de NFC-e (modelo 65) junto à SEFAZ. Antes de ativar, preencha os dados da empresa, os campos fiscais dos produtos (NCM, CFOP, CSOSN) e configure o certificado digital no arquivo <b>.env</b> do servidor.</div></div>
+                            <div class="alerta ambar mb-16 hidden" id="nf-simulacao"><span class="ms">science</span><div>O servidor está em <b>modo simulação</b> (NFE_DRY_RUN): as notas não são enviadas à SEFAZ.</div></div>
+                            <div class="pendencias" id="nf-pendencias"></div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-16">
+                        <div class="card-head"><h3>Certificado digital A1</h3><span class="sub">Arquivo .pfx do e-CNPJ</span></div>
+                        <div class="card-body">
+                            <div id="cert-info" class="mb-16"></div>
+                            <div class="form-grid c3" style="align-items:end">
+                                <div class="campo span-2"><label for="cert-arquivo">Arquivo do certificado (.pfx ou .p12)</label><input type="file" id="cert-arquivo" accept=".pfx,.p12,application/x-pkcs12"></div>
+                                <div class="campo"><label for="cert-senha">Senha do certificado</label><input type="password" id="cert-senha" autocomplete="new-password"></div>
+                            </div>
+                            <div class="alerta"><span class="ms">lock</span><div>O certificado e a senha são guardados <b>criptografados</b> no servidor e nunca voltam para o navegador. Só administradores podem enviar ou remover.</div></div>
+                        </div>
+                        <div class="card-foot">
+                            <button class="btn btn-contorno-perigo hidden" id="cert-remover" onclick="removerCertificado()"><span class="ms">delete</span>Remover</button>
+                            <button class="btn btn-primario" onclick="enviarCertificado()"><span class="ms">upload</span>Enviar certificado</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-head"><h3>Configuração da NFC-e</h3><span class="badge azul sem-ponto">SEFAZ-AM</span></div>
+                        <div class="card-body">
                             <label class="toggle mb-16"><input type="checkbox" id="n-habilitado"><span class="trilho"></span><span><b>Emitir NFC-e nas vendas do PDV</b></span></label>
                             <div class="form-grid c3 mt-16">
-                                <div class="campo"><label for="n-tpAmb">Ambiente</label><select id="n-tpAmb"><option value="1">Produção</option><option value="2">Homologação (testes)</option></select></div>
+                                <div class="campo"><label>UF da SEFAZ</label><input type="text" value="AM — Amazonas" readonly></div>
+                                <div class="campo"><label for="n-tpAmb">Ambiente</label><select id="n-tpAmb"><option value="2">Homologação (testes)</option><option value="1">Produção</option></select></div>
                                 <div class="campo"><label for="n-serie">Série</label><input type="number" id="n-serie" min="1" max="999" value="1"></div>
-                                <div class="campo"><label for="n-proximoNumero">Próximo número</label><input type="number" id="n-proximoNumero" min="1" value="1"></div>
+                                <div class="campo"><label for="n-proximoNumero">Próximo número</label><input type="number" id="n-proximoNumero" min="1" value="1"><span class="dica-campo">Nunca diminua a numeração já usada.</span></div>
                                 <div class="campo"><label for="n-cfopPadrao">CFOP padrão</label><input type="text" id="n-cfopPadrao" placeholder="5102" maxlength="4"></div>
                                 <div class="campo"><label for="n-csosnPadrao">CSOSN padrão</label><input type="text" id="n-csosnPadrao" placeholder="102" maxlength="3"></div>
                                 <div class="campo"><label for="n-cscId">ID do CSC</label><input type="text" id="n-cscId" placeholder="Preencha apenas para alterar" autocomplete="off"></div>
                                 <div class="campo span-2"><label for="n-csc">CSC (Código de Segurança do Contribuinte)</label>
                                     <input type="password" id="n-csc" placeholder="Novo CSC — preencha apenas para alterar" autocomplete="new-password">
                                     <span class="dica-campo" id="n-csc-status">—</span></div>
-                                <div class="campo span-all"><label for="n-qrcodeUrl">URL de consulta do QR Code</label><input type="text" id="n-qrcodeUrl" value="https://www.sefaz.am.gov.br/nfce/consulta"></div>
+                                <div class="campo span-all"><label for="n-qrcodeUrl">URL de consulta do QR Code</label><input type="text" id="n-qrcodeUrl" placeholder="Em branco = URL oficial da SEFAZ-AM para o ambiente escolhido"><span class="dica-campo" id="n-qrcode-padrao"></span></div>
                             </div>
+                            <div class="alerta mt-8"><span class="ms">info</span><div>Comece em <b>Homologação</b> com o CSC de homologação. Depois de uma nota de teste autorizada, troque para <b>Produção</b> com o CSC de produção.</div></div>
                             <div class="aviso" id="aviso-nfe" style="display:none;"></div>
                         </div>
                         <div class="card-foot"><button class="btn btn-sucesso" onclick="salvarNfe()"><span class="ms">check</span>Salvar configuração fiscal</button></div>
@@ -203,7 +236,7 @@
     <script src="/ui/shell.js"></script>
     <script>
         const API_BASE = window.location.protocol.startsWith('http') ? '' : 'http://localhost:3000';
-        const IDs = ['name','tradeName','document','stateReg','cityReg','crt','cnae','address','number','complement','neighborhood','city','state','zipCode','phone','email'];
+        const IDs = ['name','tradeName','document','stateReg','cityReg','crt','cnae','address','number','complement','neighborhood','city','state','cityCode','zipCode','phone','email'];
         let logo = null;
 
         function obterOperador() {
@@ -270,7 +303,7 @@
 
                 const n = c.nfe || {};
                 document.getElementById('n-habilitado').checked = !!n.habilitado;
-                document.getElementById('n-tpAmb').value = n.tpAmb === 2 ? '2' : '1';
+                document.getElementById('n-tpAmb').value = (n.tpAmb === 1 && (n.habilitado || n.cscConfigurado)) ? '1' : '2';
                 document.getElementById('n-serie').value = Number(n.serie) || 1;
                 document.getElementById('n-proximoNumero').value = n.proximoNumero || 1;
                 document.getElementById('n-cfopPadrao').value = n.cfopPadrao || '5102';
@@ -280,7 +313,8 @@
                 document.getElementById('n-csc-status').textContent = n.cscConfigurado
                     ? 'CSC configurado. Para trocar, digite o novo valor abaixo.'
                     : 'CSC não configurado. Digite o código e o ID abaixo.';
-                document.getElementById('n-qrcodeUrl').value = n.qrcodeUrl || 'https://www.sefaz.am.gov.br/nfce/consulta';
+                document.getElementById('n-qrcodeUrl').value = n.qrcodeUrl || '';
+                carregarStatusNfe();
 
                 const g = c.seguranca || {};
                 document.getElementById('g-loginMax').value = g.loginMaxTentativas ?? 5;
@@ -312,6 +346,64 @@
             } catch (e) {
                 mostrarAviso2('aviso-seguranca', e.message, false);
             }
+        }
+
+        // ---------- Situação da NFC-e e certificado
+        async function carregarStatusNfe() {
+            try {
+                const st = await api('/api/nfe/status');
+                const prontas = st.pendencias.filter(x => x.ok).length;
+                document.getElementById('nf-resumo').textContent = `SEFAZ-${st.uf} · ${st.ambiente} · série ${Number(st.serie)} · próximo nº ${st.proximoNumero} · ${prontas} de ${st.pendencias.length} itens prontos`;
+                document.getElementById('nf-selo').innerHTML = st.habilitado
+                    ? '<span class="badge ativo">Emissão ligada</span>'
+                    : (st.pronto ? '<span class="badge azul">Pronto para ligar</span>' : '<span class="badge pendente">Configuração pendente</span>');
+                document.getElementById('nf-simulacao').classList.toggle('hidden', !st.simulacao);
+                document.getElementById('n-qrcode-padrao').textContent = 'URL em uso: ' + st.urlQrCode;
+                document.getElementById('nf-pendencias').innerHTML = st.pendencias.map(x =>
+                    `<div class="pend ${x.ok ? 'ok' : 'nok'}"><span class="ms">${x.ok ? 'check_circle' : 'error'}</span><div><b>${esc(x.item)}</b>${x.detalhe ? `<small>${esc(x.detalhe)}</small>` : ''}</div></div>`).join('');
+                const c = st.certificado;
+                const info = document.getElementById('cert-info');
+                if (c) {
+                    const cor = c.diasRestantes < 0 ? 'vermelho' : c.diasRestantes <= 30 ? 'ambar' : 'verde';
+                    info.innerHTML = `<div class="alerta ${cor}"><span class="ms">verified_user</span><div><b>${esc(c.titular)}</b><br>Válido até ${new Date(c.validoAte).toLocaleDateString('pt-BR')} (${c.diasRestantes < 0 ? 'vencido' : c.diasRestantes + ' dias'})${c.origem === 'banco' ? '' : ' · configurado no servidor'}</div></div>`;
+                    document.getElementById('cert-remover').classList.toggle('hidden', c.origem !== 'banco');
+                } else {
+                    info.innerHTML = '<div class="alerta ambar"><span class="ms">warning</span><div>Nenhum certificado enviado. Sem ele a NFC-e não pode ser emitida.</div></div>';
+                    document.getElementById('cert-remover').classList.add('hidden');
+                }
+            } catch (e) {
+                document.getElementById('nf-resumo').textContent = e.message;
+            }
+        }
+
+        function lerArquivoBase64(arquivo) {
+            return new Promise((ok, erro) => {
+                const r = new FileReader();
+                r.onload = () => ok(String(r.result).replace(/^data:[^,]*,/, ''));
+                r.onerror = () => erro(new Error('Não foi possível ler o arquivo.'));
+                r.readAsDataURL(arquivo);
+            });
+        }
+
+        async function enviarCertificado() {
+            const arq = document.getElementById('cert-arquivo').files[0];
+            const senha = document.getElementById('cert-senha').value;
+            if (!arq) { JG.toast('Selecione o arquivo .pfx do certificado.', 'alerta'); return; }
+            if (!senha) { JG.toast('Informe a senha do certificado.', 'alerta'); return; }
+            try {
+                const arquivo = await lerArquivoBase64(arq);
+                const r = await api('/api/nfe/certificado', 'POST', { arquivo, senha });
+                document.getElementById('cert-arquivo').value = '';
+                document.getElementById('cert-senha').value = '';
+                JG.toast(`Certificado de ${r.titular} enviado. Válido até ${new Date(r.validoAte).toLocaleDateString('pt-BR')}.`, 'sucesso');
+                carregarStatusNfe();
+            } catch (e) { JG.toast(e.message, 'erro'); }
+        }
+
+        async function removerCertificado() {
+            if (!confirm('Remover o certificado digital? A NFC-e deixará de ser emitida até um novo envio.')) return;
+            try { await api('/api/nfe/certificado', 'DELETE'); JG.toast('Certificado removido.', 'sucesso'); carregarStatusNfe(); }
+            catch (e) { JG.toast(e.message, 'erro'); }
         }
 
         async function salvarNfe() {
@@ -486,6 +578,7 @@
                 if (d.bairro) document.getElementById('c-neighborhood').value = d.bairro;
                 if (d.cidade) document.getElementById('c-city').value = d.cidade;
                 if (d.estado) document.getElementById('c-state').value = d.estado;
+                if (d.ibge) document.getElementById('c-cityCode').value = d.ibge;
                 document.getElementById('c-number').focus();
             } catch (e) { JG.toast('CEP não encontrado. Preencha o endereço manualmente.', 'alerta'); }
         }

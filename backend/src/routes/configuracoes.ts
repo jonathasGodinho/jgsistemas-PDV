@@ -23,6 +23,7 @@ const CAMPOS = [
     'city',
     'state',
     'zipCode',
+    'cityCode',
     'phone',
     'email',
     'logo'
@@ -72,7 +73,7 @@ router.get('/', async (req: any, res: any) => {
             csosnPadrao: '102',
             csc: '',
             cscId: '',
-            qrcodeUrl: 'https://www.sefaz.am.gov.br/nfce/consulta'
+            qrcodeUrl: ''
         };
         // O CSC é segredo de uso exclusivo do backend (montagem do QR Code e emissão
         // da NFC-e). Nunca é devolvido ao frontend — apenas um indicador de configuração.
@@ -166,8 +167,9 @@ router.post('/', requerPermissao(...PERFIS_PRIVILEGIADOS), async (req: any, res:
             await salvarSetting('nfe_config', {
                 habilitado: Boolean(n.habilitado),
                 tpAmb: Number(n.tpAmb) === 2 ? 2 : 1,
+                // proximoNumero ausente = mantém o atual (nunca regredir a numeração)
                 serie: String(n.serie ?? atual.serie ?? '1').padStart(3, '0'),
-                proximoNumero: Math.max(1, Number(n.proximoNumero) || 1),
+                proximoNumero: Math.max(1, Number(n.proximoNumero) || Number(atual.proximoNumero) || 1),
                 cfopPadrao: String(n.cfopPadrao ?? atual.cfopPadrao ?? '5102'),
                 csosnPadrao: String(n.csosnPadrao ?? atual.csosnPadrao ?? '102'),
                 // CSC/CSC Id são write-only: só são alterados quando o frontend envia
@@ -178,7 +180,8 @@ router.post('/', requerPermissao(...PERFIS_PRIVILEGIADOS), async (req: any, res:
                 cscId: (n.cscId !== undefined && String(n.cscId).trim() !== '')
                     ? String(n.cscId).trim()
                     : String(atual.cscId ?? ''),
-                qrcodeUrl: String(n.qrcodeUrl ?? atual.qrcodeUrl ?? 'https://www.sefaz.am.gov.br/nfce/consulta')
+                // Vazio = URL oficial da SEFAZ-AM conforme o ambiente (nfe/config.ts)
+                qrcodeUrl: String(n.qrcodeUrl ?? atual.qrcodeUrl ?? '').replace('https://www.sefaz.am.gov.br/nfce/consulta', '')
             });
         }
 

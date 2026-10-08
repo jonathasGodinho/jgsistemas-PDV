@@ -6,6 +6,8 @@ import { mkdtemp, readFile, rm, writeFile } from 'fs/promises';
 import { tmpdir } from 'os';
 import path from 'path';
 import { SignedXml } from 'xml-crypto';
+import { obterSetting } from '../utils/settings';
+import { decifrar } from '../utils/cripto';
 
 const execFileAsync = promisify(execFile);
 
@@ -17,6 +19,41 @@ export interface Assinador {
 
 function env(nome: string): string {
     return process.env[nome] ?? '';
+}
+
+// Certificado A1 (.pfx), nesta ordem de prioridade:
+//   1. NFE_CERT_PFX_BASE64 + NFE_CERT_PASSWORD (variáveis do servidor, ex.: Vercel)
+//   2. NFE_CERT_PFX (caminho do arquivo) + NFE_CERT_PASSWORD
+//   3. Enviado pela tela Configurações › Fiscal (guardado no banco, criptografado)
+export const CERTIFICADO_KEY = 'nfe_certificado';
+
+export interface CertificadoPfx { pfx: Buffer; senha: string; origem: 'env' | 'arquivo' | 'banco'; }
+
+export async function obterPfx(): Promise<CertificadoPfx | null> {
+    const b64 = env('NFE_CERT_PFX_BASE64').replace(/\s+/g, '');
+    if (b64) return { pfx: Buffer.from(b64, 'base64'), senha: env('NFE_CERT_PASSWORD'), origem: 'env' };
+    if (env('NFE_CERT_PFX')) return { pfx: await readFile(env('NFE_CERT_PFX')), senha: env('NFE_CERT_PASSWORD'), origem: 'arquivo' };
+    const salvo = await obterSetting<any>(CERTIFICADO_KEY, null);
+    if (salvo && salvo.pfx) {
+        return { pfx: decifrar(salvo.pfx), senha: salvo.senha ? decifrar(salvo.senha).toString('utf8') : '', origem: 'banco' };
+    }
+    return null;
+}
+
+// Lê os dados públicos de um .pfx (valida a senha). Usado no envio pela tela.
+export function inspecionarPfx(dados: Buffer, senha: string) {
+    const asn1 = forge.asn1.fromDer(forge.util.createBuffer(dados.toString('latin1')));
+    const p12 = forge.pkcs12.pkcs12FromAsn1(asn1, senha || undefined);
+    const temChave = !!(p12.getBags({ bagType: forge.pki.oids.pkcs8ShroudedKeyBag! })[forge.pki.oids.pkcs8ShroudedKeyBag!]?.[0]?.key
+        || p12.getBags({ bagType: forge.pki.oids.encryptedPrivateKeyInfo! })[forge.pki.oids.encryptedPrivateKeyInfo!]?.[0]?.key);
+    const certs = (p12.getBags({ bagType: forge.pki.oids.certBag! })[forge.pki.oids.certBag!] ?? []).map(b => b.cert).filter(Boolean) as forge.pki.Certificate[];
+    // Certificado do titular = o que não é emissor de nenhum outro (fim da cadeia)
+    const cert = certs.find(c => !certs.some(o => o !== c && o.issuer.hash === c.subject.hash)) ?? certs[0];
+    if (!temChave) throw new Error('O arquivo não contém a chave privada (verifique se é um certificado A1 .pfx).');
+    if (!cert) throw new Error('Nenhum certificado encontrado no arquivo .pfx.');
+    const cn = String(cert.subject.getField('CN')?.value ?? '');
+    const cnpj = (cn.match(/(\d{14})/) || [])[1] ?? null;
+    return { titular: cn, cnpj, validoDe: cert.validity.notBefore, validoAte: cert.validity.notAfter };
 }
 
 function criarTeste(): Assinador {
@@ -46,8 +83,7 @@ function criarTeste(): Assinador {
     };
 }
 
-async function criarPfx(caminho: string, senha: string): Promise<Assinador> {
-    const dados = await readFile(caminho);
+async function criarPfx(dados: Buffer, senha: string): Promise<Assinador> {
     const asn1 = forge.asn1.fromDer(forge.util.createBuffer(dados.toString('latin1')));
     const p12 = forge.pkcs12.pkcs12FromAsn1(asn1, senha || undefined);
 
@@ -132,14 +168,14 @@ async function criarPkcs11(): Promise<Assinador> {
 
 export async function criarAssinador(): Promise<Assinador> {
     const modo = (env('NFE_CERT_MODE') || '').toLowerCase();
-    const pfx = env('NFE_CERT_PFX');
     const dll = env('NFE_CERT_DLL');
 
     if (modo === 'test') return criarTeste();
-    if (pfx) return criarPfx(pfx, env('NFE_CERT_PASSWORD'));
+    const a1 = await obterPfx();
+    if (a1) return criarPfx(a1.pfx, a1.senha);
     if (dll) return criarPkcs11();
     throw new Error(
-        'Nenhum certificado configurado. Defina NFE_CERT_MODE=test (somente testes), NFE_CERT_PFX (certificado A1) ou NFE_CERT_DLL (token A3) no arquivo .env.'
+        'Nenhum certificado digital configurado. Envie o certificado A1 (.pfx) em Configurações › Fiscal.'
     );
 }
 

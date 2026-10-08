@@ -2,6 +2,7 @@ import { readFile } from 'fs/promises';
 import { request as httpRequest, type ClientRequestArgs } from 'http';
 import { request as httpsRequest, type RequestOptions } from 'https';
 import type { Duplex } from 'stream';
+import { obterPfx } from './cert';
 
 export const SERVICOS = {
     AUTORIZACAO: 'NfeAutorizacao4',
@@ -44,11 +45,11 @@ interface OpcoesTls {
 }
 
 async function tlsOpcoes(): Promise<OpcoesTls> {
-    const pfx = process.env.NFE_CERT_PFX;
-    if (pfx) {
+    const a1 = await obterPfx();
+    if (a1) {
         return {
-            pfx: await readFile(pfx),
-            passphrase: process.env.NFE_CERT_PASSWORD ?? ''
+            pfx: a1.pfx,
+            passphrase: a1.senha
         };
     }
     return { rejectUnauthorized: process.env.NFE_TLS_INSECURE !== '1' };
