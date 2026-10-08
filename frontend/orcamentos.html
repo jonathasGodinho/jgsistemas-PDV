@@ -6,119 +6,94 @@
     <meta name="google" content="notranslate">
     <title>Orçamentos - JG Sistemas</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
-        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
-        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
-        header a:hover { color: white; }
-        main { padding: 20px; max-width: 1100px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
-        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
-        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
-        .painel-corpo { padding: 14px; }
-        .campo { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
-        .campo label { font-size: 11px; color: #656d78; font-weight: bold; text-transform: uppercase; }
-        .campo input, .campo select { padding: 9px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; width: 100%; background: white; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { background-color: #134074; color: white; padding: 8px; text-align: left; text-transform: uppercase; font-size: 11px; }
-        td { padding: 8px; border-bottom: 1px solid #e6e9ed; color: #333; }
-        tr:nth-child(even) { background-color: #f8f9fa; }
-        .btn { border: none; border-radius: 4px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; }
-        .btn-azul { background-color: #134074; color: white; }
-        .btn-verde { background-color: #00a651; color: white; }
-        .btn-mini { padding: 4px 8px; font-size: 12px; }
-        .btn-block { width: 100%; padding: 12px; font-size: 15px; }
-        .sem-dados { text-align: center; color: #8b95a1; padding: 24px; font-size: 14px; }
-        .verde { color: #00a651; }
-        .badge { display: inline-block; padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
-        .b-azul { background: #d6e6f7; color: #134074; }
-        .b-verde { background: #d8f3e3; color: #008c45; }
-        .resumo { display: flex; gap: 12px; flex-wrap: wrap; }
-        .resumo div { flex: 1; min-width: 180px; background: #f0f2f5; border-radius: 4px; padding: 12px; text-align: center; }
-        .resumo .v { font-size: 20px; font-weight: bold; color: #134074; }
-        .resumo .r { font-size: 11px; color: #656d78; text-transform: uppercase; }
-
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 100; }
-        .modal-overlay.active { display: flex; }
-        .modal { background: white; border-radius: 6px; width: 640px; max-width: 94vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
-        .modal-head { background-color: #0b2545; color: white; padding: 14px 18px; font-weight: bold; font-size: 15px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
-        .modal-head .close { cursor: pointer; font-size: 20px; color: #aab2bd; }
-        .modal-head .close:hover { color: white; }
-        .modal-body { padding: 18px; }
+        #me-itens table { font-size: 13px; }
+        #me-itens td, #me-itens th { height: 36px; }
     </style>
+    <link rel="stylesheet" href="/ui/jg.css">
 </head>
-<body>
-
-    <header>
-        <div>JG SISTEMAS - ORÇAMENTOS</div>
-        <div><a href="/">← Menu Principal</a></div>
-    </header>
-
+<body class="jg" data-pagina="orcamentos">
     <main>
-        <div class="painel">
-            <div class="painel-titulo"><span>Orçamentos Pendentes</span></div>
-            <div class="painel-corpo">
-                <div class="resumo" id="box-resumo"></div>
-                <div style="overflow-x:auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Nº</th>
-                                <th>Data</th>
-                                <th>Operador</th>
-                                <th style="text-align:right;">Itens</th>
-                                <th style="text-align:right;">Subtotal</th>
-                                <th style="text-align:right;">Desconto</th>
-                                <th style="text-align:right;">Total</th>
-                                <th style="text-align:center;">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabela-orcamentos">
-                            <tr><td colspan="8" class="sem-dados">Carregando...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+        <div class="page-head">
+            <div><h1>Orçamentos</h1><div class="sub">Orçamentos salvos no PDV aguardando efetivação</div></div>
+            <div class="acoes"><a class="btn btn-sucesso" href="/pdv.html" target="_blank" rel="noopener"><span class="ms">add</span>Novo orçamento no PDV</a></div>
+        </div>
+        <div class="kpis" id="box-resumo"></div>
+        <div class="card">
+            <div class="card-body" style="padding-bottom:0">
+                <div class="filtros"><div class="input-icone" style="flex:1;min-width:260px"><span class="ms">search</span><input type="text" id="f-busca" placeholder="Filtrar por número, operador ou cliente"></div></div>
+            </div>
+            <div class="tabela-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nº</th>
+                            <th>Data</th>
+                            <th>Operador</th>
+                            <th>Cliente</th>
+                            <th class="right">Itens</th>
+                            <th class="right">Subtotal</th>
+                            <th class="right">Desconto</th>
+                            <th class="right">Total</th>
+                            <th class="acoes">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-orcamentos">
+                        <tr><td colspan="9" class="sem-dados">Carregando...</td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </main>
-
-    <footer>© 2026 JG Sistemas</footer>
-
-    <!-- Modal efetivar -->
+    <!-- Modal efetivar / ver itens -->
     <div class="modal-overlay" id="modal-efetivar">
         <div class="modal">
             <div class="modal-head">
-                <span>Efetivar Orçamento - Nº <span id="me-numero">-</span></span>
+                <span id="me-titulo">Efetivar venda — Nº <span id="me-numero">-</span></span>
                 <span class="close" onclick="fecharModal()">&times;</span>
             </div>
             <div class="modal-body">
-                <div id="me-itens" style="margin-bottom:14px;"></div>
-                <div class="campo">
-                    <label>Forma de pagamento</label>
-                    <select id="me-metodo">
-                        <option value="MONEY">Dinheiro</option>
-                        <option value="PIX">PIX</option>
-                        <option value="CREDIT_CARD">Crédito</option>
-                        <option value="DEBIT_CARD">Débito</option>
-                        <option value="CREDIARIO">Crediário</option>
-                    </select>
+                <div id="me-itens" class="mb-16"></div>
+                <div id="me-pagamento">
+                    <div class="destaque mb-16"><div class="rotulo">Total a receber</div><div class="valor" id="me-total">R$ 0,00</div></div>
+                    <div class="form-grid">
+                        <div class="campo"><label for="me-metodo">Forma de pagamento</label>
+                            <select id="me-metodo">
+                                <option value="MONEY">Dinheiro</option>
+                                <option value="PIX">PIX</option>
+                                <option value="CREDIT_CARD">Crédito</option>
+                                <option value="DEBIT_CARD">Débito</option>
+                                <option value="CREDIARIO">Crediário</option>
+                            </select>
+                        </div>
+                        <div id="box-parcelas" class="campo" style="display:none;"><label for="me-parcelas">Parcelas</label><input type="number" id="me-parcelas" min="1" max="12" value="1"></div>
+                        <div class="campo" id="box-recebido"><label for="me-recebido">Valor recebido (dinheiro)</label><input type="number" id="me-recebido" step="0.01" placeholder="0,00"></div>
+                    </div>
                 </div>
-                <div id="box-parcelas" class="campo" style="display:none;">
-                    <label>Parcelas</label>
-                    <input type="number" id="me-parcelas" min="1" max="12" value="1">
-                </div>
-                <div class="campo">
-                    <label>Valor recebido (Dinheiro)</label>
-                    <input type="number" id="me-recebido" step="0.01" placeholder="0,00">
-                </div>
-                <button class="btn btn-verde btn-block" onclick="confirmarEfetivar()">Efetivar Venda</button>
+            </div>
+            <div class="modal-foot" id="me-rodape">
+                <button class="btn" onclick="fecharModal()">Cancelar</button>
+                <button class="btn btn-sucesso" id="me-confirmar" onclick="confirmarEfetivar()"><span class="ms">check</span>Efetivar venda</button>
             </div>
         </div>
     </div>
 
+    <!-- Modal excluir -->
+    <div class="modal-overlay" id="modal-excluir">
+        <div class="modal sm">
+            <div class="modal-head"><span>Excluir orçamento <span id="mx-numero"></span></span><span class="close" onclick="document.getElementById('modal-excluir').classList.remove('active')">&times;</span></div>
+            <div class="modal-body">
+                <p style="margin:0 0 14px">O orçamento será cancelado e sairá da lista de pendentes.</p>
+                <div class="campo" style="margin:0"><label for="mx-senha">Senha do administrador *</label><input type="password" id="mx-senha" autocomplete="off"></div>
+            </div>
+            <div class="modal-foot"><button class="btn" onclick="document.getElementById('modal-excluir').classList.remove('active')">Voltar</button><button class="btn btn-perigo" onclick="confirmarExcluir()"><span class="ms">delete</span>Excluir</button></div>
+        </div>
+    </div>
+
     <script src="/seguranca.js"></script>
+    <script src="/ui/shell.js"></script>
     <script>
         const API_BASE = '';
-        const formatarMoeda = v => `R$ ${Number(v).toFixed(2).replace('.', ',')}`;
+        const formatarMoeda = v => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         const formatarDataHora = d => new Date(d).toLocaleString('pt-BR');
 
         function obterOperador() {
@@ -158,58 +133,90 @@
                 const orcs = dados.vendas;
                 orcamentosCache = orcs;
 
+                const total = orcs.reduce((s, v) => s + Number(v.total || 0), 0);
+                const semana = orcs.filter(v => Date.now() - new Date(v.data).getTime() > 7 * 86400000).length;
                 document.getElementById('box-resumo').innerHTML = `
-                    <div><div class="v">${orcs.length}</div><div class="r">Orçamentos pendentes</div></div>
-                    <div><div class="v">${formatarMoeda(dados.resumo.total)}</div><div class="r">Total em orçamentos</div></div>`;
-
-                const tbody = document.getElementById('tabela-orcamentos');
-                if (orcs.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="8" class="sem-dados">Nenhum orçamento pendente</td></tr>';
-                    return;
-                }
-                tbody.innerHTML = orcs.map(v => `
-                    <tr>
-                        <td><strong>${v.numero}</strong></td>
-                        <td>${formatarDataHora(v.data)}</td>
-                        <td>${esc(v.operador)}</td>
-                        <td style="text-align:right;">${v.qtdItens}</td>
-                        <td style="text-align:right;">${formatarMoeda(v.subtotal)}</td>
-                        <td style="text-align:right;">${formatarMoeda(v.desconto)}</td>
-                        <td style="text-align:right;"><strong>${formatarMoeda(v.total)}</strong></td>
-                        <td style="text-align:center;">
-                            <button class="btn btn-mini btn-verde" onclick="abrirEfetivar('${v.id}', '${v.numero}')">Efetivar</button>
-                            <button class="btn btn-mini btn-azul" onclick="verItens(${orcs.indexOf(v)})">Itens</button>
-                        </td>
-                    </tr>`).join('');
+                    <div class="kpi ambar"><div class="kpi-top"><span>Orçamentos pendentes</span><span class="ms">request_quote</span></div><div class="kpi-valor">${orcs.length}</div></div>
+                    <div class="kpi"><div class="kpi-top"><span>Valor pendente</span><span class="ms">payments</span></div><div class="kpi-valor">${formatarMoeda(total)}</div></div>
+                    <div class="kpi ${semana ? 'vermelho' : ''}"><div class="kpi-top"><span>Há mais de 7 dias</span><span class="ms">schedule</span></div><div class="kpi-valor">${semana}</div></div>`;
+                renderizarOrcamentos();
             } catch (e) { alert(e.message); }
+        }
+
+        function renderizarOrcamentos() {
+            const orcs = orcamentosCache;
+            const q = document.getElementById('f-busca').value.trim().toLowerCase();
+            const lista = orcs.filter(v => !q || [v.numero, v.operador, v.cliente].join(' ').toLowerCase().includes(q));
+            const tbody = document.getElementById('tabela-orcamentos');
+            if (lista.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9"><div class="estado-vazio"><span class="ms">request_quote</span><p>${orcs.length ? 'Nenhum orçamento com esse filtro.' : 'Nenhum orçamento pendente.'}</p></div></td></tr>`;
+                return;
+            }
+            tbody.innerHTML = lista.map(v => `
+                <tr>
+                    <td><b>${esc(v.numero)}</b></td>
+                    <td>${formatarDataHora(v.data)}</td>
+                    <td>${esc(v.operador)}</td>
+                    <td>${esc(v.cliente || 'Consumidor final')}</td>
+                    <td class="right">${v.qtdItens}</td>
+                    <td class="right">${formatarMoeda(v.subtotal)}</td>
+                    <td class="right">${v.desconto ? formatarMoeda(v.desconto) : '—'}</td>
+                    <td class="right"><b>${formatarMoeda(v.total)}</b></td>
+                    <td class="acoes">
+                        <button class="btn-icone" title="Ver itens" onclick="verItens(${orcs.indexOf(v)})"><span class="ms">list_alt</span></button>
+                        <button class="btn-icone" title="Efetivar venda" style="color:var(--green)" onclick="abrirEfetivar('${v.id}', '${esc(v.numero)}')"><span class="ms">task_alt</span></button>
+                        <button class="btn-icone perigo" title="Excluir" onclick="excluirOrcamento('${v.id}', '${esc(v.numero)}')"><span class="ms">delete</span></button>
+                    </td>
+                </tr>`).join('');
+        }
+        document.getElementById('f-busca').addEventListener('input', renderizarOrcamentos);
+
+        let excluirId = null;
+        function excluirOrcamento(id, numero) {
+            excluirId = id;
+            document.getElementById('mx-numero').innerText = numero;
+            document.getElementById('mx-senha').value = '';
+            document.getElementById('modal-excluir').classList.add('active');
+            setTimeout(() => document.getElementById('mx-senha').focus(), 50);
+        }
+        async function confirmarExcluir() {
+            const senha = document.getElementById('mx-senha').value;
+            if (!senha) { JG.toast('Informe a senha do administrador.', 'alerta'); return; }
+            try {
+                await api(`/api/vendas/${excluirId}/cancelar`, 'POST', { senhaAdmin: senha, motivo: 'Orçamento excluído' });
+                document.getElementById('modal-excluir').classList.remove('active');
+                JG.toast('Orçamento excluído.', 'sucesso');
+                carregarOrcamentos();
+            } catch (e) { JG.toast(e.message, 'erro'); }
+        }
+
+        function itensHtml(v) {
+            const linhas = (v.itensDetalhe || []).map(i => `
+                <tr><td>${esc(i.nome)}<br><small>${esc(i.codigo)}</small></td><td class="right">${i.quantidade}</td><td class="right">${formatarMoeda(i.unitario)}</td><td class="right">${formatarMoeda(i.subtotal)}</td></tr>`).join('');
+            return `<div class="tabela-wrap" style="border:1px solid var(--border)"><table><thead><tr><th>Produto</th><th class="right">Qtd</th><th class="right">Unit.</th><th class="right">Subtotal</th></tr></thead><tbody>${linhas}</tbody></table></div>`;
         }
 
         function verItens(idx) {
             const v = orcamentosCache[idx];
             if (!v) return;
-            const itens = v.itensDetalhe;
-            const linhas = itens.map(i => `
-                <tr>
-                    <td>${esc(i.codigo)}</td>
-                    <td>${esc(i.nome)}</td>
-                    <td style="text-align:right;">${i.quantidade}</td>
-                    <td style="text-align:right;">${formatarMoeda(i.unitario)}</td>
-                    <td style="text-align:right;">${formatarMoeda(i.subtotal)}</td>
-                </tr>`).join('');
-            const modal = document.getElementById('modal-efetivar');
-            document.getElementById('me-numero').innerText = '-';
-            document.getElementById('me-itens').innerHTML = `
-                <table>
-                    <thead><tr><th>Código</th><th>Produto</th><th style="text-align:right;">Qtd</th><th style="text-align:right;">Unit.</th><th style="text-align:right;">Subtotal</th></tr></thead>
-                    <tbody>${linhas}</tbody>
-                </table>
-                <div style="text-align:right; margin-top:10px; font-weight:bold;">Total: ${formatarMoeda(v.total)}</div>`;
-            modal.classList.add('active');
+            document.getElementById('me-titulo').innerHTML = `Itens do orçamento ${esc(v.numero)}`;
+            document.getElementById('me-itens').innerHTML = itensHtml(v) + `<div class="row between mt-8"><span class="muted">${esc(v.cliente || 'Consumidor final')}</span><b>Total: ${formatarMoeda(v.total)}</b></div>`;
+            document.getElementById('me-pagamento').style.display = 'none';
+            document.getElementById('me-confirmar').onclick = () => abrirEfetivar(v.id, v.numero);
+            document.getElementById('me-confirmar').innerHTML = '<span class="ms">task_alt</span>Efetivar este orçamento';
+            document.getElementById('modal-efetivar').classList.add('active');
         }
 
         function abrirEfetivar(id, numero) {
             orcamentoEfetivarId = id;
-            document.getElementById('me-numero').innerText = numero;
+            const v = orcamentosCache.find(x => x.id === id) || {};
+            document.getElementById('me-titulo').innerHTML = `Efetivar venda — ${esc(numero)}${v.cliente ? ' · ' + esc(v.cliente) : ''}<span id="me-numero" class="hidden">${esc(numero)}</span>`;
+            document.getElementById('me-itens').innerHTML = v.itensDetalhe ? itensHtml(v) : '';
+            document.getElementById('me-total').innerText = formatarMoeda(v.total);
+            document.getElementById('me-pagamento').style.display = '';
+            document.getElementById('box-recebido').style.display = '';
+            document.getElementById('me-confirmar').onclick = confirmarEfetivar;
+            document.getElementById('me-confirmar').innerHTML = '<span class="ms">check</span>Efetivar venda';
             document.getElementById('me-metodo').value = 'MONEY';
             document.getElementById('me-parcelas').value = '1';
             document.getElementById('me-recebido').value = '';
@@ -218,7 +225,8 @@
         }
 
         document.getElementById('me-metodo').addEventListener('change', (e) => {
-            document.getElementById('box-parcelas').style.display = e.target.value === 'CREDIT_CARD' ? 'flex' : 'none';
+            document.getElementById('box-parcelas').style.display = e.target.value === 'CREDIT_CARD' ? '' : 'none';
+            document.getElementById('box-recebido').style.display = e.target.value === 'MONEY' ? '' : 'none';
         });
 
         function fecharModal() {

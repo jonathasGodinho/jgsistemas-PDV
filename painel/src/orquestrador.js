@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 const config = require('./config');
+const modulos = require('./modulos');
 
 const processos = new Map(); // id -> ChildProcess
 const bloqueadores = new Map(); // id -> ChildProcess
@@ -141,6 +142,8 @@ async function iniciarInstancia(cliente) {
     await matarPorta(cliente.porta);
 
     const { cmd, args, env, cwd } = config.instanciaCmd(cliente.banco, cliente.porta, cliente);
+    // Módulos liberados: a instância relê este arquivo sempre que ele muda.
+    env.JG_MODULOS_ARQUIVO = modulos.gravarLiberacao(cliente);
 
     const logDir = path.join(config.DADOS, 'logs');
     if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });

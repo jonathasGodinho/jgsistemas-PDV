@@ -7,6 +7,7 @@ const fs = require('fs');
 const config = require('./config');
 const store = require('./store');
 const orc = require('./orquestrador');
+const modulos = require('./modulos');
 
 const app = express();
 app.disable('x-powered-by');
@@ -113,6 +114,8 @@ setInterval(() => {
 }, 60000).unref();
 
 app.use(express.static(config.FRONTEND, { dotfiles: 'ignore' }));
+// Design system compartilhado com o ERP (CSS, fontes)
+app.use('/ui', express.static(path.join(config.RAIZ, 'frontend', 'ui'), { dotfiles: 'ignore' }));
 
 app.get('/', (_req, res) => res.redirect('/painel.html'));
 
@@ -240,6 +243,8 @@ app.get('/api/clientes', exigirPainel, async (_req, res) => {
         }
         lista.push({
             ...limpo,
+            modulosAtivos: modulos.modulosDoCliente(c).length,
+            modulosTotal: modulos.catalogo().filter((m) => !m.futuro).length,
             rodando: orc.instanciaRodando(c.id) || (ocupada && c.status === 'ATIVO'),
             bloqueado: orc.bloqueioAtivo(c.id) || (ocupada && c.status === 'SUSPENSO')
         });
@@ -249,8 +254,9 @@ app.get('/api/clientes', exigirPainel, async (_req, res) => {
 
 // POST /api/clientes - cadastra um cliente (sem provisionar)
 app.post('/api/clientes', exigirPainel, (req, res) => {
-    const { nome, fantasia, cnpj, plano, valor, vencimento } = req.body || {};
+    const { nome, fantasia, cnpj, plano, valor, vencimento, planoId, segmento } = req.body || {};
     if (!nome || !nome.trim()) return res.status(400).json({ erro: 'Informe o nome do cliente!' });
+    const planoEscolhido = modulos.lerPlanos().planos.find((p) => p.id === planoId) || null;
 
     const id = crypto.randomUUID();
     const slug = slugDe(nome);
@@ -268,8 +274,13 @@ app.post('/api/clientes', exigirPainel, (req, res) => {
         adminEmail: null,
         adminSenha: null,
         criadoEm: new Date().toISOString(),
-        vencimento: vencimento ? String(vencimento).slice(0, 10) : null
+        vencimento: vencimento ? String(vencimento).slice(0, 10) : null,
+        planoId: planoEscolhido ? planoEscolhido.id : null,
+        segmento: ['VAREJO', 'MODA', 'SALAO'].includes(segmento) ? segmento : 'MODA',
+        modulos: planoEscolhido ? [...planoEscolhido.modulos] : undefined,
+        modulosPersonalizados: false
     };
+    if (planoEscolhido && !(Number(valor) > 0)) cliente.valor = planoEscolhido.valor;
 
     const lista = store.lerClientes();
     if (lista.some((c) => c.banco === cliente.banco)) {
@@ -438,6 +449,93 @@ app.delete('/api/clientes/:id', exigirPainel, async (req, res) => {
     }
     store.salvarClientes(store.lerClientes().filter((c) => c.id !== cliente.id));
     return res.json({ ok: true });
+});
+
+// ---- Planos e módulos ----
+
+// GET /api/catalogo - módulos do ERP + planos comerciais
+app.get('/api/catalogo', exigirPainel, (_req, res) => {
+    const dados = modulos.lerPlanos();
+    return res.json({
+        modulos: modulos.catalogo().map((m) => ({ ...m, precoAdicional: modulos.precoAdicional(m.chave, dados) })),
+        planos: dados.planos,
+        adicionais: dados.adicionais
+    });
+});
+
+// PUT /api/planos - salva os planos e a matriz de módulos por plano
+app.put('/api/planos', exigirPainel, (req, res) => {
+    const { planos, adicionais } = req.body || {};
+    if (!Array.isArray(planos) || !planos.length) return res.status(400).json({ erro: 'Informe ao menos um plano!' });
+    const ids = planos.map((p) => String(p.id || '').trim()).filter(Boolean);
+    if (new Set(ids).size !== ids.length) return res.status(400).json({ erro: 'Há planos com o mesmo identificador!' });
+    const salvo = modulos.salvarPlanos({ planos, adicionais });
+    // Clientes que seguem o plano (sem ajuste manual) recebem a nova matriz na hora.
+    const clientes = store.lerClientes();
+    let alterados = 0;
+    for (const c of clientes) {
+        if (c.tipo === 'escola' || !c.planoId || c.modulosPersonalizados) continue;
+        const p = salvo.planos.find((x) => x.id === c.planoId);
+        if (!p) continue;
+        c.modulos = [...p.modulos];
+        alterados++;
+        try { modulos.gravarLiberacao(c); } catch (e) { /* instância ainda não provisionada */ }
+    }
+    if (alterados) store.salvarClientes(clientes);
+    return res.json({ ...salvo, clientesAtualizados: alterados });
+});
+
+// GET /api/clientes/:id/modulos - módulos liberados do cliente
+app.get('/api/clientes/:id/modulos', exigirPainel, (req, res) => {
+    const cliente = store.porId(req.params.id);
+    if (!cliente) return res.status(404).json({ erro: 'Cliente não encontrado!' });
+    return res.json({
+        planoId: cliente.planoId || null,
+        segmento: cliente.segmento || 'MODA',
+        modulos: modulos.modulosDoCliente(cliente),
+        personalizado: !!cliente.modulosPersonalizados,
+        limiteUsuarios: cliente.limiteUsuarios ?? null,
+        limiteCaixas: cliente.limiteCaixas ?? null,
+        cobranca: modulos.resumoCobranca(cliente)
+    });
+});
+
+// PUT /api/clientes/:id/modulos - libera/bloqueia módulos (vale na hora, sem reiniciar)
+app.put('/api/clientes/:id/modulos', exigirPainel, (req, res) => {
+    const cliente = store.porId(req.params.id);
+    if (!cliente) return res.status(404).json({ erro: 'Cliente não encontrado!' });
+    if (cliente.tipo === 'escola') return res.status(400).json({ erro: 'Serviço interno não usa módulos do ERP.' });
+
+    const { planoId, segmento, modulos: lista, limiteUsuarios, limiteCaixas } = req.body || {};
+    const planos = modulos.lerPlanos().planos;
+    if (planoId !== undefined) {
+        if (planoId && !planos.some((p) => p.id === planoId)) return res.status(400).json({ erro: 'Plano inválido!' });
+        cliente.planoId = planoId || null;
+    }
+    if (segmento !== undefined) {
+        if (!['VAREJO', 'MODA', 'SALAO'].includes(segmento)) return res.status(400).json({ erro: 'Segmento inválido!' });
+        cliente.segmento = segmento;
+    }
+    if (lista !== undefined) {
+        if (!Array.isArray(lista)) return res.status(400).json({ erro: 'Lista de módulos inválida!' });
+        const validas = modulos.chavesValidas();
+        const futuros = new Set(modulos.catalogo().filter((m) => m.futuro).map((m) => m.chave));
+        cliente.modulos = [...new Set(lista.filter((m) => validas.has(m) && !futuros.has(m)))];
+        const plano = planos.find((p) => p.id === cliente.planoId);
+        const doPlano = plano ? plano.modulos.filter((m) => !futuros.has(m)).sort().join(',') : null;
+        cliente.modulosPersonalizados = doPlano === null || doPlano !== [...cliente.modulos].sort().join(',');
+    }
+    const limite = (v) => (v === null || v === '' ? null : Math.max(0, Math.round(Number(v) || 0)));
+    if (limiteUsuarios !== undefined) cliente.limiteUsuarios = limite(limiteUsuarios);
+    if (limiteCaixas !== undefined) cliente.limiteCaixas = limite(limiteCaixas);
+
+    const resumo = modulos.resumoCobranca(cliente);
+    if (resumo.total > 0) cliente.valor = resumo.total;
+    store.salvarClientes(store.lerClientes().map((c) => c.id === cliente.id ? cliente : c));
+    try { modulos.gravarLiberacao(cliente); } catch (e) {
+        return res.status(500).json({ erro: 'Salvo, mas falha ao gravar a liberação: ' + e.message });
+    }
+    return res.json({ ok: true, modulos: cliente.modulos, personalizado: cliente.modulosPersonalizados, cobranca: resumo });
 });
 
 // ---- Verificação automática de vencimento ----

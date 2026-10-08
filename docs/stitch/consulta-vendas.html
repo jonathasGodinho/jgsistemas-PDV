@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>JG Sistemas - Consulta de Vendas</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "outline": "#737782",
+            "on-tertiary-fixed-variant": "#005320",
+            "secondary-container": "#bfd5fe",
+            "secondary": "#4a5f82",
+            "on-background": "#0b1c30",
+            "tertiary-fixed-dim": "#62df7d",
+            "surface-container": "#e5eeff",
+            "on-secondary-fixed-variant": "#324769",
+            "tertiary": "#004319",
+            "on-secondary-container": "#475c7f",
+            "primary-fixed": "#d6e3ff",
+            "surface-container-highest": "#d3e4fe",
+            "primary-fixed-dim": "#a9c7ff",
+            "on-error": "#ffffff",
+            "on-error-container": "#93000a",
+            "surface": "#f8f9ff",
+            "on-primary-fixed": "#001b3e",
+            "surface-container-low": "#eff4ff",
+            "surface-variant": "#d3e4fe",
+            "primary": "#003873",
+            "on-primary-fixed-variant": "#0e4688",
+            "on-tertiary": "#ffffff",
+            "outline-variant": "#c3c6d2",
+            "background": "#f8f9ff",
+            "surface-dim": "#cbdbf5",
+            "surface-container-high": "#dce9ff",
+            "on-primary": "#ffffff",
+            "surface-tint": "#305ea1",
+            "on-primary-container": "#a2c3ff",
+            "error-container": "#ffdad6",
+            "secondary-fixed-dim": "#b2c7f0",
+            "on-secondary": "#ffffff",
+            "surface-bright": "#f8f9ff",
+            "tertiary-fixed": "#7ffc97",
+            "secondary-fixed": "#d5e3ff",
+            "on-tertiary-fixed": "#002109",
+            "error": "#ba1a1a",
+            "on-surface-variant": "#434750",
+            "inverse-primary": "#a9c7ff",
+            "tertiary-container": "#005d25",
+            "surface-container-lowest": "#ffffff",
+            "on-secondary-fixed": "#011b3b",
+            "on-tertiary-container": "#5dda7a",
+            "primary-container": "#1d4f91",
+            "inverse-on-surface": "#eaf1ff",
+            "on-surface": "#0b1c30"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Inter", "sans-serif"],
+            "display": ["Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Inter', sans-serif;
+      font-feature-settings: "tnum" 1, "cv05" 1;
+    }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-on-surface antialiased overflow-x-hidden min-w-[1440px]">
+<!-- SHELL CONTAINER -->
+<div class="flex h-screen w-full overflow-hidden bg-[#F4F6FA]">
+<!-- SIDEBAR (Fixed 248px Marinho #0B1C30 / on-surface) -->
+<aside class="w-[248px] bg-on-surface flex-shrink-0 flex flex-col justify-between select-none z-30 shadow-md">
+<!-- Top Brand & Navigation -->
+<div class="flex flex-col h-full overflow-y-auto custom-scrollbar">
+<!-- Logo Header -->
+<div class="h-14 flex items-center px-4 gap-2.5 border-b border-white/10">
+<div class="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center font-bold text-white text-sm shadow-sm tracking-tight">
+            JG
+          </div>
+<div class="flex flex-col">
+<span class="font-headline font-bold text-white text-base tracking-tight leading-none">JG Sistemas</span>
+<span class="text-[11px] text-slate-400 font-medium leading-tight mt-0.5">ERP Gestão Comercial</span>
+</div>
+</div>
+<!-- Navigation Cluster -->
+<nav class="p-3 space-y-4 text-xs font-medium text-slate-300">
+<!-- Item Principal -->
+<div>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[19px]">home</span>
+<span class="text-[13px]">Início</span>
+</a>
+</div>
+<!-- Seção VENDAS (Expandida & Ativa) -->
+<div>
+<div class="flex items-center justify-between px-3 py-1 text-[11px] font-semibold text-slate-400 tracking-wider">
+<span>VENDAS</span>
+<span class="material-symbols-outlined text-[16px] text-slate-400">expand_more</span>
+</div>
+<div class="mt-1 space-y-0.5 pl-1">
+<a class="flex items-center justify-between px-3 py-2 text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[18px] text-slate-400">point_of_sale</span>
+<span class="text-[13px]">PDV Caixa</span>
+</div>
+<span class="text-[10px] bg-white/10 text-slate-300 px-1.5 py-0.5 rounded font-mono">F12</span>
+</a>
+<!-- ITEM ATIVO: Consultar Vendas -->
+<a class="flex items-center justify-between px-3 py-2 text-white bg-primary-container rounded-lg font-medium shadow-sm relative" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[18px] text-emerald-400">manage_search</span>
+<span class="text-[13px] font-semibold">Consultar vendas</span>
+</div>
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+</a>
+<a class="flex items-center gap-2.5 px-3 py-2 text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px] text-slate-400">sync_alt</span>
+<span class="text-[13px]">Trocas e devoluções</span>
+</a>
+<a class="flex items-center gap-2.5 px-3 py-2 text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px] text-slate-400">credit_card</span>
+<span class="text-[13px]">Crediário da loja</span>
+</a>
+</div>
+</div>
+<!-- Seção CATÁLOGO & ESTOQUE -->
+<div>
+<div class="px-3 py-1 text-[11px] font-semibold text-slate-400 tracking-wider">
+              CATÁLOGO &amp; ESTOQUE
+            </div>
+<div class="mt-1 space-y-0.5 pl-1">
+<a class="flex items-center gap-2.5 px-3 py-2 text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px] text-slate-400">inventory_2</span>
+<span class="text-[13px]">Produtos</span>
+</a>
+<a class="flex items-center gap-2.5 px-3 py-2 text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px] text-slate-400">warehouse</span>
+<span class="text-[13px]">Posição de estoque</span>
+</a>
+<a class="flex items-center gap-2.5 px-3 py-2 text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px] text-slate-400">local_shipping</span>
+<span class="text-[13px]">Compras &amp; Fornecedores</span>
+</a>
+</div>
+</div>
+<!-- Seção GESTÃO -->
+<div>
+<div class="px-3 py-1 text-[11px] font-semibold text-slate-400 tracking-wider">
+              GESTÃO
+            </div>
+<div class="mt-1 space-y-0.5 pl-1">
+<a class="flex items-center gap-2.5 px-3 py-2 text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px] text-slate-400">group</span>
+<span class="text-[13px]">Clientes &amp; Fidelidade</span>
+</a>
+<a class="flex items-center gap-2.5 px-3 py-2 text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px] text-slate-400">account_balance</span>
+<span class="text-[13px]">Financeiro &amp; DRE</span>
+</a>
+<a class="flex items-center gap-2.5 px-3 py-2 text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px] text-slate-400">badge</span>
+<span class="text-[13px]">Colaboradores</span>
+</a>
+<a class="flex items-center gap-2.5 px-3 py-2 text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px] text-slate-400">bar_chart</span>
+<span class="text-[13px]">Relatórios executivos</span>
+</a>
+</div>
+</div>
+<!-- Seção SISTEMA -->
+<div>
+<div class="px-3 py-1 text-[11px] font-semibold text-slate-400 tracking-wider">
+              SISTEMA
+            </div>
+<div class="mt-1 space-y-0.5 pl-1">
+<a class="flex items-center gap-2.5 px-3 py-2 text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px] text-slate-400">settings</span>
+<span class="text-[13px]">Configurações</span>
+</a>
+<a class="flex items-center gap-2.5 px-3 py-2 text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px] text-slate-400">headset_mic</span>
+<span class="text-[13px]">Suporte JG</span>
+</a>
+</div>
+</div>
+</nav>
+</div>
+<!-- Rodapé da Sidebar -->
+<div class="p-3 bg-black/20 border-t border-white/10 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-emerald-950/70 border border-emerald-500/30 text-emerald-400 text-xs font-medium">
+<span class="material-symbols-outlined text-[15px]">storefront</span>
+<span>Varejo · Moda</span>
+</div>
+<span class="flex items-center gap-1 text-[11px] text-emerald-400 font-medium">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            Online
+          </span>
+</div>
+<div class="text-[11px] text-slate-400 px-1 font-mono">
+          v3.4.1 · Loja Matriz 01
+        </div>
+</div>
+</aside>
+<!-- CONTENT SHELL (Topbar + Main Content + Docked Drawer) -->
+<div class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+<!-- TOPBAR (56px fixa branca) -->
+<header class="h-14 bg-white border-b border-slate-200 px-6 flex items-center justify-between flex-shrink-0 z-20">
+<!-- Breadcrumb & Search -->
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 text-xs font-medium text-slate-500">
+<span>Vendas</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-slate-900 font-semibold">Consulta de vendas</span>
+</div>
+<!-- Campo de Busca Global -->
+<div class="relative w-80">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-[18px]">search</span>
+<input class="w-full h-9 pl-9 pr-14 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:bg-white text-slate-700" placeholder="Buscar módulo, produto ou cliente..." type="text"/>
+<span class="absolute right-2.5 top-2 text-[10px] bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded font-mono font-medium">Ctrl+K</span>
+</div>
+</div>
+<!-- Trailing Actions & User -->
+<div class="flex items-center gap-4">
+<!-- Chip Caixa 01 Aberto -->
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold">
+<span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+<span>Caixa 01 · Aberto</span>
+</div>
+<!-- Botão Abrir PDV CTA -->
+<button class="h-9 px-3.5 bg-primary hover:bg-primary-container text-white font-medium text-xs rounded-lg inline-flex items-center gap-2 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[17px]">point_of_sale</span>
+<span>Abrir PDV</span>
+<span class="text-[10px] bg-white/20 px-1.5 py-0.5 rounded font-mono">F1</span>
+</button>
+<div class="h-5 w-[1px] bg-slate-200"></div>
+<!-- Ícones Utilitários -->
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-100 hover:text-slate-800 relative">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-100 hover:text-slate-800">
+<span class="material-symbols-outlined text-[20px]">help</span>
+</button>
+</div>
+<!-- Avatar Operador -->
+<div class="flex items-center gap-2.5 pl-2">
+<div class="w-8 h-8 rounded-full bg-[#1D4F91] text-white flex items-center justify-center font-bold text-xs">
+              JG
+            </div>
+<div class="flex flex-col text-left">
+<span class="text-xs font-semibold text-slate-900 leading-tight">Juliana Gomes</span>
+<span class="text-[11px] text-slate-500 leading-tight">Gerente Geral</span>
+</div>
+</div>
+</div>
+</header>
+<!-- BODY SPLIT CONTAINER (Main Table Area + Docked Right Drawer 480px) -->
+<div class="flex-1 flex overflow-hidden">
+<!-- MAIN TABLE CANVAS -->
+<main class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-5 bg-[#F4F6FA]">
+<!-- Header da Página -->
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-2xl font-bold text-slate-900 tracking-tight font-headline">Consulta de Vendas</h1>
+<p class="text-xs text-slate-500 mt-0.5">Histórico analítico de transações, conferência de caixa e status de emissão de NFC-e.</p>
+</div>
+<div class="flex items-center gap-2">
+<button class="h-9 px-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium text-xs rounded-lg inline-flex items-center gap-2 shadow-xs transition-colors">
+<span class="material-symbols-outlined text-[17px] text-slate-500">file_download</span>
+<span>Exportar Relatório</span>
+</button>
+<button class="h-9 px-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium text-xs rounded-lg inline-flex items-center gap-2 shadow-xs transition-colors">
+<span class="material-symbols-outlined text-[17px] text-emerald-600">table_view</span>
+<span>Exportar XLS</span>
+</button>
+</div>
+</div>
+<!-- BARRA DE FILTROS -->
+<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
+<div class="grid grid-cols-12 gap-3 items-end">
+<!-- Filtro de Período -->
+<div class="col-span-3">
+<label class="block text-[11px] font-semibold text-slate-600 mb-1">Período de Venda</label>
+<div class="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-700">
+<span class="material-symbols-outlined text-[16px] text-slate-400">calendar_today</span>
+<input class="w-20 bg-transparent text-xs p-0 border-0 focus:ring-0 font-medium text-slate-800 tabular-nums" type="text" value="01/10/2026"/>
+<span class="text-slate-400">até</span>
+<input class="w-20 bg-transparent text-xs p-0 border-0 focus:ring-0 font-medium text-slate-800 tabular-nums" type="text" value="08/10/2026"/>
+</div>
+</div>
+<!-- Dropdown Forma de Pagamento -->
+<div class="col-span-2">
+<label class="block text-[11px] font-semibold text-slate-600 mb-1">Forma de Pagamento</label>
+<select class="w-full text-xs h-9 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:ring-1 focus:ring-primary">
+<option selected="">Todas as formas</option>
+<option>PIX</option>
+<option>Cartão de Crédito</option>
+<option>Cartão de Débito</option>
+<option>Dinheiro em Espécie</option>
+<option>Crediário da Loja</option>
+</select>
+</div>
+<!-- Dropdown Status da Venda -->
+<div class="col-span-2">
+<label class="block text-[11px] font-semibold text-slate-600 mb-1">Status da Venda</label>
+<select class="w-full text-xs h-9 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:ring-1 focus:ring-primary">
+<option selected="">Todas as Vendas</option>
+<option>Concluída</option>
+<option>Cancelada</option>
+<option>Pendente</option>
+</select>
+</div>
+<!-- Dropdown Status Fiscal NFC-e -->
+<div class="col-span-2">
+<label class="block text-[11px] font-semibold text-slate-600 mb-1">Status NFC-e</label>
+<select class="w-full text-xs h-9 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:ring-1 focus:ring-primary">
+<option selected="">Todas as notas</option>
+<option>Autorizada</option>
+<option>Pendente Sefaz</option>
+<option>Cancelada</option>
+<option>Sem NFC-e</option>
+</select>
+</div>
+<!-- Botões de Ação -->
+<div class="col-span-3 flex items-center justify-end gap-2">
+<a class="text-xs font-semibold text-slate-500 hover:text-slate-700 px-2 py-2" href="#">Limpar filtros</a>
+<button class="h-9 px-4 bg-[#1D4F91] hover:bg-[#153e74] text-white font-medium text-xs rounded-lg inline-flex items-center gap-1.5 transition-colors shadow-xs">
+<span class="material-symbols-outlined text-[16px]">filter_alt</span>
+<span>Filtrar</span>
+</button>
+</div>
+</div>
+<!-- Campo de Busca Textual -->
+<div class="pt-2 border-t border-slate-100 flex items-center gap-2">
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-[18px]">search</span>
+<input class="w-full h-9 pl-9 pr-4 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-primary focus:bg-white" placeholder="Buscar por Nº da venda, CPF do cliente ou nome do produto..." type="text"/>
+</div>
+<div class="text-[11px] text-slate-400 font-medium px-2">
+                Exibindo resultados do período ativo
+              </div>
+</div>
+</div>
+<!-- CARDS DE RESUMO E MÉTRICAS (KPIs) -->
+<div class="grid grid-cols-12 gap-4">
+<!-- Card 1: Vendas no Período -->
+<div class="col-span-3 bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-slate-500">
+<span class="text-xs font-medium">Vendas no período</span>
+<span class="material-symbols-outlined text-slate-400 text-[20px]">shopping_bag</span>
+</div>
+<div class="my-2">
+<div class="text-2xl font-bold text-slate-900 tabular-nums">412 vendas</div>
+<div class="flex items-center gap-1 text-[11px] font-semibold text-emerald-600 mt-1">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+<span>+8.4%</span>
+<span class="text-slate-400 font-normal">vs. semana anterior</span>
+</div>
+</div>
+<div class="text-[11px] text-slate-400 border-t border-slate-100 pt-2">
+                Média de 51,5 vendas/dia
+              </div>
+</div>
+<!-- Card 2: Total Vendido & Ticket Médio -->
+<div class="col-span-3 bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-slate-500">
+<span class="text-xs font-medium">Faturamento Total</span>
+<span class="material-symbols-outlined text-slate-400 text-[20px]">payments</span>
+</div>
+<div class="my-2">
+<div class="text-2xl font-bold text-slate-900 tabular-nums">R$ 54.320,80</div>
+<div class="flex items-center gap-1.5 text-[11px] text-slate-600 mt-1">
+<span class="font-medium text-slate-500">Ticket médio:</span>
+<span class="font-bold text-slate-800 tabular-nums">R$ 131,84</span>
+</div>
+</div>
+<div class="text-[11px] text-slate-400 border-t border-slate-100 pt-2">
+                Descontos concedidos: R$ 1.412,30
+              </div>
+</div>
+<!-- Card 3: Distribuição por Forma de Pagamento -->
+<div class="col-span-6 bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between text-slate-500 mb-2">
+<span class="text-xs font-medium">Distribuição por Forma de Pagamento</span>
+<span class="text-[11px] font-semibold text-slate-400">Total 100%</span>
+</div>
+<!-- Barra de Distribuição Visual -->
+<div class="h-2 w-full rounded-full bg-slate-100 flex overflow-hidden mb-3">
+<div class="bg-emerald-500 h-full w-[40%]" title="PIX 40%"></div>
+<div class="bg-blue-600 h-full w-[34%]" title="C. Crédito 34%"></div>
+<div class="bg-sky-400 h-full w-[14%]" title="C. Débito 14%"></div>
+<div class="bg-amber-400 h-full w-[9%]" title="Dinheiro 9%"></div>
+<div class="bg-purple-500 h-full w-[3%]" title="Crediário 3%"></div>
+</div>
+<!-- Grade com Valores Reais -->
+<div class="grid grid-cols-5 gap-2 text-[11px] tabular-nums">
+<div class="flex flex-col">
+<div class="flex items-center gap-1 text-slate-600 font-medium">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span>PIX (40%)</span>
+</div>
+<span class="font-bold text-slate-900 mt-0.5">R$ 21.728,32</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1 text-slate-600 font-medium">
+<span class="w-2 h-2 rounded-full bg-blue-600"></span>
+<span>Crédito (34%)</span>
+</div>
+<span class="font-bold text-slate-900 mt-0.5">R$ 18.469,07</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1 text-slate-600 font-medium">
+<span class="w-2 h-2 rounded-full bg-sky-400"></span>
+<span>Débito (14%)</span>
+</div>
+<span class="font-bold text-slate-900 mt-0.5">R$ 7.604,91</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1 text-slate-600 font-medium">
+<span class="w-2 h-2 rounded-full bg-amber-400"></span>
+<span>Dinheiro (9%)</span>
+</div>
+<span class="font-bold text-slate-900 mt-0.5">R$ 4.888,87</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1 text-slate-600 font-medium">
+<span class="w-2 h-2 rounded-full bg-purple-500"></span>
+<span>Crediário (3%)</span>
+</div>
+<span class="font-bold text-slate-900 mt-0.5">R$ 1.629,63</span>
+</div>
+</div>
+</div>
+</div>
+<!-- TABELA DE VENDAS -->
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse text-xs">
+<thead>
+<tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold h-11">
+<th class="px-4 py-2 w-28">Nº Venda</th>
+<th class="px-3 py-2 w-36">Data / Hora</th>
+<th class="px-3 py-2">Operador</th>
+<th class="px-3 py-2">Cliente</th>
+<th class="px-3 py-2 text-center">Itens</th>
+<th class="px-3 py-2">Forma Pagamento</th>
+<th class="px-4 py-2 text-right">Valor Total</th>
+<th class="px-3 py-2 text-center">Status NFC-e</th>
+<th class="px-4 py-2 text-center w-20">Ações</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<!-- Linha 1: SELECIONADA (#004.512) -->
+<tr class="bg-blue-50/70 hover:bg-blue-50 transition-colors h-12 border-l-4 border-l-[#1D4F91] cursor-pointer">
+<td class="px-4 py-2 font-mono font-bold text-primary">#004.512</td>
+<td class="px-3 py-2 tabular-nums text-slate-700 font-medium">08/10/2026 14:35</td>
+<td class="px-3 py-2 text-slate-700">Ana Paula Souza</td>
+<td class="px-3 py-2">
+<div class="font-semibold text-slate-900">Mariana Silva</div>
+<div class="text-[10px] text-slate-400 font-mono">CPF: ***.418.902-**</div>
+</td>
+<td class="px-3 py-2 text-center tabular-nums text-slate-600">5 itens <span class="text-[10px] text-slate-400">(6 un)</span></td>
+<td class="px-3 py-2">
+<span class="inline-flex items-center gap-1 font-medium text-slate-700 bg-slate-100 px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-[13px] text-slate-500">payments</span>
+                        Múltiplo (PIX/Créd./Din.)
+                      </span>
+</td>
+<td class="px-4 py-2 text-right font-bold text-slate-900 tabular-nums">R$ 500,00</td>
+<td class="px-3 py-2 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                        Autorizada
+                      </span>
+</td>
+<td class="px-4 py-2 text-center">
+<button class="w-7 h-7 inline-flex items-center justify-center rounded-lg bg-primary text-white hover:bg-[#153e74] shadow-xs" title="Ver detalhes">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+</button>
+</td>
+</tr>
+<!-- Linha 2 (#004.511) -->
+<tr class="hover:bg-slate-50 transition-colors h-12">
+<td class="px-4 py-2 font-mono font-medium text-slate-800">#004.511</td>
+<td class="px-3 py-2 tabular-nums text-slate-600">08/10/2026 14:18</td>
+<td class="px-3 py-2 text-slate-600">Ana Paula Souza</td>
+<td class="px-3 py-2 text-slate-500 italic">Consumidor Final</td>
+<td class="px-3 py-2 text-center tabular-nums text-slate-600">2 itens</td>
+<td class="px-3 py-2">
+<span class="inline-flex items-center gap-1 font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">
+<span class="material-symbols-outlined text-[13px]">bolt</span>
+                        PIX Instantâneo
+                      </span>
+</td>
+<td class="px-4 py-2 text-right font-semibold text-slate-800 tabular-nums">R$ 189,90</td>
+<td class="px-3 py-2 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                        Autorizada
+                      </span>
+</td>
+<td class="px-4 py-2 text-center">
+<button class="w-7 h-7 inline-flex items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+</button>
+</td>
+</tr>
+<!-- Linha 3 (#004.510) -->
+<tr class="hover:bg-slate-50 transition-colors h-12">
+<td class="px-4 py-2 font-mono font-medium text-slate-800">#004.510</td>
+<td class="px-3 py-2 tabular-nums text-slate-600">08/10/2026 13:52</td>
+<td class="px-3 py-2 text-slate-600">Carlos Mendes</td>
+<td class="px-3 py-2 font-medium text-slate-800">Rodrigo Alves</td>
+<td class="px-3 py-2 text-center tabular-nums text-slate-600">1 item</td>
+<td class="px-3 py-2 text-slate-700">Cartão de Débito</td>
+<td class="px-4 py-2 text-right font-semibold text-slate-800 tabular-nums">R$ 79,90</td>
+<td class="px-3 py-2 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                        Autorizada
+                      </span>
+</td>
+<td class="px-4 py-2 text-center">
+<button class="w-7 h-7 inline-flex items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+</button>
+</td>
+</tr>
+<!-- Linha 4 (#004.509 - Pendente) -->
+<tr class="hover:bg-slate-50 transition-colors h-12">
+<td class="px-4 py-2 font-mono font-medium text-slate-800">#004.509</td>
+<td class="px-3 py-2 tabular-nums text-slate-600">08/10/2026 13:40</td>
+<td class="px-3 py-2 text-slate-600">Ana Paula Souza</td>
+<td class="px-3 py-2 font-medium text-slate-800">Camila Ferreira</td>
+<td class="px-3 py-2 text-center tabular-nums text-slate-600">4 itens</td>
+<td class="px-3 py-2 text-slate-700">Cartão de Crédito 2x</td>
+<td class="px-4 py-2 text-right font-semibold text-slate-800 tabular-nums">R$ 349,00</td>
+<td class="px-3 py-2 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-800 border border-amber-200">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                        Pendente Sefaz
+                      </span>
+</td>
+<td class="px-4 py-2 text-center">
+<button class="w-7 h-7 inline-flex items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+</button>
+</td>
+</tr>
+<!-- Linha 5 (#004.508 - Sem NFC-e) -->
+<tr class="hover:bg-slate-50 transition-colors h-12">
+<td class="px-4 py-2 font-mono font-medium text-slate-800">#004.508</td>
+<td class="px-3 py-2 tabular-nums text-slate-600">08/10/2026 12:55</td>
+<td class="px-3 py-2 text-slate-600">Carlos Mendes</td>
+<td class="px-3 py-2 font-medium text-slate-800">Marcos Vinicius</td>
+<td class="px-3 py-2 text-center tabular-nums text-slate-600">1 item</td>
+<td class="px-3 py-2 text-slate-700">Dinheiro</td>
+<td class="px-4 py-2 text-right font-semibold text-slate-800 tabular-nums">R$ 59,90</td>
+<td class="px-3 py-2 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+                        Sem NFC-e
+                      </span>
+</td>
+<td class="px-4 py-2 text-center">
+<button class="w-7 h-7 inline-flex items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+</button>
+</td>
+</tr>
+<!-- Linha 6 (#004.507 - Cancelada) -->
+<tr class="hover:bg-slate-50 transition-colors h-12 opacity-80">
+<td class="px-4 py-2 font-mono font-medium text-slate-500 line-through">#004.507</td>
+<td class="px-3 py-2 tabular-nums text-slate-500">08/10/2026 12:10</td>
+<td class="px-3 py-2 text-slate-500">Ana Paula Souza</td>
+<td class="px-3 py-2 text-slate-500">Letícia Prado</td>
+<td class="px-3 py-2 text-center tabular-nums text-slate-500">3 itens</td>
+<td class="px-3 py-2 text-slate-500">Cartão de Crédito</td>
+<td class="px-4 py-2 text-right font-semibold text-slate-400 tabular-nums line-through">R$ 220,00</td>
+<td class="px-3 py-2 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-red-100 text-red-700 border border-red-200">
+<span class="w-1.5 h-1.5 rounded-full bg-red-600"></span>
+                        Cancelada
+                      </span>
+</td>
+<td class="px-4 py-2 text-center">
+<button class="w-7 h-7 inline-flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Paginação Compacta -->
+<div class="px-4 py-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600">
+<div>
+                Mostrando <span class="font-bold text-slate-900">1</span> a <span class="font-bold text-slate-900">6</span> de <span class="font-bold text-slate-900">412</span> vendas
+              </div>
+<div class="flex items-center gap-2">
+<button class="px-2.5 py-1 bg-white border border-slate-200 rounded text-slate-400 cursor-not-allowed">Anterior</button>
+<div class="flex items-center gap-1">
+<button class="w-7 h-7 bg-primary text-white rounded font-semibold text-xs">1</button>
+<button class="w-7 h-7 hover:bg-slate-200 rounded text-slate-700">2</button>
+<button class="w-7 h-7 hover:bg-slate-200 rounded text-slate-700">3</button>
+<span>...</span>
+<button class="w-7 h-7 hover:bg-slate-200 rounded text-slate-700">69</button>
+</div>
+<button class="px-2.5 py-1 bg-white border border-slate-200 rounded text-slate-700 hover:bg-slate-100">Próxima</button>
+</div>
+</div>
+</div>
+</main>
+<!-- DRAWER LATERAL DIREITO ABERTO (Largura exata 480px, Docked/Pinned) -->
+<aside class="w-[480px] bg-white border-l border-slate-300 flex-shrink-0 flex flex-col h-full shadow-2xl z-20 overflow-hidden">
+<!-- Cabeçalho do Drawer -->
+<div class="p-4 bg-slate-50 border-b border-slate-200 flex-shrink-0">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="text-base font-bold text-slate-900 font-mono tracking-tight">Venda #004.512</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                  Concluída
+                </span>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  NFC-e Autorizada
+                </span>
+</div>
+<button class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition-colors" title="Fechar painel">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<div class="text-[11px] text-slate-500 mt-1 flex items-center gap-2">
+<span class="tabular-nums font-medium">08/10/2026 às 14:35</span>
+<span>•</span>
+<span>Operador: <strong class="text-slate-700 font-semibold">Ana Paula Souza</strong></span>
+<span>•</span>
+<span>PDV: <strong class="text-slate-700 font-semibold">Caixa 01</strong></span>
+</div>
+</div>
+<!-- Conteúdo com Scroll do Drawer -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-5 text-xs text-slate-700">
+<!-- SEÇÃO 1: Cliente & Dados Gerais -->
+<div class="bg-slate-50/80 rounded-lg p-3 border border-slate-200">
+<div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-slate-400">person</span>
+                Cliente &amp; Contato
+              </div>
+<div class="grid grid-cols-2 gap-2 text-xs">
+<div>
+<span class="text-slate-400 block text-[10px]">Nome Completo</span>
+<span class="font-bold text-slate-900 text-xs">Mariana Silva</span>
+</div>
+<div>
+<span class="text-slate-400 block text-[10px]">CPF</span>
+<span class="font-mono text-slate-700 tabular-nums">123.456.789-00</span>
+</div>
+<div class="col-span-2 pt-1 border-t border-slate-200/60 flex items-center justify-between">
+<div>
+<span class="text-slate-400 block text-[10px]">WhatsApp / Celular</span>
+<span class="font-medium text-slate-700 tabular-nums">(11) 98765-4321</span>
+</div>
+<span class="text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-medium border border-blue-200">Cliente Cadastrado</span>
+</div>
+</div>
+</div>
+<!-- SEÇÃO 2: Itens da Venda -->
+<div>
+<div class="flex items-center justify-between mb-2">
+<span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-slate-400">shopping_cart</span>
+                  Itens da Venda (5 itens / 6 un)
+                </span>
+<span class="text-[11px] text-slate-400 font-medium">Preço com desconto</span>
+</div>
+<div class="border border-slate-200 rounded-lg overflow-hidden">
+<table class="w-full text-left text-xs divide-y divide-slate-100">
+<tbody class="divide-y divide-slate-100 bg-white">
+<tr class="hover:bg-slate-50">
+<td class="p-2.5">
+<div class="font-semibold text-slate-800">Vestido Midi Floral Tam G</div>
+<div class="text-[10px] text-slate-400 font-mono">Cód: MOD-4819 · 1 un x R$ 189,90</div>
+</td>
+<td class="p-2.5 text-right font-bold text-slate-900 tabular-nums">R$ 189,90</td>
+</tr>
+<tr class="hover:bg-slate-50">
+<td class="p-2.5">
+<div class="font-semibold text-slate-800">Calça Jeans Skinny Tam 38</div>
+<div class="text-[10px] text-slate-400 font-mono">Cód: JNS-2011 · 1 un x R$ 149,90 <span class="text-amber-600 font-semibold">(Desc -R$ 10,00)</span></div>
+</td>
+<td class="p-2.5 text-right font-bold text-slate-900 tabular-nums">R$ 139,90</td>
+</tr>
+<tr class="hover:bg-slate-50">
+<td class="p-2.5">
+<div class="font-semibold text-slate-800">Camiseta Básica Algodão M</div>
+<div class="text-[10px] text-slate-400 font-mono">Cód: BAS-1002 · 2 un x R$ 59,90</div>
+</td>
+<td class="p-2.5 text-right font-bold text-slate-900 tabular-nums">R$ 119,80</td>
+</tr>
+<tr class="hover:bg-slate-50">
+<td class="p-2.5">
+<div class="font-semibold text-slate-800">Cinto Couro Legítimo</div>
+<div class="text-[10px] text-slate-400 font-mono">Cód: ACC-0391 · 1 un x R$ 39,90</div>
+</td>
+<td class="p-2.5 text-right font-bold text-slate-900 tabular-nums">R$ 39,90</td>
+</tr>
+<tr class="hover:bg-slate-50">
+<td class="p-2.5">
+<div class="font-semibold text-slate-800">Kit Meia Soquete 3 Pares</div>
+<div class="text-[10px] text-slate-400 font-mono">Cód: MEI-0082 · 1 un x R$ 22,80 <span class="text-amber-600 font-semibold">(Desc -R$ 2,30)</span></div>
+</td>
+<td class="p-2.5 text-right font-bold text-slate-900 tabular-nums">R$ 20,50</td>
+</tr>
+</tbody>
+</table>
+<div class="bg-slate-50 p-2.5 border-t border-slate-200 flex flex-col gap-1 text-xs">
+<div class="flex justify-between text-slate-500">
+<span>Subtotal Bruto:</span>
+<span class="tabular-nums">R$ 512,30</span>
+</div>
+<div class="flex justify-between text-emerald-700 font-medium">
+<span>Descontos Promocionais:</span>
+<span class="tabular-nums">-R$ 12,30</span>
+</div>
+<div class="flex justify-between text-slate-900 font-bold text-sm pt-1 border-t border-slate-200">
+<span>Total Líquido:</span>
+<span class="tabular-nums text-primary text-base">R$ 500,00</span>
+</div>
+</div>
+</div>
+</div>
+<!-- SEÇÃO 3: Formas de Pagamento Efetivadas -->
+<div>
+<div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-slate-400">account_balance_wallet</span>
+                Pagamentos Recebidos
+              </div>
+<div class="space-y-1.5 bg-slate-50 rounded-lg p-3 border border-slate-200">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span class="font-medium text-slate-800">PIX Instantâneo</span>
+<span class="text-[10px] text-slate-400">· Conciliado</span>
+</div>
+<span class="font-bold text-slate-900 tabular-nums">R$ 150,00</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-blue-600"></span>
+<span class="font-medium text-slate-800">Cartão de Crédito (3x)</span>
+<span class="text-[10px] text-slate-400 font-mono">· TEF #89210</span>
+</div>
+<span class="font-bold text-slate-900 tabular-nums">R$ 250,00</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-amber-400"></span>
+<span class="font-medium text-slate-800">Dinheiro em Espécie</span>
+<span class="text-[10px] text-slate-400">· Troco R$ 0,00</span>
+</div>
+<span class="font-bold text-slate-900 tabular-nums">R$ 100,00</span>
+</div>
+<div class="pt-2 mt-2 border-t border-slate-200 flex justify-between font-bold text-slate-900">
+<span>Total Liquidado:</span>
+<span class="tabular-nums">R$ 500,00</span>
+</div>
+</div>
+</div>
+<!-- SEÇÃO 4: Dados Fiscais da NFC-e -->
+<div class="bg-emerald-50/50 rounded-lg p-3.5 border border-emerald-200">
+<div class="flex items-center justify-between mb-2">
+<div class="text-[11px] font-bold text-emerald-900 uppercase tracking-wider flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-emerald-700">verified</span>
+                  Emissão Fiscal NFC-e
+                </div>
+<span class="text-[10px] bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded font-mono font-bold">Protocolado</span>
+</div>
+<div class="space-y-1.5 text-xs">
+<div class="flex justify-between">
+<span class="text-slate-500">Número &amp; Série:</span>
+<span class="font-semibold text-slate-800 font-mono">Nº 12.845 / Série 1</span>
+</div>
+<div class="flex justify-between">
+<span class="text-slate-500">Protocolo Sefaz:</span>
+<span class="font-mono text-slate-800 tabular-nums">135260084920184</span>
+</div>
+<div class="flex justify-between">
+<span class="text-slate-500">Ambiente de Transmissão:</span>
+<span class="text-slate-800 font-medium">Sefaz-SP v4.00 Prod.</span>
+</div>
+<div class="pt-2 mt-2 border-t border-emerald-200/60">
+<div class="text-[10px] text-slate-500 font-medium mb-1">Chave de Acesso (44 dígitos):</div>
+<div class="flex items-center gap-1 bg-white p-1.5 rounded border border-emerald-200 font-mono text-[11px] text-slate-700">
+<span class="truncate">3526 1012 3456 7800 0190 6500 1000 0128 4510 0012 3456</span>
+<button class="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-slate-800" title="Copiar Chave">
+<span class="material-symbols-outlined text-[15px]">content_copy</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- SEÇÃO 5: Ações Rápidas -->
+<div class="space-y-2">
+<div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Ações da Venda</div>
+<div class="grid grid-cols-2 gap-2">
+<button class="h-9 px-3 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium rounded-lg inline-flex items-center justify-center gap-1.5 transition-colors shadow-xs">
+<span class="material-symbols-outlined text-[17px] text-slate-600">print</span>
+<span>Reimprimir Cupom</span>
+</button>
+<button class="h-9 px-3 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium rounded-lg inline-flex items-center justify-center gap-1.5 transition-colors shadow-xs">
+<span class="material-symbols-outlined text-[17px] text-emerald-600">share</span>
+<span>WhatsApp / E-mail</span>
+</button>
+</div>
+<button class="w-full h-8 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg inline-flex items-center justify-center gap-1.5 transition-colors text-xs border border-slate-200">
+<span class="material-symbols-outlined text-[16px] text-amber-600">cloud_off</span>
+<span>Cancelar apenas NFC-e na Sefaz</span>
+</button>
+</div>
+<!-- SEÇÃO 6: Cancelamento da Venda (Área de Perigo) -->
+<div class="rounded-xl border border-red-200 bg-red-50/50 p-3.5 space-y-3">
+<div class="flex items-center gap-1.5 text-red-800 font-bold text-xs">
+<span class="material-symbols-outlined text-[18px] text-red-600">warning</span>
+<span>Zona de Perigo · Estorno e Cancelamento</span>
+</div>
+<p class="text-[11px] text-red-700/90 leading-tight">
+                O cancelamento estornará a transação do caixa, devolverá os 5 itens ao estoque e cancelará a NFC-e.
+              </p>
+<div>
+<label class="block text-[10px] font-bold text-slate-700 mb-1">Motivo do Cancelamento</label>
+<input class="w-full text-xs h-8 bg-white border border-red-200 rounded text-slate-800 focus:ring-1 focus:ring-red-500" type="text" value="Desistência do cliente após pagamento"/>
+</div>
+<div>
+<label class="block text-[10px] font-bold text-slate-700 mb-1">Senha de Autorização Gerente</label>
+<input class="w-full text-xs h-8 bg-white border border-red-200 rounded text-slate-800 focus:ring-1 focus:ring-red-500 font-mono" placeholder="••••••••" type="password" value="123456"/>
+</div>
+<button class="w-full h-9 bg-red-600 hover:bg-red-700 text-white font-semibold text-xs rounded-lg inline-flex items-center justify-center gap-2 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[17px]">delete_forever</span>
+<span>Confirmar Cancelamento da Venda</span>
+</button>
+</div>
+</div>
+<!-- Rodapé do Drawer -->
+<div class="p-3 bg-slate-50 border-t border-slate-200 flex justify-between items-center text-[11px] text-slate-500">
+<span>Registro ID: #984210</span>
+<button class="text-primary hover:underline font-semibold">Ver log de auditoria</button>
+</div>
+</aside>
+</div>
+</div>
+</div>
+</body></html>

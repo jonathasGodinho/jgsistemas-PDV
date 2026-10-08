@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>JG Sistemas - Colaboradores</title>
+<!-- Inter Google Font -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config verbatim as required -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-variant": "#d3e4fe",
+            "surface-dim": "#cbdbf5",
+            "surface-container-highest": "#d3e4fe",
+            "on-error": "#ffffff",
+            "background": "#f8f9ff",
+            "on-secondary-container": "#475c7f",
+            "tertiary-container": "#005d25",
+            "error": "#ba1a1a",
+            "inverse-surface": "#213145",
+            "surface-container": "#e5eeff",
+            "tertiary": "#004319",
+            "on-primary": "#ffffff",
+            "on-primary-fixed-variant": "#0e4688",
+            "inverse-on-surface": "#eaf1ff",
+            "surface-tint": "#305ea1",
+            "surface": "#f8f9ff",
+            "secondary-fixed-dim": "#b2c7f0",
+            "on-surface-variant": "#434750",
+            "outline": "#737782",
+            "inverse-primary": "#a9c7ff",
+            "on-tertiary-container": "#5dda7a",
+            "on-background": "#0b1c30",
+            "on-secondary-fixed-variant": "#324769",
+            "secondary": "#4a5f82",
+            "secondary-fixed": "#d5e3ff",
+            "surface-container-lowest": "#ffffff",
+            "primary-fixed-dim": "#a9c7ff",
+            "tertiary-fixed": "#7ffc97",
+            "on-primary-container": "#a2c3ff",
+            "on-surface": "#0b1c30",
+            "outline-variant": "#c3c6d2",
+            "surface-bright": "#f8f9ff",
+            "on-secondary": "#ffffff",
+            "on-tertiary-fixed": "#002109",
+            "primary-container": "#1d4f91",
+            "on-tertiary": "#ffffff",
+            "surface-container-low": "#eff4ff",
+            "surface-container-high": "#dce9ff",
+            "primary-fixed": "#d6e3ff",
+            "on-error-container": "#93000a",
+            "on-secondary-fixed": "#011b3b",
+            "tertiary-fixed-dim": "#62df7d",
+            "on-primary-fixed": "#001b3e",
+            "primary": "#003873",
+            "error-container": "#ffdad6",
+            "secondary-container": "#bfd5fe",
+            "on-tertiary-fixed-variant": "#005320"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {},
+          "fontFamily": {
+            "headline": ["Inter"],
+            "display": ["Inter"],
+            "body": ["Inter"],
+            "label": ["Inter"]
+          },
+          "fontSize": {}
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Inter', sans-serif;
+      font-variant-numeric: tabular-nums;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .material-symbols-fill {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+    /* Custom scrollbar for ERP tables */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #eff4ff;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c3c6d2;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #737782;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex overflow-x-hidden selection:bg-surface-variant selection:text-primary">
+<!-- ========================================================================= -->
+<!-- SIDEBAR (SideNavBar Component Blueprint)                                 -->
+<!-- ========================================================================= -->
+<aside class="fixed top-0 left-0 h-screen w-[248px] flex flex-col z-40 bg-primary text-on-primary border-r border-outline-variant/20 shadow-none font-body text-sm font-medium">
+<!-- Top Branding & Segment Header -->
+<div class="px-5 py-4 border-b border-primary-container/40">
+<div class="flex items-center gap-3">
+<!-- Logo Badge verde JG -->
+<div class="w-9 h-9 rounded-lg bg-tertiary-container text-tertiary-fixed flex items-center justify-center font-headline font-bold text-base shadow-sm ring-1 ring-tertiary-fixed/40">
+          JG
+        </div>
+<div>
+<div class="font-headline text-base font-bold text-on-primary tracking-tight leading-tight">JG Sistemas</div>
+<div class="text-[11px] font-medium text-primary-fixed-dim uppercase tracking-wider">Varejo · Moda</div>
+</div>
+</div>
+<!-- PDV Shortcut Quick CTA -->
+<a class="mt-4 flex items-center justify-between w-full px-3 py-2 rounded-lg bg-tertiary-container hover:bg-tertiary-container/90 text-on-primary font-semibold text-xs tracking-wide transition-all shadow-sm group" href="#pdv">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary-fixed text-[18px]">point_of_sale</span>
+<span>Abrir PDV [F1]</span>
+</span>
+<span class="text-[10px] bg-tertiary px-1.5 py-0.5 rounded text-tertiary-fixed font-mono border border-tertiary-fixed/30">F1</span>
+</a>
+</div>
+<!-- Main Navigation Tabs -->
+<nav class="flex-1 overflow-y-auto px-3 py-3 space-y-1">
+<!-- Início -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#inicio">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-medium">Início</span>
+</a>
+<!-- Vendas -->
+<a class="flex items-center justify-between px-3 py-2.5 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors group" href="#vendas">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">point_of_sale</span>
+<span class="text-sm font-medium">Vendas</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant text-[16px] group-hover:text-on-primary">expand_more</span>
+</a>
+<!-- Clientes -->
+<a class="flex items-center justify-between px-3 py-2.5 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors group" href="#clientes">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm font-medium">Clientes</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant text-[16px] group-hover:text-on-primary">expand_more</span>
+</a>
+<!-- Catálogo -->
+<a class="flex items-center justify-between px-3 py-2.5 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors group" href="#catalogo">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="text-sm font-medium">Catálogo</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant text-[16px] group-hover:text-on-primary">expand_more</span>
+</a>
+<!-- Estoque -->
+<a class="flex items-center justify-between px-3 py-2.5 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors group" href="#estoque">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">warehouse</span>
+<span class="text-sm font-medium">Estoque</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant text-[16px] group-hover:text-on-primary">expand_more</span>
+</a>
+<!-- Financeiro -->
+<a class="flex items-center justify-between px-3 py-2.5 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors group" href="#financeiro">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">account_balance</span>
+<span class="text-sm font-medium">Financeiro</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant text-[16px] group-hover:text-on-primary">expand_more</span>
+</a>
+<!-- Pessoas (ACTIVE ACCORDION / DESTINATION MATCH) -->
+<div class="space-y-1">
+<a class="flex items-center justify-between px-3 py-2.5 rounded-lg bg-primary-container text-on-primary font-semibold border-l-4 border-tertiary-fixed shadow-sm" href="#pessoas">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary-fixed">badge</span>
+<span class="text-sm font-semibold">Pessoas</span>
+</div>
+<span class="material-symbols-outlined text-tertiary-fixed text-[16px]">expand_less</span>
+</a>
+<!-- Sub-items under Pessoas -->
+<div class="pl-8 pr-1 py-1 space-y-1 border-l border-primary-container/60 ml-4">
+<a class="flex items-center justify-between py-1.5 px-2.5 rounded-md text-xs font-semibold bg-primary-container/80 text-tertiary-fixed" href="#colaboradores">
+<span class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed"></span>
+              Colaboradores
+            </span>
+<span class="text-[10px] bg-tertiary-container/80 text-on-tertiary px-1.5 py-0.2 rounded-full font-bold">18</span>
+</a>
+<a class="flex items-center py-1.5 px-2.5 rounded-md text-xs font-normal text-primary-fixed-dim hover:text-on-primary hover:bg-primary-container/30 transition-colors" href="#comissoes">
+            Comissões &amp; Metas
+          </a>
+<a class="flex items-center py-1.5 px-2.5 rounded-md text-xs font-normal text-primary-fixed-dim hover:text-on-primary hover:bg-primary-container/30 transition-colors" href="#escalas">
+            Jornadas &amp; Escalas
+          </a>
+</div>
+</div>
+<!-- Relatórios -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#relatorios">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="text-sm font-medium">Relatórios</span>
+</a>
+<!-- Administração -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#administracao">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-medium">Administração</span>
+</a>
+</nav>
+<!-- Sidebar Footer -->
+<div class="p-3 border-t border-primary-container/30 bg-primary/95 space-y-2">
+<div class="flex items-center justify-between px-2 text-[11px] text-primary-fixed-dim">
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed animate-pulse"></span>
+          Sistema Online
+        </span>
+<span class="font-mono text-[10px]">v3.4.1</span>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-2 px-2 py-1.5 rounded text-xs text-primary-fixed-dim">
+<span class="material-symbols-outlined text-[16px]">storefront</span>
+<span class="font-medium text-on-primary">Varejo · Moda</span>
+</div>
+<button class="p-1.5 text-primary-fixed-dim hover:text-on-primary rounded hover:bg-primary-container/50 transition-colors" title="Configurações Rápidas">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- TOPBAR (TopNavBar Component Blueprint)                                   -->
+<!-- ========================================================================= -->
+<header class="fixed top-0 left-[248px] right-0 h-14 z-30 bg-surface-container-lowest border-b border-outline-variant shadow-sm flex items-center justify-between px-6">
+<!-- Left Section: Breadcrumb & Search -->
+<div class="flex items-center gap-6 flex-1 max-w-2xl">
+<!-- Breadcrumb Navigation -->
+<div class="flex items-center gap-2 text-xs font-medium text-on-surface-variant whitespace-nowrap">
+<span class="hover:text-primary cursor-pointer transition-colors">Pessoas</span>
+<span class="text-outline-variant">/</span>
+<span class="text-primary font-semibold">Colaboradores</span>
+</div>
+<!-- Global Search Bar with Shortcut -->
+<div class="relative w-full max-w-md">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-[18px]">search</span>
+</div>
+<input class="w-full pl-9 pr-16 py-1.5 text-xs bg-surface-container-low border border-outline-variant/60 rounded-lg text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all" placeholder="Buscar módulo, produto ou cliente (Ctrl+K)..." type="text"/>
+<div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">
+<kbd class="text-[10px] font-mono text-outline-variant bg-surface-container px-1.5 py-0.5 rounded border border-outline-variant/40">Ctrl+K</kbd>
+</div>
+</div>
+</div>
+<!-- Right Section: Status Pills, Actions, Profile -->
+<div class="flex items-center gap-3">
+<!-- Status Chip: Caixa 01 · Aberto -->
+<div class="flex items-center gap-2 px-3 py-1 bg-tertiary-container/10 border border-tertiary-container/30 rounded-full text-tertiary font-medium text-xs">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-tertiary-fixed-dim opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-tertiary-container"></span>
+</span>
+<span>Caixa 01 · Aberto</span>
+</div>
+<!-- Quick Action: PDV Button -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-tertiary-container hover:bg-tertiary text-on-primary text-xs font-semibold shadow-sm transition-all">
+<span class="material-symbols-outlined text-[16px]">point_of_sale</span>
+<span>Abrir PDV [F1]</span>
+</button>
+<div class="h-4 w-px bg-outline-variant mx-1"></div>
+<!-- Notification Icon -->
+<button class="relative p-1.5 rounded-lg text-secondary hover:bg-surface-container-low hover:text-on-surface transition-colors" title="Notificações">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-error ring-2 ring-surface-container-lowest"></span>
+</button>
+<!-- Help Icon -->
+<button class="p-1.5 rounded-lg text-secondary hover:bg-surface-container-low hover:text-on-surface transition-colors" title="Ajuda &amp; Atalhos">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+</button>
+<div class="h-4 w-px bg-outline-variant mx-1"></div>
+<!-- User Profile Header -->
+<div class="flex items-center gap-2.5 pl-1 cursor-pointer group">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary font-bold text-xs flex items-center justify-center ring-2 ring-primary-container/20 group-hover:ring-primary transition-all">
+          JG
+        </div>
+<div class="text-left hidden lg:block leading-tight">
+<div class="text-xs font-semibold text-on-surface group-hover:text-primary transition-colors">Juliana Gomes</div>
+<div class="text-[11px] text-on-surface-variant">Gerente Geral</div>
+</div>
+<span class="material-symbols-outlined text-outline text-[16px]">keyboard_arrow_down</span>
+</div>
+</div>
+</header>
+<!-- ========================================================================= -->
+<!-- MAIN WORKSPACE CONTENT                                                    -->
+<!-- ========================================================================= -->
+<main class="ml-[248px] pt-14 pb-12 flex-1 min-h-screen bg-background">
+<div class="max-w-[1440px] mx-auto p-6 space-y-6">
+<!-- Workspace Page Header -->
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+<div>
+<div class="flex items-center gap-3">
+<h1 class="text-2xl font-bold font-headline text-on-surface tracking-tight">Colaboradores</h1>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-surface-container text-primary border border-outline-variant/30">
+              18 cadastrados
+            </span>
+</div>
+<p class="text-sm text-on-surface-variant mt-1">
+            Gestão do quadro de funcionários, comissões de vendas, funções e permissões de acesso ao sistema.
+          </p>
+</div>
+<!-- Action CTAs -->
+<div class="flex items-center gap-2.5 self-start md:self-auto">
+<button class="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-secondary bg-surface-container-lowest border border-outline-variant rounded-lg hover:bg-surface-container-low hover:text-on-surface transition-all shadow-sm">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Exportar [F8]</span>
+</button>
+<button class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-on-primary bg-tertiary-container hover:bg-tertiary rounded-lg shadow-sm transition-all focus:ring-2 focus:ring-tertiary-fixed">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+<span>+ Novo colaborador [F2]</span>
+</button>
+</div>
+</div>
+<!-- Bento-style Key Metrics / Summary Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Metric Card 1: Total Colaboradores -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/70 shadow-sm flex items-center justify-between hover:border-primary/40 transition-colors">
+<div>
+<span class="text-xs font-medium text-on-surface-variant uppercase tracking-wider">Total de Colaboradores</span>
+<div class="flex items-baseline gap-2 mt-1.5">
+<span class="text-2xl font-bold font-headline text-on-surface">18</span>
+<span class="text-xs font-medium text-tertiary-container flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> 16 ativos
+              </span>
+</div>
+<p class="text-[11px] text-outline mt-1">2 inativos / afastados</p>
+</div>
+<div class="w-11 h-11 rounded-lg bg-surface-container-low text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">group</span>
+</div>
+</div>
+<!-- Metric Card 2: Vendedores & Atendentes -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/70 shadow-sm flex items-center justify-between hover:border-primary/40 transition-colors">
+<div>
+<span class="text-xs font-medium text-on-surface-variant uppercase tracking-wider">Vendedores &amp; Balcão</span>
+<div class="flex items-baseline gap-2 mt-1.5">
+<span class="text-2xl font-bold font-headline text-on-surface">8</span>
+<span class="text-xs font-medium text-primary bg-surface-container px-2 py-0.5 rounded-full">Comissionados</span>
+</div>
+<p class="text-[11px] text-outline mt-1">Geração direta no PDV</p>
+</div>
+<div class="w-11 h-11 rounded-lg bg-surface-container-low text-tertiary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">point_of_sale</span>
+</div>
+</div>
+<!-- Metric Card 3: Distribuição de Vínculo -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/70 shadow-sm flex items-center justify-between hover:border-primary/40 transition-colors">
+<div>
+<span class="text-xs font-medium text-on-surface-variant uppercase tracking-wider">Folha &amp; Vínculo</span>
+<div class="flex items-baseline gap-1.5 mt-1.5">
+<span class="text-sm font-bold text-on-surface">12 <span class="text-[11px] font-normal text-on-surface-variant">CLT</span></span>
+<span class="text-outline-variant">·</span>
+<span class="text-sm font-bold text-on-surface">4 <span class="text-[11px] font-normal text-on-surface-variant">MEI</span></span>
+<span class="text-outline-variant">·</span>
+<span class="text-sm font-bold text-on-surface">2 <span class="text-[11px] font-normal text-on-surface-variant">Autôn.</span></span>
+</div>
+<p class="text-[11px] text-outline mt-1">Conformidade e contratos</p>
+</div>
+<div class="w-11 h-11 rounded-lg bg-surface-container-low text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">assignment_ind</span>
+</div>
+</div>
+<!-- Metric Card 4: Média de Comissão -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/70 shadow-sm flex items-center justify-between hover:border-primary/40 transition-colors">
+<div>
+<span class="text-xs font-medium text-on-surface-variant uppercase tracking-wider">Média de Comissão</span>
+<div class="flex items-baseline gap-2 mt-1.5">
+<span class="text-2xl font-bold font-headline text-on-surface">3,5%</span>
+<span class="text-xs font-medium text-secondary">sobre vendas</span>
+</div>
+<p class="text-[11px] text-outline mt-1">Taxa padrão de Moda: 4,0%</p>
+</div>
+<div class="w-11 h-11 rounded-lg bg-surface-container-low text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">percent</span>
+</div>
+</div>
+</div>
+<!-- Filters & Search Toolbar -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/70 shadow-sm space-y-3">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+<!-- Search input -->
+<div class="md:col-span-4 relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-[18px]">search</span>
+</div>
+<input class="w-full pl-9 pr-3 py-2 text-xs bg-surface-container-low border border-outline-variant/70 rounded-lg text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all" placeholder="Buscar por nome, matrícula, CPF ou cargo..." type="text"/>
+</div>
+<!-- Cargo Filter Dropdown -->
+<div class="md:col-span-2">
+<select class="w-full py-2 px-3 text-xs bg-surface-container-low border border-outline-variant/70 rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary">
+<option value="">Todos os cargos</option>
+<option value="vendedora">Vendedora</option>
+<option value="caixa">Caixa</option>
+<option value="gerente">Gerente</option>
+<option value="cabeleireira">Cabeleireira</option>
+<option value="estoquista">Estoquista</option>
+<option value="supervisor">Supervisor</option>
+</select>
+</div>
+<!-- Vínculo Filter Dropdown -->
+<div class="md:col-span-2">
+<select class="w-full py-2 px-3 text-xs bg-surface-container-low border border-outline-variant/70 rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary">
+<option value="">Todos os vínculos</option>
+<option value="clt">CLT</option>
+<option value="mei">Parceiro / MEI</option>
+<option value="autonomo">Autônomo</option>
+</select>
+</div>
+<!-- Papel de Acesso Dropdown -->
+<div class="md:col-span-2">
+<select class="w-full py-2 px-3 text-xs bg-surface-container-low border border-outline-variant/70 rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary">
+<option value="">Todos os papéis</option>
+<option value="admin">Administrador</option>
+<option value="gerente">Gerente</option>
+<option value="supervisor">Supervisor</option>
+<option value="vendedor">Vendedor</option>
+<option value="sem_acesso">Sem acesso</option>
+</select>
+</div>
+<!-- Situação Filter Dropdown -->
+<div class="md:col-span-2">
+<select class="w-full py-2 px-3 text-xs bg-surface-container-low border border-outline-variant/70 rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary">
+<option selected="" value="ativos">Ativos (16)</option>
+<option value="inativos">Inativos (2)</option>
+<option value="todos">Todas as situações (18)</option>
+</select>
+</div>
+</div>
+<!-- Filter action bar footer -->
+<div class="flex items-center justify-between pt-2 border-t border-surface-container text-xs">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span>Filtros ativos:</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container-low text-primary text-[11px] font-medium border border-outline-variant/40">
+              Situação: Ativos
+              <button class="hover:text-error"><span class="material-symbols-outlined text-[14px]">close</span></button>
+</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="text-xs text-secondary hover:text-error transition-colors px-2.5 py-1 rounded">
+              Limpar filtros
+            </button>
+<button class="px-3.5 py-1 text-xs font-semibold bg-primary text-on-primary rounded-lg hover:bg-primary-container transition-all">
+              Aplicar filtros
+            </button>
+</div>
+</div>
+</div>
+<!-- Compact Enterprise Table -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/70 shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse text-xs">
+<!-- Table Header -->
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant/80 text-on-surface-variant font-semibold select-none">
+<th class="py-3 px-4 w-10 text-center">
+<input class="rounded border-outline text-primary focus:ring-primary h-3.5 w-3.5" type="checkbox"/>
+</th>
+<th class="py-3 px-3 w-20">Matrícula</th>
+<th class="py-3 px-4 min-w-[220px]">Colaborador</th>
+<th class="py-3 px-4">Cargo</th>
+<th class="py-3 px-4">Vínculo</th>
+<th class="py-3 px-4">Papel no Sistema</th>
+<th class="py-3 px-4 text-right">Comissão %</th>
+<th class="py-3 px-4 text-center">Situação</th>
+<th class="py-3 px-4 w-28 text-right">Ações</th>
+</tr>
+</thead>
+<!-- Table Body: 8 realistic records -->
+<tbody class="divide-y divide-outline-variant/30 text-on-surface">
+<!-- 1. Ana Paula Souza -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-3 px-4 text-center">
+<input class="rounded border-outline text-primary focus:ring-primary h-3.5 w-3.5" type="checkbox"/>
+</td>
+<td class="py-3 px-3 font-mono font-medium text-secondary">#0001</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container font-semibold flex items-center justify-center text-xs">
+                      AS
+                    </div>
+<div>
+<div class="font-semibold text-on-surface hover:text-primary cursor-pointer transition-colors">Ana Paula Souza</div>
+<div class="text-[11px] text-outline font-mono">CPF 342.***.***-10</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-4 font-medium text-on-surface">Vendedora</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-surface-container text-primary border border-outline-variant/30">
+                    CLT
+                  </span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-surface-container-high text-on-surface">
+<span class="material-symbols-outlined text-[14px] text-primary">sell</span>
+                    Vendedor
+                  </span>
+</td>
+<td class="py-3 px-4 text-right font-medium font-mono text-tertiary-container">4,0%</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-tertiary-container/10 text-tertiary border border-tertiary-container/20">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span>
+                    Ativo
+                  </span>
+</td>
+<td class="py-3 px-4 text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1 rounded text-outline hover:text-primary hover:bg-surface-container transition-colors" title="Visualizar">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1 rounded text-outline hover:text-primary hover:bg-surface-container transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1 rounded text-outline hover:text-on-surface hover:bg-surface-container transition-colors" title="Mais opções">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- 2. Juliana Gomes -->
+<tr class="hover:bg-surface-container-low/60 transition-colors bg-surface-container-low/20">
+<td class="py-3 px-4 text-center">
+<input class="rounded border-outline text-primary focus:ring-primary h-3.5 w-3.5" type="checkbox"/>
+</td>
+<td class="py-3 px-3 font-mono font-medium text-secondary">#0002</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary font-semibold flex items-center justify-center text-xs">
+                      JG
+                    </div>
+<div>
+<div class="font-semibold text-on-surface hover:text-primary cursor-pointer transition-colors flex items-center gap-1.5">
+                        Juliana Gomes
+                        <span class="text-[10px] bg-primary-fixed text-on-primary-fixed px-1.5 py-0.2 rounded font-normal">Você</span>
+</div>
+<div class="text-[11px] text-outline font-mono">CPF 123.***.***-89</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-4 font-medium text-on-surface">Gerente</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-surface-container text-primary border border-outline-variant/30">
+                    CLT
+                  </span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-primary-container/20 text-primary border border-primary/20">
+<span class="material-symbols-outlined text-[14px]">shield_person</span>
+                    Gerente Geral
+                  </span>
+</td>
+<td class="py-3 px-4 text-right font-medium font-mono text-tertiary-container">1,5%</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-tertiary-container/10 text-tertiary border border-tertiary-container/20">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span>
+                    Ativo
+                  </span>
+</td>
+<td class="py-3 px-4 text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1 rounded text-outline hover:text-primary hover:bg-surface-container transition-colors" title="Visualizar">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1 rounded text-outline hover:text-primary hover:bg-surface-container transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1 rounded text-outline hover:text-on-surface hover:bg-surface-container transition-colors" title="Mais opções">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- 3. Carlos Eduardo Mendes -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-3 px-4 text-center">
+<input class="rounded border-outline text-primary focus:ring-primary h-3.5 w-3.5" type="checkbox"/>
+</td>
+<td class="py-3 px-3 font-mono font-medium text-secondary">#0003</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-variant text-on-surface font-semibold flex items-center justify-center text-xs">
+                      CM
+                    </div>
+<div>
+<div class="font-semibold text-on-surface hover:text-primary cursor-pointer transition-colors">Carlos Eduardo Mendes</div>
+<div class="text-[11px] text-outline font-mono">CPF 456.***.***-22</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-4 font-medium text-on-surface">Caixa</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-surface-container text-primary border border-outline-variant/30">
+                    CLT
+                  </span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-secondary-fixed text-on-secondary-fixed">
+<span class="material-symbols-outlined text-[14px]">point_of_sale</span>
+                    Operador de Caixa
+                  </span>
+</td>
+<td class="py-3 px-4 text-right font-mono text-outline">— (Fixo)</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-tertiary-container/10 text-tertiary border border-tertiary-container/20">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span>
+                    Ativo
+                  </span>
+</td>
+<td class="py-3 px-4 text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1 rounded text-outline hover:text-primary hover:bg-surface-container transition-colors" title="Visualizar">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1 rounded text-outline hover:text-primary hover:bg-surface-container transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1 rounded text-outline hover:text-on-surface hover:bg-surface-container transition-colors" title="Mais opções">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- 4. Beatriz Alcantara -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-3 px-4 text-center">
+<input class="rounded border-outline text-primary focus:ring-primary h-3.5 w-3.5" type="checkbox"/>
+</td>
+<td class="py-3 px-3 font-mono font-medium text-secondary">#0004</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-variant text-on-secondary-container font-semibold flex items-center justify-center text-xs">
+                      BA
+                    </div>
+<div>
+<div class="font-semibold text-on-surface hover:text-primary cursor-pointer transition-colors">Beatriz Alcantara</div>
+<div class="text-[11px] text-outline font-mono">CPF 589.***.***-74</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-4 font-medium text-on-surface">Vendedora</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-surface-container text-primary border border-outline-variant/30">
+                    CLT
+                  </span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-surface-container-high text-on-surface">
+<span class="material-symbols-outlined text-[14px] text-primary">sell</span>
+                    Vendedor
+                  </span>
+</td>
+<td class="py-3 px-4 text-right font-medium font-mono text-tertiary-container">4,0%</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-tertiary-container/10 text-tertiary border border-tertiary-container/20">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span>
+                    Ativo
+                  </span>
+</td>
+<td class="py-3 px-4 text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1 rounded text-outline hover:text-primary hover:bg-surface-container transition-colors" title="Visualizar">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1 rounded text-outline hover:text-primary hover:bg-surface-container transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1 rounded text-outline hover:text-on-surface hover:bg-surface-container transition-colors" title="Mais opções">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- 5. Fernanda Lima -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-3 px-4 text-center">
+<input class="rounded border-outline text-primary focus:ring-primary h-3.5 w-3.5" type="checkbox"/>
+</td>
+<td class="py-3 px-3 font-mono font-medium text-secondary">#0005</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed text-on-secondary-fixed font-semibold flex items-center justify-center text-xs">
+                      FL
+                    </div>
+<div>
+<div class="font-semibold text-on-surface hover:text-primary cursor-pointer transition-colors">Fernanda Lima</div>
+<div class="text-[11px] text-outline font-mono">CPF 210.***.***-33</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-4 font-medium text-on-surface">Cabeleireira</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-surface-container-high text-on-surface border border-outline-variant/40">
+                    Parceiro (Salão/Moda)
+                  </span>
+</td>
+<td class="py-3 px-4">
+<span class="text-outline text-xs italic">Sem acesso</span>
+</td>
+<td class="py-3 px-4 text-right font-medium font-mono text-tertiary-container">40,0%</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-tertiary-container/10 text-tertiary border border-tertiary-container/20">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span>
+                    Ativo
+                  </span>
+</td>
+<td class="py-3 px-4 text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1 rounded text-outline hover:text-primary hover:bg-surface-container transition-colors" title="Visualizar">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1 rounded text-outline hover:text-primary hover:bg-surface-container transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1 rounded text-outline hover:text-on-surface hover:bg-surface-container transition-colors" title="Mais opções">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- 6. Roberto Silva Rocha -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-3 px-4 text-center">
+<input class="rounded border-outline text-primary focus:ring-primary h-3.5 w-3.5" type="checkbox"/>
+</td>
+<td class="py-3 px-3 font-mono font-medium text-secondary">#0006</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-variant text-on-surface font-semibold flex items-center justify-center text-xs">
+                      RR
+                    </div>
+<div>
+<div class="font-semibold text-on-surface hover:text-primary cursor-pointer transition-colors">Roberto Silva Rocha</div>
+<div class="text-[11px] text-outline font-mono">CPF 781.***.***-55</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-4 font-medium text-on-surface">Estoquista</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-surface-container text-primary border border-outline-variant/30">
+                    CLT
+                  </span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-surface-container-high text-on-surface">
+<span class="material-symbols-outlined text-[14px]">warehouse</span>
+                    Supervisor de Estoque
+                  </span>
+</td>
+<td class="py-3 px-4 text-right font-mono text-outline">—</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-tertiary-container/10 text-tertiary border border-tertiary-container/20">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span>
+                    Ativo
+                  </span>
+</td>
+<td class="py-3 px-4 text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1 rounded text-outline hover:text-primary hover:bg-surface-container transition-colors" title="Visualizar">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1 rounded text-outline hover:text-primary hover:bg-surface-container transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1 rounded text-outline hover:text-on-surface hover:bg-surface-container transition-colors" title="Mais opções">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- 7. Camila Rodrigues -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-3 px-4 text-center">
+<input class="rounded border-outline text-primary focus:ring-primary h-3.5 w-3.5" type="checkbox"/>
+</td>
+<td class="py-3 px-3 font-mono font-medium text-secondary">#0007</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container font-semibold flex items-center justify-center text-xs">
+                      CR
+                    </div>
+<div>
+<div class="font-semibold text-on-surface hover:text-primary cursor-pointer transition-colors">Camila Rodrigues</div>
+<div class="text-[11px] text-outline font-mono">CPF 632.***.***-90</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-4 font-medium text-on-surface">Vendedora</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-surface-container-high text-on-surface border border-outline-variant/40">
+                    Autônomo
+                  </span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-surface-container-high text-on-surface">
+<span class="material-symbols-outlined text-[14px] text-primary">sell</span>
+                    Vendedor
+                  </span>
+</td>
+<td class="py-3 px-4 text-right font-medium font-mono text-tertiary-container">5,0%</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-tertiary-container/10 text-tertiary border border-tertiary-container/20">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span>
+                    Ativo
+                  </span>
+</td>
+<td class="py-3 px-4 text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1 rounded text-outline hover:text-primary hover:bg-surface-container transition-colors" title="Visualizar">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1 rounded text-outline hover:text-primary hover:bg-surface-container transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1 rounded text-outline hover:text-on-surface hover:bg-surface-container transition-colors" title="Mais opções">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- 8. Marcos Vinicius Santos (Inativo) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors opacity-75">
+<td class="py-3 px-4 text-center">
+<input class="rounded border-outline text-primary focus:ring-primary h-3.5 w-3.5" type="checkbox"/>
+</td>
+<td class="py-3 px-3 font-mono font-medium text-secondary">#0008</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-dim text-outline font-semibold flex items-center justify-center text-xs">
+                      MS
+                    </div>
+<div>
+<div class="font-semibold text-on-surface hover:text-primary cursor-pointer transition-colors">Marcos Vinicius Santos</div>
+<div class="text-[11px] text-outline font-mono">CPF 901.***.***-18</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-4 font-medium text-on-surface">Caixa</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-surface-container text-primary border border-outline-variant/30">
+                    CLT
+                  </span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-secondary-fixed text-on-secondary-fixed">
+<span class="material-symbols-outlined text-[14px]">point_of_sale</span>
+                    Operador de Caixa
+                  </span>
+</td>
+<td class="py-3 px-4 text-right font-mono text-outline">—</td>
+<td class="py-3 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-surface-container-high text-outline border border-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                    Inativo
+                  </span>
+</td>
+<td class="py-3 px-4 text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1 rounded text-outline hover:text-primary hover:bg-surface-container transition-colors" title="Visualizar">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1 rounded text-outline hover:text-primary hover:bg-surface-container transition-colors" title="Reativar / Editar">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1 rounded text-outline hover:text-on-surface hover:bg-surface-container transition-colors" title="Mais opções">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Pagination and Range Bar -->
+<div class="py-3 px-4 bg-surface-container-lowest border-t border-outline-variant flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-on-surface-variant">
+<div class="flex items-center gap-4">
+<span>Exibindo <span class="font-semibold text-on-surface">1–8</span> de <span class="font-semibold text-on-surface">18</span> colaboradores</span>
+<div class="flex items-center gap-1.5 border-l border-outline-variant/60 pl-4">
+<span>Itens por página:</span>
+<select class="py-1 px-2 bg-surface-container-low border border-outline-variant rounded text-xs text-on-surface focus:outline-none focus:ring-1 focus:ring-primary">
+<option selected="" value="10">10</option>
+<option value="25">25</option>
+<option value="50">50</option>
+</select>
+</div>
+</div>
+<!-- Pagination numeric controls -->
+<div class="flex items-center gap-1 self-center sm:self-auto">
+<button class="p-1.5 rounded border border-outline-variant text-outline hover:bg-surface-container hover:text-on-surface transition-colors disabled:opacity-40" disabled="" title="Página anterior">
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+</button>
+<button class="px-2.5 py-1 rounded font-semibold bg-primary text-on-primary">1</button>
+<button class="px-2.5 py-1 rounded text-on-surface-variant hover:bg-surface-container transition-colors">2</button>
+<button class="px-2.5 py-1 rounded text-on-surface-variant hover:bg-surface-container transition-colors">3</button>
+<button class="p-1.5 rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" title="Próxima página">
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Quick Helpful Keyboard Shortcuts Banner -->
+<div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg border border-outline-variant/50 text-xs text-on-surface-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">keyboard</span>
+<span class="font-medium text-on-surface">Atalhos rápidos do módulo:</span>
+<span>Pressione <kbd class="px-1.5 py-0.5 bg-surface-container-lowest border border-outline-variant rounded font-mono text-[10px]">F2</kbd> para cadastrar colaborador, <kbd class="px-1.5 py-0.5 bg-surface-container-lowest border border-outline-variant rounded font-mono text-[10px]">F8</kbd> para exportar planilha, ou selecione a linha e tecle <kbd class="px-1.5 py-0.5 bg-surface-container-lowest border border-outline-variant rounded font-mono text-[10px]">Enter</kbd> para ver detalhes.</span>
+</div>
+<button class="text-primary hover:underline font-medium text-xs whitespace-nowrap">Ver todos os atalhos</button>
+</div>
+</div>
+</main>
+<!-- ========================================================================= -->
+<!-- FOOTER (Institutional Status Bar Component Blueprint)                     -->
+<!-- ========================================================================= -->
+<footer class="fixed bottom-0 left-[248px] right-0 h-8 z-20 bg-surface-container-lowest border-t border-outline-variant flex items-center justify-between px-6 font-body text-xs text-on-surface-variant">
+<div class="flex items-center gap-2 truncate">
+<span class="font-medium">© 2026 JG Sistemas de Gestão Comercial S.A.</span>
+<span class="text-outline-variant">·</span>
+<span>Licenciado para: <strong class="font-medium text-on-surface">Moda &amp; Estilo Ltda.</strong></span>
+<span class="text-outline-variant">·</span>
+<span>Suporte: 0800 123 4567</span>
+</div>
+<!-- Institutional links and quick keyboard cues -->
+<div class="flex items-center gap-4 shrink-0">
+<div class="hidden xl:flex items-center gap-2 text-[11px] text-outline">
+<span>[F1] PDV</span>
+<span>·</span>
+<span>[F2] Novo Colaborador</span>
+<span>·</span>
+<span>[Ctrl+K] Busca</span>
+</div>
+<div class="h-3 w-px bg-outline-variant hidden xl:block"></div>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#status">Status dos Serviços</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#atalhos">Atalhos do Teclado</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#ajuda">Ajuda</a>
+</div>
+</footer>
+</body></html>

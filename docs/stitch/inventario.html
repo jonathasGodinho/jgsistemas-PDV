@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Inventário de Estoque — JG Sistemas</title>
+<!-- Fontes & Ícones Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration conforme Tokens de Design -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-variant": "#d3e4fe",
+            "secondary-fixed-dim": "#b2c7f0",
+            "outline-variant": "#c3c6d2",
+            "primary-fixed-dim": "#a9c7ff",
+            "on-background": "#0b1c30",
+            "surface-tint": "#305ea1",
+            "error-container": "#ffdad6",
+            "tertiary-fixed": "#7ffc97",
+            "surface-container-low": "#eff4ff",
+            "on-tertiary-fixed-variant": "#005320",
+            "on-secondary-fixed-variant": "#324769",
+            "tertiary": "#004319",
+            "tertiary-container": "#005d25",
+            "primary-fixed": "#d6e3ff",
+            "inverse-on-surface": "#eaf1ff",
+            "surface-container-high": "#dce9ff",
+            "outline": "#737782",
+            "secondary-fixed": "#d5e3ff",
+            "secondary-container": "#bfd5fe",
+            "on-surface": "#0b1c30",
+            "on-primary-container": "#a2c3ff",
+            "secondary": "#4a5f82",
+            "on-primary": "#ffffff",
+            "on-surface-variant": "#434750",
+            "primary": "#003873",
+            "primary-container": "#1d4f91",
+            "on-tertiary-fixed": "#002109",
+            "on-tertiary-container": "#5dda7a",
+            "on-secondary-container": "#475c7f",
+            "surface-dim": "#cbdbf5",
+            "error": "#ba1a1a",
+            "on-tertiary": "#ffffff",
+            "on-secondary": "#ffffff",
+            "on-primary-fixed": "#001b3e",
+            "on-error": "#ffffff",
+            "surface": "#f8f9ff",
+            "on-primary-fixed-variant": "#0e4688",
+            "on-error-container": "#93000a",
+            "on-secondary-fixed": "#011b3b",
+            "background": "#f8f9ff",
+            "surface-container-highest": "#d3e4fe",
+            "inverse-surface": "#213145",
+            "surface-container-lowest": "#ffffff",
+            "surface-bright": "#f8f9ff",
+            "inverse-primary": "#a9c7ff",
+            "tertiary-fixed-dim": "#62df7d",
+            "surface-container": "#e5eeff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Inter", "sans-serif"],
+            "display": ["Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      vertical-align: middle;
+    }
+    .material-symbols-outlined.fill-1 {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+    /* Estilo de rolagem refinada para áreas densas */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased selection:bg-secondary-container selection:text-on-secondary-container min-h-screen overflow-x-hidden">
+<!-- ========================================================================= -->
+<!-- 1. SIDENAVBAR (SHARED COMPONENT RIGID IMPLEMENTATION)                      -->
+<!-- ========================================================================= -->
+<aside class="fixed top-0 left-0 h-screen w-[248px] flex flex-col z-40 bg-on-background border-r border-outline-variant/30 select-none shadow-none">
+<div class="w-[248px] h-full flex flex-col justify-between py-4 px-3 overflow-y-auto">
+<!-- Topo: Marca e Subtítulo -->
+<div>
+<div class="flex items-center gap-3 px-2 py-2 mb-4">
+<div class="w-9 h-9 rounded-lg bg-tertiary-container flex items-center justify-center text-on-tertiary font-bold font-headline text-base tracking-tight shadow-sm ring-1 ring-tertiary-fixed-dim/30">
+            JG
+          </div>
+<div class="flex flex-col">
+<span class="font-headline text-base font-bold text-on-primary tracking-tight leading-none">JG Sistemas</span>
+<span class="text-xs text-secondary-fixed-dim font-medium tracking-normal mt-1">Varejo · Moda</span>
+</div>
+</div>
+<!-- Botão Ação Rápida Sidebar (CTA JSON) -->
+<div class="px-1 mb-5">
+<button class="w-full flex items-center justify-center gap-2 bg-tertiary-container hover:bg-tertiary text-on-primary font-semibold text-xs py-2.5 px-3 rounded-lg shadow-sm transition-all duration-150 active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span>Novo Inventário</span>
+</button>
+</div>
+<!-- Navegação Primária -->
+<nav class="space-y-1">
+<!-- Início -->
+<a class="text-surface-variant hover:text-on-primary hover:bg-surface-variant/10 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-sm font-medium">Início</span>
+</a>
+<!-- Vendas -->
+<a class="text-surface-variant hover:text-on-primary hover:bg-surface-variant/10 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">point_of_sale</span>
+<span class="text-sm font-medium">Vendas</span>
+</a>
+<!-- Clientes -->
+<a class="text-surface-variant hover:text-on-primary hover:bg-surface-variant/10 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm font-medium">Clientes</span>
+</a>
+<!-- Catálogo -->
+<a class="text-surface-variant hover:text-on-primary hover:bg-surface-variant/10 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="text-sm font-medium">Catálogo</span>
+</a>
+<!-- Estoque (ACTIVE ACCORDING TO PAGE CONTEXT & JSON) -->
+<div class="space-y-1 pt-0.5">
+<a class="bg-primary-container text-on-primary font-semibold rounded-lg px-3 py-2 flex items-center justify-between shadow-sm active:scale-[0.98]" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">warehouse</span>
+<span class="text-sm font-medium">Estoque</span>
+</div>
+<span class="material-symbols-outlined text-xs">expand_more</span>
+</a>
+<!-- Submenu Estoque Expandido -->
+<div class="pl-8 pr-1 py-1 space-y-1 border-l-2 border-primary-container/40 ml-4 my-1">
+<a class="block text-xs py-1.5 px-2 rounded font-medium text-surface-variant hover:text-on-primary hover:bg-surface-variant/10 transition-colors" href="#">
+                Posição de Estoque
+              </a>
+<a class="block text-xs py-1.5 px-2 rounded font-semibold text-tertiary-fixed bg-surface-variant/15 flex items-center justify-between" href="#">
+<span>Inventário</span>
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed"></span>
+</a>
+<a class="block text-xs py-1.5 px-2 rounded font-medium text-surface-variant hover:text-on-primary hover:bg-surface-variant/10 transition-colors" href="#">
+                Compras &amp; Fornecedores
+              </a>
+</div>
+</div>
+<!-- Financeiro -->
+<a class="text-surface-variant hover:text-on-primary hover:bg-surface-variant/10 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">account_balance</span>
+<span class="text-sm font-medium">Financeiro</span>
+</a>
+<!-- Pessoas -->
+<a class="text-surface-variant hover:text-on-primary hover:bg-surface-variant/10 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">badge</span>
+<span class="text-sm font-medium">Pessoas</span>
+</a>
+<!-- Relatórios -->
+<a class="text-surface-variant hover:text-on-primary hover:bg-surface-variant/10 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="text-sm font-medium">Relatórios</span>
+</a>
+<!-- Administração -->
+<a class="text-surface-variant hover:text-on-primary hover:bg-surface-variant/10 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-medium">Administração</span>
+</a>
+</nav>
+</div>
+<!-- Rodapé da SideNav (JSON tabs + status ERP) -->
+<div class="pt-4 border-t border-outline-variant/20 space-y-2">
+<a class="text-surface-variant hover:text-on-primary hover:bg-surface-variant/10 rounded-lg px-3 py-1.5 flex items-center gap-3 text-xs transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+<span>Auditoria</span>
+</a>
+<a class="text-surface-variant hover:text-on-primary hover:bg-surface-variant/10 rounded-lg px-3 py-1.5 flex items-center gap-3 text-xs transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+<span>Configurações</span>
+</a>
+<!-- Status de Conexão e Versão -->
+<div class="px-3 pt-3 flex items-center justify-between text-[11px] text-surface-variant/80">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim animate-pulse"></span>
+<span>Online</span>
+</div>
+<span class="font-mono text-outline-variant/80">v3.4.1</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- 2. TOPNAVBAR (SHARED COMPONENT EXECUTION)                                 -->
+<!-- ========================================================================= -->
+<header class="fixed top-0 left-[248px] right-0 h-14 z-30 bg-surface-container-lowest border-b border-outline-variant/40 shadow-sm flex items-center justify-between px-6">
+<!-- Esquerda: Breadcrumb e Identidade Rápida -->
+<div class="flex items-center gap-4">
+<nav aria-label="Breadcrumb" class="flex items-center gap-2 text-sm text-on-surface-variant">
+<span class="text-on-surface-variant font-medium">Estoque</span>
+<span class="material-symbols-outlined text-outline text-[16px]">chevron_right</span>
+<span class="text-primary font-semibold">Inventário</span>
+</nav>
+</div>
+<!-- Centro: Campo de Pesquisa Global com atalho Ctrl+K -->
+<div class="w-96 relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant/60 rounded-lg pl-9 pr-14 py-1.5 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all placeholder:text-outline" placeholder="Buscar módulo, produto ou contagem..." type="text"/>
+<kbd class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] bg-surface-container-lowest border border-outline-variant rounded px-1.5 py-0.5 text-on-surface-variant font-mono font-medium shadow-2xs">
+        Ctrl K
+      </kbd>
+</div>
+<!-- Direita: Ações de Caixa, PDV, Notificações e Perfil -->
+<div class="flex items-center gap-3">
+<!-- Status do Caixa -->
+<div class="flex items-center gap-2 px-2.5 py-1 bg-surface-container-high/60 border border-outline-variant/40 rounded-full text-xs font-medium text-on-surface">
+<span class="w-2 h-2 rounded-full bg-tertiary-container ring-2 ring-tertiary-fixed-dim/50"></span>
+<span>Caixa 01 · Aberto</span>
+</div>
+<!-- Botão Ação Primária Trailing: Abrir PDV -->
+<button class="bg-primary text-on-primary hover:bg-primary-container px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all shadow-xs active:scale-[0.98]">
+<span class="material-symbols-outlined text-[16px]">point_of_sale</span>
+<span>Abrir PDV</span>
+<kbd class="ml-1 text-[10px] bg-primary-container px-1 py-0.2 rounded text-surface-variant font-mono">F1</kbd>
+</button>
+<!-- Divisor vertical -->
+<div class="h-5 w-px bg-outline-variant/60"></div>
+<!-- Ações por Ícone: Notificações & Ajuda -->
+<div class="flex items-center gap-1">
+<button class="relative p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition-colors" title="Notificações">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full ring-2 ring-surface-container-lowest"></span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high rounded-lg transition-colors" title="Ajuda &amp; Suporte">
+<span class="material-symbols-outlined">help</span>
+</button>
+</div>
+<!-- Perfil Operador -->
+<div class="flex items-center gap-2.5 pl-2">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-bold text-xs ring-1 ring-outline-variant/50">
+          JG
+        </div>
+<div class="text-left leading-tight hidden lg:block">
+<div class="text-xs font-semibold text-on-surface">Juliana Gomes</div>
+<div class="text-[11px] text-on-surface-variant">Gerente</div>
+</div>
+</div>
+</div>
+</header>
+<!-- ========================================================================= -->
+<!-- 3. ÁREA PRINCIPAL DE CONTEÚDO                                            -->
+<!-- ========================================================================= -->
+<main class="ml-[248px] pt-14 min-h-screen bg-surface p-6">
+<div class="max-w-[1536px] mx-auto space-y-5">
+<!-- Cabeçalho da Página + KPIs + Ações Globais -->
+<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pb-2 border-b border-outline-variant/30">
+<div>
+<div class="flex items-center gap-2.5">
+<h1 class="text-xl font-bold tracking-tight text-on-surface">Inventário de Estoque</h1>
+<span class="bg-secondary-container text-on-secondary-container text-xs px-2.5 py-0.5 rounded-full font-medium">
+              Auditoria em Lote
+            </span>
+</div>
+<p class="text-xs text-on-surface-variant mt-1">
+            Conferência física de gôndola e depósito com conciliação automática de saldos e perdas.
+          </p>
+</div>
+<div class="flex items-center gap-2.5 self-start lg:self-auto">
+<!-- Botão Exportar Relatório [F8] -->
+<button class="inline-flex items-center gap-1.5 bg-surface-container-lowest border border-outline-variant/70 hover:bg-surface-container text-on-surface px-3 py-2 rounded-lg text-xs font-medium shadow-xs transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-[17px]">file_download</span>
+<span>Exportar Relatório</span>
+<kbd class="text-[10px] bg-surface-container px-1 py-0.2 rounded font-mono text-outline">F8</kbd>
+</button>
+<!-- Botão Primário Verde: Abrir Nova Contagem [F2] -->
+<button class="inline-flex items-center gap-1.5 bg-tertiary-container hover:bg-tertiary text-on-primary px-3.5 py-2 rounded-lg text-xs font-semibold shadow-xs transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>Abrir Nova Contagem</span>
+<kbd class="text-[10px] bg-tertiary text-tertiary-fixed px-1 py-0.2 rounded font-mono">F2</kbd>
+</button>
+</div>
+</div>
+<!-- Bento Grid de KPIs de Auditoria do Mês -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest p-3.5 rounded-xl border border-outline-variant/50 shadow-xs flex items-center justify-between">
+<div class="space-y-1">
+<span class="text-xs font-medium text-on-surface-variant">Contagens no Mês</span>
+<div class="text-xl font-bold tracking-tight text-on-surface tabular-nums">4 Ciclos</div>
+<div class="text-[11px] text-on-surface-variant flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span> 2 finalizadas
+              <span class="text-outline-variant">·</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> 1 em andamento
+            </div>
+</div>
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[22px]">fact_check</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest p-3.5 rounded-xl border border-outline-variant/50 shadow-xs flex items-center justify-between">
+<div class="space-y-1">
+<span class="text-xs font-medium text-on-surface-variant">Acurácia Média de Estoque</span>
+<div class="text-xl font-bold tracking-tight text-on-surface tabular-nums">98,2%</div>
+<div class="text-[11px] text-tertiary-container font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+              +0,4% vs mês anterior
+            </div>
+</div>
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-tertiary-container">
+<span class="material-symbols-outlined text-[22px]">verified</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest p-3.5 rounded-xl border border-outline-variant/50 shadow-xs flex items-center justify-between">
+<div class="space-y-1">
+<span class="text-xs font-medium text-on-surface-variant">Divergência Total Auditada</span>
+<div class="text-xl font-bold tracking-tight text-error tabular-nums">-R$ 412,00</div>
+<div class="text-[11px] text-on-surface-variant">
+              14 itens ajustados fisicamente
+            </div>
+</div>
+<div class="w-10 h-10 rounded-lg bg-error-container/40 flex items-center justify-center text-error">
+<span class="material-symbols-outlined text-[22px]">difference</span>
+</div>
+</div>
+</div>
+<!-- ===================================================================== -->
+<!-- LAYOUT DIVIDIDO EM DUAS COLUNAS (35% ESQUERDA / 65% DIREITA)           -->
+<!-- ===================================================================== -->
+<div class="grid grid-cols-12 gap-5 items-start">
+<!-- COLUNA ESQUERDA: LISTA DE CONTAGENS (~35% -> col-span-4) -->
+<div class="col-span-12 lg:col-span-4 space-y-3.5">
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50 shadow-xs space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<h2 class="text-sm font-bold text-on-surface">Contagens Registradas</h2>
+<span class="bg-surface-container text-on-surface-variant text-[11px] font-semibold px-2 py-0.2 rounded-full tabular-nums">4</span>
+</div>
+<button class="text-xs text-primary font-medium hover:underline flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">tune</span>
+                Filtros
+              </button>
+</div>
+<!-- Chips de Filtro de Status -->
+<div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+<button class="bg-primary text-on-primary font-medium px-2.5 py-1 rounded-md text-[11px]">Todas</button>
+<button class="bg-surface-container text-on-surface-variant hover:bg-surface-container-high px-2.5 py-1 rounded-md text-[11px] transition-colors">Em andamento (1)</button>
+<button class="bg-surface-container text-on-surface-variant hover:bg-surface-container-high px-2.5 py-1 rounded-md text-[11px] transition-colors">Finalizadas (2)</button>
+</div>
+<!-- Busca Rápida na Lista -->
+<div class="relative">
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-outline text-[16px]">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant/60 rounded-lg pl-8 pr-3 py-1.5 text-xs text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Filtrar por nome, setor ou data..." type="text"/>
+</div>
+<!-- LISTA DE CARDS DE INVENTÁRIOS -->
+<div class="space-y-2.5 pt-1">
+<!-- Card 1: ATIVO / SELECIONADO -->
+<div class="relative rounded-xl border-2 border-primary bg-surface-container-lowest p-3.5 shadow-xs cursor-pointer ring-2 ring-primary/10">
+<div class="flex items-start justify-between gap-2 mb-1.5">
+<div class="space-y-0.5">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-amber-500"></span>
+<h3 class="text-xs font-bold text-on-surface">Inventário Outubro – Jeans</h3>
+</div>
+<p class="text-[11px] text-on-surface-variant font-medium">Gôndola Jeanswear &amp; Calças</p>
+</div>
+<span class="bg-amber-100 text-amber-800 border border-amber-300 text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                    Em andamento
+                  </span>
+</div>
+<div class="text-[11px] text-outline mb-2.5">
+                  Criado em 08/10/2026 por <span class="text-on-surface font-medium">Juliana Gomes</span>
+</div>
+<!-- Mini Barra de Progresso -->
+<div class="space-y-1">
+<div class="flex justify-between text-[11px] font-medium">
+<span class="text-on-surface-variant">Progresso</span>
+<span class="text-primary tabular-nums font-semibold">86/120 itens (72%)</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 72%"></div>
+</div>
+</div>
+<div class="mt-3 pt-2.5 border-t border-outline-variant/30 flex items-center justify-between text-[11px]">
+<span class="text-amber-800 font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">pending</span>
+                    Sessão em edição
+                  </span>
+<span class="text-primary font-semibold flex items-center gap-0.5">
+                    Conferindo agora
+                    <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</span>
+</div>
+</div>
+<!-- Card 2: Finalizada -->
+<div class="rounded-xl border border-outline-variant/60 bg-surface-container-lowest p-3.5 shadow-xs hover:border-outline transition-all cursor-pointer">
+<div class="flex items-start justify-between gap-2 mb-1">
+<div>
+<h3 class="text-xs font-bold text-on-surface">Contagem Geral Set/2026</h3>
+<p class="text-[11px] text-on-surface-variant">Geral Loja + Estoque Fechado</p>
+</div>
+<span class="bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                    Finalizada
+                  </span>
+</div>
+<div class="text-[11px] text-outline mb-2">
+                  Concluído em 30/09/2026
+                </div>
+<div class="text-[11px] bg-surface-container-low p-2 rounded-lg text-on-surface-variant flex items-center justify-between tabular-nums">
+<span>1.240/1.240 conferidos · 100%</span>
+<span class="text-error font-medium">Ajuste: -18 un</span>
+</div>
+</div>
+<!-- Card 3: Finalizada Vestidos -->
+<div class="rounded-xl border border-outline-variant/60 bg-surface-container-lowest p-3.5 shadow-xs hover:border-outline transition-all cursor-pointer">
+<div class="flex items-start justify-between gap-2 mb-1">
+<div>
+<h3 class="text-xs font-bold text-on-surface">Balanço Coleção Verão – Vestidos</h3>
+<p class="text-[11px] text-on-surface-variant">Araras Principais &amp; Vitrine</p>
+</div>
+<span class="bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                    Finalizada
+                  </span>
+</div>
+<div class="text-[11px] text-outline mb-2">
+                  Concluído em 22/09/2026
+                </div>
+<div class="text-[11px] bg-surface-container-low p-2 rounded-lg text-tertiary-container font-medium flex items-center justify-between tabular-nums">
+<span>180/180 conferidos · 100%</span>
+<span class="flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[13px]">check_circle</span>
+                    Sem divergências
+                  </span>
+</div>
+</div>
+<!-- Card 4: Rascunho / Agendada -->
+<div class="rounded-xl border border-outline-variant/60 bg-surface-container-lowest p-3.5 shadow-xs hover:border-outline transition-all cursor-pointer opacity-85">
+<div class="flex items-start justify-between gap-2 mb-1">
+<div>
+<h3 class="text-xs font-bold text-on-surface">Acessórios e Bolsas – Auditoria</h3>
+<p class="text-[11px] text-on-surface-variant">Prateleiras Centrais</p>
+</div>
+<span class="bg-secondary-fixed text-on-secondary-fixed text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                    Rascunho
+                  </span>
+</div>
+<div class="text-[11px] text-outline mb-2">
+                  Agendado para 15/10/2026
+                </div>
+<div class="text-[11px] text-on-surface-variant tabular-nums">
+                  0/95 produtos conferidos
+                </div>
+</div>
+</div>
+<!-- Botão Adicional Rodapé da Lista -->
+<button class="w-full mt-2 py-2 border border-dashed border-outline-variant hover:border-tertiary-container hover:bg-surface-container-low text-tertiary-container rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-[16px]">add</span>
+              Criar Agendamento de Contagem
+            </button>
+</div>
+</div>
+<!-- COLUNA DIREITA: PAINEL DA CONTAGEM SELECIONADA (~65% -> col-span-8) -->
+<div class="col-span-12 lg:col-span-8 space-y-4">
+<!-- Card de Controle da Sessão Ativa -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/50 shadow-xs p-5 space-y-4">
+<!-- Header do Painel de Conferência -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-outline-variant/30 pb-4">
+<div>
+<div class="flex items-center gap-2">
+<h2 class="text-base font-bold text-on-surface">Inventário Outubro – Jeans</h2>
+<span class="font-mono text-xs bg-surface-container px-2 py-0.5 rounded text-on-surface-variant font-medium">#INV-2026-10</span>
+</div>
+<div class="flex flex-wrap items-center gap-y-1 gap-x-3 text-xs text-on-surface-variant mt-1.5">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-outline">person</span>
+                    Operador: <strong class="text-on-surface font-semibold">Juliana Gomes</strong>
+</span>
+<span class="text-outline-variant">|</span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-outline">location_on</span>
+                    Local: <strong class="text-on-surface font-semibold">Setor Denim A-04</strong>
+</span>
+<span class="text-outline-variant">|</span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-outline">schedule</span>
+                    Início: <strong class="text-on-surface font-semibold">Hoje às 09:30</strong>
+</span>
+</div>
+</div>
+<!-- Indicadores de status da sessão -->
+<div class="flex items-center gap-2">
+<span class="flex items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-200 text-amber-900 rounded-full text-xs font-semibold">
+<span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+                  Coleta Ativa
+                </span>
+<button class="p-1.5 text-outline hover:text-on-surface rounded-lg hover:bg-surface-container transition-colors" title="Mais Opções">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Progresso Geral e Chips de Conciliação -->
+<div class="space-y-2">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs font-medium">
+<span class="text-on-surface">
+                  Progresso da Contagem: <strong class="text-primary tabular-nums">86 de 120 produtos bipados</strong> (72%)
+                </span>
+<span class="text-on-surface-variant text-[11px]">
+                  Faltam 34 itens para conclusão do lote
+                </span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-2.5 overflow-hidden">
+<div class="bg-gradient-to-r from-primary to-primary-container h-full rounded-full transition-all duration-300" style="width: 72%"></div>
+</div>
+<!-- Badges de Resumo Analítico -->
+<div class="flex flex-wrap items-center gap-2 pt-1 text-xs">
+<div class="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-md font-medium text-[11px]">
+<span class="material-symbols-outlined text-[14px]">check</span>
+                  82 conferidos sem divergência
+                </div>
+<div class="flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 text-blue-800 border border-blue-200 rounded-md font-medium text-[11px]">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+                  3 com sobras (+)
+                </div>
+<div class="flex items-center gap-1.5 px-2.5 py-1 bg-rose-50 text-rose-800 border border-rose-200 rounded-md font-medium text-[11px]">
+<span class="material-symbols-outlined text-[14px]">arrow_downward</span>
+                  1 com falta (−)
+                </div>
+</div>
+</div>
+<!-- BARRA DE BIPAGEM / SCANNER COM ENTRADA RÁPIDA -->
+<div class="p-3.5 bg-surface-container-low rounded-xl border border-outline-variant/60 space-y-2.5">
+<div class="flex items-center justify-between text-xs">
+<span class="font-semibold text-on-surface flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">barcode_scanner</span>
+                  Entrada Rápida via Leitor (Bipagem)
+                </span>
+<!-- Toggle de Modo Adição Rápida (+1 por bip) -->
+<label class="inline-flex items-center gap-2 cursor-pointer select-none">
+<span class="text-xs text-on-surface-variant font-medium">Modo Adição Rápida (+1 por bip)</span>
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-8 h-4 bg-outline-variant/80 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-tertiary-container relative"></div>
+</label>
+</div>
+<div class="flex flex-col sm:flex-row items-center gap-2">
+<!-- Input de Código de Barras / SKU -->
+<div class="relative flex-1 w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">qr_code_scanner</span>
+<input class="w-full bg-surface-container-lowest border border-outline-variant/80 rounded-lg pl-9 pr-14 py-2 text-xs font-mono text-on-surface placeholder:font-sans placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary shadow-2xs" placeholder="Bipe o código de barras (EAN/SKU) ou digite para somar [F3]..." type="text"/>
+<kbd class="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] bg-surface-container border border-outline-variant rounded px-1.5 py-0.5 text-on-surface-variant font-mono">
+                    F3
+                  </kbd>
+</div>
+<!-- Seletor de Quantidade Rápida -->
+<div class="flex items-center border border-outline-variant/80 bg-surface-container-lowest rounded-lg p-0.5 shadow-2xs">
+<button class="w-7 h-7 flex items-center justify-center text-on-surface hover:bg-surface-container rounded text-xs font-bold" title="Diminuir">
+                    −
+                  </button>
+<span class="px-2 text-xs font-semibold text-on-surface tabular-nums">Qtd: 1 un</span>
+<button class="w-7 h-7 flex items-center justify-center text-on-surface hover:bg-surface-container rounded text-xs font-bold" title="Aumentar">
+                    +
+                  </button>
+</div>
+<!-- Botão de Registro -->
+<button class="w-full sm:w-auto bg-primary hover:bg-primary-container text-on-primary px-4 py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 shadow-xs transition-all active:scale-[0.98] whitespace-nowrap">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span>Registrar Bipagem</span>
+<kbd class="text-[10px] bg-primary-container px-1 py-0.2 rounded font-mono text-surface-variant">Enter</kbd>
+</button>
+</div>
+</div>
+<!-- TABELA DE CONFERÊNCIA DOS ITENS (DADOS REALISTAS DE VAREJO) -->
+<div class="border border-outline-variant/50 rounded-xl overflow-hidden bg-surface-container-lowest">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse text-xs">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-semibold border-b border-outline-variant/50 select-none">
+<th class="py-2.5 px-3.5">Código / EAN</th>
+<th class="py-2.5 px-3.5">Produto &amp; Variação</th>
+<th class="py-2.5 px-3.5 text-right">Saldo Esperado (Sistema)</th>
+<th class="py-2.5 px-3.5 text-center w-36">Saldo Contado (Físico)</th>
+<th class="py-2.5 px-3.5 text-center">Divergência</th>
+<th class="py-2.5 px-3.5 text-right w-16">Ações</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30 text-on-surface">
+<!-- Linha 1: Sobra (+2) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-2.5 px-3.5 font-mono text-[11px] text-outline">
+                        7891029384727
+                        <span class="block text-[10px] text-on-surface-variant">SKU-JNS-01-38</span>
+</td>
+<td class="py-2.5 px-3.5 font-medium">
+                        Calça Jeans Skinny Lavagem Clara
+                        <span class="block text-[11px] text-on-surface-variant">Tam 38 · Barra Tradicional</span>
+</td>
+<td class="py-2.5 px-3.5 text-right font-medium tabular-nums text-on-surface-variant">
+                        24 un
+                      </td>
+<td class="py-2.5 px-3.5 text-center">
+<div class="inline-flex items-center border border-outline-variant rounded-md overflow-hidden bg-surface-container-lowest shadow-2xs">
+<button class="px-1.5 py-0.5 text-outline hover:text-on-surface hover:bg-surface-container">−</button>
+<input class="w-10 text-center text-xs font-bold py-1 border-none focus:ring-0 tabular-nums text-on-surface" type="text" value="26"/>
+<button class="px-1.5 py-0.5 text-outline hover:text-on-surface hover:bg-surface-container">+</button>
+</div>
+</td>
+<td class="py-2.5 px-3.5 text-center tabular-nums">
+<span class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold px-2 py-0.5 rounded text-[11px]">
+<span class="material-symbols-outlined text-[12px]">add</span>
+                          +2 un
+                        </span>
+<span class="block text-[10px] text-emerald-700 font-medium mt-0.5">+R$ 299,80</span>
+</td>
+<td class="py-2.5 px-3.5 text-right">
+<button class="p-1 text-outline hover:text-primary rounded" title="Ver detalhes do item">
+<span class="material-symbols-outlined text-[17px]">history</span>
+</button>
+</td>
+</tr>
+<!-- Linha 2: Falta (-1) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors bg-rose-50/20">
+<td class="py-2.5 px-3.5 font-mono text-[11px] text-outline">
+                        7891029384819
+                        <span class="block text-[10px] text-on-surface-variant">SKU-JNS-02-40</span>
+</td>
+<td class="py-2.5 px-3.5 font-medium">
+                        Calça Jeans Slim Denim Escuro
+                        <span class="block text-[11px] text-on-surface-variant">Tam 40 · Linha Premium</span>
+</td>
+<td class="py-2.5 px-3.5 text-right font-medium tabular-nums text-on-surface-variant">
+                        12 un
+                      </td>
+<td class="py-2.5 px-3.5 text-center">
+<div class="inline-flex items-center border border-error/50 rounded-md overflow-hidden bg-surface-container-lowest shadow-2xs">
+<button class="px-1.5 py-0.5 text-outline hover:text-on-surface hover:bg-surface-container">−</button>
+<input class="w-10 text-center text-xs font-bold py-1 border-none focus:ring-0 tabular-nums text-error" type="text" value="11"/>
+<button class="px-1.5 py-0.5 text-outline hover:text-on-surface hover:bg-surface-container">+</button>
+</div>
+</td>
+<td class="py-2.5 px-3.5 text-center tabular-nums">
+<span class="inline-flex items-center gap-1 bg-rose-100 text-rose-800 border border-rose-300 font-bold px-2 py-0.5 rounded text-[11px]">
+<span class="material-symbols-outlined text-[12px]">remove</span>
+                          −1 un
+                        </span>
+<span class="block text-[10px] text-rose-700 font-medium mt-0.5">-R$ 149,90</span>
+</td>
+<td class="py-2.5 px-3.5 text-right">
+<button class="p-1 text-outline hover:text-primary rounded" title="Recontar este SKU">
+<span class="material-symbols-outlined text-[17px]">sync</span>
+</button>
+</td>
+</tr>
+<!-- Linha 3: Conferido OK -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-2.5 px-3.5 font-mono text-[11px] text-outline">
+                        7891029384833
+                        <span class="block text-[10px] text-on-surface-variant">SKU-JKT-04-M</span>
+</td>
+<td class="py-2.5 px-3.5 font-medium">
+                        Jaqueta Jeans Oversized Destroyed
+                        <span class="block text-[11px] text-on-surface-variant">Tamanho M · Unissex</span>
+</td>
+<td class="py-2.5 px-3.5 text-right font-medium tabular-nums text-on-surface-variant">
+                        8 un
+                      </td>
+<td class="py-2.5 px-3.5 text-center">
+<div class="inline-flex items-center border border-outline-variant rounded-md overflow-hidden bg-surface-container-lowest shadow-2xs">
+<button class="px-1.5 py-0.5 text-outline hover:text-on-surface hover:bg-surface-container">−</button>
+<input class="w-10 text-center text-xs font-bold py-1 border-none focus:ring-0 tabular-nums text-on-surface" type="text" value="8"/>
+<button class="px-1.5 py-0.5 text-outline hover:text-on-surface hover:bg-surface-container">+</button>
+</div>
+</td>
+<td class="py-2.5 px-3.5 text-center tabular-nums">
+<span class="inline-flex items-center gap-1 bg-surface-container text-on-surface-variant font-medium px-2 py-0.5 rounded text-[11px]">
+<span class="material-symbols-outlined text-[13px] text-tertiary-container">check_circle</span>
+                          0 un (OK)
+                        </span>
+</td>
+<td class="py-2.5 px-3.5 text-right">
+<button class="p-1 text-outline hover:text-primary rounded" title="Ver detalhes">
+<span class="material-symbols-outlined text-[17px]">history</span>
+</button>
+</td>
+</tr>
+<!-- Linha 4: Short Jeans OK -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-2.5 px-3.5 font-mono text-[11px] text-outline">
+                        7891029384857
+                        <span class="block text-[10px] text-on-surface-variant">SKU-SHT-03-36</span>
+</td>
+<td class="py-2.5 px-3.5 font-medium">
+                        Short Jeans Cintura Alta Desfiado
+                        <span class="block text-[11px] text-on-surface-variant">Tam 36 · Vintage Blue</span>
+</td>
+<td class="py-2.5 px-3.5 text-right font-medium tabular-nums text-on-surface-variant">
+                        15 un
+                      </td>
+<td class="py-2.5 px-3.5 text-center">
+<div class="inline-flex items-center border border-outline-variant rounded-md overflow-hidden bg-surface-container-lowest shadow-2xs">
+<button class="px-1.5 py-0.5 text-outline hover:text-on-surface hover:bg-surface-container">−</button>
+<input class="w-10 text-center text-xs font-bold py-1 border-none focus:ring-0 tabular-nums text-on-surface" type="text" value="15"/>
+<button class="px-1.5 py-0.5 text-outline hover:text-on-surface hover:bg-surface-container">+</button>
+</div>
+</td>
+<td class="py-2.5 px-3.5 text-center tabular-nums">
+<span class="inline-flex items-center gap-1 bg-surface-container text-on-surface-variant font-medium px-2 py-0.5 rounded text-[11px]">
+<span class="material-symbols-outlined text-[13px] text-tertiary-container">check_circle</span>
+                          0 un (OK)
+                        </span>
+</td>
+<td class="py-2.5 px-3.5 text-right">
+<button class="p-1 text-outline hover:text-primary rounded">
+<span class="material-symbols-outlined text-[17px]">history</span>
+</button>
+</td>
+</tr>
+<!-- Linha 5: Sobra (+1) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors">
+<td class="py-2.5 px-3.5 font-mono text-[11px] text-outline">
+                        7891029384895
+                        <span class="block text-[10px] text-on-surface-variant">SKU-WDL-08-42</span>
+</td>
+<td class="py-2.5 px-3.5 font-medium">
+                        Calça Wide Leg Cargo Off-White
+                        <span class="block text-[11px] text-on-surface-variant">Tam 42 · Sarja Acetinada</span>
+</td>
+<td class="py-2.5 px-3.5 text-right font-medium tabular-nums text-on-surface-variant">
+                        10 un
+                      </td>
+<td class="py-2.5 px-3.5 text-center">
+<div class="inline-flex items-center border border-outline-variant rounded-md overflow-hidden bg-surface-container-lowest shadow-2xs">
+<button class="px-1.5 py-0.5 text-outline hover:text-on-surface hover:bg-surface-container">−</button>
+<input class="w-10 text-center text-xs font-bold py-1 border-none focus:ring-0 tabular-nums text-on-surface" type="text" value="11"/>
+<button class="px-1.5 py-0.5 text-outline hover:text-on-surface hover:bg-surface-container">+</button>
+</div>
+</td>
+<td class="py-2.5 px-3.5 text-center tabular-nums">
+<span class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold px-2 py-0.5 rounded text-[11px]">
+<span class="material-symbols-outlined text-[12px]">add</span>
+                          +1 un
+                        </span>
+<span class="block text-[10px] text-emerald-700 font-medium mt-0.5">+R$ 189,00</span>
+</td>
+<td class="py-2.5 px-3.5 text-right">
+<button class="p-1 text-outline hover:text-primary rounded">
+<span class="material-symbols-outlined text-[17px]">history</span>
+</button>
+</td>
+</tr>
+<!-- Linha 6: Falta (-2) -->
+<tr class="hover:bg-surface-container-low/60 transition-colors bg-rose-50/20">
+<td class="py-2.5 px-3.5 font-mono text-[11px] text-outline">
+                        7891029384918
+                        <span class="block text-[10px] text-on-surface-variant">SKU-BER-05-38</span>
+</td>
+<td class="py-2.5 px-3.5 font-medium">
+                        Bermuda Jeans Ciclista Lavada
+                        <span class="block text-[11px] text-on-surface-variant">Tam 38 · Lycra Confort</span>
+</td>
+<td class="py-2.5 px-3.5 text-right font-medium tabular-nums text-on-surface-variant">
+                        17 un
+                      </td>
+<td class="py-2.5 px-3.5 text-center">
+<div class="inline-flex items-center border border-error/50 rounded-md overflow-hidden bg-surface-container-lowest shadow-2xs">
+<button class="px-1.5 py-0.5 text-outline hover:text-on-surface hover:bg-surface-container">−</button>
+<input class="w-10 text-center text-xs font-bold py-1 border-none focus:ring-0 tabular-nums text-error" type="text" value="15"/>
+<button class="px-1.5 py-0.5 text-outline hover:text-on-surface hover:bg-surface-container">+</button>
+</div>
+</td>
+<td class="py-2.5 px-3.5 text-center tabular-nums">
+<span class="inline-flex items-center gap-1 bg-rose-100 text-rose-800 border border-rose-300 font-bold px-2 py-0.5 rounded text-[11px]">
+<span class="material-symbols-outlined text-[12px]">remove</span>
+                          −2 un
+                        </span>
+<span class="block text-[10px] text-rose-700 font-medium mt-0.5">-R$ 178,00</span>
+</td>
+<td class="py-2.5 px-3.5 text-right">
+<button class="p-1 text-outline hover:text-primary rounded">
+<span class="material-symbols-outlined text-[17px]">sync</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Rodapé da Tabela: Paginação e Estado de Itens -->
+<div class="bg-surface-container-low px-4 py-2.5 border-t border-outline-variant/40 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-on-surface-variant">
+<div class="tabular-nums font-medium">
+                  Exibindo <span class="font-bold text-on-surface">6</span> de <span class="font-bold text-on-surface">86</span> itens conferidos · 
+                  <span class="text-amber-800 font-semibold">34 pendentes de bipagem</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="px-2 py-1 rounded border border-outline-variant/50 bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container disabled:opacity-50" disabled="">
+                    Anterior
+                  </button>
+<button class="w-6 h-6 rounded bg-primary text-on-primary font-bold text-xs flex items-center justify-center">
+                    1
+                  </button>
+<button class="w-6 h-6 rounded hover:bg-surface-container text-on-surface-variant text-xs flex items-center justify-center">
+                    2
+                  </button>
+<button class="w-6 h-6 rounded hover:bg-surface-container text-on-surface-variant text-xs flex items-center justify-center">
+                    3
+                  </button>
+<button class="px-2 py-1 rounded border border-outline-variant/50 bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container">
+                    Próxima
+                  </button>
+</div>
+</div>
+</div>
+<!-- RODAPÉ DE AÇÕES DA CONFERÊNCIA -->
+<div class="space-y-3 pt-2">
+<!-- Alerta informativo de conciliação fiscal/física -->
+<div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant/50 flex items-start gap-2.5 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">info</span>
+<p class="leading-relaxed">
+                  A finalização do inventário irá atualizar automaticamente os saldos do estoque no sistema e registrar as movimentações de ajuste (entrada por sobra e baixa por perda/quebra).
+                </p>
+</div>
+<!-- Barra de Botões de Ação Final -->
+<div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
+<div class="flex items-center gap-2 w-full sm:w-auto">
+<button class="w-full sm:w-auto px-3.5 py-2 border border-outline-variant/80 hover:bg-surface-container rounded-lg text-xs font-medium text-on-surface transition-colors flex items-center justify-center gap-1.5 active:scale-[0.98]">
+<span class="material-symbols-outlined text-[16px]">pause_circle</span>
+<span>Salvar Rascunho / Pausar</span>
+<kbd class="text-[10px] bg-surface-container px-1 py-0.2 rounded font-mono text-outline">Esc</kbd>
+</button>
+<button class="w-full sm:w-auto px-3.5 py-2 border border-outline-variant/80 hover:bg-surface-container rounded-lg text-xs font-medium text-on-surface transition-colors flex items-center justify-center gap-1.5 active:scale-[0.98]">
+<span class="material-symbols-outlined text-[16px]">print</span>
+<span>Imprimir Espelho de Divergências</span>
+</button>
+</div>
+<button class="w-full sm:w-auto bg-tertiary-container hover:bg-tertiary text-on-primary px-5 py-2.5 rounded-lg text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span>Finalizar e aplicar ajustes</span>
+<kbd class="text-[10px] bg-tertiary text-tertiary-fixed px-1.5 py-0.5 rounded font-mono">F10</kbd>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

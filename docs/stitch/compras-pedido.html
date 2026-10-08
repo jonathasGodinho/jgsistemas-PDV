@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>JG Sistemas — Compras — Novo Pedido</title>
+<!-- Font & Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "outline-variant": "#c3c6d2",
+            "on-surface": "#0b1c30",
+            "primary-fixed": "#d6e3ff",
+            "on-tertiary-fixed-variant": "#005320",
+            "on-primary-container": "#a2c3ff",
+            "surface-container-low": "#eff4ff",
+            "primary": "#003873",
+            "surface-variant": "#d3e4fe",
+            "on-primary": "#ffffff",
+            "secondary-container": "#bfd5fe",
+            "tertiary-container": "#005d25",
+            "tertiary-fixed": "#7ffc97",
+            "on-surface-variant": "#434750",
+            "inverse-on-surface": "#eaf1ff",
+            "tertiary": "#004319",
+            "surface-container-lowest": "#ffffff",
+            "on-error-container": "#93000a",
+            "surface-bright": "#f8f9ff",
+            "error": "#ba1a1a",
+            "on-background": "#0b1c30",
+            "on-secondary": "#ffffff",
+            "surface-dim": "#cbdbf5",
+            "inverse-surface": "#213145",
+            "error-container": "#ffdad6",
+            "secondary-fixed": "#d5e3ff",
+            "on-secondary-fixed": "#011b3b",
+            "secondary-fixed-dim": "#b2c7f0",
+            "inverse-primary": "#a9c7ff",
+            "tertiary-fixed-dim": "#62df7d",
+            "on-secondary-fixed-variant": "#324769",
+            "background": "#f8f9ff",
+            "surface-container-high": "#dce9ff",
+            "on-tertiary-container": "#5dda7a",
+            "surface-container": "#e5eeff",
+            "surface-tint": "#305ea1",
+            "on-primary-fixed-variant": "#0e4688",
+            "primary-fixed-dim": "#a9c7ff",
+            "on-error": "#ffffff",
+            "on-tertiary-fixed": "#002109",
+            "on-tertiary": "#ffffff",
+            "secondary": "#4a5f82",
+            "primary-container": "#1d4f91",
+            "outline": "#737782",
+            "on-primary-fixed": "#001b3e",
+            "surface-container-highest": "#d3e4fe",
+            "on-secondary-container": "#475c7f",
+            "surface": "#f8f9ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Inter", "sans-serif"],
+            "display": ["Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Inter', sans-serif;
+      font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased overflow-x-hidden min-h-screen">
+<!-- ============================================================== -->
+<!-- SIDEBAR (SHELL ANCHOR: 248px fixa, marinho escuro / on-surface) -->
+<!-- ============================================================== -->
+<aside class="fixed top-0 left-0 bottom-0 w-[248px] h-screen z-40 bg-on-surface text-surface border-r border-outline-variant/20 shadow-sm flex flex-col justify-between p-4 overflow-y-auto">
+<!-- Top Part -->
+<div class="flex flex-col gap-5">
+<!-- Logo & Brand Header -->
+<div class="flex items-center gap-3 px-1 py-1">
+<div class="w-9 h-9 rounded-lg bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center font-headline font-bold text-base shadow-sm">
+          JG
+        </div>
+<div class="flex flex-col leading-tight">
+<span class="font-headline font-bold text-base text-surface tracking-wide">JG Sistemas</span>
+<span class="text-xs text-outline-variant font-medium">Varejo · Moda</span>
+</div>
+</div>
+<!-- Quick PDV Shortcut Button in Sidebar -->
+<button class="w-full flex items-center justify-between px-3 py-2 bg-tertiary-container hover:bg-tertiary text-on-tertiary-container rounded-lg font-medium text-xs tracking-wide transition-colors">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-base">point_of_sale</span>
+<span>Abrir PDV [F1]</span>
+</span>
+<span class="text-[10px] bg-tertiary/40 px-1.5 py-0.5 rounded text-surface">F1</span>
+</button>
+<!-- Navigation Links -->
+<nav class="flex flex-col gap-1 text-sm font-body">
+<!-- Início -->
+<a class="text-surface-variant hover:text-surface hover:bg-surface-variant/10 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Início</span>
+</a>
+<!-- Vendas -->
+<a class="text-surface-variant hover:text-surface hover:bg-surface-variant/10 rounded-lg px-3 py-2 flex items-center justify-between transition-colors cursor-pointer" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">point_of_sale</span>
+<span>Vendas</span>
+</div>
+<span class="material-symbols-outlined text-sm opacity-60">expand_more</span>
+</a>
+<!-- Clientes -->
+<a class="text-surface-variant hover:text-surface hover:bg-surface-variant/10 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined">group</span>
+<span>Clientes</span>
+</a>
+<!-- Catálogo -->
+<a class="text-surface-variant hover:text-surface hover:bg-surface-variant/10 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span>Catálogo</span>
+</a>
+<!-- Estoque (ABERTO COM SUBITENS - COMPRAS ATIVO) -->
+<div class="flex flex-col gap-0.5">
+<div class="bg-primary-container/40 text-surface font-semibold rounded-lg px-3 py-2 flex items-center justify-between cursor-pointer">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-fixed">warehouse</span>
+<span class="text-primary-fixed font-medium">Estoque</span>
+</div>
+<span class="material-symbols-outlined text-sm text-primary-fixed">expand_less</span>
+</div>
+<!-- Submenu do Estoque -->
+<div class="pl-7 pr-1 flex flex-col gap-1 py-1 border-l-2 border-primary-container/60 ml-4 my-1">
+<a class="px-2.5 py-1.5 rounded text-xs text-surface-variant hover:text-surface hover:bg-surface-variant/10 transition-colors" href="#">
+              Posição de estoque
+            </a>
+<a class="px-2.5 py-1.5 rounded text-xs text-surface-variant hover:text-surface hover:bg-surface-variant/10 transition-colors" href="#">
+              Inventário
+            </a>
+<a class="px-2.5 py-1.5 rounded-md text-xs font-semibold bg-tertiary-container/80 text-tertiary-fixed flex items-center justify-between shadow-xs" href="#">
+<span>Compras</span>
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed"></span>
+</a>
+<a class="px-2.5 py-1.5 rounded text-xs text-surface-variant hover:text-surface hover:bg-surface-variant/10 transition-colors" href="#">
+              Fornecedores
+            </a>
+</div>
+</div>
+<!-- Financeiro -->
+<a class="text-surface-variant hover:text-surface hover:bg-surface-variant/10 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span>Financeiro</span>
+</a>
+<!-- Pessoas -->
+<a class="text-surface-variant hover:text-surface hover:bg-surface-variant/10 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined">badge</span>
+<span>Pessoas</span>
+</a>
+<!-- Relatórios -->
+<a class="text-surface-variant hover:text-surface hover:bg-surface-variant/10 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span>Relatórios</span>
+</a>
+<!-- Administração -->
+<a class="text-surface-variant hover:text-surface hover:bg-surface-variant/10 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Administração</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Bottom Status & Segment -->
+<div class="pt-4 border-t border-outline-variant/15 flex flex-col gap-2">
+<div class="flex items-center justify-between text-xs text-surface-variant px-1">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed inline-block animate-pulse"></span>
+<span class="text-[11px] font-medium text-surface">Online · Matriz 01</span>
+</div>
+<span class="text-[10px] text-outline tracking-wider font-mono">v3.4.1</span>
+</div>
+<div class="flex items-center gap-2 text-xs text-surface-variant/80 px-1">
+<span class="material-symbols-outlined text-sm">store</span>
+<span class="text-[11px]">Segmento: Varejo · Moda</span>
+</div>
+</div>
+</aside>
+<!-- ============================================================== -->
+<!-- TOPBAR (SHELL ANCHOR: 56px fixa, bg branca, border-b sutil)    -->
+<!-- ============================================================== -->
+<header class="fixed top-0 left-[248px] right-0 h-14 z-30 bg-surface-container-lowest border-b border-outline-variant/30 flex items-center justify-between px-6 shadow-xs">
+<!-- Breadcrumb & Search -->
+<div class="flex items-center gap-6">
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-1.5 text-xs font-medium">
+<span class="text-outline">Estoque</span>
+<span class="text-outline-variant">/</span>
+<span class="text-outline">Compras</span>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface font-semibold">Novo Pedido</span>
+</nav>
+<!-- Global Search -->
+<div class="relative w-80">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-lg">search</span>
+<input class="w-full h-8 pl-9 pr-14 text-xs bg-surface-container-low border border-outline-variant/40 rounded-lg text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="Buscar módulo, produto ou fornecedor..." type="text"/>
+<kbd class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] bg-surface-container-lowest border border-outline-variant/60 text-outline px-1.5 py-0.5 rounded font-mono">
+          Ctrl+K
+        </kbd>
+</div>
+</div>
+<!-- Actions & User Profile -->
+<div class="flex items-center gap-3">
+<!-- Status Chip Caixa -->
+<div class="flex items-center gap-1.5 px-2.5 py-1 bg-surface-container-low border border-outline-variant/30 rounded-full text-xs font-medium text-tertiary">
+<span class="w-2 h-2 rounded-full bg-tertiary-container inline-block"></span>
+<span class="text-[11px] font-semibold text-on-surface">Caixa 01 · Aberto</span>
+</div>
+<!-- Abrir PDV [F1] -->
+<button class="h-8 px-3.5 bg-tertiary-container hover:bg-tertiary text-on-tertiary-container rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-xs">
+<span class="material-symbols-outlined text-sm">point_of_sale</span>
+<span>Abrir PDV</span>
+<span class="text-[10px] opacity-75 font-normal ml-0.5">[F1]</span>
+</button>
+<div class="h-5 w-px bg-outline-variant/40 mx-1"></div>
+<!-- Notification Icon -->
+<button class="relative p-1.5 text-outline hover:text-on-surface hover:bg-surface-container-low rounded-lg transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full ring-2 ring-surface-container-lowest"></span>
+</button>
+<!-- Help Icon -->
+<button class="p-1.5 text-outline hover:text-on-surface hover:bg-surface-container-low rounded-lg transition-colors">
+<span class="material-symbols-outlined">help</span>
+</button>
+<!-- User Avatar Cluster -->
+<div class="flex items-center gap-2 pl-2 border-l border-outline-variant/30">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-semibold text-xs border border-primary/20">
+          JG
+        </div>
+<div class="flex flex-col text-left leading-tight">
+<span class="text-xs font-semibold text-on-surface">Juliana Gomes</span>
+<span class="text-[10px] text-outline">Gerente Geral</span>
+</div>
+</div>
+</div>
+</header>
+<!-- ============================================================== -->
+<!-- MAIN CONTENT CANVAS (Offset: left 248px, top 56px)              -->
+<!-- ============================================================== -->
+<main class="ml-[248px] pt-14 pb-12 min-h-screen">
+<div class="max-w-[1360px] mx-auto px-6 py-5 flex flex-col gap-5">
+<!-- PAGE HEADER BAR -->
+<section class="flex flex-wrap items-center justify-between gap-4 pb-2 border-b border-outline-variant/20">
+<div>
+<div class="flex items-center gap-3">
+<h1 class="text-xl font-headline font-bold text-on-surface tracking-tight">
+              Compras e Fornecedores
+            </h1>
+<span class="px-2 py-0.5 bg-primary-fixed text-on-primary-fixed-variant text-[11px] font-semibold rounded-md border border-primary-container/20">
+              Novo Pedido de Compra [F2]
+            </span>
+</div>
+<p class="text-xs text-outline mt-0.5">
+            Emissão de ordens de compra, controle de reposição com fornecedores credenciados e previsão de entrega.
+          </p>
+</div>
+<!-- Header Actions -->
+<div class="flex items-center gap-2">
+<button class="h-9 px-3 bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low text-on-surface text-xs font-medium rounded-lg flex items-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-sm text-outline">history</span>
+<span>Histórico de Compras</span>
+</button>
+<button class="h-9 px-3 bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low text-on-surface text-xs font-medium rounded-lg flex items-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-sm text-outline">file_upload</span>
+<span>Importar XML de NF-e</span>
+</button>
+<button class="h-9 px-4 bg-tertiary-container hover:bg-tertiary text-on-tertiary-container text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors shadow-xs">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+<span>Registrar pedido [F10]</span>
+</button>
+</div>
+</section>
+<!-- TWO-COLUMN WORKFLOW GRID (62% / 38%) -->
+<div class="grid grid-cols-12 gap-5 items-start">
+<!-- LEFT COLUMN: Novo Pedido Form + Items Table (col-span-8 ~ 66% ou 7.5 de 12) -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-4">
+<!-- MAIN CARD: FORMULÁRIO DE PEDIDO DE COMPRA -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/40 shadow-xs p-5 flex flex-col gap-5">
+<!-- 1. Header do Pedido: Informações de Fornecedor e Condições -->
+<div>
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/20 mb-3.5">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+<h2 class="text-sm font-semibold text-on-surface">Dados do Fornecedor &amp; Faturamento</h2>
+</div>
+<span class="text-[11px] text-outline font-medium">Ordem de Compra: <span class="font-mono text-on-surface font-semibold">#PC-0088 (Novo)</span></span>
+</div>
+<div class="grid grid-cols-12 gap-3.5">
+<!-- Fornecedor Select / Display -->
+<div class="col-span-12 sm:col-span-6 flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<label class="text-[11px] font-semibold text-on-surface-variant">Fornecedor Credenciado</label>
+<a class="text-[10px] text-primary hover:underline font-medium" href="#">Ver ficha do fornecedor</a>
+</div>
+<div class="relative">
+<select class="w-full h-9 pl-3 pr-8 text-xs bg-surface-container-lowest border border-outline-variant/60 rounded-lg text-on-surface font-medium focus:ring-1 focus:ring-primary focus:border-primary">
+<option selected="">Jeans Brasil Confecções EIRELI (CNPJ 22.451.980/0001-19)</option>
+<option>Malharia Santa Rita Ltda (CNPJ 04.912.871/0001-44)</option>
+<option>Fiação &amp; Tecelagem Paulista (CNPJ 54.120.300/0001-92)</option>
+<option>Couros do Sul Artefatos S.A. (CNPJ 18.234.901/0002-30)</option>
+</select>
+</div>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-tertiary-container/30 text-on-tertiary-fixed-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span>
+                      Fornecedor Homologado
+                    </span>
+<span class="text-[10px] text-outline">I.E.: 104.982.119.001 · São Paulo - SP</span>
+</div>
+</div>
+<!-- Condição de Pagamento -->
+<div class="col-span-6 sm:col-span-2 flex flex-col gap-1">
+<label class="text-[11px] font-semibold text-on-surface-variant">Condição Pagamento</label>
+<select class="w-full h-9 px-2 text-xs bg-surface-container-lowest border border-outline-variant/60 rounded-lg text-on-surface font-medium focus:ring-1 focus:ring-primary focus:border-primary">
+<option selected="">Boleto 30/60 dias</option>
+<option>Boleto à vista</option>
+<option>Boleto 28/56/84 dias</option>
+<option>PIX Antecipado (3% desc)</option>
+</select>
+</div>
+<!-- Previsão de Entrega -->
+<div class="col-span-6 sm:col-span-2 flex flex-col gap-1">
+<label class="text-[11px] font-semibold text-on-surface-variant">Previsão Entrega</label>
+<div class="relative">
+<input class="w-full h-9 px-2 text-xs bg-surface-container-lowest border border-outline-variant/60 rounded-lg text-on-surface font-medium focus:ring-1 focus:ring-primary focus:border-primary" type="text" value="24/10/2026 (14 dias)"/>
+</div>
+</div>
+<!-- Comprador Responsável -->
+<div class="col-span-12 sm:col-span-2 flex flex-col gap-1">
+<label class="text-[11px] font-semibold text-on-surface-variant">Comprador Resp.</label>
+<input class="w-full h-9 px-2 text-xs bg-surface-container-low border border-outline-variant/40 rounded-lg text-on-surface font-medium cursor-not-allowed" readonly="" type="text" value="Juliana Gomes"/>
+</div>
+</div>
+</div>
+<!-- 2. Barra de Adição Rápida de Produtos (Quick SKU Insertion) -->
+<div class="bg-surface-container-low/70 p-3 rounded-lg border border-outline-variant/30">
+<div class="flex items-center gap-2">
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-lg">barcode_scanner</span>
+<input class="w-full h-9 pl-9 pr-3 text-xs bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" placeholder="Buscar por código de barras, SKU ou descrição do produto [F3]..." type="text"/>
+</div>
+<!-- Campo Quantidade com Stepper -->
+<div class="w-28 flex items-center bg-surface-container-lowest border border-outline-variant/50 rounded-lg h-9 px-2">
+<span class="text-[10px] text-outline font-semibold uppercase mr-1">Qtd</span>
+<input class="w-full text-xs font-semibold text-on-surface focus:outline-none border-0 p-0 text-center tabular-nums" type="number" value="10"/>
+</div>
+<!-- Botão Inserir Item -->
+<button class="h-9 px-4 bg-primary text-on-primary hover:bg-primary-container text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors shadow-xs">
+<span class="material-symbols-outlined text-sm">add</span>
+<span>Inserir item</span>
+</button>
+</div>
+</div>
+<!-- 3. Tabela Densa de Itens do Pedido -->
+<div>
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2">
+<h3 class="text-xs font-bold uppercase tracking-wider text-outline">Grade de Produtos Inclusos</h3>
+<span class="px-2 py-0.2 bg-secondary-container text-on-secondary-container text-[11px] font-bold rounded-full">5 itens</span>
+</div>
+<span class="text-[11px] text-outline">Clique na quantidade para editar em lote</span>
+</div>
+<!-- Table Container -->
+<div class="overflow-x-auto border border-outline-variant/30 rounded-lg">
+<table class="w-full text-left border-collapse text-xs">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-semibold text-[11px] border-b border-outline-variant/30">
+<th class="py-2.5 px-3">Item / Descrição</th>
+<th class="py-2.5 px-2">SKU &amp; Grade</th>
+<th class="py-2.5 px-2 text-center w-24">Qtd Compra</th>
+<th class="py-2.5 px-2 text-right">Custo Unit.</th>
+<th class="py-2.5 px-2 text-right">Venda Sugerida</th>
+<th class="py-2.5 px-3 text-right">Subtotal</th>
+<th class="py-2.5 px-2 text-center w-10">Ações</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20 text-on-surface">
+<!-- Item 1 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-2.5 px-3">
+<div class="font-medium text-on-surface">Calça Jeans Skinny Alta Lavagem Clara</div>
+<div class="text-[10px] text-outline">Composição: 98% Algodão, 2% Elastano · Cód. Fab: 884-CL</div>
+</td>
+<td class="py-2.5 px-2">
+<span class="font-mono text-[11px] bg-surface-container px-1 py-0.5 rounded text-primary">JNS-2011</span>
+<div class="text-[10px] text-outline-variant font-medium mt-0.5">Grade: 36 ao 44</div>
+</td>
+<td class="py-2.5 px-2 text-center">
+<div class="inline-flex items-center border border-outline-variant/50 rounded bg-surface-container-lowest px-1.5 py-0.5">
+<input class="w-12 text-xs font-semibold text-center border-0 p-0 text-on-surface tabular-nums focus:ring-0" type="text" value="20 un"/>
+</div>
+</td>
+<td class="py-2.5 px-2 text-right tabular-nums font-medium text-on-surface">
+                        R$ 75,00
+                      </td>
+<td class="py-2.5 px-2 text-right tabular-nums text-outline">
+                        R$ 189,90 <span class="text-[10px] text-tertiary font-semibold">(60%)</span>
+</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-semibold text-on-surface">
+                        R$ 1.500,00
+                      </td>
+<td class="py-2.5 px-2 text-center">
+<button class="p-1 text-outline hover:text-error hover:bg-error-container/40 rounded transition-colors" title="Remover item">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</td>
+</tr>
+<!-- Item 2 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-2.5 px-3">
+<div class="font-medium text-on-surface">Vestido Midi Floral Estampado</div>
+<div class="text-[10px] text-outline">Viscose Premium forrada com zíper invisível · Coleção Primavera</div>
+</td>
+<td class="py-2.5 px-2">
+<span class="font-mono text-[11px] bg-surface-container px-1 py-0.5 rounded text-primary">MOD-4819</span>
+<div class="text-[10px] text-outline-variant font-medium mt-0.5">Grade: P / M / G</div>
+</td>
+<td class="py-2.5 px-2 text-center">
+<div class="inline-flex items-center border border-outline-variant/50 rounded bg-surface-container-lowest px-1.5 py-0.5">
+<input class="w-12 text-xs font-semibold text-center border-0 p-0 text-on-surface tabular-nums focus:ring-0" type="text" value="15 un"/>
+</div>
+</td>
+<td class="py-2.5 px-2 text-right tabular-nums font-medium text-on-surface">
+                        R$ 98,00
+                      </td>
+<td class="py-2.5 px-2 text-right tabular-nums text-outline">
+                        R$ 249,90 <span class="text-[10px] text-tertiary font-semibold">(61%)</span>
+</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-semibold text-on-surface">
+                        R$ 1.470,00
+                      </td>
+<td class="py-2.5 px-2 text-center">
+<button class="p-1 text-outline hover:text-error hover:bg-error-container/40 rounded transition-colors" title="Remover item">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</td>
+</tr>
+<!-- Item 3 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-2.5 px-3">
+<div class="font-medium text-on-surface">Jaqueta Jeans Oversized Destroyed</div>
+<div class="text-[10px] text-outline">Bolsos frontais utilitários e botões em latão envelhecido</div>
+</td>
+<td class="py-2.5 px-2">
+<span class="font-mono text-[11px] bg-surface-container px-1 py-0.5 rounded text-primary">JNS-8841</span>
+<div class="text-[10px] text-outline-variant font-medium mt-0.5">Grade: M / G</div>
+</td>
+<td class="py-2.5 px-2 text-center">
+<div class="inline-flex items-center border border-outline-variant/50 rounded bg-surface-container-lowest px-1.5 py-0.5">
+<input class="w-12 text-xs font-semibold text-center border-0 p-0 text-on-surface tabular-nums focus:ring-0" type="text" value="12 un"/>
+</div>
+</td>
+<td class="py-2.5 px-2 text-right tabular-nums font-medium text-on-surface">
+                        R$ 120,00
+                      </td>
+<td class="py-2.5 px-2 text-right tabular-nums text-outline">
+                        R$ 289,00 <span class="text-[10px] text-tertiary font-semibold">(58%)</span>
+</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-semibold text-on-surface">
+                        R$ 1.440,00
+                      </td>
+<td class="py-2.5 px-2 text-center">
+<button class="p-1 text-outline hover:text-error hover:bg-error-container/40 rounded transition-colors" title="Remover item">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</td>
+</tr>
+<!-- Item 4 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-2.5 px-3">
+<div class="font-medium text-on-surface">Camiseta Básica Algodão Egípcio Branca</div>
+<div class="text-[10px] text-outline">Fio penteado 40.1 anti-pilling com costura reforçada</div>
+</td>
+<td class="py-2.5 px-2">
+<span class="font-mono text-[11px] bg-surface-container px-1 py-0.5 rounded text-primary">BAS-1002</span>
+<div class="text-[10px] text-outline-variant font-medium mt-0.5">Grade: P / M / G / GG</div>
+</td>
+<td class="py-2.5 px-2 text-center">
+<div class="inline-flex items-center border border-outline-variant/50 rounded bg-surface-container-lowest px-1.5 py-0.5">
+<input class="w-12 text-xs font-semibold text-center border-0 p-0 text-on-surface tabular-nums focus:ring-0" type="text" value="30 un"/>
+</div>
+</td>
+<td class="py-2.5 px-2 text-right tabular-nums font-medium text-on-surface">
+                        R$ 28,50
+                      </td>
+<td class="py-2.5 px-2 text-right tabular-nums text-outline">
+                        R$ 79,90 <span class="text-[10px] text-tertiary font-semibold">(64%)</span>
+</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-semibold text-on-surface">
+                        R$ 855,00
+                      </td>
+<td class="py-2.5 px-2 text-center">
+<button class="p-1 text-outline hover:text-error hover:bg-error-container/40 rounded transition-colors" title="Remover item">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</td>
+</tr>
+<!-- Item 5 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-2.5 px-3">
+<div class="font-medium text-on-surface">Blusa Cropped Canelada Manga Longa</div>
+<div class="text-[10px] text-outline">Malha canelada encorpada gola alta cor Terracota</div>
+</td>
+<td class="py-2.5 px-2">
+<span class="font-mono text-[11px] bg-surface-container px-1 py-0.5 rounded text-primary">MOD-3312</span>
+<div class="text-[10px] text-outline-variant font-medium mt-0.5">Grade: P / M</div>
+</td>
+<td class="py-2.5 px-2 text-center">
+<div class="inline-flex items-center border border-outline-variant/50 rounded bg-surface-container-lowest px-1.5 py-0.5">
+<input class="w-12 text-xs font-semibold text-center border-0 p-0 text-on-surface tabular-nums focus:ring-0" type="text" value="33 un"/>
+</div>
+</td>
+<td class="py-2.5 px-2 text-right tabular-nums font-medium text-on-surface">
+                        R$ 36,81
+                      </td>
+<td class="py-2.5 px-2 text-right tabular-nums text-outline">
+                        R$ 89,90 <span class="text-[10px] text-tertiary font-semibold">(59%)</span>
+</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-semibold text-on-surface">
+                        R$ 1.215,00
+                      </td>
+<td class="py-2.5 px-2 text-center">
+<button class="p-1 text-outline hover:text-error hover:bg-error-container/40 rounded transition-colors" title="Remover item">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- 4. Rodapé e Resumo Financeiro do Card -->
+<div class="pt-3 border-t border-outline-variant/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+<!-- Métricas de Margem & Volumes -->
+<div class="flex items-center gap-6 text-xs text-on-surface-variant">
+<div class="flex flex-col">
+<span class="text-[10px] text-outline uppercase font-semibold">Total de Peças</span>
+<span class="font-bold text-on-surface tabular-nums text-sm">110 volumes</span>
+</div>
+<div class="h-7 w-px bg-outline-variant/40"></div>
+<div class="flex flex-col">
+<span class="text-[10px] text-outline uppercase font-semibold">Margem Bruta Proj.</span>
+<span class="font-bold text-tertiary tabular-nums text-sm">58,4%</span>
+</div>
+<div class="h-7 w-px bg-outline-variant/40"></div>
+<div class="flex flex-col">
+<span class="text-[10px] text-outline uppercase font-semibold">Tipo de Frete</span>
+<span class="font-semibold text-on-surface">CIF (Por conta do Fornecedor)</span>
+</div>
+</div>
+<!-- Destaque Total do Pedido -->
+<div class="flex items-center gap-3 bg-surface-container-low px-4 py-2.5 rounded-lg border border-outline-variant/30">
+<div class="text-right">
+<span class="text-[10px] uppercase font-bold text-outline block">Total Líquido</span>
+<span class="text-lg font-headline font-bold text-on-surface tabular-nums">R$ 6.480,00</span>
+</div>
+</div>
+</div>
+<!-- Ações Finais do Formulário -->
+<div class="flex items-center justify-between pt-2">
+<button class="h-9 px-4 text-xs font-semibold text-error hover:bg-error-container/30 rounded-lg transition-colors flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm">delete_sweep</span>
+<span>Limpar itens</span>
+</button>
+<div class="flex items-center gap-2">
+<button class="h-9 px-4 bg-surface-container-low hover:bg-surface-container border border-outline-variant/40 text-on-surface text-xs font-semibold rounded-lg transition-colors">
+                  Salvar como Rascunho
+                </button>
+<button class="h-9 px-5 bg-tertiary-container hover:bg-tertiary text-on-tertiary-container text-xs font-bold rounded-lg flex items-center gap-2 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-sm">check</span>
+<span>Registrar Pedido [F10]</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Observações & Instruções Adicionais de Entrega -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 p-3.5 flex items-center justify-between text-xs text-outline">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-base text-primary">local_shipping</span>
+<span>Local de descarregamento: <strong>Galpão Matriz 01 (Docas 02)</strong> · Horário de recebimento: Seg à Sex, 08h às 17h</span>
+</div>
+<button class="text-primary hover:underline font-medium text-[11px]">Editar instruções</button>
+</div>
+</div>
+<!-- RIGHT COLUMN: Painel "Pedidos de Compra Recentes" (col-span-4 ~ 34%) -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-4">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/40 shadow-xs p-4 flex flex-col gap-3.5">
+<!-- Header do Painel Lateral -->
+<div class="flex items-center justify-between pb-2 border-b border-outline-variant/20">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-base">receipt_long</span>
+<h2 class="text-sm font-semibold text-on-surface">Pedidos Recentes</h2>
+</div>
+<button class="text-primary hover:underline text-xs font-semibold">Atualizar</button>
+</div>
+<!-- Segmented Filter Tabs -->
+<div class="flex bg-surface-container-low p-0.5 rounded-lg text-xs font-medium">
+<button class="flex-1 py-1 rounded bg-surface-container-lowest text-on-surface shadow-xs text-center font-semibold text-[11px]">
+                Todos (48)
+              </button>
+<button class="flex-1 py-1 rounded text-outline hover:text-on-surface text-center font-medium text-[11px] transition-colors">
+                Abertos (5)
+              </button>
+<button class="flex-1 py-1 rounded text-outline hover:text-on-surface text-center font-medium text-[11px] transition-colors">
+                Recebidos
+              </button>
+</div>
+<!-- Quick Filter Input -->
+<div class="relative">
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-outline text-base">filter_list</span>
+<input class="w-full h-8 pl-8 pr-3 text-xs bg-surface-container-lowest border border-outline-variant/50 rounded-lg text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" placeholder="Filtrar fornecedor ou PC#..." type="text"/>
+</div>
+<!-- List of Orders Cards -->
+<div class="flex flex-col gap-2.5">
+<!-- PC-0087 (Hoje) -->
+<div class="p-3 bg-surface-container-low/60 hover:bg-surface-container-low rounded-lg border border-primary/30 transition-all cursor-pointer">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-mono font-bold text-xs text-primary">#PC-0087</span>
+<span class="text-[10px] text-outline">Hoje às 11:20</span>
+</div>
+<span class="text-xs font-semibold text-on-surface mt-0.5">Jeans Brasil Confecções</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-surface-variant text-on-primary-fixed-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
+                    Aberto
+                  </span>
+</div>
+<div class="flex items-center justify-between mt-2 pt-2 border-t border-outline-variant/20 text-xs">
+<span class="text-outline text-[11px]">110 itens</span>
+<span class="font-bold text-on-surface tabular-nums">R$ 6.480,00</span>
+</div>
+</div>
+<!-- PC-0086 -->
+<div class="p-3 bg-surface-container-lowest hover:bg-surface-container-low/50 rounded-lg border border-outline-variant/30 transition-all cursor-pointer">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-mono font-bold text-xs text-on-surface">#PC-0086</span>
+<span class="text-[10px] text-outline">07/10/2026</span>
+</div>
+<span class="text-xs font-semibold text-on-surface mt-0.5">Malharia Santa Rita Ltda</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-surface-variant text-on-primary-fixed-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                    Aberto
+                  </span>
+</div>
+<div class="flex items-center justify-between mt-2 pt-2 border-t border-outline-variant/20 text-xs">
+<span class="text-outline text-[11px]">85 itens</span>
+<span class="font-bold text-on-surface tabular-nums">R$ 4.310,00</span>
+</div>
+</div>
+<!-- PC-0085 -->
+<div class="p-3 bg-surface-container-lowest hover:bg-surface-container-low/50 rounded-lg border border-outline-variant/30 transition-all cursor-pointer">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-mono font-bold text-xs text-on-surface">#PC-0085</span>
+<span class="text-[10px] text-outline">03/10/2026</span>
+</div>
+<span class="text-xs font-semibold text-on-surface mt-0.5">Fiação &amp; Tecelagem Paulista</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-tertiary-container/20 text-on-tertiary-fixed-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span>
+                    Recebido
+                  </span>
+</div>
+<div class="flex items-center justify-between mt-2 pt-2 border-t border-outline-variant/20 text-xs">
+<span class="text-outline text-[11px]">240 itens</span>
+<span class="font-bold text-on-surface tabular-nums">R$ 12.850,00</span>
+</div>
+</div>
+<!-- PC-0084 -->
+<div class="p-3 bg-surface-container-lowest hover:bg-surface-container-low/50 rounded-lg border border-outline-variant/30 transition-all cursor-pointer">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-mono font-bold text-xs text-on-surface">#PC-0084</span>
+<span class="text-[10px] text-outline">28/09/2026</span>
+</div>
+<span class="text-xs font-semibold text-on-surface mt-0.5">Couros do Sul Artefatos S.A.</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-tertiary-container/20 text-on-tertiary-fixed-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span>
+                    Recebido
+                  </span>
+</div>
+<div class="flex items-center justify-between mt-2 pt-2 border-t border-outline-variant/20 text-xs">
+<span class="text-outline text-[11px]">45 itens</span>
+<span class="font-bold text-on-surface tabular-nums">R$ 5.920,00</span>
+</div>
+</div>
+<!-- PC-0083 (Cancelado) -->
+<div class="p-3 bg-surface-container-lowest hover:bg-surface-container-low/50 rounded-lg border border-outline-variant/30 transition-all cursor-pointer opacity-80">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-mono font-bold text-xs text-outline line-through">#PC-0083</span>
+<span class="text-[10px] text-outline">20/09/2026</span>
+</div>
+<span class="text-xs font-medium text-on-surface-variant mt-0.5">Aviamentos Estrela Dourada</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-error-container text-on-error-container">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                    Cancelado
+                  </span>
+</div>
+<div class="flex items-center justify-between mt-2 pt-2 border-t border-outline-variant/20 text-xs">
+<span class="text-error text-[10px]">Motivo: Prazo expirado</span>
+<span class="font-medium text-outline tabular-nums">R$ 1.840,00</span>
+</div>
+</div>
+</div>
+<!-- Resumo Mensal & Footer da Lista Direita -->
+<div class="mt-2 pt-3 border-t border-outline-variant/30 flex flex-col gap-2">
+<div class="bg-surface-container-low p-2.5 rounded-lg flex items-center justify-between text-xs">
+<span class="text-outline font-medium">Comprometido no Mês:</span>
+<span class="font-bold text-on-surface tabular-nums">R$ 23.640,00</span>
+</div>
+<a class="w-full text-center py-1.5 text-xs font-semibold text-primary hover:bg-surface-container-low rounded-lg transition-colors flex items-center justify-center gap-1" href="#">
+<span>Ver todos os 48 pedidos</span>
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Micro Card: Suporte a Fornecedores e Prazos -->
+<div class="bg-surface-container-low/50 border border-outline-variant/40 rounded-xl p-3.5 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-2xl">verified</span>
+<div class="flex flex-col text-xs leading-tight">
+<span class="font-semibold text-on-surface">Auditoria de XML Ativa</span>
+<span class="text-[11px] text-outline mt-0.5">Notas fiscais eletrônicas confrontadas automaticamente com os pedidos cadastrados.</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- ============================================================== -->
+<!-- FOOTER INFERIOR (TECLAS DE ATALHO ERP JG SISTEMAS)            -->
+<!-- ============================================================== -->
+<footer class="fixed bottom-0 left-[248px] right-0 h-8 bg-surface-container-lowest border-t border-outline-variant/30 px-6 flex items-center justify-between text-[11px] text-outline z-20">
+<div class="flex items-center gap-4">
+<span class="font-semibold text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-sm text-outline">keyboard</span>
+        Atalhos:
+      </span>
+<span class="flex items-center gap-1">
+<kbd class="px-1 py-0.2 bg-surface-container border border-outline-variant rounded font-mono text-[10px]">F1</kbd> PDV
+      </span>
+<span class="flex items-center gap-1">
+<kbd class="px-1 py-0.2 bg-surface-container border border-outline-variant rounded font-mono text-[10px]">F2</kbd> Novo Pedido
+      </span>
+<span class="flex items-center gap-1">
+<kbd class="px-1 py-0.2 bg-surface-container border border-outline-variant rounded font-mono text-[10px]">F3</kbd> Buscar Produto
+      </span>
+<span class="flex items-center gap-1 font-medium text-tertiary">
+<kbd class="px-1 py-0.2 bg-tertiary-container/30 border border-tertiary-container rounded font-mono text-[10px]">F10</kbd> Registrar Pedido
+      </span>
+<span class="flex items-center gap-1">
+<kbd class="px-1 py-0.2 bg-surface-container border border-outline-variant rounded font-mono text-[10px]">Esc</kbd> Cancelar / Voltar
+      </span>
+</div>
+<div class="flex items-center gap-3">
+<span>© 2026 JG Sistemas de Gestão Comercial</span>
+<span class="text-outline-variant">·</span>
+<span class="font-mono text-[10px] text-outline">Terminal: CX-01-OP-JULIANA</span>
+</div>
+</footer>
+</body></html>

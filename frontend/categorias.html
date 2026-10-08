@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>Categorias e marcas - JG Sistemas</title>
+    <link rel="stylesheet" href="/ui/jg.css">
+    <style>
+        .form-inline { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; padding: 14px 16px; border-bottom: 1px solid var(--border); background: var(--surface-2); border-radius: var(--radius) var(--radius) 0 0; }
+        .form-inline .campo { margin: 0; }
+        .form-inline .nome { flex: 1; min-width: 220px; }
+        tr.editando td { background: var(--primary-soft); }
+    </style>
+</head>
+<body class="jg" data-pagina="categorias">
+    <main>
+        <div class="page-head">
+            <div><h1>Categorias e marcas</h1><div class="sub">Organize o catálogo por categoria, marca e coleção.</div></div>
+            <div class="acoes"><a class="btn" href="/produtos.html"><span class="ms">inventory_2</span>Ver produtos</a></div>
+        </div>
+
+        <div class="abas">
+            <button class="aba ativa" data-tipo="categorias">Categorias <span class="contador" id="cont-categorias">0</span></button>
+            <button class="aba" data-tipo="marcas">Marcas <span class="contador" id="cont-marcas">0</span></button>
+            <button class="aba" data-tipo="colecoes">Coleções <span class="contador" id="cont-colecoes">0</span></button>
+        </div>
+
+        <div class="card">
+            <div class="form-inline">
+                <div class="campo nome"><label for="f-nome" id="lbl-nome">Nova categoria</label><input type="text" id="f-nome" placeholder="Nome"></div>
+                <div class="campo so-colecao hidden" style="width:180px"><label for="f-temporada">Temporada</label>
+                    <select id="f-temporada"><option value="">Selecione...</option><option value="VERAO">Verão</option><option value="INVERNO">Inverno</option><option value="PRIMAVERA">Primavera</option><option value="OUTONO">Outono</option><option value="PERMANENTE">Permanente</option></select></div>
+                <div class="campo so-colecao hidden" style="width:110px"><label for="f-ano">Ano</label><input type="number" id="f-ano" placeholder="2026" min="2000" max="2100"></div>
+                <button class="btn btn-sucesso" id="btn-salvar" onclick="salvar()"><span class="ms">add</span><span id="txt-salvar">Adicionar</span></button>
+                <button class="btn hidden" id="btn-cancelar" onclick="cancelarEdicao()">Cancelar</button>
+            </div>
+            <div class="tabela-wrap">
+                <table>
+                    <thead id="thead"></thead>
+                    <tbody id="tbody"><tr><td class="sem-dados">Carregando...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script src="/seguranca.js"></script>
+    <script src="/ui/shell.js"></script>
+    <script>
+        const TEMPORADAS = { VERAO: 'Verão', INVERNO: 'Inverno', PRIMAVERA: 'Primavera', OUTONO: 'Outono', PERMANENTE: 'Permanente' };
+        const TIPOS = {
+            categorias: { singular: 'categoria', api: '/api/categorias', vazio: 'Nenhuma categoria cadastrada.', icone: 'category' },
+            marcas: { singular: 'marca', api: '/api/marcas', vazio: 'Nenhuma marca cadastrada.', icone: 'sell' },
+            colecoes: { singular: 'coleção', api: '/api/colecoes', vazio: 'Nenhuma coleção cadastrada.', icone: 'style' }
+        };
+        let tipo = 'categorias';
+        let dados = { categorias: [], marcas: [], colecoes: [] };
+        let editandoId = null;
+        const $ = (id) => document.getElementById(id);
+
+        async function api(url, metodo = 'GET', corpo = null) {
+            const opcoes = { method: metodo, headers: { 'Content-Type': 'application/json' } };
+            if (corpo) opcoes.body = JSON.stringify(corpo);
+            const r = await fetch(url, opcoes);
+            if (r.status === 401) { localStorage.removeItem('jg_operador'); location.href = '/login.html'; throw new Error('Sessão expirada.'); }
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.erro || 'Erro na requisição');
+            return d;
+        }
+        (function () { const op = JG.operador(); if (op && op.papel === 'SELLER') location.href = '/'; })();
+
+        async function carregar(t) {
+            try { dados[t] = await api(TIPOS[t].api); } catch (e) { dados[t] = []; JG.toast(e.message, 'erro'); }
+            $('cont-' + t).textContent = dados[t].length;
+        }
+
+        function trocarAba(t) {
+            tipo = t;
+            document.querySelectorAll('[data-tipo]').forEach(b => b.classList.toggle('ativa', b.dataset.tipo === t));
+            document.querySelectorAll('.so-colecao').forEach(el => el.classList.toggle('hidden', t !== 'colecoes'));
+            history.replaceState(null, '', '#' + t);
+            cancelarEdicao();
+            renderizar();
+        }
+        document.querySelectorAll('[data-tipo]').forEach(b => b.addEventListener('click', () => trocarAba(b.dataset.tipo)));
+
+        function renderizar() {
+            const col = tipo === 'colecoes';
+            $('thead').innerHTML = `<tr><th>Nome</th>${col ? '<th>Temporada</th><th>Ano</th>' : ''}<th class="right">Produtos</th><th>Status</th><th class="acoes">Ações</th></tr>`;
+            const lista = dados[tipo];
+            const cols = col ? 6 : 4;
+            if (!lista.length) {
+                $('tbody').innerHTML = `<tr><td colspan="${cols}"><div class="estado-vazio"><span class="ms">${TIPOS[tipo].icone}</span><p>${TIPOS[tipo].vazio}</p></div></td></tr>`;
+                return;
+            }
+            $('tbody').innerHTML = lista.map(x => `<tr class="${editandoId === x.id ? 'editando' : ''}">
+                <td><b>${esc(x.nome)}</b></td>
+                ${col ? `<td>${x.temporada ? `<span class="chip" style="height:24px;cursor:default">${esc(TEMPORADAS[x.temporada] || x.temporada)}</span>` : '<span class="muted">—</span>'}</td><td>${x.ano || '—'}</td>` : ''}
+                <td class="right">${x.produtos}</td>
+                <td><label class="toggle" title="${x.ativo ? 'Desativar' : 'Ativar'}"><input type="checkbox" ${x.ativo ? 'checked' : ''} onchange="alternarAtivo('${x.id}', this.checked)"><span class="trilho"></span><span class="badge ${x.ativo ? 'ativo' : 'inativo'}">${x.ativo ? 'Ativo' : 'Inativo'}</span></label></td>
+                <td class="acoes">
+                    <button class="btn-icone" title="Editar" onclick="editar('${x.id}')"><span class="ms">edit</span></button>
+                    <button class="btn-icone perigo" title="Excluir" onclick="excluir('${x.id}')"><span class="ms">delete</span></button>
+                </td></tr>`).join('');
+        }
+
+        function editar(id) {
+            const x = dados[tipo].find(i => i.id === id);
+            if (!x) return;
+            editandoId = id;
+            $('f-nome').value = x.nome;
+            if (tipo === 'colecoes') { $('f-temporada').value = x.temporada || ''; $('f-ano').value = x.ano || ''; }
+            $('lbl-nome').textContent = 'Editar ' + TIPOS[tipo].singular;
+            $('txt-salvar').textContent = 'Salvar';
+            $('btn-salvar').querySelector('.ms').textContent = 'check';
+            $('btn-cancelar').classList.remove('hidden');
+            $('f-nome').focus();
+            renderizar();
+        }
+        function cancelarEdicao() {
+            editandoId = null;
+            $('f-nome').value = ''; $('f-temporada').value = ''; $('f-ano').value = '';
+            $('lbl-nome').textContent = 'Nova ' + TIPOS[tipo].singular;
+            $('txt-salvar').textContent = 'Adicionar';
+            $('btn-salvar').querySelector('.ms').textContent = 'add';
+            $('btn-cancelar').classList.add('hidden');
+            renderizar();
+        }
+
+        async function salvar() {
+            const nome = $('f-nome').value.trim();
+            if (!nome) { JG.toast('Informe o nome.', 'alerta'); $('f-nome').focus(); return; }
+            const corpo = { nome };
+            if (tipo === 'colecoes') { corpo.temporada = $('f-temporada').value || null; corpo.ano = $('f-ano').value || null; }
+            try {
+                if (editandoId) await api(`${TIPOS[tipo].api}/${editandoId}`, 'PUT', corpo);
+                else await api(TIPOS[tipo].api, 'POST', corpo);
+                JG.toast(editandoId ? 'Alterações salvas.' : 'Cadastro adicionado.', 'sucesso');
+                await carregar(tipo);
+                cancelarEdicao();
+            } catch (e) { JG.toast(e.message, 'erro'); }
+        }
+
+        async function alternarAtivo(id, ativo) {
+            try {
+                await api(`${TIPOS[tipo].api}/${id}`, 'PUT', { ativo });
+                await carregar(tipo);
+                renderizar();
+            } catch (e) { JG.toast(e.message, 'erro'); await carregar(tipo); renderizar(); }
+        }
+
+        async function excluir(id) {
+            const x = dados[tipo].find(i => i.id === id);
+            if (!x || !confirm(`Excluir "${x.nome}"?${x.produtos ? `\n${x.produtos} produto(s) usam este cadastro.` : ''}`)) return;
+            try {
+                await api(`${TIPOS[tipo].api}/${id}`, 'DELETE');
+                JG.toast('Excluído.', 'sucesso');
+                await carregar(tipo);
+                if (editandoId === id) cancelarEdicao(); else renderizar();
+            } catch (e) { JG.toast(e.message, 'erro'); }
+        }
+
+        $('f-nome').addEventListener('keydown', (e) => { if (e.key === 'Enter') salvar(); if (e.key === 'Escape') cancelarEdicao(); });
+
+        (async () => {
+            await Promise.all(Object.keys(TIPOS).map(carregar));
+            const h = location.hash.slice(1);
+            trocarAba(TIPOS[h] ? h : 'categorias');
+        })();
+    </script>
+</body>
+</html>

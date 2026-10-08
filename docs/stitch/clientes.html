@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Clientes · JG Sistemas ERP</title>
+<!-- Fontes e Ícones -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-variant": "#d3e4fe",
+            "surface-container-low": "#eff4ff",
+            "secondary": "#4a5f82",
+            "surface-tint": "#305ea1",
+            "inverse-on-surface": "#eaf1ff",
+            "surface": "#f8f9ff",
+            "tertiary-container": "#005d25",
+            "primary-container": "#1d4f91",
+            "primary-fixed": "#d6e3ff",
+            "secondary-fixed": "#d5e3ff",
+            "on-tertiary": "#ffffff",
+            "on-surface-variant": "#434750",
+            "outline-variant": "#c3c6d2",
+            "on-tertiary-fixed": "#002109",
+            "on-primary": "#ffffff",
+            "surface-container": "#e5eeff",
+            "inverse-primary": "#a9c7ff",
+            "surface-container-lowest": "#ffffff",
+            "on-secondary-fixed-variant": "#324769",
+            "primary-fixed-dim": "#a9c7ff",
+            "on-primary-container": "#a2c3ff",
+            "tertiary": "#004319",
+            "on-primary-fixed-variant": "#0e4688",
+            "tertiary-fixed-dim": "#62df7d",
+            "secondary-container": "#bfd5fe",
+            "background": "#f8f9ff",
+            "on-secondary-fixed": "#011b3b",
+            "tertiary-fixed": "#7ffc97",
+            "outline": "#737782",
+            "error": "#ba1a1a",
+            "primary": "#003873",
+            "on-background": "#0b1c30",
+            "surface-dim": "#cbdbf5",
+            "surface-bright": "#f8f9ff",
+            "on-primary-fixed": "#001b3e",
+            "inverse-surface": "#213145",
+            "on-tertiary-container": "#5dda7a",
+            "on-secondary": "#ffffff",
+            "on-error-container": "#93000a",
+            "on-surface": "#0b1c30",
+            "error-container": "#ffdad6",
+            "surface-container-high": "#dce9ff",
+            "secondary-fixed-dim": "#b2c7f0",
+            "on-tertiary-fixed-variant": "#005320",
+            "surface-container-highest": "#d3e4fe",
+            "on-secondary-container": "#475c7f",
+            "on-error": "#ffffff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Inter", "sans-serif"],
+            "display": ["Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Inter', sans-serif;
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+    .material-symbols-outlined.fill-1 {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased flex min-h-screen">
+<!-- ========================================================================= -->
+<!-- SIDEBAR (256px / w-64) - Shell de Navegação Principal                      -->
+<!-- ========================================================================= -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 flex flex-col justify-between p-3 bg-on-primary-fixed text-surface-container-highest shadow-sm">
+<!-- Topo da Sidebar -->
+<div class="flex flex-col gap-3">
+<!-- Marca & Logo JG Sistemas -->
+<div class="flex items-center gap-3 px-2 py-2">
+<div class="w-10 h-10 rounded-lg bg-tertiary-container flex items-center justify-center font-bold text-lg text-tertiary-fixed shadow-sm">
+          JG
+        </div>
+<div class="flex flex-col">
+<span class="font-headline text-base font-bold text-on-primary leading-tight">JG Sistemas</span>
+<span class="text-xs text-tertiary-fixed font-medium">Varejo · Moda</span>
+</div>
+</div>
+<!-- Divisor sutil -->
+<div class="h-px bg-outline-variant/20 mx-2"></div>
+<!-- Navegação Principal Agrupada -->
+<nav class="flex flex-col gap-1 font-body text-sm font-medium">
+<!-- Início -->
+<a class="flex items-center gap-3 px-3 py-2 text-surface-container-highest hover:bg-on-primary-fixed-variant hover:text-on-primary rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">home</span>
+<span>Início</span>
+</a>
+<!-- Vendas (com submenu retrátil / indicador) -->
+<a class="flex items-center justify-between px-3 py-2 text-surface-container-highest hover:bg-on-primary-fixed-variant hover:text-on-primary rounded-lg transition-colors" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">point_of_sale</span>
+<span>Vendas</span>
+</div>
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</a>
+<!-- Clientes (ITEM ATIVO CONFORME JSON E REQUISITOS) -->
+<div class="flex flex-col gap-1">
+<a class="flex items-center justify-between px-3 py-2 bg-primary-container text-on-primary rounded-lg font-semibold shadow-sm" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] fill-1">group</span>
+<span>Clientes</span>
+</div>
+<span class="px-1.5 py-0.5 rounded text-[11px] font-bold bg-primary text-on-primary">2.418</span>
+</a>
+<!-- Submenu de Clientes expandido -->
+<div class="flex flex-col ml-8 border-l border-outline-variant/30 pl-2 gap-1 my-1">
+<a class="px-2 py-1.5 text-xs font-semibold text-tertiary-fixed bg-on-primary-fixed-variant rounded" href="#">
+              Lista de Clientes
+            </a>
+<a class="px-2 py-1 text-xs text-surface-container-highest hover:text-on-primary rounded transition-colors" href="#">
+              Programa Fidelidade
+            </a>
+<a class="px-2 py-1 text-xs text-surface-container-highest hover:text-on-primary rounded transition-colors" href="#">
+              Cobrança &amp; Crediário
+            </a>
+</div>
+</div>
+<!-- Catálogo -->
+<a class="flex items-center gap-3 px-3 py-2 text-surface-container-highest hover:bg-on-primary-fixed-variant hover:text-on-primary rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+<span>Catálogo</span>
+</a>
+<!-- Estoque -->
+<a class="flex items-center gap-3 px-3 py-2 text-surface-container-highest hover:bg-on-primary-fixed-variant hover:text-on-primary rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">warehouse</span>
+<span>Estoque</span>
+</a>
+<!-- Financeiro -->
+<a class="flex items-center gap-3 px-3 py-2 text-surface-container-highest hover:bg-on-primary-fixed-variant hover:text-on-primary rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">payments</span>
+<span>Financeiro</span>
+</a>
+<!-- Pessoas -->
+<a class="flex items-center gap-3 px-3 py-2 text-surface-container-highest hover:bg-on-primary-fixed-variant hover:text-on-primary rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">badge</span>
+<span>Pessoas</span>
+</a>
+<!-- Relatórios -->
+<a class="flex items-center gap-3 px-3 py-2 text-surface-container-highest hover:bg-on-primary-fixed-variant hover:text-on-primary rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+<span>Relatórios</span>
+</a>
+<!-- Administração -->
+<a class="flex items-center gap-3 px-3 py-2 text-surface-container-highest hover:bg-on-primary-fixed-variant hover:text-on-primary rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span>Administração</span>
+</a>
+</nav>
+</div>
+<!-- Rodapé da Sidebar -->
+<div class="flex flex-col gap-2 pt-2 border-t border-outline-variant/20">
+<div class="flex items-center justify-between px-2 text-xs">
+<div class="flex items-center gap-1.5 text-on-tertiary-container font-semibold">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed animate-pulse"></span>
+<span>Online</span>
+</div>
+<span class="text-[11px] text-outline-variant">Loja Matriz 01</span>
+</div>
+<div class="flex items-center justify-between px-2 py-1.5 rounded-lg bg-on-primary-fixed-variant/50 text-[11px]">
+<span class="font-medium text-tertiary-fixed">v3.4.1 Estável</span>
+<span class="text-surface-container-highest/80">Varejo · Moda</span>
+</div>
+<div class="grid grid-cols-2 gap-1 text-xs">
+<a class="flex items-center justify-center gap-1.5 py-1.5 text-surface-container-highest hover:text-on-primary rounded transition-colors" href="#">
+<span class="material-symbols-outlined text-base">tune</span>
+<span>Ajustes</span>
+</a>
+<a class="flex items-center justify-center gap-1.5 py-1.5 text-surface-container-highest hover:text-on-primary rounded transition-colors" href="#">
+<span class="material-symbols-outlined text-base">help</span>
+<span>Suporte</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- CONTEÚDO PRINCIPAL (COM TOPBAR FIXA)                                       -->
+<!-- ========================================================================= -->
+<div class="flex-1 pl-64 flex flex-col min-h-screen">
+<!-- TOPBAR FIXA (56px / h-14) -->
+<header class="fixed top-0 right-0 left-64 h-14 z-30 flex items-center justify-between px-6 bg-surface-container-lowest border-b border-outline-variant/30 shadow-sm">
+<!-- Breadcrumb & Campo de Busca -->
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 text-xs font-medium text-on-surface-variant">
+<span class="hover:text-primary cursor-pointer">JG Sistemas</span>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface font-semibold">Clientes</span>
+<span class="text-outline-variant">/</span>
+<span class="text-primary font-semibold">Lista de Clientes</span>
+</div>
+<!-- Busca Global Ctrl+K -->
+<div class="relative w-80">
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-outline text-lg">search</span>
+<input class="w-full h-8 pl-9 pr-12 text-xs bg-surface-container-low border border-outline-variant/40 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:bg-surface-container-lowest text-on-surface placeholder-on-surface-variant/70" placeholder="Buscar módulo, produto ou cliente (Ctrl+K)" type="text"/>
+<kbd class="absolute right-2 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] bg-surface-container border border-outline-variant/40 rounded text-on-surface-variant font-mono">⌘K</kbd>
+</div>
+</div>
+<!-- Ações do Cabeçalho & Operador -->
+<div class="flex items-center gap-4">
+<!-- Chip de Status do Caixa -->
+<div class="flex items-center gap-2 px-2.5 py-1 rounded-full bg-surface-container text-tertiary-container border border-tertiary-container/20 text-xs font-semibold">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-tertiary-container opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-tertiary-container"></span>
+</span>
+<span>Caixa 01 · Aberto</span>
+</div>
+<!-- Botão Abrir PDV -->
+<button class="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-primary text-on-primary hover:bg-primary-container text-xs font-semibold shadow-sm transition-transform active:scale-95">
+<span class="material-symbols-outlined text-base">point_of_sale</span>
+<span>[F1] Abrir PDV</span>
+</button>
+<div class="h-5 w-px bg-outline-variant/30"></div>
+<!-- Ícones de Suporte e Alertas -->
+<div class="flex items-center gap-1">
+<button class="relative p-1.5 rounded-lg text-secondary hover:bg-surface-container transition-colors" title="Notificações">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-error"></span>
+</button>
+<button class="p-1.5 rounded-lg text-secondary hover:bg-surface-container transition-colors" title="Ajuda">
+<span class="material-symbols-outlined text-[20px]">help</span>
+</button>
+</div>
+<div class="h-5 w-px bg-outline-variant/30"></div>
+<!-- Operador / Usuário -->
+<div class="flex items-center gap-2.5 pl-1">
+<div class="w-8 h-8 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold text-xs">
+            JG
+          </div>
+<div class="flex flex-col text-left">
+<span class="text-xs font-bold text-on-surface leading-tight">Juliana Gomes</span>
+<span class="text-[11px] text-on-surface-variant">Gerente Geral</span>
+</div>
+</div>
+</div>
+</header>
+<!-- ÁREA DE CONTEÚDO PRINCIPAL (Margem superior de 56px para respeitar a Topbar) -->
+<main class="flex-1 mt-14 p-6 bg-background space-y-6">
+<!-- CABEÇALHO DA TELA & BOTÕES DE AÇÃO -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<div class="flex items-center gap-2.5">
+<h1 class="text-2xl font-bold font-headline text-on-surface tracking-tight">Clientes</h1>
+<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary-fixed text-primary border border-primary/20">
+              2.418 cadastrados
+            </span>
+</div>
+<p class="text-xs text-on-surface-variant mt-1 font-body">
+            Gestão da base de consumidores, controle de limites no crediário, histórico e fidelidade.
+          </p>
+</div>
+<div class="flex items-center gap-2.5">
+<button class="flex items-center gap-1.5 h-10 px-3.5 rounded-lg border border-outline-variant/60 bg-surface-container-lowest text-on-surface hover:bg-surface-container text-xs font-semibold transition-colors shadow-sm">
+<span class="material-symbols-outlined text-base text-secondary">file_download</span>
+<span>Exportar XLS / CSV</span>
+</button>
+<button class="flex items-center gap-2 h-10 px-4 rounded-lg bg-tertiary-container hover:bg-tertiary text-on-tertiary text-xs font-semibold transition-transform active:scale-95 shadow-sm">
+<span class="material-symbols-outlined text-base">person_add</span>
+<span>+ Novo cliente [F2]</span>
+</button>
+</div>
+</div>
+<!-- CARDS DE RESUMO / KPIS RÁPIDOS -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Card 1: Total Clientes -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/30 shadow-sm flex items-center justify-between">
+<div>
+<span class="text-xs font-medium text-on-surface-variant">Total de Clientes</span>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="text-2xl font-bold font-headline tabular-nums text-on-surface">2.418</span>
+<span class="text-[11px] font-semibold text-tertiary-container flex items-center">
+<span class="material-symbols-outlined text-xs">trending_up</span> +34 no mês
+              </span>
+</div>
+<span class="text-[11px] text-outline mt-0.5 block">Base cadastral consolidada</span>
+</div>
+<div class="w-10 h-10 rounded-lg bg-primary-fixed/50 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">group</span>
+</div>
+</div>
+<!-- Card 2: Clientes Ativos -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/30 shadow-sm flex items-center justify-between">
+<div>
+<span class="text-xs font-medium text-on-surface-variant">Clientes Ativos</span>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="text-2xl font-bold font-headline tabular-nums text-on-surface">2.190</span>
+<span class="text-[11px] font-semibold text-on-tertiary-container bg-surface-container px-1.5 py-0.5 rounded">
+                90,5% da base
+              </span>
+</div>
+<span class="text-[11px] text-outline mt-0.5 block">Compras nos últimos 90 dias</span>
+</div>
+<div class="w-10 h-10 rounded-lg bg-surface-container text-tertiary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">check_circle</span>
+</div>
+</div>
+<!-- Card 3: Inadimplentes -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/30 shadow-sm flex items-center justify-between">
+<div>
+<span class="text-xs font-medium text-on-surface-variant">Inadimplentes (Crediário)</span>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="text-2xl font-bold font-headline tabular-nums text-error">84</span>
+<span class="text-[11px] font-semibold text-error bg-error-container/40 px-1.5 py-0.5 rounded">
+                3,5% da carteira
+              </span>
+</div>
+<span class="text-[11px] text-outline mt-0.5 block">Pendentes de renegociação</span>
+</div>
+<div class="w-10 h-10 rounded-lg bg-error-container text-error flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">warning</span>
+</div>
+</div>
+<!-- Card 4: Cashback Total -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/30 shadow-sm flex items-center justify-between">
+<div>
+<span class="text-xs font-medium text-on-surface-variant">Saldo Total em Cashback</span>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="text-2xl font-bold font-headline tabular-nums text-primary">R$ 14.820,50</span>
+</div>
+<span class="text-[11px] text-outline mt-0.5 block">Programa Fidelidade JG Ativo</span>
+</div>
+<div class="w-10 h-10 rounded-lg bg-secondary-fixed text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">loyalty</span>
+</div>
+</div>
+</section>
+<!-- BARRA DE FILTROS & PESQUISA AVANÇADA -->
+<section class="bg-surface-container-lowest p-3.5 rounded-xl border border-outline-variant/30 shadow-sm flex flex-wrap items-center justify-between gap-3">
+<div class="flex flex-wrap items-center gap-3 flex-1 min-w-[320px]">
+<!-- Campo de Busca -->
+<div class="relative flex-1 min-w-[240px]">
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-outline text-base">search</span>
+<input class="w-full h-9 pl-9 pr-3 text-xs bg-surface-container-low border border-outline-variant/40 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:bg-surface-container-lowest text-on-surface placeholder-on-surface-variant/70" placeholder="Buscar por nome, documento ou telefone..." type="text"/>
+</div>
+<!-- Select Situação -->
+<div class="w-40">
+<select class="w-full h-9 px-2.5 text-xs bg-surface-container-low border border-outline-variant/40 rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary">
+<option value="">Situação: Todos</option>
+<option selected="" value="ativo">Ativos (2.190)</option>
+<option value="inativo">Inativos (144)</option>
+<option value="inadimplente">Inadimplentes (84)</option>
+</select>
+</div>
+<!-- Select Cidade/UF -->
+<div class="w-44">
+<select class="w-full h-9 px-2.5 text-xs bg-surface-container-low border border-outline-variant/40 rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary">
+<option value="">Cidade: Todas as cidades</option>
+<option value="sp">São Paulo · SP</option>
+<option value="guarulhos">Guarulhos · SP</option>
+<option value="osasco">Osasco · SP</option>
+<option value="santoandre">Santo André · SP</option>
+<option value="sbc">São Bernardo · SP</option>
+<option value="campinas">Campinas · SP</option>
+</select>
+</div>
+<!-- Filtros Rápidos (Toggles Estilizados) -->
+<div class="flex items-center gap-2">
+<label class="flex items-center gap-1.5 px-2.5 py-1.5 bg-surface-container-low border border-outline-variant/30 rounded-lg cursor-pointer hover:bg-surface-container text-xs text-on-surface select-none">
+<input class="w-3.5 h-3.5 rounded text-primary focus:ring-primary border-outline-variant" type="checkbox"/>
+<span>Apenas Inadimplentes</span>
+</label>
+<label class="flex items-center gap-1.5 px-2.5 py-1.5 bg-surface-container-low border border-outline-variant/30 rounded-lg cursor-pointer hover:bg-surface-container text-xs text-on-surface select-none">
+<input class="w-3.5 h-3.5 rounded text-primary focus:ring-primary border-outline-variant" type="checkbox"/>
+<span>Com saldo de Cashback</span>
+</label>
+</div>
+</div>
+<!-- Ações do Filtro -->
+<div class="flex items-center gap-2">
+<button class="h-9 px-4 rounded-lg bg-primary text-on-primary hover:bg-primary-container text-xs font-semibold shadow-sm transition-colors flex items-center gap-1.5">
+<span class="material-symbols-outlined text-base">filter_list</span>
+<span>Filtrar</span>
+</button>
+<button class="h-9 px-3 rounded-lg text-xs font-medium text-secondary hover:text-on-surface hover:bg-surface-container transition-colors">
+            Limpar filtros
+          </button>
+</div>
+</section>
+<!-- TABELA PRINCIPAL DE CLIENTES (12 LINHAS HIPER-REALISTAS) -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-sm overflow-hidden flex flex-col">
+<div class="overflow-x-auto">
+<table class="w-full text-left text-xs border-collapse">
+<!-- Cabeçalho da Tabela -->
+<thead>
+<tr class="bg-surface-container-low/70 border-b border-outline-variant/30 text-secondary font-semibold uppercase tracking-wider text-[11px]">
+<th class="py-3 px-3 w-10 text-center">
+<input class="rounded border-outline-variant text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</th>
+<th class="py-3 px-3 min-w-[220px]">Nome Completo / E-mail</th>
+<th class="py-3 px-3 min-w-[130px]">CPF / CNPJ</th>
+<th class="py-3 px-3 min-w-[150px]">Celular / WhatsApp</th>
+<th class="py-3 px-3 min-w-[140px]">Cidade / UF</th>
+<th class="py-3 px-3 min-w-[110px] text-right">Limite de Crédito</th>
+<th class="py-3 px-3 min-w-[110px] text-right">Total Comprado</th>
+<th class="py-3 px-3 min-w-[110px] text-center">Situação</th>
+<th class="py-3 px-3 w-28 text-center">Ações</th>
+</tr>
+</thead>
+<!-- Linhas de Dados (12 linhas completas) -->
+<tbody class="divide-y divide-outline-variant/20 font-body">
+<!-- Linha 1 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors h-11">
+<td class="py-2.5 px-3 text-center">
+<input class="rounded border-outline-variant text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="py-2.5 px-3">
+<div class="font-semibold text-on-surface">Patrícia Lima Ribeiro</div>
+<div class="text-[11px] text-secondary">patricia.lima@gmail.com</div>
+</td>
+<td class="py-2.5 px-3 tabular-nums text-on-surface">123.456.789-00</td>
+<td class="py-2.5 px-3">
+<a class="flex items-center gap-1 text-primary hover:underline tabular-nums" href="#">
+<span class="material-symbols-outlined text-sm text-tertiary-container">chat</span>
+<span>(11) 98765-4321</span>
+</a>
+</td>
+<td class="py-2.5 px-3 text-on-surface">São Paulo · SP</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-medium text-on-surface">R$ 2.000,00</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-semibold text-primary">R$ 5.840,00</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-surface-container text-tertiary-container border border-tertiary-container/20">
+                    Ativo
+                  </span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-primary transition-colors" title="Ver Ficha">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-primary transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-error transition-colors" title="Opções">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 2 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors h-11">
+<td class="py-2.5 px-3 text-center">
+<input class="rounded border-outline-variant text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="py-2.5 px-3">
+<div class="font-semibold text-on-surface">Mariana Costa Silva</div>
+<div class="text-[11px] text-secondary">mari.costa88@outlook.com</div>
+</td>
+<td class="py-2.5 px-3 tabular-nums text-on-surface">412.390.118-09</td>
+<td class="py-2.5 px-3">
+<a class="flex items-center gap-1 text-primary hover:underline tabular-nums" href="#">
+<span class="material-symbols-outlined text-sm text-tertiary-container">chat</span>
+<span>(11) 97123-8844</span>
+</a>
+</td>
+<td class="py-2.5 px-3 text-on-surface">Osasco · SP</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-medium text-on-surface">R$ 1.500,00</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-semibold text-primary">R$ 3.210,50</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-surface-container text-tertiary-container border border-tertiary-container/20">
+                    Ativo
+                  </span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-primary transition-colors" title="Ver Ficha">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-primary transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-error transition-colors" title="Opções">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 3 (Inadimplente) -->
+<tr class="hover:bg-error-container/10 transition-colors h-11 bg-error-container/5">
+<td class="py-2.5 px-3 text-center">
+<input class="rounded border-outline-variant text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="py-2.5 px-3">
+<div class="font-semibold text-on-surface">Rodrigo Alves Souza</div>
+<div class="text-[11px] text-secondary">rodrigo.souza@uol.com.br</div>
+</td>
+<td class="py-2.5 px-3 tabular-nums text-on-surface">301.992.812-70</td>
+<td class="py-2.5 px-3">
+<a class="flex items-center gap-1 text-primary hover:underline tabular-nums" href="#">
+<span class="material-symbols-outlined text-sm text-tertiary-container">chat</span>
+<span>(11) 99841-2309</span>
+</a>
+</td>
+<td class="py-2.5 px-3 text-on-surface">Guarulhos · SP</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-medium text-error line-through">R$ 800,00</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-semibold text-on-surface">R$ 1.490,00</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-error-container text-error border border-error/20">
+                    Inadimplente
+                  </span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-primary transition-colors" title="Ver Ficha">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-primary transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-error transition-colors" title="Opções">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 4 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors h-11">
+<td class="py-2.5 px-3 text-center">
+<input class="rounded border-outline-variant text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="py-2.5 px-3">
+<div class="font-semibold text-on-surface">Camila Ferreira Santos</div>
+<div class="text-[11px] text-secondary">camila.fsantos@yahoo.com</div>
+</td>
+<td class="py-2.5 px-3 tabular-nums text-on-surface">219.048.712-44</td>
+<td class="py-2.5 px-3">
+<a class="flex items-center gap-1 text-primary hover:underline tabular-nums" href="#">
+<span class="material-symbols-outlined text-sm text-tertiary-container">chat</span>
+<span>(11) 98112-7765</span>
+</a>
+</td>
+<td class="py-2.5 px-3 text-on-surface">São Paulo · SP</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-medium text-on-surface">R$ 3.000,00</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-semibold text-primary">R$ 8.920,00</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-surface-container text-tertiary-container border border-tertiary-container/20">
+                    Ativo
+                  </span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-primary transition-colors" title="Ver Ficha">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-primary transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-error transition-colors" title="Opções">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 5 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors h-11">
+<td class="py-2.5 px-3 text-center">
+<input class="rounded border-outline-variant text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="py-2.5 px-3">
+<div class="font-semibold text-on-surface">Marcos Vinícius Toledo</div>
+<div class="text-[11px] text-secondary">mv.toledo@empresa.com.br</div>
+</td>
+<td class="py-2.5 px-3 tabular-nums text-on-surface">582.491.808-12</td>
+<td class="py-2.5 px-3">
+<a class="flex items-center gap-1 text-primary hover:underline tabular-nums" href="#">
+<span class="material-symbols-outlined text-sm text-tertiary-container">chat</span>
+<span>(11) 97455-1290</span>
+</a>
+</td>
+<td class="py-2.5 px-3 text-on-surface">Santo André · SP</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-medium text-on-surface">R$ 1.200,00</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-semibold text-primary">R$ 2.760,00</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-surface-container text-tertiary-container border border-tertiary-container/20">
+                    Ativo
+                  </span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-primary transition-colors" title="Ver Ficha">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-primary transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-error transition-colors" title="Opções">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 6 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors h-11">
+<td class="py-2.5 px-3 text-center">
+<input class="rounded border-outline-variant text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="py-2.5 px-3">
+<div class="font-semibold text-on-surface">Beatriz Mendes Rocha</div>
+<div class="text-[11px] text-secondary">bmendes.rocha@gmail.com</div>
+</td>
+<td class="py-2.5 px-3 tabular-nums text-on-surface">184.903.621-35</td>
+<td class="py-2.5 px-3">
+<a class="flex items-center gap-1 text-primary hover:underline tabular-nums" href="#">
+<span class="material-symbols-outlined text-sm text-tertiary-container">chat</span>
+<span>(11) 99341-0022</span>
+</a>
+</td>
+<td class="py-2.5 px-3 text-on-surface">São Bernardo · SP</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-medium text-on-surface">R$ 2.500,00</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-semibold text-primary">R$ 6.300,00</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-surface-container text-tertiary-container border border-tertiary-container/20">
+                    Ativo
+                  </span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-primary transition-colors" title="Ver Ficha">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-primary transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-error transition-colors" title="Opções">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 7 (Inativo) -->
+<tr class="hover:bg-surface-container-low/50 transition-colors h-11 opacity-80">
+<td class="py-2.5 px-3 text-center">
+<input class="rounded border-outline-variant text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="py-2.5 px-3">
+<div class="font-semibold text-on-surface">Lucas Gabriel Martins</div>
+<div class="text-[11px] text-secondary">lucas.gabriel.m@bol.com.br</div>
+</td>
+<td class="py-2.5 px-3 tabular-nums text-on-surface">349.812.504-89</td>
+<td class="py-2.5 px-3">
+<a class="flex items-center gap-1 text-secondary hover:underline tabular-nums" href="#">
+<span class="material-symbols-outlined text-sm text-outline">chat</span>
+<span>(11) 98870-6543</span>
+</a>
+</td>
+<td class="py-2.5 px-3 text-on-surface">São Paulo · SP</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-medium text-on-surface">R$ 500,00</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-semibold text-on-surface">R$ 920,00</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-surface-container-high text-secondary border border-outline-variant/30">
+                    Inativo
+                  </span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-primary transition-colors" title="Ver Ficha">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-primary transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-error transition-colors" title="Opções">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 8 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors h-11">
+<td class="py-2.5 px-3 text-center">
+<input class="rounded border-outline-variant text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="py-2.5 px-3">
+<div class="font-semibold text-on-surface">Fernanda Oliveira Dias</div>
+<div class="text-[11px] text-secondary">fer.dias@campinas.ind.br</div>
+</td>
+<td class="py-2.5 px-3 tabular-nums text-on-surface">490.128.743-01</td>
+<td class="py-2.5 px-3">
+<a class="flex items-center gap-1 text-primary hover:underline tabular-nums" href="#">
+<span class="material-symbols-outlined text-sm text-tertiary-container">chat</span>
+<span>(11) 97209-4411</span>
+</a>
+</td>
+<td class="py-2.5 px-3 text-on-surface">Campinas · SP</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-medium text-on-surface">R$ 1.800,00</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-semibold text-primary">R$ 4.150,00</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-surface-container text-tertiary-container border border-tertiary-container/20">
+                    Ativo
+                  </span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-primary transition-colors" title="Ver Ficha">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-primary transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-error transition-colors" title="Opções">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 9 (Inadimplente) -->
+<tr class="hover:bg-error-container/10 transition-colors h-11 bg-error-container/5">
+<td class="py-2.5 px-3 text-center">
+<input class="rounded border-outline-variant text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="py-2.5 px-3">
+<div class="font-semibold text-on-surface">Thiago Henrique Pires</div>
+<div class="text-[11px] text-secondary">thiago.pires@hotmail.com</div>
+</td>
+<td class="py-2.5 px-3 tabular-nums text-on-surface">275.641.980-55</td>
+<td class="py-2.5 px-3">
+<a class="flex items-center gap-1 text-primary hover:underline tabular-nums" href="#">
+<span class="material-symbols-outlined text-sm text-tertiary-container">chat</span>
+<span>(11) 99120-8876</span>
+</a>
+</td>
+<td class="py-2.5 px-3 text-on-surface">Osasco · SP</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-medium text-error line-through">R$ 1.000,00</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-semibold text-on-surface">R$ 1.890,00</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-error-container text-error border border-error/20">
+                    Inadimplente
+                  </span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-primary transition-colors" title="Ver Ficha">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-primary transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-error transition-colors" title="Opções">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 10 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors h-11">
+<td class="py-2.5 px-3 text-center">
+<input class="rounded border-outline-variant text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="py-2.5 px-3">
+<div class="font-semibold text-on-surface">Juliana Andrade Carvalho</div>
+<div class="text-[11px] text-secondary">juliana.carvalho@globo.com</div>
+</td>
+<td class="py-2.5 px-3 tabular-nums text-on-surface">612.384.905-22</td>
+<td class="py-2.5 px-3">
+<a class="flex items-center gap-1 text-primary hover:underline tabular-nums" href="#">
+<span class="material-symbols-outlined text-sm text-tertiary-container">chat</span>
+<span>(11) 98450-3312</span>
+</a>
+</td>
+<td class="py-2.5 px-3 text-on-surface">São Paulo · SP</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-medium text-on-surface">R$ 4.000,00</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-semibold text-primary">R$ 12.450,00</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-surface-container text-tertiary-container border border-tertiary-container/20">
+                    Ativo
+                  </span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-primary transition-colors" title="Ver Ficha">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-primary transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-error transition-colors" title="Opções">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 11 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors h-11">
+<td class="py-2.5 px-3 text-center">
+<input class="rounded border-outline-variant text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="py-2.5 px-3">
+<div class="font-semibold text-on-surface">Rafael Monteiro Ramos</div>
+<div class="text-[11px] text-secondary">rafael.ramos@uol.com.br</div>
+</td>
+<td class="py-2.5 px-3 tabular-nums text-on-surface">729.401.832-67</td>
+<td class="py-2.5 px-3">
+<a class="flex items-center gap-1 text-primary hover:underline tabular-nums" href="#">
+<span class="material-symbols-outlined text-sm text-tertiary-container">chat</span>
+<span>(11) 97632-1198</span>
+</a>
+</td>
+<td class="py-2.5 px-3 text-on-surface">Guarulhos · SP</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-medium text-on-surface">R$ 1.500,00</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-semibold text-primary">R$ 3.800,00</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-surface-container text-tertiary-container border border-tertiary-container/20">
+                    Ativo
+                  </span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-primary transition-colors" title="Ver Ficha">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-primary transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-error transition-colors" title="Opções">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 12 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors h-11">
+<td class="py-2.5 px-3 text-center">
+<input class="rounded border-outline-variant text-primary focus:ring-primary w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="py-2.5 px-3">
+<div class="font-semibold text-on-surface">Vanessa Cristiane Nunes</div>
+<div class="text-[11px] text-secondary">vanessa.nunes@gmail.com</div>
+</td>
+<td class="py-2.5 px-3 tabular-nums text-on-surface">835.912.470-33</td>
+<td class="py-2.5 px-3">
+<a class="flex items-center gap-1 text-primary hover:underline tabular-nums" href="#">
+<span class="material-symbols-outlined text-sm text-tertiary-container">chat</span>
+<span>(11) 99543-7721</span>
+</a>
+</td>
+<td class="py-2.5 px-3 text-on-surface">São Paulo · SP</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-medium text-on-surface">R$ 2.200,00</td>
+<td class="py-2.5 px-3 text-right tabular-nums font-semibold text-primary">R$ 5.120,00</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-surface-container text-tertiary-container border border-tertiary-container/20">
+                    Ativo
+                  </span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-primary transition-colors" title="Ver Ficha">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-primary transition-colors" title="Editar">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container text-secondary hover:text-error transition-colors" title="Opções">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- RODAPÉ & PAGINAÇÃO DA TABELA -->
+<div class="flex flex-col sm:flex-row items-center justify-between px-4 py-3 border-t border-outline-variant/30 bg-surface-container-low/40 gap-3 text-xs">
+<div class="flex items-center gap-4 text-on-surface-variant font-medium">
+<span>Exibindo <strong class="text-on-surface font-semibold tabular-nums">1–12</strong> de <strong class="text-on-surface font-semibold tabular-nums">2.418</strong> clientes</span>
+<div class="flex items-center gap-1.5">
+<span>Linhas por página:</span>
+<select class="h-7 px-2 text-xs bg-surface-container-lowest border border-outline-variant/50 rounded text-on-surface focus:outline-none">
+<option selected="" value="12">12</option>
+<option value="25">25</option>
+<option value="50">50</option>
+<option value="100">100</option>
+</select>
+</div>
+</div>
+<!-- Controles de Navegação -->
+<div class="flex items-center gap-1">
+<button class="h-8 px-2.5 rounded border border-outline-variant/40 bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container disabled:opacity-40 transition-colors flex items-center gap-1 font-medium" disabled="">
+<span class="material-symbols-outlined text-base">chevron_left</span>
+<span>Anterior</span>
+</button>
+<div class="flex items-center gap-1 mx-1">
+<button class="h-8 w-8 rounded bg-primary text-on-primary font-bold tabular-nums">1</button>
+<button class="h-8 w-8 rounded border border-outline-variant/30 bg-surface-container-lowest text-on-surface hover:bg-surface-container font-medium tabular-nums">2</button>
+<button class="h-8 w-8 rounded border border-outline-variant/30 bg-surface-container-lowest text-on-surface hover:bg-surface-container font-medium tabular-nums">3</button>
+<span class="px-1 text-outline">...</span>
+<button class="h-8 w-8 rounded border border-outline-variant/30 bg-surface-container-lowest text-on-surface hover:bg-surface-container font-medium tabular-nums">202</button>
+</div>
+<button class="h-8 px-2.5 rounded border border-outline-variant/40 bg-surface-container-lowest text-on-surface hover:bg-surface-container transition-colors flex items-center gap-1 font-medium">
+<span>Próxima</span>
+<span class="material-symbols-outlined text-base">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+<!-- ATALHOS DE TECLADO RÁPIDOS & AJUDA ERP -->
+<footer class="pt-2 pb-6 border-t border-outline-variant/20 flex flex-wrap items-center justify-between text-xs text-on-surface-variant gap-4">
+<div class="flex items-center gap-4 flex-wrap">
+<span class="font-medium">Atalhos rápidos:</span>
+<span class="inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-surface-container border border-outline-variant/40 rounded text-[10px] font-mono text-on-surface">F1</kbd> PDV</span>
+<span class="inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-surface-container border border-outline-variant/40 rounded text-[10px] font-mono text-on-surface">F2</kbd> Novo Cliente</span>
+<span class="inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-surface-container border border-outline-variant/40 rounded text-[10px] font-mono text-on-surface">F4</kbd> Consulta de Estoque</span>
+<span class="inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-surface-container border border-outline-variant/40 rounded text-[10px] font-mono text-on-surface">Ctrl+K</kbd> Busca Global</span>
+</div>
+<div class="flex items-center gap-4 text-[11px]">
+<span>© 2024 JG Sistemas do Brasil Ltda. Todos os direitos reservados.</span>
+<a class="text-primary hover:underline" href="#">Central de Suporte</a>
+<a class="text-primary hover:underline" href="#">Política de Privacidade</a>
+</div>
+</footer>
+</main>
+</div>
+</body></html>

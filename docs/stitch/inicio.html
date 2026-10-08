@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>JG Sistemas — Início ERP Varejo &amp; Moda</title>
+<!-- Inter Google Font -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Theme Configuration -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-dim": "#cbdbf5",
+            "on-secondary-fixed": "#011b3b",
+            "on-error-container": "#93000a",
+            "surface-container-highest": "#d3e4fe",
+            "background": "#f8f9ff",
+            "surface-container": "#e5eeff",
+            "on-primary": "#ffffff",
+            "secondary-container": "#bfd5fe",
+            "error-container": "#ffdad6",
+            "surface-bright": "#f8f9ff",
+            "primary-fixed-dim": "#a9c7ff",
+            "outline": "#737782",
+            "on-secondary": "#ffffff",
+            "on-primary-container": "#a2c3ff",
+            "tertiary-fixed-dim": "#62df7d",
+            "surface-tint": "#305ea1",
+            "secondary-fixed": "#d5e3ff",
+            "surface-container-low": "#eff4ff",
+            "inverse-surface": "#213145",
+            "error": "#ba1a1a",
+            "surface": "#f8f9ff",
+            "outline-variant": "#c3c6d2",
+            "on-surface-variant": "#434750",
+            "on-error": "#ffffff",
+            "tertiary-container": "#005d25",
+            "on-primary-fixed-variant": "#0e4688",
+            "primary-container": "#1d4f91",
+            "on-tertiary-fixed-variant": "#005320",
+            "on-primary-fixed": "#001b3e",
+            "tertiary": "#004319",
+            "on-secondary-fixed-variant": "#324769",
+            "on-secondary-container": "#475c7f",
+            "surface-container-high": "#dce9ff",
+            "surface-variant": "#d3e4fe",
+            "on-tertiary-container": "#5dda7a",
+            "tertiary-fixed": "#7ffc97",
+            "on-tertiary": "#ffffff",
+            "on-surface": "#0b1c30",
+            "secondary-fixed-dim": "#b2c7f0",
+            "primary": "#003873",
+            "inverse-on-surface": "#eaf1ff",
+            "surface-container-lowest": "#ffffff",
+            "secondary": "#4a5f82",
+            "primary-fixed": "#d6e3ff",
+            "on-background": "#0b1c30",
+            "inverse-primary": "#a9c7ff",
+            "on-tertiary-fixed": "#002109"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Inter", "sans-serif"],
+            "display": ["Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .material-symbols-outlined.fill {
+      font-variation-settings: 'FILL' 1;
+    }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    /* Custom subtle scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c3c6d2;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #737782;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-body antialiased min-h-screen flex selection:bg-secondary-container selection:text-on-secondary-fixed">
+<!-- ========================================================================= -->
+<!-- SIDEBAR (Fixed 248px / w-64 - Nav Shell conformidade com JSON de ancoragem) -->
+<!-- ========================================================================= -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 flex flex-col justify-between p-3 bg-on-primary-fixed border-r border-outline-variant/20 shadow-sm text-surface-container-highest">
+<!-- Topo & Menu de Navegação -->
+<div class="flex flex-col h-full overflow-hidden">
+<!-- Marca & Header do Sidebar -->
+<div class="flex items-center gap-3 px-3 py-2.5 mb-2">
+<div class="w-9 h-9 rounded-lg bg-tertiary-container flex items-center justify-center text-tertiary-fixed font-bold font-headline text-base shadow-sm ring-1 ring-tertiary-fixed/30">
+          JG
+        </div>
+<div class="flex flex-col leading-tight overflow-hidden">
+<span class="font-headline text-base font-bold text-on-primary tracking-tight">JG Sistemas</span>
+<span class="text-xs text-tertiary-fixed font-medium">Varejo · Moda</span>
+</div>
+</div>
+<!-- Links de Navegação com Scroll Discreto -->
+<nav class="flex-1 overflow-y-auto space-y-4 pr-1 text-sm font-medium">
+<!-- Bloco Principal -->
+<div class="space-y-1">
+<!-- Item Ativo: Início -->
+<a class="flex items-center gap-3 px-3 py-2 bg-primary-container text-on-primary rounded-lg font-semibold shadow-sm transition-transform active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined fill text-tertiary-fixed">home</span>
+<span>Início</span>
+</a>
+</div>
+<!-- Grupo: Vendas -->
+<div class="space-y-1 pt-1">
+<div class="px-3 text-[11px] font-semibold text-outline-variant tracking-wider">VENDAS</div>
+<a class="flex items-center justify-between px-3 py-1.5 text-surface-container-highest hover:bg-on-primary-fixed-variant hover:text-on-primary rounded-lg transition-colors group" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline-variant group-hover:text-on-primary">point_of_sale</span>
+<span>PDV Caixa</span>
+</div>
+<span class="text-[10px] bg-tertiary-container text-tertiary-fixed font-mono px-1.5 py-0.5 rounded">F12</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-1.5 text-surface-container-highest hover:bg-on-primary-fixed-variant hover:text-on-primary rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-outline-variant group-hover:text-on-primary">receipt_long</span>
+<span>Consultar vendas</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-1.5 text-surface-container-highest hover:bg-on-primary-fixed-variant hover:text-on-primary rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-outline-variant group-hover:text-on-primary">sync_alt</span>
+<span>Trocas e devoluções</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-1.5 text-surface-container-highest hover:bg-on-primary-fixed-variant hover:text-on-primary rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-outline-variant group-hover:text-on-primary">credit_card</span>
+<span>Crediário da loja</span>
+</a>
+</div>
+<!-- Grupo: Catálogo & Estoque -->
+<div class="space-y-1 pt-1">
+<div class="px-3 text-[11px] font-semibold text-outline-variant tracking-wider">CATÁLOGO &amp; ESTOQUE</div>
+<a class="flex items-center gap-3 px-3 py-1.5 text-surface-container-highest hover:bg-on-primary-fixed-variant hover:text-on-primary rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-outline-variant group-hover:text-on-primary">inventory_2</span>
+<span>Produtos</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-1.5 text-surface-container-highest hover:bg-on-primary-fixed-variant hover:text-on-primary rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-outline-variant group-hover:text-on-primary">warehouse</span>
+<span>Posição de estoque</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-1.5 text-surface-container-highest hover:bg-on-primary-fixed-variant hover:text-on-primary rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-outline-variant group-hover:text-on-primary">local_shipping</span>
+<span>Compras &amp; Fornecedores</span>
+</a>
+</div>
+<!-- Grupo: Clientes & Financeiro -->
+<div class="space-y-1 pt-1">
+<div class="px-3 text-[11px] font-semibold text-outline-variant tracking-wider">GESTÃO</div>
+<a class="flex items-center gap-3 px-3 py-1.5 text-surface-container-highest hover:bg-on-primary-fixed-variant hover:text-on-primary rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-outline-variant group-hover:text-on-primary">group</span>
+<span>Clientes &amp; Fidelidade</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-1.5 text-surface-container-highest hover:bg-on-primary-fixed-variant hover:text-on-primary rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-outline-variant group-hover:text-on-primary">payments</span>
+<span>Financeiro &amp; DRE</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-1.5 text-surface-container-highest hover:bg-on-primary-fixed-variant hover:text-on-primary rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-outline-variant group-hover:text-on-primary">badge</span>
+<span>Colaboradores</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-1.5 text-surface-container-highest hover:bg-on-primary-fixed-variant hover:text-on-primary rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-outline-variant group-hover:text-on-primary">analytics</span>
+<span>Relatórios executivos</span>
+</a>
+</div>
+<!-- Administração -->
+<div class="space-y-1 pt-1">
+<div class="px-3 text-[11px] font-semibold text-outline-variant tracking-wider">SISTEMA</div>
+<a class="flex items-center gap-3 px-3 py-1.5 text-surface-container-highest hover:bg-on-primary-fixed-variant hover:text-on-primary rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-outline-variant group-hover:text-on-primary">tune</span>
+<span>Configurações</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-1.5 text-surface-container-highest hover:bg-on-primary-fixed-variant hover:text-on-primary rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-outline-variant group-hover:text-on-primary">help</span>
+<span>Suporte JG</span>
+</a>
+</div>
+</nav>
+<!-- Rodapé da Sidebar -->
+<div class="pt-3 border-t border-outline-variant/20 mt-2">
+<div class="bg-on-primary-fixed-variant/50 rounded-lg p-2.5 flex items-center justify-between text-xs text-surface-container-highest">
+<div class="flex flex-col">
+<span class="font-semibold text-on-primary">JG ERP v4.2.0</span>
+<span class="text-[11px] text-tertiary-fixed">Servidor Online</span>
+</div>
+<span class="inline-block w-2 h-2 rounded-full bg-tertiary-fixed animate-pulse"></span>
+</div>
+</div>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- TOP NAVBAR FIXA (56px h-14) -->
+<!-- ========================================================================= -->
+<header class="fixed top-0 right-0 left-64 h-14 z-30 flex items-center justify-between px-6 bg-surface-container-lowest border-b border-outline-variant/30 shadow-sm">
+<!-- Esquerda: Título / Breadcrumb & Busca Global -->
+<div class="flex items-center gap-6 flex-1 max-w-2xl">
+<div class="flex items-center gap-2 text-sm font-medium">
+<span class="text-on-surface-variant">Painel Geral</span>
+<span class="text-outline-variant">/</span>
+<span class="font-semibold text-primary">Início</span>
+</div>
+<!-- Barra de Busca Global (Ctrl+K) -->
+<div class="relative w-full max-w-md hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant">search</span>
+<input class="w-full pl-9 pr-12 py-1.5 text-xs bg-surface-container-low border border-outline-variant/40 rounded-lg text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all" placeholder="Buscar módulo, produto ou cliente (Ctrl+K)" type="text"/>
+<kbd class="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-mono text-outline bg-surface-container-lowest border border-outline-variant rounded">⌘K</kbd>
+</div>
+</div>
+<!-- Direita: Indicadores de Caixa, PDV & Perfil do Operador -->
+<div class="flex items-center gap-4">
+<!-- Status do Caixa -->
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-tertiary-container/15 text-tertiary-container border border-tertiary-fixed-dim/40">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim animate-ping"></span>
+<span>Caixa 01 · Aberto</span>
+</div>
+<!-- Botão Primário Abrir PDV -->
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-tertiary-container hover:bg-tertiary text-on-primary font-semibold text-xs rounded-lg shadow-sm transition active:scale-95">
+<span class="material-symbols-outlined text-[16px]">point_of_sale</span>
+<span>Abrir PDV</span>
+<span class="text-[10px] bg-tertiary-fixed text-on-tertiary-fixed font-mono px-1 rounded">F12</span>
+</button>
+<div class="h-4 w-px bg-outline-variant/40 mx-0.5"></div>
+<!-- Notificações -->
+<button class="relative p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container transition text-outline">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<!-- Perfil Operador -->
+<div class="flex items-center gap-2.5 pl-1">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-bold text-xs">
+          JG
+        </div>
+<div class="hidden lg:flex flex-col text-left leading-tight">
+<span class="text-xs font-bold text-on-surface">Juliana Gomes</span>
+<span class="text-[11px] text-on-surface-variant font-medium">Gerente Geral</span>
+</div>
+</div>
+</div>
+</header>
+<!-- ========================================================================= -->
+<!-- MAIN CONTENT AREA (Scrollável, offset para sidebar 248px e topbar 56px) -->
+<!-- ========================================================================= -->
+<main class="ml-64 mt-14 flex-1 p-6 space-y-6 overflow-x-hidden min-h-[calc(100vh-3.5rem)] bg-background">
+<!-- Header da Página & Filtros de Período -->
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-1">
+<div>
+<div class="flex items-center gap-3">
+<h1 class="text-2xl font-bold font-headline text-on-surface tracking-tight">Início</h1>
+<span class="inline-flex items-center gap-1 text-[11px] font-medium text-tertiary-container bg-surface-container-low px-2 py-0.5 rounded-md border border-outline-variant/20">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span>
+            Atualizado às 16:42
+          </span>
+</div>
+<p class="text-xs text-on-surface-variant mt-0.5 font-medium">
+          Quinta-feira, 08/10/2026 · Visão executiva integrada de loja e balcão
+        </p>
+</div>
+<!-- Barra de Ações Rápidas & Filtros -->
+<div class="flex items-center gap-2.5">
+<div class="inline-flex p-0.5 bg-surface-container border border-outline-variant/40 rounded-lg text-xs font-medium">
+<button class="px-3 py-1 rounded bg-surface-container-lowest text-primary font-semibold shadow-xs">Hoje</button>
+<button class="px-3 py-1 rounded text-on-surface-variant hover:text-on-surface transition">Ontem</button>
+<button class="px-3 py-1 rounded text-on-surface-variant hover:text-on-surface transition">Últimos 7 dias</button>
+</div>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-lowest border border-outline-variant/60 hover:bg-surface-container-low text-on-surface text-xs font-semibold rounded-lg shadow-sm transition active:scale-95">
+<span class="material-symbols-outlined text-[16px]">file_download</span>
+<span>Exportar resumo</span>
+</button>
+</div>
+</div>
+<!-- ========================================================================= -->
+<!-- 1. GRID DE 6 KPIS CARDS (Executivo & Operacional) -->
+<!-- ========================================================================= -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5">
+<!-- KPI 1: Vendas Hoje -->
+<div class="bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-3.5 shadow-xs flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant mb-2">
+<span class="text-xs font-semibold">Vendas hoje</span>
+<span class="material-symbols-outlined text-primary text-[18px]">payments</span>
+</div>
+<div>
+<div class="text-xl font-bold font-headline text-on-surface tabular-nums">R$ 8.452,90</div>
+<div class="flex items-center gap-1 mt-1 text-[11px] font-medium text-tertiary-container">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+<span>+12% vs ontem</span>
+</div>
+</div>
+</div>
+<!-- KPI 2: Nº de Vendas -->
+<div class="bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-3.5 shadow-xs flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant mb-2">
+<span class="text-xs font-semibold">Nº de vendas</span>
+<span class="material-symbols-outlined text-primary text-[18px]">shopping_cart</span>
+</div>
+<div>
+<div class="text-xl font-bold font-headline text-on-surface tabular-nums">64 pedidos</div>
+<div class="text-[11px] text-on-surface-variant mt-1">
+            Meta diária: <span class="font-semibold text-on-surface">80</span> (80%)
+          </div>
+</div>
+</div>
+<!-- KPI 3: Ticket Médio -->
+<div class="bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-3.5 shadow-xs flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant mb-2">
+<span class="text-xs font-semibold">Ticket médio</span>
+<span class="material-symbols-outlined text-primary text-[18px]">receipt</span>
+</div>
+<div>
+<div class="text-xl font-bold font-headline text-on-surface tabular-nums">R$ 132,08</div>
+<div class="text-[11px] text-on-surface-variant mt-1">
+            Média mensal: R$ 126,50
+          </div>
+</div>
+</div>
+<!-- KPI 4: Caixas Abertos -->
+<div class="bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-3.5 shadow-xs flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant mb-2">
+<span class="text-xs font-semibold">Caixas abertos</span>
+<span class="material-symbols-outlined text-primary text-[18px]">storefront</span>
+</div>
+<div>
+<div class="text-xl font-bold font-headline text-on-surface tabular-nums">2 de 3</div>
+<div class="flex items-center gap-1.5 mt-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim" title="Caixa 1: Aberto"></span>
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim" title="Caixa 2: Aberto"></span>
+<span class="w-2 h-2 rounded-full bg-outline-variant" title="Caixa 3: Fechado"></span>
+<span class="text-[11px] text-on-surface-variant ml-1 font-medium">PDV 1 e 2 operando</span>
+</div>
+</div>
+</div>
+<!-- KPI 5: Contas a Receber Vencidas -->
+<div class="bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-3.5 shadow-xs flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant mb-2">
+<span class="text-xs font-semibold text-error">A receber vencidas</span>
+<span class="material-symbols-outlined text-error text-[18px]">event_busy</span>
+</div>
+<div>
+<div class="text-xl font-bold font-headline text-error tabular-nums">R$ 3.210,00</div>
+<div class="inline-flex items-center gap-1 mt-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-error-container text-on-error-container">
+            14 títulos em atraso
+          </div>
+</div>
+</div>
+<!-- KPI 6: Contas a Pagar Vencidas -->
+<div class="bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-3.5 shadow-xs flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant mb-2">
+<span class="text-xs font-semibold text-on-secondary-container">A pagar pendentes</span>
+<span class="material-symbols-outlined text-secondary text-[18px]">schedule</span>
+</div>
+<div>
+<div class="text-xl font-bold font-headline text-on-surface tabular-nums">R$ 1.180,40</div>
+<div class="inline-flex items-center gap-1 mt-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-surface-container-highest text-primary">
+            3 títulos para hoje
+          </div>
+</div>
+</div>
+</div>
+<!-- ========================================================================= -->
+<!-- 2. SEÇÃO PRINCIPAL DE GRÁFICOS E ANÁLISES (Bento Grid: 8 cols + 4 cols) -->
+<!-- ========================================================================= -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+<!-- COLUNA ESQUERDA (8 colunas) -->
+<div class="lg:col-span-8 space-y-5">
+<!-- CARD: Gráfico de Vendas por Hora -->
+<div class="bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-5 shadow-xs">
+<div class="flex items-center justify-between mb-4">
+<div>
+<h2 class="text-sm font-bold font-headline text-on-surface">Vendas por hora (08h às 20h)</h2>
+<p class="text-xs text-on-surface-variant">Distribuição horária do faturamento e picos de balcão</p>
+</div>
+<div class="flex items-center gap-3 text-xs">
+<span class="inline-flex items-center gap-1 text-on-surface-variant">
+<span class="w-3 h-3 rounded bg-primary-container inline-block"></span>
+                Horário Regular
+              </span>
+<span class="inline-flex items-center gap-1 font-semibold text-primary">
+<span class="w-3 h-3 rounded bg-primary inline-block"></span>
+                Picos de Venda
+              </span>
+</div>
+</div>
+<!-- Gráfico SVG Vetorial de Barras Interativo/Preciso -->
+<div class="w-full h-56 pt-2">
+<svg class="w-full h-full" fill="none" preserveaspectratio="none" viewbox="0 0 680 190">
+<!-- Grid lines horizontais -->
+<line stroke="#E2E8F0" stroke-dasharray="3 3" stroke-width="1" x1="30" x2="670" y1="20" y2="20"></line>
+<text fill="#737782" font-family="Inter" font-size="10" text-anchor="start" x="5" y="24">R$ 1.6k</text>
+<line stroke="#E2E8F0" stroke-dasharray="3 3" stroke-width="1" x1="30" x2="670" y1="65" y2="65"></line>
+<text fill="#737782" font-family="Inter" font-size="10" text-anchor="start" x="5" y="69">R$ 1.1k</text>
+<line stroke="#E2E8F0" stroke-dasharray="3 3" stroke-width="1" x1="30" x2="670" y1="110" y2="110"></line>
+<text fill="#737782" font-family="Inter" font-size="10" text-anchor="start" x="5" y="114">R$ 600</text>
+<line stroke="#c3c6d2" stroke-width="1" x1="30" x2="670" y1="155" y2="155"></line>
+<text fill="#737782" font-family="Inter" font-size="10" text-anchor="start" x="15" y="158">R$ 0</text>
+<!-- Barras por Hora (13 slots de 08h a 20h) -->
+<!-- 08h: R$ 180 (h: 16) -->
+<rect fill="#bfd5fe" height="16" rx="4" width="30" x="48" y="139"></rect>
+<text fill="#434750" font-family="Inter" font-size="10" text-anchor="middle" x="63" y="172">08h</text>
+<!-- 09h: R$ 390 (h: 35) -->
+<rect fill="#bfd5fe" height="35" rx="4" width="30" x="96" y="120"></rect>
+<text fill="#434750" font-family="Inter" font-size="10" text-anchor="middle" x="111" y="172">09h</text>
+<!-- 10h: R$ 780 (h: 70) -->
+<rect fill="#1d4f91" height="70" rx="4" width="30" x="144" y="85"></rect>
+<text fill="#434750" font-family="Inter" font-size="10" text-anchor="middle" x="159" y="172">10h</text>
+<!-- 11h: R$ 1.480 (h: 130) PICO 1 -->
+<rect fill="#003873" height="130" rx="4" width="30" x="192" y="25"></rect>
+<!-- Badge Pico -->
+<rect fill="#0b1c30" height="16" rx="3" width="54" x="180" y="4"></rect>
+<text fill="#ffffff" font-family="Inter" font-size="9" font-weight="bold" text-anchor="middle" x="207" y="15">R$ 1.480</text>
+<text fill="#003873" font-family="Inter" font-size="10" font-weight="bold" text-anchor="middle" x="207" y="172">11h</text>
+<!-- 12h: R$ 1.150 (h: 102) -->
+<rect fill="#1d4f91" height="102" rx="4" width="30" x="240" y="53"></rect>
+<text fill="#434750" font-family="Inter" font-size="10" text-anchor="middle" x="255" y="172">12h</text>
+<!-- 13h: R$ 420 (h: 38) -->
+<rect fill="#bfd5fe" height="38" rx="4" width="30" x="288" y="117"></rect>
+<text fill="#434750" font-family="Inter" font-size="10" text-anchor="middle" x="303" y="172">13h</text>
+<!-- 14h: R$ 510 (h: 46) -->
+<rect fill="#bfd5fe" height="46" rx="4" width="30" x="336" y="109"></rect>
+<text fill="#434750" font-family="Inter" font-size="10" text-anchor="middle" x="351" y="172">14h</text>
+<!-- 15h: R$ 680 (h: 61) -->
+<rect fill="#1d4f91" height="61" rx="4" width="30" x="384" y="94"></rect>
+<text fill="#434750" font-family="Inter" font-size="10" text-anchor="middle" x="399" y="172">15h</text>
+<!-- 16h: R$ 940 (h: 84) -->
+<rect fill="#1d4f91" height="84" rx="4" width="30" x="432" y="71"></rect>
+<text fill="#434750" font-family="Inter" font-size="10" text-anchor="middle" x="447" y="172">16h</text>
+<!-- 17h: R$ 1.620 (h: 142) PICO 2 (Maior) -->
+<rect fill="#003873" height="142" rx="4" width="30" x="480" y="13"></rect>
+<!-- Badge Pico 2 -->
+<rect fill="#005d25" height="16" rx="3" width="54" x="468" y="-2"></rect>
+<text fill="#7ffc97" font-family="Inter" font-size="9" font-weight="bold" text-anchor="middle" x="495" y="9">R$ 1.620</text>
+<text fill="#003873" font-family="Inter" font-size="10" font-weight="bold" text-anchor="middle" x="495" y="172">17h</text>
+<!-- 18h: R$ 720 (h: 64) -->
+<rect fill="#1d4f91" height="64" rx="4" width="30" x="528" y="91"></rect>
+<text fill="#434750" font-family="Inter" font-size="10" text-anchor="middle" x="543" y="172">18h</text>
+<!-- 19h: R$ 340 (h: 30) -->
+<rect fill="#bfd5fe" height="30" rx="4" width="30" x="576" y="125"></rect>
+<text fill="#434750" font-family="Inter" font-size="10" text-anchor="middle" x="591" y="172">19h</text>
+<!-- 20h: R$ 120 (h: 11) -->
+<rect fill="#bfd5fe" height="11" rx="4" width="30" x="624" y="144"></rect>
+<text fill="#434750" font-family="Inter" font-size="10" text-anchor="middle" x="639" y="172">20h</text>
+</svg>
+</div>
+<div class="mt-2 pt-3 border-t border-outline-variant/30 flex items-center justify-between text-xs text-on-surface-variant">
+<span>Período mais quente: <strong class="text-on-surface">17h00 - 18h00</strong> (Pós-expediente)</span>
+<span>Total faturado no gráfico: <strong class="text-primary tabular-nums font-semibold">R$ 8.452,90</strong></span>
+</div>
+</div>
+<!-- CARD: Tabela Top Produtos do Dia -->
+<div class="bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-5 shadow-xs">
+<div class="flex items-center justify-between mb-3">
+<div>
+<h2 class="text-sm font-bold font-headline text-on-surface">Top produtos mais vendidos hoje</h2>
+<p class="text-xs text-on-surface-variant">Itens com maior giro financeiro no varejo</p>
+</div>
+<a class="text-xs font-semibold text-primary hover:underline flex items-center gap-1" href="#">
+              Ver catálogo completo
+              <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</a>
+</div>
+<!-- Tabela Compacta de 44px de altura nas linhas -->
+<div class="overflow-x-auto">
+<table class="w-full text-left text-sm border-collapse">
+<thead>
+<tr class="border-b border-outline-variant/40 text-[11px] font-semibold text-outline tracking-wider">
+<th class="py-2.5 px-3">CÓDIGO / PRODUTO</th>
+<th class="py-2.5 px-3">CATEGORIA</th>
+<th class="py-2.5 px-3 text-center">QTD VENDIDA</th>
+<th class="py-2.5 px-3 text-right">TOTAL FATURADO</th>
+<th class="py-2.5 px-3 text-center">ESTOQUE ATUAL</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20 text-xs">
+<!-- Linha 1 -->
+<tr class="h-11 hover:bg-surface-container-low/60 transition-colors">
+<td class="py-2 px-3">
+<div class="font-semibold text-on-surface">Vestido Midi Floral Primavera</div>
+<div class="text-[10px] text-outline font-mono">REF-84920 · Tam G</div>
+</td>
+<td class="py-2 px-3 text-on-surface-variant">Moda Feminina</td>
+<td class="py-2 px-3 text-center font-semibold tabular-nums text-on-surface">14 un</td>
+<td class="py-2 px-3 text-right font-bold tabular-nums text-on-surface">R$ 2.646,00</td>
+<td class="py-2 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-secondary-container/30 text-on-secondary-container">18 un</span>
+</td>
+</tr>
+<!-- Linha 2 -->
+<tr class="h-11 hover:bg-surface-container-low/60 transition-colors">
+<td class="py-2 px-3">
+<div class="font-semibold text-on-surface">Calça Jeans Slim Denim 40</div>
+<div class="text-[10px] text-outline font-mono">REF-42091 · Azul Escuro</div>
+</td>
+<td class="py-2 px-3 text-on-surface-variant">Jeanswear</td>
+<td class="py-2 px-3 text-center font-semibold tabular-nums text-on-surface">11 un</td>
+<td class="py-2 px-3 text-right font-bold tabular-nums text-on-surface">R$ 1.969,00</td>
+<td class="py-2 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-secondary-container/30 text-on-secondary-container">9 un</span>
+</td>
+</tr>
+<!-- Linha 3 -->
+<tr class="h-11 hover:bg-surface-container-low/60 transition-colors">
+<td class="py-2 px-3">
+<div class="font-semibold text-on-surface">Camiseta Básica Algodão Egípcio G</div>
+<div class="text-[10px] text-outline font-mono">REF-10923 · Off-white</div>
+</td>
+<td class="py-2 px-3 text-on-surface-variant">Básicos</td>
+<td class="py-2 px-3 text-center font-semibold tabular-nums text-on-surface">19 un</td>
+<td class="py-2 px-3 text-right font-bold tabular-nums text-on-surface">R$ 1.691,00</td>
+<td class="py-2 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-error-container text-on-error-container font-semibold">2 un</span>
+</td>
+</tr>
+<!-- Linha 4 -->
+<tr class="h-11 hover:bg-surface-container-low/60 transition-colors">
+<td class="py-2 px-3">
+<div class="font-semibold text-on-surface">Blazer Alfaiataria Linho Cru</div>
+<div class="text-[10px] text-outline font-mono">REF-77142 · Tam M</div>
+</td>
+<td class="py-2 px-3 text-on-surface-variant">Alfaiataria</td>
+<td class="py-2 px-3 text-center font-semibold tabular-nums text-on-surface">5 un</td>
+<td class="py-2 px-3 text-right font-bold tabular-nums text-on-surface">R$ 1.445,00</td>
+<td class="py-2 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-secondary-container/30 text-on-secondary-container">7 un</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- COLUNA DIREITA (4 colunas) -->
+<div class="lg:col-span-4 space-y-5">
+<!-- CARD: Formas de Pagamento (Donut Chart + Breakdown) -->
+<div class="bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-5 shadow-xs">
+<div class="flex items-center justify-between mb-3">
+<div>
+<h2 class="text-sm font-bold font-headline text-on-surface">Formas de pagamento</h2>
+<p class="text-xs text-on-surface-variant">Composição de recebimento hoje</p>
+</div>
+<span class="text-xs font-bold text-tertiary-container bg-surface-container-low px-2 py-0.5 rounded">R$ 8.452,90</span>
+</div>
+<!-- SVG Donut Chart -->
+<div class="flex items-center justify-center my-3">
+<div class="relative w-36 h-36">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 42 42">
+<!-- Círculo base de fundo -->
+<circle cx="21" cy="21" fill="transparent" r="15.91549430918954" stroke="#E2E8F0" stroke-width="5"></circle>
+<!-- PIX: 38% -> stroke-dasharray: 38 62, offset: 0 (#107C41 / tertiary-container) -->
+<circle cx="21" cy="21" fill="transparent" r="15.91549430918954" stroke="#005d25" stroke-dasharray="38 62" stroke-dashoffset="0" stroke-width="5"></circle>
+<!-- Crédito: 27% -> offset: -38 (#003873 / primary) -->
+<circle cx="21" cy="21" fill="transparent" r="15.91549430918954" stroke="#003873" stroke-dasharray="27 73" stroke-dashoffset="-38" stroke-width="5"></circle>
+<!-- Débito: 21% -> offset: -65 (#1d4f91 / primary-container) -->
+<circle cx="21" cy="21" fill="transparent" r="15.91549430918954" stroke="#1d4f91" stroke-dasharray="21 79" stroke-dashoffset="-65" stroke-width="5"></circle>
+<!-- Dinheiro: 11% -> offset: -86 (#bfd5fe / secondary-container) -->
+<circle cx="21" cy="21" fill="transparent" r="15.91549430918954" stroke="#bfd5fe" stroke-dasharray="11 89" stroke-dashoffset="-86" stroke-width="5"></circle>
+<!-- Crediário: 3% -> offset: -97 (#d97706 âmbar) -->
+<circle cx="21" cy="21" fill="transparent" r="15.91549430918954" stroke="#d97706" stroke-dasharray="3 97" stroke-dashoffset="-97" stroke-width="5"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+<span class="text-[11px] text-outline font-medium">PIX Líder</span>
+<span class="text-sm font-bold text-on-surface tabular-nums">38%</span>
+</div>
+</div>
+</div>
+<!-- Lista de Breakdown Monetário -->
+<div class="space-y-2 pt-1 text-xs">
+<div class="flex items-center justify-between">
+<span class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary-container"></span>
+<span>PIX</span>
+</span>
+<span class="tabular-nums font-semibold text-on-surface">R$ 3.212,10 <span class="text-outline font-normal">(38%)</span></span>
+</div>
+<div class="flex items-center justify-between">
+<span class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+<span>Cartão de Crédito</span>
+</span>
+<span class="tabular-nums font-semibold text-on-surface">R$ 2.282,28 <span class="text-outline font-normal">(27%)</span></span>
+</div>
+<div class="flex items-center justify-between">
+<span class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container"></span>
+<span>Cartão de Débito</span>
+</span>
+<span class="tabular-nums font-semibold text-on-surface">R$ 1.775,11 <span class="text-outline font-normal">(21%)</span></span>
+</div>
+<div class="flex items-center justify-between">
+<span class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary-container"></span>
+<span>Dinheiro em Espécie</span>
+</span>
+<span class="tabular-nums font-semibold text-on-surface">R$ 929,82 <span class="text-outline font-normal">(11%)</span></span>
+</div>
+<div class="flex items-center justify-between">
+<span class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-amber-600"></span>
+<span>Crediário da Loja</span>
+</span>
+<span class="tabular-nums font-semibold text-on-surface">R$ 253,59 <span class="text-outline font-normal">(3%)</span></span>
+</div>
+</div>
+</div>
+<!-- CARD: Vendas por Operador -->
+<div class="bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-5 shadow-xs">
+<div class="flex items-center justify-between mb-4">
+<div>
+<h2 class="text-sm font-bold font-headline text-on-surface">Vendas por operador</h2>
+<p class="text-xs text-on-surface-variant">Desempenho da equipe hoje</p>
+</div>
+<span class="material-symbols-outlined text-outline">leaderboard</span>
+</div>
+<div class="space-y-4 text-xs">
+<!-- Operador 1 -->
+<div>
+<div class="flex justify-between items-center mb-1">
+<div class="flex items-center gap-2">
+<span class="w-5 h-5 rounded-full bg-tertiary-container text-tertiary-fixed text-[10px] font-bold flex items-center justify-center">1</span>
+<span class="font-semibold text-on-surface">Ana Paula</span>
+<span class="text-outline text-[11px]">(28 vendas)</span>
+</div>
+<span class="font-bold tabular-nums text-on-surface">R$ 3.840,00</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 78%"></div>
+</div>
+</div>
+<!-- Operador 2 -->
+<div>
+<div class="flex justify-between items-center mb-1">
+<div class="flex items-center gap-2">
+<span class="w-5 h-5 rounded-full bg-primary-container text-on-primary text-[10px] font-bold flex items-center justify-center">2</span>
+<span class="font-semibold text-on-surface">Carlos Mendes</span>
+<span class="text-outline text-[11px]">(22 vendas)</span>
+</div>
+<span class="font-bold tabular-nums text-on-surface">R$ 2.910,00</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 59%"></div>
+</div>
+</div>
+<!-- Operador 3 -->
+<div>
+<div class="flex justify-between items-center mb-1">
+<div class="flex items-center gap-2">
+<span class="w-5 h-5 rounded-full bg-secondary text-on-secondary text-[10px] font-bold flex items-center justify-center">3</span>
+<span class="font-semibold text-on-surface">Juliana Gomes</span>
+<span class="text-outline text-[11px]">(14 vendas)</span>
+</div>
+<span class="font-bold tabular-nums text-on-surface">R$ 1.702,90</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 35%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ========================================================================= -->
+<!-- 3. SEÇÃO INFERIOR: ESTOQUE CRÍTICO & ATALHOS RÁPIDOS DE TECLADO -->
+<!-- ========================================================================= -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-5 pt-1">
+<!-- Card Estoque Baixo (7 colunas) -->
+<div class="lg:col-span-7 bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-5 shadow-xs flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error">warning</span>
+<div>
+<h3 class="text-sm font-bold font-headline text-on-surface">Estoque baixo (Atenção imediata)</h3>
+<p class="text-xs text-on-surface-variant">Produtos que atingiram ou romperam o ponto de reposição</p>
+</div>
+</div>
+<button class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary text-on-primary text-xs font-semibold rounded-lg hover:bg-primary-container transition active:scale-95 shadow-xs">
+<span class="material-symbols-outlined text-[15px]">add_shopping_cart</span>
+<span>Gerar pedido de compra</span>
+</button>
+</div>
+<div class="divide-y divide-outline-variant/20">
+<!-- Item 1 -->
+<div class="py-2.5 flex items-center justify-between text-xs">
+<div class="space-y-0.5">
+<div class="font-semibold text-on-surface">Camiseta Básica Branca M</div>
+<div class="text-outline text-[11px]">2 un em estoque · Estoque mín. 10 un</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                  Crítico
+                </span>
+<button class="p-1 text-on-surface-variant hover:text-primary rounded">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="py-2.5 flex items-center justify-between text-xs">
+<div class="space-y-0.5">
+<div class="font-semibold text-on-surface">Vestido Seda Estampado P</div>
+<div class="text-outline text-[11px]">1 un em estoque · Estoque mín. 6 un</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-error-container text-on-error-container">
+                  Repor urgente
+                </span>
+<button class="p-1 text-on-surface-variant hover:text-primary rounded">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="py-2.5 flex items-center justify-between text-xs">
+<div class="space-y-0.5">
+<div class="font-semibold text-on-surface">Calça Jeans Skinny 38</div>
+<div class="text-outline text-[11px]">3 un em estoque · Estoque mín. 12 un</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                  Crítico
+                </span>
+<button class="p-1 text-on-surface-variant hover:text-primary rounded">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-3 border-t border-outline-variant/30 flex items-center justify-between text-xs text-outline">
+<span>Total de 18 itens abaixo do ponto de ressuprimento</span>
+<a class="font-medium text-primary hover:underline" href="#">Ver inventário completo</a>
+</div>
+</div>
+<!-- Card Atalhos Rápidos Operacionais (5 colunas) -->
+<div class="lg:col-span-5 bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-5 shadow-xs flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-3">
+<div>
+<h3 class="text-sm font-bold font-headline text-on-surface">Atalhos rápidos do operador</h3>
+<p class="text-xs text-on-surface-variant">Acesso ultra-rápido por teclado sem tirar a mão da venda</p>
+</div>
+<span class="material-symbols-outlined text-outline">keyboard</span>
+</div>
+<div class="grid grid-cols-2 gap-2.5 pt-1">
+<!-- Atalho F12 -->
+<button class="flex items-center justify-between p-3 rounded-lg border border-outline-variant/60 bg-surface-container-low hover:bg-surface-container hover:border-primary/40 transition group text-left">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">point_of_sale</span>
+<span class="text-xs font-semibold text-on-surface">Nova venda</span>
+</div>
+<span class="px-1.5 py-0.5 bg-tertiary-container text-tertiary-fixed font-mono text-[10px] font-bold rounded shadow-xs">F12</span>
+</button>
+<!-- Atalho F3 -->
+<button class="flex items-center justify-between p-3 rounded-lg border border-outline-variant/60 bg-surface-container-low hover:bg-surface-container hover:border-primary/40 transition group text-left">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">person_add</span>
+<span class="text-xs font-semibold text-on-surface">Novo cliente</span>
+</div>
+<span class="px-1.5 py-0.5 bg-surface-container-lowest text-on-surface font-mono text-[10px] font-semibold border border-outline-variant rounded shadow-xs">F3</span>
+</button>
+<!-- Atalho F4 -->
+<button class="flex items-center justify-between p-3 rounded-lg border border-outline-variant/60 bg-surface-container-low hover:bg-surface-container hover:border-primary/40 transition group text-left">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">add_card</span>
+<span class="text-xs font-semibold text-on-surface">Lançar conta</span>
+</div>
+<span class="px-1.5 py-0.5 bg-surface-container-lowest text-on-surface font-mono text-[10px] font-semibold border border-outline-variant rounded shadow-xs">F4</span>
+</button>
+<!-- Atalho F7 -->
+<button class="flex items-center justify-between p-3 rounded-lg border border-outline-variant/60 bg-surface-container-low hover:bg-surface-container hover:border-primary/40 transition group text-left">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">manage_search</span>
+<span class="text-xs font-semibold text-on-surface">Ver estoque</span>
+</div>
+<span class="px-1.5 py-0.5 bg-surface-container-lowest text-on-surface font-mono text-[10px] font-semibold border border-outline-variant rounded shadow-xs">F7</span>
+</button>
+</div>
+</div>
+<div class="pt-3 border-t border-outline-variant/30 flex items-center justify-between text-[11px] text-on-surface-variant">
+<span>Pressione <kbd class="px-1 py-0.5 bg-surface-container text-on-surface rounded font-mono border border-outline-variant/40">F1</kbd> em qualquer tela para Ajuda</span>
+<span class="font-medium text-tertiary-container">Modo Turbo PDV Ativado</span>
+</div>
+</div>
+</div>
+<!-- Informações de Segurança & Rodapé do Conteúdo -->
+<div class="pt-4 pb-2 flex flex-col sm:flex-row items-center justify-between text-xs text-outline border-t border-outline-variant/30">
+<div class="flex items-center gap-2">
+<span>© 2026 JG Sistemas de Gestão Comercial S.A.</span>
+<span>·</span>
+<span>CNPJ 24.890.123/0001-44</span>
+</div>
+<div class="flex items-center gap-4 mt-2 sm:mt-0">
+<span class="flex items-center gap-1 text-tertiary-container">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span>
+          Conexão Segura TLS 1.3
+        </span>
+<a class="hover:text-primary transition" href="#">Termos &amp; Suporte</a>
+</div>
+</div>
+</main>
+</body></html>

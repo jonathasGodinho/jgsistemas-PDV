@@ -6,74 +6,42 @@
     <meta name="google" content="notranslate">
     <title>Relatórios Gerenciais - JG Sistemas</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
-        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
-        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
-        header a:hover { color: white; }
-        main { padding: 20px; max-width: 1100px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
-        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
-        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
-        .painel-corpo { padding: 16px; }
-        .form-linha { display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; }
-        .form-linha .campo { display: flex; flex-direction: column; gap: 5px; }
-        .form-linha label { font-size: 12px; color: #656d78; font-weight: bold; text-transform: uppercase; }
-        .form-linha input { padding: 10px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
-        .btn { border: none; border-radius: 4px; padding: 10px 16px; font-size: 13px; font-weight: bold; cursor: pointer; }
-        .btn-verde { background-color: #00a651; color: white; }
-        .btn-verde:hover { background-color: #007a3d; }
-        .btn-cinza { background-color: #8b95a1; color: white; }
-        .btn-cinza:hover { background-color: #6f7885; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { background-color: #134074; color: white; padding: 8px 10px; text-align: left; text-transform: uppercase; font-size: 11px; }
-        td { padding: 8px 10px; border-bottom: 1px solid #e6e9ed; color: #333; }
-        tr:nth-child(even) { background-color: #f8f9fa; }
-        .sem-dados { text-align: center; color: #8b95a1; padding: 24px; font-size: 14px; }
-        .abas { display: flex; gap: 6px; margin-bottom: 0; }
-        .aba { padding: 10px 16px; background: #e6e9ed; border: none; border-radius: 4px 4px 0 0; font-weight: bold; font-size: 13px; cursor: pointer; color: #656d78; }
-        .aba.ativa { background: white; color: #0b2545; border: 1px solid #ccd1d9; border-bottom: none; }
-        .resumo-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 14px; }
-        .resumo-cards .item { background: #f8f9fa; border: 1px solid #e6e9ed; border-radius: 4px; padding: 12px; }
-        .resumo-cards .item .rotulo { font-size: 11px; color: #8b95a1; font-weight: bold; text-transform: uppercase; }
-        .resumo-cards .item .valor { font-size: 20px; font-weight: bold; color: #134074; margin-top: 4px; }
-        footer { background-color: #134074; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
+        .resumo-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin-bottom: 16px; }
+        .resumo-cards .item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 14px 16px; }
+        .resumo-cards .item .rotulo { font-size: 12.5px; color: var(--text-2); font-weight: 500; }
+        .resumo-cards .item .valor { font-size: 22px; font-weight: 700; margin-top: 6px; font-variant-numeric: tabular-nums; }
+        #area-resultado table { border: 1px solid var(--border); border-radius: var(--radius); }
+        .cel-barra { width: 34%; }
+        .cel-barra .barra-h { height: 10px; }
     </style>
+    <link rel="stylesheet" href="/ui/jg.css">
 </head>
-<body>
-
-    <header>
-        <div>JG SISTEMAS - RELATÓRIOS GERENCIAIS</div>
-        <div><a href="/">← Menu Principal</a></div>
-    </header>
-
+<body class="jg" data-pagina="relatorios">
     <main>
-        <div class="painel">
-            <div class="painel-corpo">
-                <div class="form-linha">
-                    <div class="campo"><label>De</label><input type="date" id="f-de"></div>
-                    <div class="campo"><label>Até</label><input type="date" id="f-ate"></div>
-                    <button class="btn btn-verde" onclick="gerar()">Gerar Relatório</button>
-                    <button class="btn btn-cinza" onclick="imprimir()">Imprimir</button>
-                </div>
+        <div class="page-head">
+            <div><h1>Relatórios</h1><div class="sub">Relatórios gerenciais por período</div></div>
+            <div class="acoes">
+                <div class="campo" style="margin:0;width:160px"><label for="f-de">De</label><input type="date" id="f-de"></div>
+                <div class="campo" style="margin:0;width:160px"><label for="f-ate">Até</label><input type="date" id="f-ate"></div>
+                <button class="btn btn-primario" onclick="gerar()" style="align-self:flex-end"><span class="ms">play_arrow</span>Gerar</button>
+                <button class="btn" onclick="imprimir()" style="align-self:flex-end"><span class="ms">print</span>Imprimir</button>
+                <button class="btn" onclick="exportarCsv()" style="align-self:flex-end"><span class="ms">download</span>Exportar CSV</button>
             </div>
         </div>
 
-        <div class="painel">
-            <div class="abas">
-                <button class="aba ativa" id="aba-operador" onclick="mostrarAba('operador')">Vendas por Operador</button>
-                <button class="aba" id="aba-ranking" onclick="mostrarAba('ranking')">Ranking de Produtos</button>
-                <button class="aba" id="aba-pagamento" onclick="mostrarAba('pagamento')">Por Pagamento</button>
-                <button class="aba" id="aba-comissao" onclick="mostrarAba('comissao')">Comissões</button>
-            </div>
-            <div class="painel-corpo" id="area-resultado">
-                <div class="sem-dados">Selecione o período e clique em "Gerar Relatório".</div>
-            </div>
+        <div class="abas">
+            <a class="aba" href="/relatorio-caixas.html"><span class="ms sm">point_of_sale</span>Fechamento de caixa</a>
+            <button class="aba ativa" id="aba-operador" onclick="mostrarAba('operador')"><span class="ms sm">person</span>Vendas por operador</button>
+            <button class="aba" id="aba-ranking" onclick="mostrarAba('ranking')"><span class="ms sm">leaderboard</span>Ranking de produtos</button>
+            <button class="aba" id="aba-pagamento" onclick="mostrarAba('pagamento')"><span class="ms sm">payments</span>Por forma de pagamento</button>
+            <button class="aba" id="aba-comissao" onclick="mostrarAba('comissao')"><span class="ms sm">percent</span>Comissões</button>
+        </div>
+        <div id="area-resultado">
+            <div class="card"><div class="estado-vazio"><span class="ms">analytics</span><p>Selecione o período e clique em "Gerar".</p></div></div>
         </div>
     </main>
-
-    <footer>© 2026 JG Sistemas</footer>
-
     <script src="/seguranca.js"></script>
+    <script src="/ui/shell.js"></script>
     <script>
         function formatarMoeda(v) {
             return 'R$ ' + (Number(v) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -125,7 +93,7 @@
 
         function mostrarAba(aba) {
             abaAtiva = aba;
-            document.querySelectorAll('.aba').forEach(b => b.classList.remove('ativa'));
+            document.querySelectorAll('button.aba').forEach(b => b.classList.remove('ativa'));
             document.getElementById(`aba-${aba}`).classList.add('ativa');
             renderizarAba();
         }
@@ -145,14 +113,17 @@
         }
 
         function tabela(thead, linhas, vazio) {
-            if (linhas.length === 0) return `<div class="sem-dados">${vazio}</div>`;
-            return `<table><thead>${thead}</thead><tbody>${linhas.join('')}</tbody></table>`;
+            if (linhas.length === 0) return `<div class="card"><div class="estado-vazio"><span class="ms">search_off</span><p>${vazio}</p></div></div>`;
+            return `<div class="card"><div class="tabela-wrap"><table><thead>${thead}</thead><tbody>${linhas.join('')}</tbody></table></div></div>`;
+        }
+        function barra(v, max) {
+            return `<td class="cel-barra"><div class="barra-h"><div style="width:${max ? Math.max(1, v / max * 100) : 0}%"></div></div></td>`;
         }
 
         function renderizarAba() {
             const area = document.getElementById('area-resultado');
             if (!Object.keys(dadosGerados).length) {
-                area.innerHTML = '<div class="sem-dados">Selecione o período e clique em "Gerar Relatório".</div>';
+                area.innerHTML = '<div class="card"><div class="estado-vazio"><span class="ms">analytics</span><p>Selecione o período e clique em "Gerar".</p></div></div>';
                 return;
             }
             let html = '';
@@ -166,13 +137,15 @@
                         <div class="item"><div class="rotulo">Total Vendido</div><div class="valor">${formatarMoeda(total)}</div></div>
                     </div>
                     ${tabela(
-                        '<tr><th>Operador</th><th style="text-align:right;">Vendas</th><th style="text-align:right;">Canceladas</th><th style="text-align:right;">Total</th></tr>',
-                        d.map(x => `
+                        '<tr><th>Operador</th><th></th><th class="right">Vendas</th><th class="right">Ticket médio</th><th class="right">Canceladas</th><th class="right">Total</th></tr>',
+                        d.slice().sort((a, b) => b.total - a.total).map(x => `
                             <tr>
-                                <td><strong>${esc(x.operador)}</strong></td>
-                                <td style="text-align:right;">${x.quantidade}</td>
-                                <td style="text-align:right;">${x.canceladas}</td>
-                                <td style="text-align:right;">${formatarMoeda(x.total)}</td>
+                                <td><b>${esc(x.operador)}</b></td>
+                                ${barra(x.total, Math.max(...d.map(y => y.total)))}
+                                <td class="right">${x.quantidade}</td>
+                                <td class="right">${formatarMoeda(x.quantidade ? x.total / x.quantidade : 0)}</td>
+                                <td class="right ${x.canceladas ? 'txt-vermelho' : ''}">${x.canceladas}</td>
+                                <td class="right"><b>${formatarMoeda(x.total)}</b></td>
                             </tr>`),
                         'Nenhuma venda no período.'
                     )}`;
@@ -185,13 +158,14 @@
                         <div class="item"><div class="rotulo">Unidades</div><div class="valor">${totalQtd}</div></div>
                     </div>
                     ${tabela(
-                        '<tr><th>#</th><th>Produto</th><th style="text-align:right;">Qtd</th><th style="text-align:right;">Valor</th></tr>',
+                        '<tr><th>#</th><th>Produto</th><th></th><th class="right">Qtd</th><th class="right">Valor</th></tr>',
                         d.map(x => `
                             <tr>
-                                <td>${x.posicao}</td>
-                                <td>${esc(x.nome)} <small style="color:#8b95a1;">(${esc(x.codigo)})</small></td>
-                                <td style="text-align:right;">${x.qtd}</td>
-                                <td style="text-align:right;">${formatarMoeda(x.valor)}</td>
+                                <td><b>${x.posicao}º</b></td>
+                                <td>${esc(x.nome)}<br><small>${esc(x.codigo)}</small></td>
+                                ${barra(x.qtd, Math.max(...d.map(y => y.qtd)))}
+                                <td class="right">${x.qtd}</td>
+                                <td class="right"><b>${formatarMoeda(x.valor)}</b></td>
                             </tr>`),
                         'Nenhuma venda no período.'
                     )}`;
@@ -203,11 +177,13 @@
                         <div class="item"><div class="rotulo">Total Recebido</div><div class="valor">${formatarMoeda(total)}</div></div>
                     </div>
                     ${tabela(
-                        '<tr><th>Forma de Pagamento</th><th style="text-align:right;">Valor</th></tr>',
-                        d.map(x => `
+                        '<tr><th>Forma de pagamento</th><th></th><th class="right">Participação</th><th class="right">Valor</th></tr>',
+                        d.slice().sort((a, b) => b.total - a.total).map(x => `
                             <tr>
-                                <td>${NOMES_METODOS[x.metodo] || x.metodo}</td>
-                                <td style="text-align:right;">${formatarMoeda(x.total)}</td>
+                                <td><b>${NOMES_METODOS[x.metodo] || esc(x.metodo)}</b></td>
+                                ${barra(x.total, Math.max(...d.map(y => y.total)))}
+                                <td class="right">${total ? (x.total / total * 100).toFixed(1).replace('.', ',') : 0}%</td>
+                                <td class="right"><b>${formatarMoeda(x.total)}</b></td>
                             </tr>`),
                         'Nenhuma venda no período.'
                     )}`;
@@ -219,13 +195,13 @@
                         <div class="item"><div class="rotulo">Comissões a Pagar</div><div class="valor">${formatarMoeda(totalComissao)}</div></div>
                     </div>
                     ${tabela(
-                        '<tr><th>Operador</th><th style="text-align:right;">Taxa (%)</th><th style="text-align:right;">Total Vendido</th><th style="text-align:right;">Comissão</th></tr>',
+                        '<tr><th>Operador</th><th class="right">Taxa</th><th class="right">Total vendido</th><th class="right">Comissão</th></tr>',
                         d.map(x => `
                             <tr>
-                                <td><strong>${esc(x.operador)}</strong></td>
-                                <td style="text-align:right;">${x.taxa}%</td>
-                                <td style="text-align:right;">${formatarMoeda(x.totalVendido)}</td>
-                                <td style="text-align:right;"><strong>${formatarMoeda(x.comissao)}</strong></td>
+                                <td><b>${esc(x.operador)}</b></td>
+                                <td class="right">${String(x.taxa).replace('.', ',')}%</td>
+                                <td class="right">${formatarMoeda(x.totalVendido)}</td>
+                                <td class="right"><b class="txt-verde">${formatarMoeda(x.comissao)}</b></td>
                             </tr>`),
                         'Nenhum operador com comissão configurada. Configure em Configurações > Operadores e Comissão.'
                     )}`;
@@ -234,12 +210,26 @@
             area.innerHTML = html;
         }
 
+        function exportarCsv() {
+            const tabelaEl = document.querySelector('#area-resultado table');
+            if (!tabelaEl) { JG.toast('Gere o relatório antes de exportar.', 'alerta'); return; }
+            const linhas = [...tabelaEl.querySelectorAll('tr')].map(tr => [...tr.children]
+                .filter(td => !td.classList.contains('cel-barra') && !(td.tagName === 'TH' && !td.textContent.trim()))
+                .map(td => '"' + td.innerText.replace(/\s+/g, ' ').trim().replace(/"/g, '""') + '"').join(';'));
+            const csv = '\ufeff' + linhas.join('\r\n');
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+            a.download = `relatorio-${abaAtiva}-${document.getElementById('f-de').value || ''}_${document.getElementById('f-ate').value || ''}.csv`;
+            a.click();
+            setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+        }
+
         function imprimir() {
             const conteudo = document.getElementById('area-resultado').innerHTML;
             if (!conteudo.trim() || !Object.keys(dadosGerados).length) { alert("Gere o relatório antes de imprimir!"); return; }
             const de = document.getElementById('f-de').value || '-';
             const ate = document.getElementById('f-ate').value || '-';
-            const nomeAba = document.getElementById(`aba-${abaAtiva}`).innerText;
+            const nomeAba = document.getElementById(`aba-${abaAtiva}`).innerText.replace(/^\S+\s*/, '');
             const w = window.open('', '_blank');
             w.document.write(`<html><head><title>Relatório - ${nomeAba}</title>
                 <style>
@@ -266,6 +256,8 @@
 
         document.getElementById('f-de').value = new Date().toISOString().slice(0, 10);
         document.getElementById('f-ate').value = new Date().toISOString().slice(0, 10);
+        if (['operador', 'ranking', 'pagamento', 'comissao'].includes(location.hash.slice(1))) mostrarAba(location.hash.slice(1));
+        gerar();
     </script>
 </body>
 </html>

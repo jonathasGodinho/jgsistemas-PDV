@@ -6,132 +6,76 @@
     <meta name="google" content="notranslate">
     <title>Recebíveis de Cartão - JG Sistemas</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
-        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
-        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
-        header a:hover { color: white; }
-        main { padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
-        footer { text-align: center; font-size: 11px; color: #8b95a1; }
-        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
-        .card { background: white; border: 1px solid #ccd1d9; border-radius: 4px; padding: 14px; }
-        .card .valor { font-size: 20px; font-weight: bold; color: #134074; margin-top: 6px; }
-        .card .rotulo { font-size: 11px; color: #656d78; font-weight: bold; text-transform: uppercase; }
-        .card.verde .valor { color: #008c45; }
-        .card.laranja .valor { color: #b26b00; }
-        .card.vermelho .valor { color: #d9534f; }
-        .filtros { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; background: white; border: 1px solid #ccd1d9; border-radius: 4px; padding: 12px; }
-        .filtros .campo { display: flex; flex-direction: column; gap: 4px; }
-        .filtros label { font-size: 11px; color: #656d78; font-weight: bold; text-transform: uppercase; }
-        .filtros select, .filtros input { padding: 8px; font-size: 13px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
+        .filtros .campo { width: 160px; }
         .antecipar { display: flex; gap: 8px; align-items: flex-end; margin-left: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { background-color: #134074; color: white; padding: 8px; text-align: left; text-transform: uppercase; font-size: 11px; }
-        td { padding: 8px; border-bottom: 1px solid #e6e9ed; color: #333; }
-        tr:nth-child(even) { background-color: #f8f9fa; }
-        .btn { border: none; border-radius: 4px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; }
-        .btn-azul { background-color: #134074; color: white; }
-        .btn-verde { background-color: #00a651; color: white; }
-        .btn-amarelo { background-color: #f0ad4e; color: white; }
-        .btn-mini { padding: 4px 8px; font-size: 12px; }
-        .sem-dados { text-align: center; color: #8b95a1; padding: 24px; font-size: 14px; }
-        .badge { display: inline-block; padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
-        .b-azul { background: #dbeafe; color: #134074; }
-        .b-laranja { background: #fde8c8; color: #b26b00; }
-        .b-verde { background: #d8f3e3; color: #008c45; }
-        .b-cinza { background: #e6e9ed; color: #656d78; }
+        .antecipar .campo { width: 150px; }
     </style>
+    <link rel="stylesheet" href="/ui/jg.css">
 </head>
-<body>
-
-    <header>
-        <div>JG SISTEMAS - RECEBÍVEIS DE CARTÃO</div>
-        <div><a href="/">← Menu Principal</a> &nbsp;|&nbsp; <a href="/projecao-repasses.html">Projeção de Repasses</a> &nbsp;|&nbsp; <a href="/operadoras.html">Operadoras e Taxas</a> &nbsp;|&nbsp; <a href="/financeiro.html">Financeiro</a></div>
-    </header>
-
+<body class="jg" data-pagina="cartoes" data-titulo="Cartões · Recebíveis">
     <main>
-        <div class="cards">
-            <div class="card verde">
-                <div class="rotulo">A Receber (líquido)</div>
-                <div class="valor" id="card-pendente">R$ 0,00</div>
-                <div class="rotulo" id="card-pendente-bruto" style="margin-top:4px;">bruto R$ 0,00 · taxa R$ 0,00</div>
-            </div>
-            <div class="card laranja">
-                <div class="rotulo">Antecipado</div>
-                <div class="valor" id="card-antecipado">R$ 0,00</div>
-            </div>
-            <div class="card">
-                <div class="rotulo">Pago</div>
-                <div class="valor" id="card-pago">R$ 0,00</div>
-            </div>
-            <div class="card vermelho">
-                <div class="rotulo">Total Bruto</div>
-                <div class="valor" id="card-total">R$ 0,00</div>
-                <div class="rotulo" style="margin-top:4px;" id="card-taxa-total">taxas R$ 0,00</div>
-            </div>
+        <div class="page-head">
+            <div><h1>Cartões</h1><div class="sub">Recebíveis de cartão, antecipação e repasses das operadoras</div></div>
+            <div class="acoes"><a class="btn" href="/financeiro.html"><span class="ms">payments</span>Contas a receber</a></div>
+        </div>
+        <div class="abas">
+            <a class="aba ativa" href="/recebiveis.html"><span class="ms sm">credit_card</span>Recebíveis</a>
+            <a class="aba" href="/projecao-repasses.html"><span class="ms sm">bar_chart</span>Projeção de repasses</a>
+            <a class="aba" href="/operadoras.html"><span class="ms sm">tune</span>Operadoras e taxas</a>
         </div>
 
-        <div class="filtros">
-            <div class="campo">
-                <label>Status</label>
-                <select id="f-status" onchange="carregarRecebiveis()">
-                    <option value="">Todos</option>
-                    <option value="PENDING">Pendente</option>
-                    <option value="ANTECIPATED">Antecipado</option>
-                    <option value="PAID">Pago</option>
-                    <option value="CANCELLED">Cancelado</option>
-                </select>
-            </div>
-            <div class="campo">
-                <label>Operadora</label>
-                <select id="f-operadora" onchange="carregarRecebiveis()"></select>
-            </div>
-            <div class="campo">
-                <label>Bandeira</label>
-                <select id="f-bandeira" onchange="carregarRecebiveis()"></select>
-            </div>
-            <div class="campo">
-                <label>De</label>
-                <input type="date" id="f-de" onchange="carregarRecebiveis()">
-            </div>
-            <div class="campo">
-                <label>Até</label>
-                <input type="date" id="f-ate" onchange="carregarRecebiveis()">
-            </div>
-            <div class="antecipar">
-                <div class="campo">
-                    <label>Taxa antecipação (%)</label>
-                    <input type="number" id="f-taxa-antecipacao" value="0" min="0" step="0.01" style="width:120px;">
+        <div class="kpis">
+            <div class="kpi verde"><div class="kpi-top"><span>A receber (líquido)</span><span class="ms">account_balance_wallet</span></div><div class="kpi-valor" id="card-pendente">R$ 0,00</div><div class="kpi-rodape" id="card-pendente-bruto">bruto R$ 0,00 · taxa R$ 0,00</div></div>
+            <div class="kpi ambar"><div class="kpi-top"><span>Antecipado</span><span class="ms">fast_forward</span></div><div class="kpi-valor" id="card-antecipado">R$ 0,00</div></div>
+            <div class="kpi"><div class="kpi-top"><span>Pago</span><span class="ms">task_alt</span></div><div class="kpi-valor" id="card-pago">R$ 0,00</div></div>
+            <div class="kpi"><div class="kpi-top"><span>Total bruto</span><span class="ms">receipt_long</span></div><div class="kpi-valor" id="card-total">R$ 0,00</div><div class="kpi-rodape" id="card-taxa-total">taxas R$ 0,00</div></div>
+        </div>
+
+        <div class="card">
+            <div class="card-body" style="padding-bottom:0">
+                <div class="filtros">
+                    <div class="campo"><label for="f-status">Status</label>
+                        <select id="f-status" onchange="carregarRecebiveis()">
+                            <option value="">Todos</option>
+                            <option value="PENDING">Pendente</option>
+                            <option value="ANTECIPATED">Antecipado</option>
+                            <option value="PAID">Pago</option>
+                            <option value="CANCELLED">Cancelado</option>
+                        </select></div>
+                    <div class="campo"><label for="f-operadora">Operadora</label><select id="f-operadora" onchange="carregarRecebiveis()"></select></div>
+                    <div class="campo"><label for="f-bandeira">Bandeira</label><select id="f-bandeira" onchange="carregarRecebiveis()"></select></div>
+                    <div class="campo"><label for="f-de">Vencimento de</label><input type="date" id="f-de" onchange="carregarRecebiveis()"></div>
+                    <div class="campo"><label for="f-ate">até</label><input type="date" id="f-ate" onchange="carregarRecebiveis()"></div>
+                    <div class="antecipar">
+                        <div class="campo"><label for="f-taxa-antecipacao">Taxa de antecipação (%)</label><input type="number" id="f-taxa-antecipacao" value="0" min="0" step="0.01"></div>
+                        <button class="btn btn-primario" onclick="anteciparPendentes()"><span class="ms">fast_forward</span>Antecipar pendentes</button>
+                    </div>
                 </div>
-                <button class="btn btn-amarelo" onclick="anteciparPendentes()">Antecipar Pendentes</button>
             </div>
-        </div>
-
-        <div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Venda</th>
-                        <th>Operadora</th>
-                        <th>Bandeira</th>
-                        <th>Parcela</th>
-                        <th style="text-align:right;">Bruto</th>
-                        <th style="text-align:right;">Taxa</th>
-                        <th style="text-align:right;">Líquido</th>
-                        <th>Vencimento</th>
-                        <th>Status</th>
-                        <th>Financeiro</th>
-                        <th style="text-align:right;">Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="tabela-recebiveis"></tbody>
-            </table>
+            <div class="tabela-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Venda</th>
+                            <th>Operadora</th>
+                            <th>Bandeira</th>
+                            <th>Parcela</th>
+                            <th class="right">Bruto</th>
+                            <th class="right">Taxa</th>
+                            <th class="right">Líquido</th>
+                            <th>Vencimento</th>
+                            <th>Status</th>
+                            <th>Financeiro</th>
+                            <th class="acoes">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-recebiveis"><tr><td colspan="11" class="sem-dados">Carregando...</td></tr></tbody>
+                </table>
+            </div>
         </div>
     </main>
-
-    <footer>JG Sistemas</footer>
-
     <script src="/seguranca.js"></script>
+    <script src="/ui/shell.js"></script>
     <script>
         const API_BASE = window.location.protocol.startsWith('http') ? '' : 'http://localhost:3000';
 
@@ -163,10 +107,10 @@
         }
         bloquear();
 
-        const STATUS_LABEL = { PENDING: 'PENDENTE', ANTECIPATED: 'ANTECIPADO', PAID: 'PAGO', CANCELLED: 'CANCELADO' };
-        const STATUS_BADGE = { PENDING: 'b-azul', ANTECIPATED: 'b-laranja', PAID: 'b-verde', CANCELLED: 'b-cinza' };
+        const STATUS_LABEL = { PENDING: 'Pendente', ANTECIPATED: 'Antecipado', PAID: 'Pago', CANCELLED: 'Cancelado' };
+        const STATUS_BADGE = { PENDING: 'pendente', ANTECIPATED: 'azul', PAID: 'pago', CANCELLED: 'cancelado' };
 
-        function moeda(v) { return `R$ ${Number(v || 0).toFixed(2)}`; }
+        function moeda(v) { return Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
         function formatarData(d) {
             if (!d) return '—';
             const dt = new Date(d);
@@ -211,12 +155,12 @@
 
                 const tbody = document.getElementById('tabela-recebiveis');
                 if (dados.recebiveis.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="11" class="sem-dados">Nenhum recebível encontrado.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="11"><div class="estado-vazio"><span class="ms">credit_card</span><p>Nenhum recebível encontrado.</p></div></td></tr>';
                     return;
                 }
 
                 const CONTA_STATUS = {
-                    PENDING: 'PENDENTE', OVERDUE: 'VENCIDA', PAID: 'BAIXADA', CANCELLED: 'CANCELADA'
+                    PENDING: 'Pendente', OVERDUE: 'Vencida', PAID: 'Baixada', CANCELLED: 'Cancelada'
                 };
                 const CONTA_BADGE = {
                     PENDING: 'b-azul', OVERDUE: 'b-vermelho', PAID: 'b-verde', CANCELLED: 'b-cinza'
@@ -224,23 +168,23 @@
 
                 tbody.innerHTML = dados.recebiveis.map(rec => `
                     <tr>
-                        <td><strong>${esc(rec.venda ?? '—')}</strong></td>
+                        <td><b>${esc(rec.venda ?? '—')}</b></td>
                         <td>${esc(rec.operadora)}</td>
                         <td>${esc(rec.bandeira)}</td>
-                        <td>${rec.metodo === 'CREDIT' ? 'CRÉDITO' : 'DÉBITO'} ${rec.parcela}</td>
-                        <td style="text-align:right;">${moeda(rec.bruto)}</td>
-                        <td style="text-align:right;">${moeda(rec.taxa)}</td>
-                        <td style="text-align:right;"><strong>${moeda(rec.liquido)}</strong></td>
+                        <td>${rec.metodo === 'CREDIT' ? 'Crédito' : 'Débito'} <small>${esc(rec.parcela)}</small></td>
+                        <td class="right">${moeda(rec.bruto)}</td>
+                        <td class="right txt-vermelho">${moeda(rec.taxa)}${rec.bruto ? `<br><small>${(rec.taxa / rec.bruto * 100).toFixed(2).replace('.', ',')}%</small>` : ''}</td>
+                        <td class="right"><b>${moeda(rec.liquido)}</b></td>
                         <td>${formatarData(rec.vencimento)}</td>
                         <td><span class="badge ${STATUS_BADGE[rec.status]}">${STATUS_LABEL[rec.status]}</span></td>
                         <td>${rec.contaFinanceiraId
                             ? `<a href="/financeiro.html" title="Ver conta no Financeiro"><span class="badge ${CONTA_BADGE[rec.contaFinanceiraStatus] || 'b-cinza'}">${esc(CONTA_STATUS[rec.contaFinanceiraStatus] || rec.contaFinanceiraStatus)}</span></a>`
-                            : '<span class="badge b-cinza">SEM CONTA</span>'}
+                            : '<span class="badge b-cinza">Sem conta</span>'}
                         </td>
-                        <td style="text-align:right;">
+                        <td class="acoes">
                             ${rec.status === 'PENDING' ? `
-                                <button class="btn btn-verde btn-mini" onclick="baixar('${rec.id}')">Baixar</button>
-                                <button class="btn btn-amarelo btn-mini" onclick="antecipar('${rec.id}')">Antecipar</button>
+                                <button class="btn-icone" style="color:var(--green)" title="Dar baixa" onclick="baixar('${rec.id}')"><span class="ms">task_alt</span></button>
+                                <button class="btn-icone" title="Antecipar" onclick="antecipar('${rec.id}')"><span class="ms">fast_forward</span></button>
                             ` : ''}
                         </td>
                     </tr>

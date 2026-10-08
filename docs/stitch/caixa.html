@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>JG Sistemas — Controle de Caixa</title>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "primary-fixed": "#d6e3ff",
+            "on-error-container": "#93000a",
+            "outline-variant": "#c3c6d2",
+            "surface-container-highest": "#d3e4fe",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary-container": "#5dda7a",
+            "on-error": "#ffffff",
+            "surface": "#f8f9ff",
+            "inverse-surface": "#213145",
+            "on-secondary-fixed-variant": "#324769",
+            "error-container": "#ffdad6",
+            "on-surface": "#0b1c30",
+            "secondary-container": "#bfd5fe",
+            "error": "#ba1a1a",
+            "on-primary-fixed": "#001b3e",
+            "on-tertiary-fixed-variant": "#005320",
+            "on-primary": "#ffffff",
+            "surface-tint": "#305ea1",
+            "primary-fixed-dim": "#a9c7ff",
+            "inverse-primary": "#a9c7ff",
+            "surface-container-low": "#eff4ff",
+            "on-secondary-fixed": "#011b3b",
+            "on-secondary-container": "#475c7f",
+            "on-primary-container": "#a2c3ff",
+            "surface-container": "#e5eeff",
+            "surface-variant": "#d3e4fe",
+            "tertiary-container": "#005d25",
+            "surface-container-high": "#dce9ff",
+            "on-secondary": "#ffffff",
+            "tertiary-fixed": "#7ffc97",
+            "surface-dim": "#cbdbf5",
+            "secondary-fixed": "#d5e3ff",
+            "primary": "#003873",
+            "on-background": "#0b1c30",
+            "tertiary-fixed-dim": "#62df7d",
+            "on-tertiary": "#ffffff",
+            "background": "#f8f9ff",
+            "secondary": "#4a5f82",
+            "on-surface-variant": "#434750",
+            "outline": "#737782",
+            "on-tertiary-fixed": "#002109",
+            "primary-container": "#1d4f91",
+            "tertiary": "#004319",
+            "surface-bright": "#f8f9ff",
+            "secondary-fixed-dim": "#b2c7f0",
+            "on-primary-fixed-variant": "#0e4688",
+            "inverse-on-surface": "#eaf1ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Inter", "sans-serif"],
+            "display": ["Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+  </style>
+</head>
+<body class="bg-[#F4F6FA] text-[#0F172A] font-body min-h-screen antialiased flex">
+<!-- ================= SIDEBAR LATERAL (248px) ================= -->
+<aside class="fixed top-0 left-0 h-screen w-[248px] bg-on-surface text-surface select-none border-r border-outline-variant/30 flex flex-col justify-between p-4 z-30">
+<div class="flex flex-col gap-6">
+<!-- Logo & Brand Header -->
+<div class="flex items-center gap-3 px-1 pt-1">
+<div class="w-9 h-9 rounded-lg bg-emerald-600 flex items-center justify-center font-headline font-bold text-white shadow-sm text-lg">
+          JG
+        </div>
+<div class="flex flex-col leading-tight">
+<span class="font-headline font-bold text-surface text-base tracking-tight">JG Sistemas</span>
+<span class="text-xs text-outline-variant">ERP &amp; PDV</span>
+</div>
+</div>
+<!-- Navigation Tabs -->
+<nav class="flex flex-col gap-1 text-sm">
+<!-- Início -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="home">home</span>
+<span>Início</span>
+</a>
+<!-- Vendas (Active Group) -->
+<div class="flex flex-col">
+<div class="flex items-center justify-between px-3 py-2 text-surface font-medium rounded-lg">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-primary-fixed" data-icon="point_of_sale">point_of_sale</span>
+<span>Vendas</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-outline-variant" data-icon="expand_less">expand_less</span>
+</div>
+<!-- Subitens de Vendas -->
+<div class="ml-4 pl-3 border-l border-outline/30 flex flex-col gap-1 my-1">
+<a class="flex items-center justify-between px-2.5 py-1.5 text-xs text-outline-variant hover:text-surface rounded-md transition-colors" href="#">
+<span>PDV</span>
+<span class="text-[10px] bg-on-secondary-fixed-variant px-1.5 py-0.5 rounded text-surface">F1</span>
+</a>
+<!-- Caixa (Item Ativo Conforme JSON e Instrução) -->
+<a class="flex items-center justify-between px-2.5 py-1.5 text-xs text-surface bg-primary-container rounded-md font-medium shadow-xs" href="#">
+<span class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed"></span>
+                Caixa
+              </span>
+<span class="text-[10px] bg-emerald-700/60 text-emerald-100 px-1.5 py-0.2 rounded font-normal">Aberto</span>
+</a>
+<a class="flex items-center px-2.5 py-1.5 text-xs text-outline-variant hover:text-surface rounded-md transition-colors" href="#">
+<span>Pedidos &amp; Orçamentos</span>
+</a>
+<a class="flex items-center px-2.5 py-1.5 text-xs text-outline-variant hover:text-surface rounded-md transition-colors" href="#">
+<span>Devoluções e Trocas</span>
+</a>
+</div>
+</div>
+<!-- Clientes -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="group">group</span>
+<span>Clientes</span>
+</a>
+<!-- Catálogo -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="inventory_2">inventory_2</span>
+<span>Catálogo</span>
+</a>
+<!-- Estoque -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="warehouse">warehouse</span>
+<span>Estoque</span>
+</a>
+<!-- Financeiro -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="account_balance">account_balance</span>
+<span>Financeiro</span>
+</a>
+<!-- Pessoas -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="badge">badge</span>
+<span>Pessoas</span>
+</a>
+<!-- Relatórios -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="bar_chart">bar_chart</span>
+<span>Relatórios</span>
+</a>
+<!-- Administração -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+<span>Administração</span>
+</a>
+</nav>
+</div>
+<!-- Rodapé Sidebar -->
+<div class="pt-3 border-t border-outline/20 flex flex-col gap-2">
+<div class="flex items-center justify-between text-xs text-outline-variant px-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-tertiary-fixed" data-icon="storefront">storefront</span>
+<span class="font-medium text-surface">Varejo · Moda</span>
+</div>
+<span class="flex items-center gap-1.5 text-[11px] text-emerald-400">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          Online
+        </span>
+</div>
+<div class="text-[11px] text-outline px-1">v3.4.1 · Loja Matriz 01</div>
+</div>
+</aside>
+<!-- ================= TOPBAR (56px) ================= -->
+<header class="fixed top-0 left-[248px] right-0 h-14 bg-surface-container-lowest border-b border-slate-200 z-20 flex items-center justify-between px-6">
+<!-- Esquerda: Breadcrumb e Busca Global -->
+<div class="flex items-center gap-6">
+<nav class="flex items-center gap-1.5 text-xs text-secondary font-medium">
+<span>Vendas</span>
+<span class="material-symbols-outlined text-[14px] text-outline-variant" data-icon="chevron_right">chevron_right</span>
+<span class="text-on-surface font-semibold">Caixa</span>
+</nav>
+<!-- Busca Global com atalho Ctrl+K -->
+<div class="relative w-80">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-[18px]" data-icon="search">search</span>
+</div>
+<input class="w-full pl-9 pr-14 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition" placeholder="Buscar módulo, produto ou cliente... (Ctrl+K)" type="text"/>
+<span class="absolute inset-y-0 right-2 flex items-center pointer-events-none">
+<kbd class="px-1.5 py-0.5 text-[10px] text-slate-500 bg-white border border-slate-200 rounded font-mono shadow-2xs">Ctrl K</kbd>
+</span>
+</div>
+</div>
+<!-- Direita: Status do Caixa, Botão PDV, Alertas e Operador -->
+<div class="flex items-center gap-3">
+<!-- Status Chip Caixa Aberto -->
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 font-medium">
+<span class="w-2 h-2 rounded-full bg-emerald-600 animate-ping inline-block"></span>
+<span class="relative">Caixa 01 · Aberto</span>
+</div>
+<!-- Botão Primário Abrir PDV -->
+<button class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#1D4F91] hover:bg-primary text-white text-xs font-semibold rounded-lg shadow-sm transition active:scale-95">
+<span class="material-symbols-outlined text-[18px]" data-icon="point_of_sale">point_of_sale</span>
+<span>Abrir PDV (F1)</span>
+</button>
+<!-- Ícones de ação -->
+<button class="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg relative transition">
+<span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-red-600 rounded-full"></span>
+</button>
+<button class="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition">
+<span class="material-symbols-outlined text-[20px]" data-icon="help">help</span>
+</button>
+<div class="h-6 w-px bg-slate-200"></div>
+<!-- Avatar e Nome do Operador -->
+<div class="flex items-center gap-2.5 pl-1">
+<div class="w-8 h-8 rounded-full bg-blue-100 border border-blue-200 text-[#1D4F91] font-semibold text-xs flex items-center justify-center">
+          JG
+        </div>
+<div class="flex flex-col text-left leading-tight">
+<span class="text-xs font-semibold text-slate-800">Juliana Gomes</span>
+<span class="text-[11px] text-slate-500">Gerente</span>
+</div>
+</div>
+</div>
+</header>
+<!-- ================= CANVAS PRINCIPAL DO ERP ================= -->
+<main class="ml-[248px] pt-14 w-[calc(100%-248px)] min-h-screen p-6 flex flex-col gap-6">
+<!-- Cabeçalho da Página -->
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-2xl font-bold text-slate-900 tracking-tight font-headline">Controle de Caixa</h1>
+<p class="text-xs text-slate-500 mt-0.5">Gerenciamento de turnos, movimentações e conciliação em dinheiro da registradora.</p>
+</div>
+<!-- Ações Rápidas de Topo -->
+<div class="flex items-center gap-2.5">
+<button class="inline-flex items-center gap-1.5 px-3 py-2 bg-blue-50 text-[#1D4F91] hover:bg-blue-100 border border-blue-200 text-xs font-semibold rounded-lg transition">
+<span class="material-symbols-outlined text-[16px]" data-icon="add_circle">add_circle</span>
+          + Suprimento
+        </button>
+<button class="inline-flex items-center gap-1.5 px-3 py-2 bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 text-xs font-semibold rounded-lg transition">
+<span class="material-symbols-outlined text-[16px]" data-icon="remove_circle">remove_circle</span>
+          − Sangria
+        </button>
+<button class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold rounded-lg shadow-sm transition">
+<span class="material-symbols-outlined text-[16px]" data-icon="lock">lock</span>
+          Fechar caixa
+        </button>
+</div>
+</div>
+<!-- Bento Grid Superior: 2 Cards Principais -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Card 1: Status da Registradora (5 cols) -->
+<div class="col-span-5 bg-white rounded-xl border border-slate-200 p-5 shadow-xs flex flex-col justify-between">
+<div>
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-10 h-10 rounded-lg bg-blue-50 text-[#1D4F91] flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]" data-icon="storefront">storefront</span>
+</div>
+<div>
+<h3 class="text-sm font-bold text-slate-900">Caixa 01 — Terminal Frente de Loja</h3>
+<span class="text-xs text-slate-500">Série POS-8840291 · PDV Principal</span>
+</div>
+</div>
+<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+              Aberto
+            </span>
+</div>
+<div class="mt-4 pt-4 border-t border-slate-100 grid grid-cols-2 gap-4 text-xs">
+<div>
+<span class="text-slate-500 block">Operador Atual</span>
+<div class="flex items-center gap-2 mt-1">
+<div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold flex items-center justify-center">
+                  AP
+                </div>
+<span class="font-semibold text-slate-800">Ana Paula Souza</span>
+</div>
+</div>
+<div>
+<span class="text-slate-500 block">Data de Abertura</span>
+<span class="font-semibold text-slate-800 mt-1 block tabular-nums">08/10/2026 às 08:02</span>
+</div>
+<div>
+<span class="text-slate-500 block">Fundo de Troco Inicial</span>
+<span class="font-semibold text-slate-900 mt-1 block tabular-nums">R$ 200,00</span>
+</div>
+<div>
+<span class="text-slate-500 block">Duração do Turno</span>
+<span class="font-semibold text-slate-800 mt-1 block">3h 48min</span>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-4 border-t border-slate-100 flex items-center gap-2">
+<button class="flex-1 py-1.5 px-3 bg-[#1D4F91] hover:bg-blue-900 text-white text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition">
+<span class="material-symbols-outlined text-[16px]" data-icon="add">add</span>
+            Suprimento
+          </button>
+<button class="flex-1 py-1.5 px-3 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition">
+<span class="material-symbols-outlined text-[16px]" data-icon="remove">remove</span>
+            Sangria
+          </button>
+<button class="flex-1 py-1.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition">
+<span class="material-symbols-outlined text-[16px]" data-icon="lock_open">lock_open</span>
+            Fechar caixa
+          </button>
+</div>
+</div>
+<!-- Card 2: Resumo do Turno e Saldo Esperado (7 cols) -->
+<div class="col-span-7 bg-white rounded-xl border border-slate-200 p-5 shadow-xs flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-3">
+<h3 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-slate-600" data-icon="analytics">analytics</span>
+              Resumo do Turno
+            </h3>
+<span class="text-xs text-slate-400">Total apurado em vendas</span>
+</div>
+<!-- Métricas em grade -->
+<div class="grid grid-cols-4 gap-2 mb-3">
+<div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+<span class="text-[11px] text-slate-500 block">Dinheiro (Espécie)</span>
+<span class="text-sm font-bold text-slate-800 tabular-nums">R$ 1.245,00</span>
+</div>
+<div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+<span class="text-[11px] text-slate-500 block">PIX</span>
+<span class="text-sm font-bold text-slate-800 tabular-nums">R$ 2.980,50</span>
+</div>
+<div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+<span class="text-[11px] text-slate-500 block">Cartão Débito</span>
+<span class="text-sm font-bold text-slate-800 tabular-nums">R$ 1.640,30</span>
+</div>
+<div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+<span class="text-[11px] text-slate-500 block">Cartão Crédito</span>
+<span class="text-sm font-bold text-slate-800 tabular-nums">R$ 2.310,10</span>
+</div>
+</div>
+<!-- Totais & Entradas/Saídas de Gaveta -->
+<div class="flex items-center justify-between text-xs py-2 px-1 border-y border-slate-100">
+<div class="flex items-center gap-4">
+<span><strong>Total Geral Vendas:</strong> <span class="text-blue-900 font-bold tabular-nums">R$ 8.175,90</span></span>
+<span><strong>Suprimentos:</strong> <span class="text-emerald-700 font-bold tabular-nums">+R$ 100,00</span></span>
+<span><strong>Sangrias:</strong> <span class="text-red-600 font-bold tabular-nums">−R$ 500,00</span></span>
+</div>
+<span class="text-[11px] text-slate-400">42 vendas realizadas</span>
+</div>
+</div>
+<!-- Box de Destaque: Saldo Esperado em Dinheiro -->
+<div class="mt-4 bg-blue-50/70 border border-blue-200 rounded-lg p-3.5 flex items-center justify-between">
+<div>
+<span class="text-xs font-semibold text-[#1D4F91] uppercase tracking-wide block">Saldo esperado em dinheiro na gaveta</span>
+<div class="text-2xl font-bold font-headline text-[#0F2747] tabular-nums mt-0.5">R$ 1.045,00</div>
+<p class="text-[11px] text-slate-600 mt-0.5 tabular-nums">
+              (Fundo R$ 200,00 + Dinheiro R$ 1.245,00 + Suprimento R$ 100,00 − Sangria R$ 500,00)
+            </p>
+</div>
+<div class="p-2.5 bg-white rounded-lg border border-blue-200 text-[#1D4F91] shadow-2xs">
+<span class="material-symbols-outlined text-[28px]" data-icon="payments">payments</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Tabela: Histórico dos Últimos Caixas -->
+<div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+<!-- Filtros e Cabeçalho da Tabela -->
+<div class="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-slate-600" data-icon="history">history</span>
+<h2 class="text-sm font-bold text-slate-900">Últimos Caixas / Histórico Recente</h2>
+<span class="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">4 registros</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="relative">
+<input class="text-xs py-1 px-2.5 pl-7 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary w-44" placeholder="Filtrar por operador..." type="text"/>
+<span class="material-symbols-outlined text-[15px] text-slate-400 absolute left-2 top-1.5" data-icon="filter_list">filter_list</span>
+</div>
+<button class="px-2.5 py-1 text-xs border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]" data-icon="download">download</span>
+            Exportar
+          </button>
+</div>
+</div>
+<!-- Tabela Compacta 44px por linha -->
+<div class="overflow-x-auto">
+<table class="w-full text-left text-xs text-slate-700">
+<thead class="bg-slate-50 text-slate-500 uppercase text-[11px] font-semibold border-b border-slate-200">
+<tr>
+<th class="py-2.5 px-4">Nº / ID</th>
+<th class="py-2.5 px-4">Operador</th>
+<th class="py-2.5 px-4">Data de Abertura</th>
+<th class="py-2.5 px-4">Fechamento</th>
+<th class="py-2.5 px-4 tabular-nums">Fundo Troco</th>
+<th class="py-2.5 px-4 tabular-nums">Vendas Dinheiro</th>
+<th class="py-2.5 px-4">Diferença</th>
+<th class="py-2.5 px-4">Status</th>
+<th class="py-2.5 px-4 text-right">Ações</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<!-- Linha 1 -->
+<tr class="hover:bg-blue-50/40 transition">
+<td class="py-2.5 px-4 font-semibold text-slate-900 tabular-nums">#1042</td>
+<td class="py-2.5 px-4 flex items-center gap-2">
+<span class="w-5 h-5 rounded-full bg-blue-100 text-[#1D4F91] text-[10px] font-bold flex items-center justify-center">AP</span>
+<span>Ana Paula Souza</span>
+</td>
+<td class="py-2.5 px-4 tabular-nums text-slate-600">08/10/2026 08:02</td>
+<td class="py-2.5 px-4 text-emerald-700 font-medium">Em andamento</td>
+<td class="py-2.5 px-4 tabular-nums">R$ 200,00</td>
+<td class="py-2.5 px-4 tabular-nums font-semibold">R$ 1.245,00</td>
+<td class="py-2.5 px-4 text-slate-400">—</td>
+<td class="py-2.5 px-4">
+<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800">Aberto</span>
+</td>
+<td class="py-2.5 px-4 text-right">
+<button class="text-xs text-[#1D4F91] hover:underline font-semibold">Detalhes</button>
+</td>
+</tr>
+<!-- Linha 2 -->
+<tr class="hover:bg-slate-50 transition">
+<td class="py-2.5 px-4 font-semibold text-slate-900 tabular-nums">#1041</td>
+<td class="py-2.5 px-4 flex items-center gap-2">
+<span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 text-[10px] font-bold flex items-center justify-center">CE</span>
+<span>Carlos Eduardo</span>
+</td>
+<td class="py-2.5 px-4 tabular-nums text-slate-600">07/10/2026 14:00</td>
+<td class="py-2.5 px-4 tabular-nums text-slate-600">07/10/2026 22:15</td>
+<td class="py-2.5 px-4 tabular-nums">R$ 200,00</td>
+<td class="py-2.5 px-4 tabular-nums font-semibold">R$ 2.110,00</td>
+<td class="py-2.5 px-4">
+<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-red-100 text-red-800 tabular-nums">−R$ 2,50</span>
+</td>
+<td class="py-2.5 px-4">
+<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700">Fechado</span>
+</td>
+<td class="py-2.5 px-4 text-right">
+<button class="text-xs text-slate-600 hover:text-slate-900 font-medium">Ver Espelho</button>
+</td>
+</tr>
+<!-- Linha 3 -->
+<tr class="hover:bg-slate-50 transition">
+<td class="py-2.5 px-4 font-semibold text-slate-900 tabular-nums">#1040</td>
+<td class="py-2.5 px-4 flex items-center gap-2">
+<span class="w-5 h-5 rounded-full bg-blue-100 text-[#1D4F91] text-[10px] font-bold flex items-center justify-center">AP</span>
+<span>Ana Paula Souza</span>
+</td>
+<td class="py-2.5 px-4 tabular-nums text-slate-600">07/10/2026 08:00</td>
+<td class="py-2.5 px-4 tabular-nums text-slate-600">07/10/2026 14:00</td>
+<td class="py-2.5 px-4 tabular-nums">R$ 200,00</td>
+<td class="py-2.5 px-4 tabular-nums font-semibold">R$ 1.890,00</td>
+<td class="py-2.5 px-4">
+<span class="px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-600 tabular-nums">R$ 0,00</span>
+</td>
+<td class="py-2.5 px-4">
+<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700">Fechado</span>
+</td>
+<td class="py-2.5 px-4 text-right">
+<button class="text-xs text-slate-600 hover:text-slate-900 font-medium">Ver Espelho</button>
+</td>
+</tr>
+<!-- Linha 4 -->
+<tr class="hover:bg-slate-50 transition">
+<td class="py-2.5 px-4 font-semibold text-slate-900 tabular-nums">#1039</td>
+<td class="py-2.5 px-4 flex items-center gap-2">
+<span class="w-5 h-5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold flex items-center justify-center">MV</span>
+<span>Marcos Vinícius</span>
+</td>
+<td class="py-2.5 px-4 tabular-nums text-slate-600">06/10/2026 14:05</td>
+<td class="py-2.5 px-4 tabular-nums text-slate-600">06/10/2026 22:30</td>
+<td class="py-2.5 px-4 tabular-nums">R$ 200,00</td>
+<td class="py-2.5 px-4 tabular-nums font-semibold">R$ 3.050,00</td>
+<td class="py-2.5 px-4">
+<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-100 text-emerald-800 tabular-nums">+R$ 1,00</span>
+</td>
+<td class="py-2.5 px-4">
+<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700">Fechado</span>
+</td>
+<td class="py-2.5 px-4 text-right">
+<button class="text-xs text-slate-600 hover:text-slate-900 font-medium">Ver Espelho</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Paginação compacta -->
+<div class="px-4 py-2.5 border-t border-slate-200 bg-slate-50 flex items-center justify-between text-xs text-slate-500">
+<span>Mostrando 4 de 24 caixas anteriores</span>
+<div class="flex items-center gap-1">
+<button class="px-2 py-1 rounded border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-50" disabled="">Anterior</button>
+<span class="px-2 py-1 font-semibold text-slate-700">1</span>
+<button class="px-2 py-1 rounded border border-slate-200 bg-white hover:bg-slate-50">2</button>
+<button class="px-2 py-1 rounded border border-slate-200 bg-white hover:bg-slate-50">3</button>
+<button class="px-2 py-1 rounded border border-slate-200 bg-white hover:bg-slate-50">Próxima</button>
+</div>
+</div>
+</div>
+</main>
+<!-- ================= MODAL 'FECHAR CAIXA' ABERTO COM OVERLAY ================= -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
+<!-- Modal Window (560px) -->
+<div class="bg-white rounded-xl shadow-2xl border border-slate-200 w-full max-w-[560px] overflow-hidden flex flex-col">
+<!-- Cabeçalho do Modal -->
+<div class="px-6 py-4 border-b border-slate-200 flex items-start justify-between bg-slate-50/70">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-blue-100 text-[#1D4F91] flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]" data-icon="lock_clock">lock_clock</span>
+</div>
+<div>
+<h2 class="text-base font-bold text-slate-900 font-headline">Fechar Caixa — Caixa 01</h2>
+<p class="text-xs text-slate-500">Operador: Ana Paula Souza · Turno iniciado às 08:02</p>
+</div>
+</div>
+<button class="text-slate-400 hover:text-slate-600 p-1 rounded-md hover:bg-slate-200/50 transition">
+<span class="material-symbols-outlined text-[20px]" data-icon="close">close</span>
+</button>
+</div>
+<!-- Corpo do Modal -->
+<div class="p-6 flex flex-col gap-4 text-xs">
+<!-- Saldo Esperado em Dinheiro -->
+<div class="p-3.5 bg-blue-50/60 border border-blue-200 rounded-lg flex items-center justify-between">
+<div>
+<span class="text-slate-600 block">Saldo esperado em dinheiro</span>
+<span class="text-xs text-slate-500">Inclui fundo de troco (R$ 200,00) + entradas − saídas em espécie.</span>
+</div>
+<div class="text-right">
+<span class="text-lg font-bold text-[#0F2747] tabular-nums font-headline">R$ 1.045,00</span>
+</div>
+</div>
+<!-- Campo de Input: Valor Contado -->
+<div class="flex flex-col gap-1.5">
+<label class="font-semibold text-slate-800 text-xs flex items-center justify-between">
+<span>Valor contado em dinheiro (R$)</span>
+<span class="text-[11px] text-slate-400 font-normal">Contagem física da gaveta</span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 font-bold text-sm">
+              R$
+            </div>
+<input class="w-full pl-10 pr-4 py-2.5 text-base font-bold text-slate-900 bg-white border-2 border-[#1D4F91] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 tabular-nums" type="text" value="1.042,50"/>
+</div>
+</div>
+<!-- Box de Diferença em Destaque (Quebra de Caixa) -->
+<div class="bg-red-50 border border-red-300 rounded-lg p-3.5 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 text-red-700">
+<span class="material-symbols-outlined text-[20px]" data-icon="warning">warning</span>
+<span class="font-bold text-xs uppercase tracking-wide">Diferença de Caixa (Quebra)</span>
+</div>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-200 text-red-900 uppercase">Falta em dinheiro</span>
+</div>
+<div class="flex items-baseline justify-between pt-1">
+<span class="text-xs text-red-900">Valor divergente:</span>
+<span class="text-xl font-bold text-red-700 tabular-nums font-headline">−R$ 2,50</span>
+</div>
+<p class="text-[11px] text-red-700/90 leading-tight">
+            O valor apurado na contagem física é inferior ao registrado nas movimentações do sistema.
+          </p>
+</div>
+<!-- Senha do Operador -->
+<div class="flex flex-col gap-1.5">
+<label class="font-semibold text-slate-800 text-xs">Senha do operador para confirmação</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+<span class="material-symbols-outlined text-[18px]" data-icon="lock">lock</span>
+</div>
+<input class="w-full pl-9 pr-3 py-2 text-xs border border-slate-300 rounded-lg text-slate-800 tracking-widest focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" type="password" value="secret123"/>
+</div>
+</div>
+<!-- Observação do Fechamento -->
+<div class="flex flex-col gap-1.5">
+<label class="font-semibold text-slate-800 text-xs">Observação do fechamento (justificativa de divergência)</label>
+<textarea class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary resize-none" rows="2">Diferença de R$ 2,50 referente a arredondamento de troco na venda #8492.</textarea>
+</div>
+</div>
+<!-- Rodapé do Modal -->
+<div class="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-3">
+<button class="px-4 py-2 border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg transition">
+          Cancelar
+        </button>
+<button class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow-sm flex items-center gap-1.5 transition">
+<span class="material-symbols-outlined text-[18px]" data-icon="check_circle">check_circle</span>
+          Confirmar fechamento
+        </button>
+</div>
+</div>
+</div>
+</body></html>

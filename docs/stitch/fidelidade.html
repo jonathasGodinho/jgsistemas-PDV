@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>JG Sistemas - Programa de Fidelidade &amp; Cashback</title>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-secondary": "#ffffff",
+            "tertiary": "#004319",
+            "surface": "#f8f9ff",
+            "tertiary-fixed-dim": "#62df7d",
+            "tertiary-container": "#005d25",
+            "on-error": "#ffffff",
+            "surface-container-lowest": "#ffffff",
+            "error": "#ba1a1a",
+            "secondary-container": "#bfd5fe",
+            "on-primary-fixed": "#001b3e",
+            "on-tertiary-container": "#5dda7a",
+            "on-background": "#0b1c30",
+            "surface-container-high": "#dce9ff",
+            "surface-bright": "#f8f9ff",
+            "on-tertiary": "#ffffff",
+            "outline-variant": "#c3c6d2",
+            "on-surface": "#0b1c30",
+            "primary-fixed": "#d6e3ff",
+            "surface-container-highest": "#d3e4fe",
+            "on-secondary-fixed": "#011b3b",
+            "error-container": "#ffdad6",
+            "primary-fixed-dim": "#a9c7ff",
+            "inverse-on-surface": "#eaf1ff",
+            "primary-container": "#1d4f91",
+            "background": "#f8f9ff",
+            "surface-tint": "#305ea1",
+            "surface-dim": "#cbdbf5",
+            "primary": "#003873",
+            "inverse-primary": "#a9c7ff",
+            "on-secondary-container": "#475c7f",
+            "surface-container": "#e5eeff",
+            "inverse-surface": "#213145",
+            "outline": "#737782",
+            "on-primary-fixed-variant": "#0e4688",
+            "tertiary-fixed": "#7ffc97",
+            "secondary": "#4a5f82",
+            "surface-variant": "#d3e4fe",
+            "on-primary": "#ffffff",
+            "on-surface-variant": "#434750",
+            "secondary-fixed-dim": "#b2c7f0",
+            "on-error-container": "#93000a",
+            "on-tertiary-fixed-variant": "#005320",
+            "on-primary-container": "#a2c3ff",
+            "on-tertiary-fixed": "#002109",
+            "on-secondary-fixed-variant": "#324769",
+            "surface-container-low": "#eff4ff",
+            "secondary-fixed": "#d5e3ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Inter", "sans-serif"],
+            "display": ["Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Inter', sans-serif;
+      font-variant-numeric: tabular-nums;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+    /* Custom scrollbar for high density tables */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-[#F4F6FA] text-on-surface antialiased overflow-x-hidden text-[13px] selection:bg-primary selection:text-white">
+<!-- SIDEBAR (Fixed Left 248px) -->
+<aside class="fixed top-0 left-0 h-screen w-[248px] bg-on-surface text-surface border-r border-outline-variant/30 flex flex-col justify-between p-4 z-40 select-none shadow-sm">
+<div class="flex flex-col gap-5">
+<!-- Brand Logo / Header -->
+<div class="flex items-center gap-3 px-2 py-1">
+<div class="w-8 h-8 rounded-lg bg-tertiary-container text-on-tertiary-container flex items-center justify-center font-bold text-sm tracking-tight border border-tertiary-fixed/30 shadow-xs">
+          JG
+        </div>
+<div class="flex flex-col">
+<span class="font-headline font-bold text-surface text-sm tracking-tight">JG Sistemas</span>
+<span class="text-[11px] text-outline-variant">Vendas &gt; Caixa</span>
+</div>
+</div>
+<!-- Navigation List -->
+<nav class="flex flex-col gap-1 font-body text-xs">
+<!-- Início -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">home</span>
+<span>Início</span>
+</a>
+<!-- Vendas -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">point_of_sale</span>
+<span>Vendas</span>
+</a>
+<!-- Clientes (Active Group) -->
+<div class="flex flex-col rounded-lg bg-white/5 pb-1">
+<div class="flex items-center justify-between px-3 py-2 text-surface font-medium cursor-pointer">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[18px] text-tertiary-fixed">group</span>
+<span>Clientes</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-outline-variant">expand_more</span>
+</div>
+<!-- Sub-items -->
+<div class="pl-9 pr-2 flex flex-col gap-0.5 text-[12px]">
+<a class="px-2 py-1.5 text-outline-variant hover:text-surface rounded transition-colors" href="#">
+              Lista de Clientes
+            </a>
+<!-- Active Sub-tab -->
+<a class="flex items-center justify-between px-2 py-1.5 text-surface bg-primary-container rounded-md font-medium" href="#">
+<span>Fidelidade</span>
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed"></span>
+</a>
+<a class="px-2 py-1.5 text-outline-variant hover:text-surface rounded transition-colors" href="#">
+              Cobrança
+            </a>
+</div>
+</div>
+<!-- Catálogo -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+<span>Catálogo</span>
+</a>
+<!-- Estoque -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">warehouse</span>
+<span>Estoque</span>
+</a>
+<!-- Financeiro -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">account_balance</span>
+<span>Financeiro</span>
+</a>
+<!-- Pessoas -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">badge</span>
+<span>Pessoas</span>
+</a>
+<!-- Relatórios -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">bar_chart</span>
+<span>Relatórios</span>
+</a>
+<!-- Administração -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+<span>Administração</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Footer -->
+<div class="border-t border-outline/20 pt-3 flex flex-col gap-2">
+<div class="flex items-center justify-between px-2 text-[11px] text-outline-variant">
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          Sistema Online
+        </span>
+<span class="font-mono text-[10px] text-outline-variant/80">v3.4.1</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-container-lowest/5 text-outline-variant text-xs">
+<span class="material-symbols-outlined text-[16px] text-tertiary-fixed">storefront</span>
+<span class="text-surface font-medium">Varejo · Moda</span>
+</div>
+</div>
+</aside>
+<!-- TOPBAR (Fixed Top 56px, left 248px) -->
+<header class="fixed top-0 left-[248px] right-0 h-14 bg-surface-container-lowest border-b border-[#E2E8F0] px-6 flex items-center justify-between z-30 shadow-xs">
+<!-- Breadcrumb & Global Search -->
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 text-xs">
+<span class="text-secondary hover:text-on-surface cursor-pointer">Clientes</span>
+<span class="text-outline-variant">/</span>
+<span class="font-semibold text-primary">Fidelidade e Cashback</span>
+</div>
+<!-- Quick Global Search -->
+<div class="relative w-80">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-[18px] text-outline">search</span>
+<input class="w-full bg-[#F4F6FA] border border-[#E2E8F0] rounded-lg pl-9 pr-16 py-1.5 text-xs text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all" placeholder="Buscar módulo, cliente ou produto... [Ctrl+K]" type="text"/>
+<kbd class="absolute right-2.5 top-2 px-1.5 py-0.5 text-[10px] bg-white border border-[#CBD5E1] rounded text-secondary font-mono">⌘K</kbd>
+</div>
+</div>
+<!-- Actions & Profile -->
+<div class="flex items-center gap-4">
+<!-- Caixa Status Badge -->
+<div class="flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+<span>Caixa 01 · Aberto</span>
+</div>
+<!-- Abrir PDV CTA Button -->
+<button class="flex items-center gap-1.5 px-3.5 py-1.5 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary/90 transition shadow-xs active:scale-95">
+<span class="material-symbols-outlined text-[17px]">point_of_sale</span>
+<span>Abrir PDV</span>
+<span class="text-[10px] opacity-75 font-mono ml-0.5">[F1]</span>
+</button>
+<!-- Icon Notifications -->
+<div class="flex items-center gap-1 text-secondary border-l border-r border-[#E2E8F0] px-2">
+<button class="p-1.5 hover:bg-surface-container-high rounded-lg text-secondary hover:text-on-surface transition relative">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-1.5 hover:bg-surface-container-high rounded-lg text-secondary hover:text-on-surface transition">
+<span class="material-symbols-outlined text-[20px]">help</span>
+</button>
+</div>
+<!-- Operator Avatar & Identity -->
+<div class="flex items-center gap-2.5 cursor-pointer hover:opacity-90">
+<div class="w-8 h-8 rounded-full bg-primary-fixed text-primary font-bold text-xs flex items-center justify-center border border-primary/20">
+          JG
+        </div>
+<div class="flex flex-col text-left">
+<span class="text-xs font-semibold text-on-surface leading-tight">Juliana Gomes</span>
+<span class="text-[10px] text-secondary">Gerente Geral</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-outline">expand_more</span>
+</div>
+</div>
+</header>
+<!-- MAIN VIEWPORT CONTAINER (With padding for Sidebar & Topbar) -->
+<main class="ml-[248px] pt-14 pb-12 min-h-screen">
+<div class="p-6 max-w-[1440px] mx-auto flex flex-col gap-5">
+<!-- HEADER SECTION -->
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-2 border-b border-[#E2E8F0]">
+<div>
+<div class="flex items-center gap-3">
+<h1 class="text-2xl font-bold font-headline text-on-surface tracking-tight">Programa de Fidelidade &amp; Cashback</h1>
+<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] fill">check_circle</span>
+              Módulo Ativo
+            </span>
+</div>
+<p class="text-secondary text-xs mt-1">Gestão de pontos acumulados, regras de cashback e histórico de extratos por cliente.</p>
+</div>
+<!-- Top Right Actions -->
+<div class="flex items-center gap-2.5">
+<button class="flex items-center gap-1.5 px-3.5 py-2 bg-white border border-[#CBD5E1] text-secondary hover:text-on-surface rounded-lg text-xs font-medium hover:bg-[#F8FAFC] transition shadow-xs">
+<span class="material-symbols-outlined text-[16px]">file_download</span>
+<span>Exportar Relatório</span>
+</button>
+<button class="flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold transition shadow-xs active:scale-95">
+<span class="material-symbols-outlined text-[16px]">settings_suggest</span>
+<span>+ Configurar Regras</span>
+</button>
+</div>
+</div>
+<!-- 4 KPI CARDS (Bento Grid) -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- KPI 1 -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-[#E2E8F0] shadow-xs flex flex-col justify-between hover:border-primary/40 transition">
+<div class="flex items-center justify-between text-secondary">
+<span class="text-xs font-medium">Saldo Total em Cashback</span>
+<div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
+</div>
+</div>
+<div class="mt-2">
+<div class="text-xl font-bold text-on-surface">R$ 14.820,40</div>
+<div class="flex items-center gap-2 mt-1.5 text-[11px]">
+<span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-semibold flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[12px]">trending_up</span> +12% no mês
+              </span>
+<span class="text-secondary">1.420 clientes participantes</span>
+</div>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-[#E2E8F0] shadow-xs flex flex-col justify-between hover:border-primary/40 transition">
+<div class="flex items-center justify-between text-secondary">
+<span class="text-xs font-medium">Resgates no Mês</span>
+<div class="w-7 h-7 rounded-lg bg-blue-50 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">redeem</span>
+</div>
+</div>
+<div class="mt-2">
+<div class="text-xl font-bold text-on-surface">R$ 2.450,00</div>
+<div class="flex items-center gap-1.5 mt-1.5 text-[11px] text-secondary">
+<span class="material-symbols-outlined text-[14px] text-primary">point_of_sale</span>
+<span>64 resgates no balcão/PDV</span>
+</div>
+</div>
+</div>
+<!-- KPI 3 -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-[#E2E8F0] shadow-xs flex flex-col justify-between hover:border-primary/40 transition">
+<div class="flex items-center justify-between text-secondary">
+<span class="text-xs font-medium">Taxa de Retenção</span>
+<div class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">autorenew</span>
+</div>
+</div>
+<div class="mt-2">
+<div class="text-xl font-bold text-on-surface">78,4%</div>
+<div class="flex items-center gap-1.5 mt-1.5 text-[11px] text-secondary">
+<span class="text-emerald-700 font-semibold">+3.2 pts</span>
+<span>compras recorrentes c/ cashback</span>
+</div>
+</div>
+</div>
+<!-- KPI 4 -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-[#E2E8F0] shadow-xs flex flex-col justify-between hover:border-amber-300 transition">
+<div class="flex items-center justify-between text-secondary">
+<span class="text-xs font-medium">Pontos a Expirar (30 dias)</span>
+<div class="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">hourglass_top</span>
+</div>
+</div>
+<div class="mt-2">
+<div class="text-xl font-bold text-amber-600">R$ 680,00</div>
+<div class="flex items-center gap-1.5 mt-1.5 text-[11px] text-amber-700">
+<span class="material-symbols-outlined text-[13px]">notification_important</span>
+<span>Alerta: 42 clientes impactados</span>
+</div>
+</div>
+</div>
+</section>
+<!-- MAIN DUAL-COLUMN WORKSPACE -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+<!-- LEFT COLUMN: CLIENT LIST (4 col on lg screen approx 420px) -->
+<section class="lg:col-span-4 bg-surface-container-lowest rounded-xl border border-[#E2E8F0] shadow-xs flex flex-col overflow-hidden">
+<!-- Column Header & Controls -->
+<div class="p-3.5 border-b border-[#E2E8F0] bg-surface/50 flex flex-col gap-2.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface text-sm">Clientes com Saldo</span>
+<span class="px-2 py-0.5 text-[11px] bg-primary/10 text-primary font-medium rounded-full">1.420 part.</span>
+</div>
+<button class="text-secondary hover:text-primary p-1 rounded" title="Atualizar Lista">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+</button>
+</div>
+<!-- Search input -->
+<div class="relative">
+<span class="material-symbols-outlined absolute left-2.5 top-2.5 text-[16px] text-outline">search</span>
+<input class="w-full bg-white border border-[#CBD5E1] rounded-lg pl-8 pr-3 py-1.5 text-xs text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" placeholder="Buscar por nome, CPF ou celular..." type="text"/>
+</div>
+<!-- Filter chips -->
+<div class="flex items-center gap-1.5 text-[11px] overflow-x-auto pt-0.5">
+<button class="px-2.5 py-1 rounded-md bg-primary text-white font-medium shadow-2xs whitespace-nowrap">Todos</button>
+<button class="px-2.5 py-1 rounded-md bg-white border border-[#CBD5E1] text-secondary hover:bg-slate-50 whitespace-nowrap">Saldo Positivo</button>
+<button class="px-2.5 py-1 rounded-md bg-white border border-[#CBD5E1] text-secondary hover:bg-slate-50 whitespace-nowrap">&gt; R$ 30,00</button>
+</div>
+</div>
+<!-- Client List Cards -->
+<div class="divide-y divide-[#E2E8F0] max-h-[580px] overflow-y-auto">
+<!-- Cliente 1: SELECIONADO -->
+<div class="p-3 bg-blue-50/60 border-l-4 border-primary transition-all cursor-pointer relative hover:bg-blue-50">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface text-xs">Mariana Costa Silva</span>
+<span class="px-1.5 py-0.2 bg-amber-100 text-amber-800 border border-amber-300 rounded text-[10px] font-semibold flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[10px] fill">stars</span> VIP Ouro
+                    </span>
+</div>
+<div class="text-[11px] text-secondary mt-0.5 font-mono">
+                    CPF ***.412.390-** · (11) 97123-8844
+                  </div>
+</div>
+<div class="text-right">
+<div class="text-emerald-700 font-bold text-xs">R$ 42,80</div>
+<div class="text-[10px] text-secondary">428 pts</div>
+</div>
+</div>
+<div class="mt-2 flex items-center justify-between text-[11px]">
+<span class="text-[10px] text-emerald-800 bg-emerald-100/70 px-1.5 py-0.5 rounded">Ativa no PDV hoje</span>
+<span class="text-primary font-medium flex items-center gap-0.5 text-xs">
+                  Extrato visualizado <span class="material-symbols-outlined text-[13px]">arrow_forward</span>
+</span>
+</div>
+</div>
+<!-- Cliente 2 -->
+<div class="p-3 hover:bg-[#F8FAFC] transition cursor-pointer">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2">
+<span class="font-medium text-on-surface text-xs">Patrícia Lima Ribeiro</span>
+<span class="px-1.5 py-0.2 bg-slate-100 text-slate-700 border border-slate-300 rounded text-[10px] font-semibold">VIP Prata</span>
+</div>
+<div class="text-[11px] text-secondary mt-0.5 font-mono">
+                    CPF ***.892.110-** · (11) 98765-4321
+                  </div>
+</div>
+<div class="text-right">
+<div class="text-emerald-700 font-bold text-xs">R$ 28,50</div>
+<div class="text-[10px] text-secondary">285 pts</div>
+</div>
+</div>
+<div class="mt-1 flex items-center justify-between text-[11px] text-secondary">
+<span>Última compra: 04/10/2026</span>
+<button class="text-secondary hover:text-primary text-[11px]">Ver extrato</button>
+</div>
+</div>
+<!-- Cliente 3 -->
+<div class="p-3 hover:bg-[#F8FAFC] transition cursor-pointer">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2">
+<span class="font-medium text-on-surface text-xs">Camila Ferreira Santos</span>
+<span class="px-1.5 py-0.2 bg-orange-50 text-orange-800 border border-orange-200 rounded text-[10px] font-semibold">Bronze</span>
+</div>
+<div class="text-[11px] text-secondary mt-0.5 font-mono">
+                    CPF ***.330.412-** · (11) 98112-7765
+                  </div>
+</div>
+<div class="text-right">
+<div class="text-emerald-700 font-bold text-xs">R$ 19,90</div>
+<div class="text-[10px] text-secondary">199 pts</div>
+</div>
+</div>
+<div class="mt-1 flex items-center justify-between text-[11px] text-secondary">
+<span>Última compra: 29/09/2026</span>
+<button class="text-secondary hover:text-primary text-[11px]">Ver extrato</button>
+</div>
+</div>
+<!-- Cliente 4 -->
+<div class="p-3 hover:bg-[#F8FAFC] transition cursor-pointer">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2">
+<span class="font-medium text-on-surface text-xs">Marcos Vinícius Toledo</span>
+<span class="px-1.5 py-0.2 bg-orange-50 text-orange-800 border border-orange-200 rounded text-[10px] font-semibold">Bronze</span>
+</div>
+<div class="text-[11px] text-secondary mt-0.5 font-mono">
+                    CPF ***.671.905-** · (11) 97455-1290
+                  </div>
+</div>
+<div class="text-right">
+<div class="text-emerald-700 font-bold text-xs">R$ 15,40</div>
+<div class="text-[10px] text-secondary">154 pts</div>
+</div>
+</div>
+<div class="mt-1 flex items-center justify-between text-[11px] text-secondary">
+<span>Última compra: 21/09/2026</span>
+<button class="text-secondary hover:text-primary text-[11px]">Ver extrato</button>
+</div>
+</div>
+<!-- Cliente 5 -->
+<div class="p-3 hover:bg-[#F8FAFC] transition cursor-pointer">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2">
+<span class="font-medium text-on-surface text-xs">Beatriz Mendes Rocha</span>
+<span class="px-1.5 py-0.2 bg-slate-100 text-slate-700 border border-slate-300 rounded text-[10px] font-semibold">VIP Prata</span>
+</div>
+<div class="text-[11px] text-secondary mt-0.5 font-mono">
+                    CPF ***.204.811-** · (11) 99341-0022
+                  </div>
+</div>
+<div class="text-right">
+<div class="text-emerald-700 font-bold text-xs">R$ 34,20</div>
+<div class="text-[10px] text-secondary">342 pts</div>
+</div>
+</div>
+<div class="mt-1 flex items-center justify-between text-[11px] text-secondary">
+<span>Última compra: 15/09/2026</span>
+<button class="text-secondary hover:text-primary text-[11px]">Ver extrato</button>
+</div>
+</div>
+<!-- Cliente 6 -->
+<div class="p-3 hover:bg-[#F8FAFC] transition cursor-pointer">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2">
+<span class="font-medium text-on-surface text-xs">Juliana Andrade Carvalho</span>
+<span class="px-1.5 py-0.2 bg-amber-100 text-amber-800 border border-amber-300 rounded text-[10px] font-semibold">VIP Ouro</span>
+</div>
+<div class="text-[11px] text-secondary mt-0.5 font-mono">
+                    CPF ***.991.033-** · (11) 98450-3312
+                  </div>
+</div>
+<div class="text-right">
+<div class="text-emerald-700 font-bold text-xs">R$ 52,00</div>
+<div class="text-[10px] text-secondary">520 pts</div>
+</div>
+</div>
+<div class="mt-1 flex items-center justify-between text-[11px] text-secondary">
+<span>Última compra: 10/09/2026</span>
+<button class="text-secondary hover:text-primary text-[11px]">Ver extrato</button>
+</div>
+</div>
+</div>
+<!-- Compact Left Pagination -->
+<div class="p-3 bg-surface/40 border-t border-[#E2E8F0] flex items-center justify-between text-[11px] text-secondary">
+<span>Exibindo 1-6 de 1.420</span>
+<div class="flex items-center gap-1">
+<button class="p-1 rounded hover:bg-slate-200 disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+</button>
+<button class="p-1 rounded hover:bg-slate-200">
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+<!-- RIGHT COLUMN: DETAILED LEDGER & ACTION (8 col on lg screen) -->
+<div class="lg:col-span-8 flex flex-col gap-5">
+<!-- 1. SELECTED CLIENT PROFILE & SUMMARY -->
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-[#E2E8F0] shadow-xs flex flex-col gap-4">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#E2E8F0] gap-2">
+<div>
+<div class="flex items-center gap-2">
+<span class="text-xs font-semibold uppercase tracking-wider text-primary">Extrato do Cliente</span>
+<span class="text-[#CBD5E1]">·</span>
+<h2 class="text-base font-bold text-on-surface">Mariana Costa Silva</h2>
+</div>
+<p class="text-xs text-secondary mt-0.5 font-mono">
+                  CPF: 412.390.118-09 · Cel: (11) 97123-8844 · Cliente desde Mar/2024
+                </p>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-2.5 py-1.5 bg-white border border-[#CBD5E1] text-secondary hover:text-on-surface rounded-lg text-xs font-medium flex items-center gap-1 shadow-2xs">
+<span class="material-symbols-outlined text-[15px]">print</span>
+                  Imprimir Extrato
+                </button>
+<button class="px-2.5 py-1.5 bg-white border border-[#CBD5E1] text-secondary hover:text-on-surface rounded-lg text-xs font-medium flex items-center gap-1 shadow-2xs">
+<span class="material-symbols-outlined text-[15px]">send_to_mobile</span>
+                  Enviar WhatsApp
+                </button>
+</div>
+</div>
+<!-- Mini Metrics Row for Selected Client -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<!-- Saldo Disponível -->
+<div class="p-3 bg-emerald-50/70 border border-emerald-200/80 rounded-lg">
+<div class="text-[11px] font-medium text-emerald-800">Saldo Atual Disponível</div>
+<div class="text-lg font-bold text-emerald-900 mt-0.5">R$ 42,80</div>
+<div class="text-[10px] text-emerald-700 mt-0.5">428 pontos (1 pt = R$ 0,10)</div>
+</div>
+<!-- Total Histórico -->
+<div class="p-3 bg-surface border border-[#E2E8F0] rounded-lg">
+<div class="text-[11px] font-medium text-secondary">Acumulado Histórico</div>
+<div class="text-lg font-bold text-on-surface mt-0.5">R$ 184,50</div>
+<div class="text-[10px] text-secondary mt-0.5">1.845 pontos gerados</div>
+</div>
+<!-- Total Já Resgatado -->
+<div class="p-3 bg-surface border border-[#E2E8F0] rounded-lg">
+<div class="text-[11px] font-medium text-secondary">Total Já Resgatado</div>
+<div class="text-lg font-bold text-on-surface mt-0.5">R$ 141,70</div>
+<div class="text-[10px] text-secondary mt-0.5">8 resgates no balcão</div>
+</div>
+<!-- Próxima Expiração -->
+<div class="p-3 bg-amber-50/70 border border-amber-200/80 rounded-lg">
+<div class="text-[11px] font-medium text-amber-900">Próxima Expiração</div>
+<div class="text-sm font-bold text-amber-950 mt-1">15/12/2026</div>
+<div class="text-[10px] text-amber-800 font-semibold">Valor: R$ 6,50 (65 pts)</div>
+</div>
+</div>
+</div>
+<!-- 2. DETAILED LEDGER TABLE -->
+<div class="bg-surface-container-lowest rounded-xl border border-[#E2E8F0] shadow-xs flex flex-col overflow-hidden">
+<div class="p-3.5 border-b border-[#E2E8F0] flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface text-sm">Transações de Saldo &amp; Pontos</span>
+<span class="text-xs text-secondary">(Últimos 90 dias)</span>
+</div>
+<div class="flex items-center gap-2 text-xs">
+<span class="text-secondary">Filtro:</span>
+<select class="text-xs bg-white border border-[#CBD5E1] rounded-md py-1 px-2 text-on-surface focus:ring-1 focus:ring-primary focus:border-primary">
+<option>Todas as operações</option>
+<option>Créditos por compra</option>
+<option>Resgates no balcão</option>
+<option>Ajustes manuais</option>
+</select>
+</div>
+</div>
+<!-- Ledger Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left text-xs">
+<thead class="bg-[#F8FAFC] border-b border-[#E2E8F0] text-secondary font-semibold">
+<tr>
+<th class="py-2.5 px-3.5">Data/Hora</th>
+<th class="py-2.5 px-3">Operação / Tipo</th>
+<th class="py-2.5 px-3">Documento / Ref</th>
+<th class="py-2.5 px-3 text-right">Valor (R$)</th>
+<th class="py-2.5 px-3 text-right">Pontos</th>
+<th class="py-2.5 px-3.5 text-right">Saldo Resultante</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#E2E8F0]">
+<!-- Linha 1 -->
+<tr class="hover:bg-slate-50 transition">
+<td class="py-2.5 px-3.5 font-mono text-[11px] text-secondary">
+                      08/10/2026 <span class="text-slate-400">14:35</span>
+</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-100 text-emerald-800">
+<span class="material-symbols-outlined text-[13px]">shopping_bag</span>
+                        Crédito por Compra
+                      </span>
+</td>
+<td class="py-2.5 px-3 text-on-surface">
+<span class="font-semibold text-primary hover:underline cursor-pointer">Venda #004.512</span>
+<span class="text-[11px] text-secondary block">Total cupom: R$ 500,00</span>
+</td>
+<td class="py-2.5 px-3 text-right font-bold text-emerald-700">
+                      +R$ 15,00
+                    </td>
+<td class="py-2.5 px-3 text-right text-emerald-700 font-medium">
+                      +150 pts
+                    </td>
+<td class="py-2.5 px-3.5 text-right font-bold text-on-surface">
+                      R$ 42,80
+                    </td>
+</tr>
+<!-- Linha 2 -->
+<tr class="hover:bg-slate-50 transition">
+<td class="py-2.5 px-3.5 font-mono text-[11px] text-secondary">
+                      25/09/2026 <span class="text-slate-400">11:20</span>
+</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-red-100 text-red-800">
+<span class="material-symbols-outlined text-[13px]">shopping_cart_checkout</span>
+                        Resgate no PDV
+                      </span>
+</td>
+<td class="py-2.5 px-3 text-on-surface">
+<span class="font-semibold text-primary hover:underline cursor-pointer">Venda #004.380</span>
+<span class="text-[11px] text-secondary block">Desconto concedido</span>
+</td>
+<td class="py-2.5 px-3 text-right font-bold text-red-700">
+                      -R$ 10,00
+                    </td>
+<td class="py-2.5 px-3 text-right text-red-700 font-medium">
+                      -100 pts
+                    </td>
+<td class="py-2.5 px-3.5 text-right font-bold text-on-surface">
+                      R$ 27,80
+                    </td>
+</tr>
+<!-- Linha 3 -->
+<tr class="hover:bg-slate-50 transition">
+<td class="py-2.5 px-3.5 font-mono text-[11px] text-secondary">
+                      15/09/2026 <span class="text-slate-400">16:45</span>
+</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-blue-100 text-primary">
+<span class="material-symbols-outlined text-[13px]">tune</span>
+                        Ajuste Manual
+                      </span>
+</td>
+<td class="py-2.5 px-3 text-on-surface">
+<span class="text-secondary">Justificativa:</span>
+<span class="text-[11px] text-on-surface font-medium block">Atendimento SAC #891</span>
+</td>
+<td class="py-2.5 px-3 text-right font-bold text-blue-700">
+                      +R$ 5,00
+                    </td>
+<td class="py-2.5 px-3 text-right text-blue-700 font-medium">
+                      +50 pts
+                    </td>
+<td class="py-2.5 px-3.5 text-right font-bold text-on-surface">
+                      R$ 37,80
+                    </td>
+</tr>
+<!-- Linha 4 -->
+<tr class="hover:bg-slate-50 transition">
+<td class="py-2.5 px-3.5 font-mono text-[11px] text-secondary">
+                      01/09/2026 <span class="text-slate-400">00:00</span>
+</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-700">
+<span class="material-symbols-outlined text-[13px]">timer_off</span>
+                        Expirado por Validade
+                      </span>
+</td>
+<td class="py-2.5 px-3 text-secondary text-[11px]">
+                      Regra de validade 180 dias
+                    </td>
+<td class="py-2.5 px-3 text-right font-bold text-slate-600">
+                      -R$ 2,20
+                    </td>
+<td class="py-2.5 px-3 text-right text-slate-600 font-medium">
+                      -22 pts
+                    </td>
+<td class="py-2.5 px-3.5 text-right font-bold text-on-surface">
+                      R$ 32,80
+                    </td>
+</tr>
+<!-- Linha 5 -->
+<tr class="hover:bg-slate-50 transition">
+<td class="py-2.5 px-3.5 font-mono text-[11px] text-secondary">
+                      18/08/2026 <span class="text-slate-400">17:10</span>
+</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-100 text-emerald-800">
+<span class="material-symbols-outlined text-[13px]">shopping_bag</span>
+                        Crédito por Compra
+                      </span>
+</td>
+<td class="py-2.5 px-3 text-on-surface">
+<span class="font-semibold text-primary hover:underline cursor-pointer">Venda #004.102</span>
+<span class="text-[11px] text-secondary block">Total cupom: R$ 350,00</span>
+</td>
+<td class="py-2.5 px-3 text-right font-bold text-emerald-700">
+                      +R$ 10,50
+                    </td>
+<td class="py-2.5 px-3 text-right text-emerald-700 font-medium">
+                      +105 pts
+                    </td>
+<td class="py-2.5 px-3.5 text-right font-bold text-on-surface">
+                      R$ 35,00
+                    </td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table footer -->
+<div class="p-3 bg-surface/30 border-t border-[#E2E8F0] flex items-center justify-between text-xs text-secondary">
+<span>Exibindo 5 transações mais recentes</span>
+<button class="text-primary hover:underline font-semibold flex items-center gap-1">
+                Carregar histórico completo (28 transações)
+                <span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+</div>
+</div>
+<!-- 3. MANUAL BALANCE ADJUSTMENT CARD (Audited Action) -->
+<div class="bg-surface-container-lowest rounded-xl border border-blue-200/90 shadow-xs p-4 bg-gradient-to-br from-white via-white to-blue-50/30">
+<div class="flex items-start justify-between pb-3 border-b border-[#E2E8F0]">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+</div>
+<div>
+<h3 class="font-bold text-sm text-on-surface">Lançar Ajuste Manual de Saldo</h3>
+<p class="text-[11px] text-secondary">Permite creditar bônus ou realizar estornos manuais com auditoria obrigatória.</p>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded text-[11px] bg-slate-100 text-slate-700 border border-slate-200 flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">lock</span>
+                Log de Auditoria Ativo
+              </span>
+</div>
+<!-- Form Grid -->
+<form class="mt-3.5 grid grid-cols-1 md:grid-cols-4 gap-3">
+<!-- Campo 1: Valor R$ -->
+<div class="md:col-span-1">
+<label class="block text-[11px] font-semibold text-secondary mb-1">
+                  Valor do Ajuste (R$) <span class="text-error">*</span>
+</label>
+<div class="relative">
+<span class="absolute left-2.5 top-2 text-xs font-bold text-slate-400">R$</span>
+<input class="w-full bg-white border border-[#CBD5E1] rounded-lg pl-8 pr-2.5 py-1.5 text-xs font-bold text-emerald-700 focus:ring-1 focus:ring-primary focus:border-primary" type="text" value="+10,00"/>
+</div>
+<span class="text-[10px] text-secondary block mt-1 leading-tight">
+                  Use positivo (+) para crédito ou (-) débito.
+                </span>
+</div>
+<!-- Campo 2: Pontos equivalentes -->
+<div class="md:col-span-1">
+<label class="block text-[11px] font-semibold text-secondary mb-1">
+                  Pontos equivalentes
+                </label>
+<div class="relative">
+<input class="w-full bg-[#F1F5F9] border border-[#CBD5E1] rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-700 cursor-not-allowed" readonly="" type="text" value="100 pontos"/>
+<span class="material-symbols-outlined absolute right-2.5 top-2 text-[16px] text-slate-400">calculate</span>
+</div>
+<span class="text-[10px] text-secondary block mt-1 leading-tight">
+                  Cálculo automático: R$ 1,00 = 10 pts.
+                </span>
+</div>
+<!-- Campo 3: Justificativa -->
+<div class="md:col-span-1">
+<label class="block text-[11px] font-semibold text-secondary mb-1">
+                  Motivo / Justificativa <span class="text-error">*</span>
+</label>
+<select class="w-full bg-white border border-[#CBD5E1] rounded-lg px-2.5 py-1.5 text-xs text-on-surface focus:ring-1 focus:ring-primary focus:border-primary">
+<option>Bonificação comercial / Campanha</option>
+<option>Compensação por troca / SAC</option>
+<option>Estorno de resgate indevido</option>
+<option>Bônus de aniversário manual</option>
+</select>
+<span class="text-[10px] text-secondary block mt-1 leading-tight">
+                  Registrado na ficha cadastral.
+                </span>
+</div>
+<!-- Campo 4: Senha autorizadora -->
+<div class="md:col-span-1">
+<label class="block text-[11px] font-semibold text-secondary mb-1">
+                  Senha do Administrador <span class="text-error">*</span>
+</label>
+<input class="w-full bg-white border border-[#CBD5E1] rounded-lg px-2.5 py-1.5 text-xs text-on-surface focus:ring-1 focus:ring-primary focus:border-primary font-mono tracking-widest" type="password" value="123456"/>
+<span class="text-[10px] text-amber-700 block mt-1 leading-tight flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[11px]">shield</span> Exige autorização gerencial
+                </span>
+</div>
+<!-- Actions bar for Form -->
+<div class="md:col-span-4 flex items-center justify-end gap-2 pt-2 border-t border-[#E2E8F0] mt-1">
+<button class="px-3 py-1.5 bg-white border border-[#CBD5E1] text-secondary hover:text-on-surface rounded-lg text-xs font-medium hover:bg-slate-50 transition" type="button">
+                  Cancelar
+                </button>
+<button class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 transition shadow-xs active:scale-95" type="button">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+                  Lançar Ajuste
+                </button>
+</div>
+</form>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- FIXED ERP STATUS BAR / FOOTER SHORTCUTS -->
+<footer class="fixed bottom-0 left-[248px] right-0 h-8 bg-surface-container-lowest border-t border-[#E2E8F0] px-6 flex items-center justify-between text-[11px] text-secondary z-30 select-none">
+<!-- Keyboard Shortcuts -->
+<div class="flex items-center gap-3">
+<span class="font-medium text-slate-500">Atalhos do Sistema:</span>
+<div class="flex items-center gap-1">
+<kbd class="px-1.5 py-0.5 bg-[#F1F5F9] border border-[#CBD5E1] rounded text-[10px] font-mono text-on-surface font-semibold">F1</kbd>
+<span>PDV Caixa</span>
+</div>
+<span class="text-slate-300">·</span>
+<div class="flex items-center gap-1">
+<kbd class="px-1.5 py-0.5 bg-[#F1F5F9] border border-[#CBD5E1] rounded text-[10px] font-mono text-on-surface font-semibold">F2</kbd>
+<span>Novo Cliente</span>
+</div>
+<span class="text-slate-300">·</span>
+<div class="flex items-center gap-1">
+<kbd class="px-1.5 py-0.5 bg-[#F1F5F9] border border-[#CBD5E1] rounded text-[10px] font-mono text-on-surface font-semibold">F4</kbd>
+<span>Consulta Rápida</span>
+</div>
+<span class="text-slate-300">·</span>
+<div class="flex items-center gap-1">
+<kbd class="px-1.5 py-0.5 bg-[#F1F5F9] border border-[#CBD5E1] rounded text-[10px] font-mono text-on-surface font-semibold">Esc</kbd>
+<span>Fechar / Voltar</span>
+</div>
+</div>
+<!-- Copyright and Support -->
+<div class="flex items-center gap-3 text-[11px]">
+<span>© 2026 JG Sistemas de Gestão Comercial S.A.</span>
+<span class="text-slate-300">·</span>
+<span class="flex items-center gap-1 text-slate-500">
+<span class="material-symbols-outlined text-[13px]">support_agent</span>
+        Suporte: 0800 555-0192
+      </span>
+<span class="text-slate-300">·</span>
+<span class="font-mono text-primary font-semibold">v3.4.1</span>
+</div>
+</footer>
+</body></html>

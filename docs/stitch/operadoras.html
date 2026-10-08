@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>JG Sistemas — Cartões, Operadoras e Taxas</title>
+<!-- Fontes Google & Ícones -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-tertiary-fixed-variant": "#005320",
+            "tertiary-container": "#005d25",
+            "primary": "#003873",
+            "outline": "#737782",
+            "secondary-fixed": "#d5e3ff",
+            "background": "#f8f9ff",
+            "on-primary": "#ffffff",
+            "error": "#ba1a1a",
+            "surface-variant": "#d3e4fe",
+            "on-error-container": "#93000a",
+            "tertiary-fixed-dim": "#62df7d",
+            "surface-bright": "#f8f9ff",
+            "on-secondary-container": "#475c7f",
+            "on-background": "#0b1c30",
+            "surface-container-lowest": "#ffffff",
+            "tertiary": "#004319",
+            "primary-container": "#1d4f91",
+            "on-primary-fixed": "#001b3e",
+            "inverse-on-surface": "#eaf1ff",
+            "surface-tint": "#305ea1",
+            "surface-container-highest": "#d3e4fe",
+            "on-primary-fixed-variant": "#0e4688",
+            "surface-container-low": "#eff4ff",
+            "surface-container": "#e5eeff",
+            "outline-variant": "#c3c6d2",
+            "on-tertiary": "#ffffff",
+            "on-secondary-fixed-variant": "#324769",
+            "inverse-primary": "#a9c7ff",
+            "secondary": "#4a5f82",
+            "on-surface": "#0b1c30",
+            "error-container": "#ffdad6",
+            "surface": "#f8f9ff",
+            "inverse-surface": "#213145",
+            "surface-container-high": "#dce9ff",
+            "surface-dim": "#cbdbf5",
+            "on-secondary-fixed": "#011b3b",
+            "on-tertiary-container": "#5dda7a",
+            "on-primary-container": "#a2c3ff",
+            "tertiary-fixed": "#7ffc97",
+            "primary-fixed-dim": "#a9c7ff",
+            "secondary-fixed-dim": "#b2c7f0",
+            "on-tertiary-fixed": "#002109",
+            "on-error": "#ffffff",
+            "primary-fixed": "#d6e3ff",
+            "secondary-container": "#bfd5fe",
+            "on-surface-variant": "#434750",
+            "on-secondary": "#ffffff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Inter", "sans-serif"],
+            "display": ["Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Inter', sans-serif;
+      font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    }
+    .num-tabular {
+      font-variant-numeric: tabular-nums;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .material-symbols-outlined.fill-icon {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+    /* Scrollbar personalizada sutil */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #eff4ff;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c3c6d2;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #737782;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface antialiased flex h-screen overflow-hidden selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- ========================================================================= -->
+<!-- 1. SIDEBAR LATERAL (Shell JG Sistemas - 248px)                          -->
+<!-- ========================================================================= -->
+<aside class="w-64 fixed top-0 left-0 h-screen z-30 bg-primary border-r border-outline-variant/30 flex flex-col justify-between p-4 shadow-sm select-none">
+<div class="flex flex-col gap-5">
+<!-- Marca & Header do Sidebar -->
+<div class="flex items-center gap-3 px-2 pt-1 pb-2">
+<div class="w-9 h-9 rounded-lg bg-tertiary-container text-tertiary-fixed flex items-center justify-center font-headline font-bold text-base shadow-sm ring-2 ring-tertiary-fixed/30">
+          JG
+        </div>
+<div class="flex flex-col">
+<span class="font-headline font-bold text-base text-on-primary tracking-tight leading-tight">JG Sistemas</span>
+<span class="text-xs text-primary-fixed/80 font-medium">Varejo · Moda</span>
+</div>
+</div>
+<!-- Ação Rápida PDV no Menu Lateral -->
+<a class="flex items-center justify-between px-3 py-2.5 rounded-lg bg-tertiary-container hover:bg-tertiary text-on-tertiary font-medium text-xs shadow-sm transition-all duration-150 group" href="#pdv">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary-fixed">point_of_sale</span>
+<span>Abrir PDV [F1]</span>
+</div>
+<span class="text-[10px] bg-tertiary/60 text-tertiary-fixed px-1.5 py-0.5 rounded font-mono">F1</span>
+</a>
+<!-- Menu Principal Navegação -->
+<nav class="flex flex-col gap-0.5 text-sm font-medium overflow-y-auto max-h-[calc(100vh-250px)] pr-1">
+<!-- Início -->
+<a class="text-primary-fixed hover:text-on-primary hover:bg-primary-container/50 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors" href="#inicio">
+<span class="material-symbols-outlined">home</span>
+<span>Início</span>
+</a>
+<!-- Vendas -->
+<a class="text-primary-fixed hover:text-on-primary hover:bg-primary-container/50 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors" href="#vendas">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span>Vendas</span>
+</a>
+<!-- Clientes -->
+<a class="text-primary-fixed hover:text-on-primary hover:bg-primary-container/50 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors" href="#clientes">
+<span class="material-symbols-outlined">group</span>
+<span>Clientes</span>
+</a>
+<!-- Catálogo -->
+<a class="text-primary-fixed hover:text-on-primary hover:bg-primary-container/50 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors" href="#catalogo">
+<span class="material-symbols-outlined">inventory_2</span>
+<span>Catálogo</span>
+</a>
+<!-- Estoque -->
+<a class="text-primary-fixed hover:text-on-primary hover:bg-primary-container/50 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors" href="#estoque">
+<span class="material-symbols-outlined">warehouse</span>
+<span>Estoque</span>
+</a>
+<!-- Financeiro (Módulo Aberto com subitens) -->
+<div class="flex flex-col rounded-lg bg-primary-container/30 pb-1">
+<a class="bg-primary-container text-on-primary font-semibold rounded-lg px-3 py-2 flex items-center justify-between transition-colors" href="#financeiro">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary-fixed">account_balance_wallet</span>
+<span>Financeiro</span>
+</div>
+<span class="material-symbols-outlined text-xs">expand_more</span>
+</a>
+<!-- Subitens do Financeiro -->
+<div class="flex flex-col ml-7 pl-2 border-l border-primary-container/50 gap-0.5 mt-1 text-xs">
+<a class="text-primary-fixed/80 hover:text-on-primary py-1.5 px-2 rounded hover:bg-primary-container/40 transition-colors" href="#visao-geral">Visão Geral</a>
+<a class="text-primary-fixed/80 hover:text-on-primary py-1.5 px-2 rounded hover:bg-primary-container/40 transition-colors" href="#contas-pagar-receber">Contas a Pagar/Receber</a>
+<!-- Item ATIVO -->
+<a class="bg-tertiary-container/80 text-on-tertiary font-semibold py-1.5 px-2 rounded flex items-center justify-between text-tertiary-fixed shadow-sm" href="#cartoes">
+<span>Cartões &amp; Taxas</span>
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed"></span>
+</a>
+<a class="text-primary-fixed/80 hover:text-on-primary py-1.5 px-2 rounded hover:bg-primary-container/40 transition-colors" href="#fluxo-caixa">Fluxo de Caixa</a>
+<a class="text-primary-fixed/80 hover:text-on-primary py-1.5 px-2 rounded hover:bg-primary-container/40 transition-colors" href="#dre">DRE Sintético</a>
+</div>
+</div>
+<!-- Pessoas -->
+<a class="text-primary-fixed hover:text-on-primary hover:bg-primary-container/50 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors" href="#pessoas">
+<span class="material-symbols-outlined">badge</span>
+<span>Pessoas</span>
+</a>
+<!-- Relatórios -->
+<a class="text-primary-fixed hover:text-on-primary hover:bg-primary-container/50 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors" href="#relatorios">
+<span class="material-symbols-outlined">analytics</span>
+<span>Relatórios</span>
+</a>
+<!-- Administração -->
+<a class="text-primary-fixed hover:text-on-primary hover:bg-primary-container/50 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors" href="#administracao">
+<span class="material-symbols-outlined">settings</span>
+<span>Administração</span>
+</a>
+</nav>
+</div>
+<!-- Rodapé Sidebar -->
+<div class="pt-3 border-t border-primary-container/60 flex flex-col gap-2 text-xs text-primary-fixed">
+<div class="flex items-center justify-between px-2">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed animate-pulse"></span>
+<span class="font-medium text-on-primary">TEF Conectado</span>
+</div>
+<span class="font-mono text-[10px] text-primary-fixed/70">v3.4.1</span>
+</div>
+<div class="px-2 py-1.5 bg-primary-container/40 rounded flex items-center justify-between text-[11px]">
+<span class="text-on-primary/90">Filial 01 — Matriz</span>
+<span class="text-tertiary-fixed font-semibold">Online</span>
+</div>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- 2. WRAPPER DE CONTEÚDO PRINCIPAL (Margin-left 256px / w-64)              -->
+<!-- ========================================================================= -->
+<div class="flex-1 ml-64 flex flex-col h-screen overflow-hidden bg-background">
+<!-- TOPBAR SUPERIOR (56px) -->
+<header class="h-14 bg-surface-container-lowest border-b border-outline-variant/40 px-6 flex items-center justify-between z-20 shrink-0">
+<!-- Breadcrumb & Título Auxiliar -->
+<div class="flex items-center gap-3">
+<nav class="flex items-center gap-1.5 text-xs text-on-surface-variant font-medium">
+<span class="hover:text-primary cursor-pointer">Financeiro</span>
+<span class="material-symbols-outlined text-[14px] text-outline">chevron_right</span>
+<span class="hover:text-primary cursor-pointer">Cartões</span>
+<span class="material-symbols-outlined text-[14px] text-outline">chevron_right</span>
+<span class="text-on-surface font-semibold">Operadoras e taxas</span>
+</nav>
+</div>
+<!-- Barra de Busca Global e Ações do Topo -->
+<div class="flex items-center gap-4">
+<!-- Campo de Pesquisa com Atalho -->
+<div class="relative w-80">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-lg">search</span>
+</div>
+<input class="w-full text-xs bg-surface-container-low border border-outline-variant/60 rounded-lg pl-9 pr-12 py-1.5 text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all" placeholder="Buscar módulo, produto ou cliente (Ctrl+K)..." type="text"/>
+<div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">
+<kbd class="text-[10px] font-mono bg-surface-container-high text-on-surface-variant px-1.5 py-0.5 rounded border border-outline-variant/60 font-semibold">Ctrl+K</kbd>
+</div>
+</div>
+<!-- Status do Caixa -->
+<div class="flex items-center gap-2 px-2.5 py-1 rounded-full bg-tertiary/10 border border-tertiary/20">
+<span class="w-2 h-2 rounded-full bg-tertiary-container animate-pulse"></span>
+<span class="text-xs font-semibold text-tertiary">Caixa 01 · Aberto</span>
+</div>
+<!-- Botão Abrir PDV [F1] Verde Primário -->
+<button class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-tertiary-container hover:bg-tertiary text-on-tertiary font-semibold text-xs shadow-sm transition-colors">
+<span class="material-symbols-outlined text-sm">point_of_sale</span>
+<span>Abrir PDV [F1]</span>
+</button>
+<!-- Divisor vertical -->
+<div class="h-6 w-px bg-outline-variant/50"></div>
+<!-- Ícones de Notificação & Ajuda -->
+<button class="relative p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors" title="Notificações">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors" title="Ajuda do Sistema">
+<span class="material-symbols-outlined">help</span>
+</button>
+<!-- Perfil do Operador -->
+<div class="flex items-center gap-2.5 pl-1 cursor-pointer group">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary font-bold text-xs flex items-center justify-center ring-2 ring-surface group-hover:ring-primary/40 transition-all">
+            JG
+          </div>
+<div class="flex flex-col text-left leading-none">
+<span class="text-xs font-semibold text-on-surface group-hover:text-primary transition-colors">Juliana Gomes</span>
+<span class="text-[10px] text-on-surface-variant mt-0.5">Gerente Geral</span>
+</div>
+</div>
+</div>
+</header>
+<!-- ÁREA DE ROLAGEM PRINCIPAL (Conteúdo da Tela) -->
+<main class="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-5">
+<!-- 2.1 CABEÇALHO DA PÁGINA COM AÇÕES -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-3 shrink-0">
+<div>
+<h1 class="text-2xl font-bold font-headline text-on-surface tracking-tight">Cartões &amp; Adquirentes</h1>
+<p class="text-xs text-on-surface-variant mt-0.5">
+            Configuração de operadoras de maquininha/TEF, prazos de liquidação e tabela de taxas MDR negociadas.
+          </p>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low text-xs font-semibold text-on-surface transition-colors shadow-sm">
+<span class="material-symbols-outlined text-sm">calculate</span>
+<span>Simular Venda c/ Taxas [F3]</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low text-xs font-semibold text-on-surface transition-colors shadow-sm">
+<span class="material-symbols-outlined text-sm">file_download</span>
+<span>Exportar Tabela MDR</span>
+</button>
+<button class="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-primary-container hover:bg-primary text-on-primary text-xs font-semibold shadow-sm transition-colors">
+<span class="material-symbols-outlined text-sm">add_circle</span>
+<span>Nova Operadora [+ Novo]</span>
+</button>
+</div>
+</div>
+<!-- 2.2 NAVEGAÇÃO DE ABAS & SUB-ABAS -->
+<div class="flex flex-col gap-2 shrink-0 border-b border-outline-variant/40 pb-1">
+<!-- Abas de Nível 1 -->
+<div class="flex items-center gap-6 text-sm">
+<button class="pb-2.5 font-medium text-on-surface-variant hover:text-on-surface flex items-center gap-2 transition-colors">
+<span>Recebíveis &amp; Conciliação</span>
+<span class="text-[11px] font-semibold bg-surface-container-high text-on-secondary-container px-2 py-0.5 rounded-full">48 títulos</span>
+</button>
+<button class="pb-2.5 font-medium text-on-surface-variant hover:text-on-surface transition-colors">
+            Projeção de Repasses
+          </button>
+<!-- ABA ATIVA -->
+<button class="pb-2.5 font-bold text-primary border-b-2 border-primary flex items-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-base">credit_card</span>
+<span>Operadoras e taxas</span>
+</button>
+</div>
+<!-- Sub-abas / Segmentação Nível 2 -->
+<div class="flex items-center gap-2 pt-1 pb-1">
+<button class="px-3 py-1 rounded-md text-xs font-medium text-on-surface-variant hover:bg-surface-container-low transition-colors">
+            Operadoras Cadastradas
+          </button>
+<button class="px-3 py-1 rounded-md text-xs font-medium text-on-surface-variant hover:bg-surface-container-low transition-colors">
+            Bandeiras Aceitas
+          </button>
+<!-- SUB-ABA ATIVA -->
+<button class="px-3 py-1 rounded-md text-xs font-semibold bg-secondary-container text-on-secondary-container shadow-xs">
+            Taxas MDR (Ativas)
+          </button>
+</div>
+</div>
+<!-- 2.3 CARDS DE RESUMO DAS OPERADORAS CREDENCIADAS (3 CARDS TOPO) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 shrink-0">
+<!-- CARD 1: STONE -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant/60 shadow-xs hover:border-primary/40 transition-all flex flex-col justify-between">
+<div>
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-lg bg-tertiary-container/15 text-tertiary flex items-center justify-center font-bold text-xs ring-1 ring-tertiary/20">
+<span class="material-symbols-outlined text-tertiary">bolt</span>
+</div>
+<div>
+<h3 class="text-sm font-bold text-on-surface leading-tight">Stone Pagamentos</h3>
+<span class="text-[11px] text-on-surface-variant">Adquirente TEF Dedicado + POS</span>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-tertiary bg-tertiary/10 px-2 py-0.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                Ativa · Principal
+              </span>
+</div>
+<!-- Dados Operacionais -->
+<div class="grid grid-cols-2 gap-2 mt-3.5 pt-3 border-t border-outline-variant/30 text-xs">
+<div>
+<span class="text-[10px] text-on-surface-variant uppercase font-medium">Prazo Débito</span>
+<p class="font-semibold text-on-surface">D+1 útil</p>
+</div>
+<div>
+<span class="text-[10px] text-on-surface-variant uppercase font-medium">Prazo Crédito</span>
+<p class="font-semibold text-on-surface">D+1 (Antecipado)</p>
+</div>
+<div>
+<span class="text-[10px] text-on-surface-variant uppercase font-medium">MDR Débito Médio</span>
+<p class="font-bold text-tertiary num-tabular">1,49%</p>
+</div>
+<div>
+<span class="text-[10px] text-on-surface-variant uppercase font-medium">MDR Crédito 1x</span>
+<p class="font-bold text-primary num-tabular">2,89%</p>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between mt-3 pt-2.5 border-t border-outline-variant/20 text-[11px] text-on-surface-variant">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">point_of_sale</span>
+              3 maquininhas vinculadas
+            </span>
+<button class="font-semibold text-primary hover:underline flex items-center gap-0.5">
+              Editar <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- CARD 2: CIELO -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant/60 shadow-xs hover:border-primary/40 transition-all flex flex-col justify-between">
+<div>
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-lg bg-primary-container/15 text-primary flex items-center justify-center font-bold text-xs ring-1 ring-primary/20">
+<span class="material-symbols-outlined text-primary">cloud</span>
+</div>
+<div>
+<h3 class="text-sm font-bold text-on-surface leading-tight">Cielo</h3>
+<span class="text-[11px] text-on-surface-variant">TEF Balcão &amp; E-commerce</span>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-primary bg-primary-container/15 px-2 py-0.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                Ativa · Reserva
+              </span>
+</div>
+<!-- Dados Operacionais -->
+<div class="grid grid-cols-2 gap-2 mt-3.5 pt-3 border-t border-outline-variant/30 text-xs">
+<div>
+<span class="text-[10px] text-on-surface-variant uppercase font-medium">Prazo Débito</span>
+<p class="font-semibold text-on-surface">D+1 útil</p>
+</div>
+<div>
+<span class="text-[10px] text-on-surface-variant uppercase font-medium">Prazo Crédito</span>
+<p class="font-semibold text-on-surface">D+30 padrão</p>
+</div>
+<div>
+<span class="text-[10px] text-on-surface-variant uppercase font-medium">MDR Débito Médio</span>
+<p class="font-bold text-tertiary num-tabular">1,55%</p>
+</div>
+<div>
+<span class="text-[10px] text-on-surface-variant uppercase font-medium">MDR Crédito 1x</span>
+<p class="font-bold text-primary num-tabular">3,10%</p>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between mt-3 pt-2.5 border-t border-outline-variant/20 text-[11px] text-on-surface-variant">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">point_of_sale</span>
+              2 terminais instalados
+            </span>
+<button class="font-semibold text-primary hover:underline flex items-center gap-0.5">
+              Editar <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- CARD 3: PAGBANK / PAGSEGURO -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant/60 shadow-xs hover:border-primary/40 transition-all flex flex-col justify-between">
+<div>
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-lg bg-surface-container-high text-on-secondary-container flex items-center justify-center font-bold text-xs ring-1 ring-outline-variant">
+<span class="material-symbols-outlined text-on-secondary-container">credit_card_heart</span>
+</div>
+<div>
+<h3 class="text-sm font-bold text-on-surface leading-tight">PagBank / PagSeguro</h3>
+<span class="text-[11px] text-on-surface-variant">POS Móvel / Backup Feiras</span>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-on-surface-variant bg-surface-container-high px-2 py-0.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                Ativa · Backup
+              </span>
+</div>
+<!-- Dados Operacionais -->
+<div class="grid grid-cols-2 gap-2 mt-3.5 pt-3 border-t border-outline-variant/30 text-xs">
+<div>
+<span class="text-[10px] text-on-surface-variant uppercase font-medium">Prazo Débito</span>
+<p class="font-semibold text-on-surface">D+0 (Na hora)</p>
+</div>
+<div>
+<span class="text-[10px] text-on-surface-variant uppercase font-medium">Prazo Crédito</span>
+<p class="font-semibold text-on-surface">D+14 dias</p>
+</div>
+<div>
+<span class="text-[10px] text-on-surface-variant uppercase font-medium">MDR Débito Médio</span>
+<p class="font-bold text-tertiary num-tabular">1,69%</p>
+</div>
+<div>
+<span class="text-[10px] text-on-surface-variant uppercase font-medium">MDR Crédito 1x</span>
+<p class="font-bold text-primary num-tabular">3,49%</p>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between mt-3 pt-2.5 border-t border-outline-variant/20 text-[11px] text-on-surface-variant">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">point_of_sale</span>
+              1 terminal móvel
+            </span>
+<button class="font-semibold text-primary hover:underline flex items-center gap-0.5">
+              Editar <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- 2.4 ÁREA PRINCIPAL DIVIDIDA EM DUAS COLUNAS (68% Tabela | 32% Formulário Lateral) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-5 pb-6 items-start">
+<!-- ================================================================= -->
+<!-- COLUNA ESQUERDA: TABELA COMPLETA DE TAXAS MDR (~68% = col-span-8) -->
+<!-- ================================================================= -->
+<div class="lg:col-span-8 bg-surface-container-lowest border border-outline-variant/60 rounded-xl shadow-xs overflow-hidden flex flex-col">
+<!-- Barra de Filtros e Ferramentas -->
+<div class="p-3.5 border-b border-outline-variant/40 flex flex-wrap items-center justify-between gap-3 bg-surface-container-low/40">
+<div class="flex items-center gap-2 flex-1 min-w-[240px]">
+<!-- Busca Rápida -->
+<div class="relative w-full max-w-xs">
+<span class="material-symbols-outlined text-outline absolute left-2.5 top-2 text-base">search</span>
+<input class="w-full text-xs pl-8 pr-3 py-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest focus:ring-1 focus:ring-primary focus:border-primary text-on-surface placeholder:text-outline" placeholder="Filtrar por bandeira ou operadora..." type="text"/>
+</div>
+</div>
+<!-- Filtros Suspensos -->
+<div class="flex items-center gap-2">
+<select class="text-xs py-1.5 pl-2.5 pr-8 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface font-medium focus:ring-1 focus:ring-primary">
+<option value="todas">Todas as operadoras</option>
+<option selected="" value="stone">Stone Pagamentos</option>
+<option value="cielo">Cielo</option>
+<option value="pagbank">PagBank</option>
+</select>
+<select class="text-xs py-1.5 pl-2.5 pr-8 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface font-medium focus:ring-1 focus:ring-primary">
+<option value="todos">Todos os Métodos</option>
+<option value="debito">Débito</option>
+<option value="credito_vista">Crédito à Vista (1x)</option>
+<option value="credito_parcelado_curto">Crédito Parcelado (2–6x)</option>
+<option value="credito_parcelado_longo">Crédito Parcelado (7–12x)</option>
+<option value="pix">PIX Máquina</option>
+</select>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg border border-outline-variant/60" title="Atualizar dados">
+<span class="material-symbols-outlined text-base">refresh</span>
+</button>
+</div>
+</div>
+<!-- Tabela com Cabeçalho Claro e Linhas Densas -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse text-xs">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-semibold border-b border-outline-variant/40">
+<th class="py-2.5 px-3">Operadora</th>
+<th class="py-2.5 px-3">Bandeira</th>
+<th class="py-2.5 px-3">Modalidade</th>
+<th class="py-2.5 px-3">Parcelamento</th>
+<th class="py-2.5 px-3">Repasse</th>
+<th class="py-2.5 px-3 text-right">Taxa MDR</th>
+<th class="py-2.5 px-3 text-center">Encargo</th>
+<th class="py-2.5 px-3 text-center w-20">Ações</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30 text-on-surface">
+<!-- Linha 1: Stone Débito Geral -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-2.5 px-3 font-medium">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span>Stone</span>
+</div>
+</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold bg-surface-container text-on-secondary-container">
+                      Todas / Genérica
+                    </span>
+</td>
+<td class="py-2.5 px-3">
+<span class="font-medium text-tertiary">Débito</span>
+</td>
+<td class="py-2.5 px-3 text-on-surface-variant font-mono">À vista (1x)</td>
+<td class="py-2.5 px-3 font-mono text-on-surface">D+1 útil</td>
+<td class="py-2.5 px-3 text-right font-bold text-tertiary num-tabular text-sm">1,18%</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full bg-surface-container-high text-on-secondary-container">
+                      Loja absorve
+                    </span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<div class="flex items-center justify-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary p-1" title="Editar"><span class="material-symbols-outlined text-[16px]">edit</span></button>
+<button class="hover:text-primary p-1" title="Histórico"><span class="material-symbols-outlined text-[16px]">history</span></button>
+<button class="hover:text-error p-1" title="Excluir"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Linha 2: Stone Crédito Mastercard 1x -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-2.5 px-3 font-medium">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span>Stone</span>
+</div>
+</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] font-semibold bg-error/10 text-error">
+                      Mastercard
+                    </span>
+</td>
+<td class="py-2.5 px-3">
+<span class="font-medium text-primary">Crédito à Vista</span>
+</td>
+<td class="py-2.5 px-3 text-on-surface-variant font-mono">1x</td>
+<td class="py-2.5 px-3 font-mono text-on-surface">D+1 (Antecipado)</td>
+<td class="py-2.5 px-3 text-right font-bold text-primary num-tabular text-sm">2,65%</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full bg-surface-container-high text-on-secondary-container">
+                      Loja absorve
+                    </span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<div class="flex items-center justify-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary p-1"><span class="material-symbols-outlined text-[16px]">edit</span></button>
+<button class="hover:text-primary p-1"><span class="material-symbols-outlined text-[16px]">history</span></button>
+<button class="hover:text-error p-1"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Linha 3: Stone Crédito Visa 1x -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-2.5 px-3 font-medium">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span>Stone</span>
+</div>
+</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] font-semibold bg-primary-container/15 text-primary">
+                      Visa
+                    </span>
+</td>
+<td class="py-2.5 px-3">
+<span class="font-medium text-primary">Crédito à Vista</span>
+</td>
+<td class="py-2.5 px-3 text-on-surface-variant font-mono">1x</td>
+<td class="py-2.5 px-3 font-mono text-on-surface">D+1 (Antecipado)</td>
+<td class="py-2.5 px-3 text-right font-bold text-primary num-tabular text-sm">2,65%</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full bg-surface-container-high text-on-secondary-container">
+                      Loja absorve
+                    </span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<div class="flex items-center justify-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary p-1"><span class="material-symbols-outlined text-[16px]">edit</span></button>
+<button class="hover:text-primary p-1"><span class="material-symbols-outlined text-[16px]">history</span></button>
+<button class="hover:text-error p-1"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Linha 4: Stone Parcelado 2 a 6x -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-2.5 px-3 font-medium">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span>Stone</span>
+</div>
+</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold bg-surface-container text-on-secondary-container">
+                      Visa / Master
+                    </span>
+</td>
+<td class="py-2.5 px-3">
+<span class="font-medium text-on-surface">Crédito Parcelado</span>
+</td>
+<td class="py-2.5 px-3 text-on-surface-variant font-mono font-medium">2x a 6x</td>
+<td class="py-2.5 px-3 font-mono text-on-surface">D+1 (Antecipado)</td>
+<td class="py-2.5 px-3 text-right font-bold text-primary num-tabular text-sm">3,45%</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full bg-surface-container-high text-on-secondary-container">
+                      Loja absorve
+                    </span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<div class="flex items-center justify-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary p-1"><span class="material-symbols-outlined text-[16px]">edit</span></button>
+<button class="hover:text-primary p-1"><span class="material-symbols-outlined text-[16px]">history</span></button>
+<button class="hover:text-error p-1"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Linha 5: Stone Parcelado 7 a 12x Repassado ao cliente -->
+<tr class="hover:bg-surface-container-low/50 transition-colors bg-surface-container-low/20">
+<td class="py-2.5 px-3 font-medium">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span>Stone</span>
+</div>
+</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold bg-surface-container text-on-secondary-container">
+                      Todas as bandeiras
+                    </span>
+</td>
+<td class="py-2.5 px-3">
+<span class="font-medium text-on-surface">Crédito Parcelado</span>
+</td>
+<td class="py-2.5 px-3 text-on-surface-variant font-mono font-medium">7x a 12x</td>
+<td class="py-2.5 px-3 font-mono text-on-surface">D+1 (Antecipado)</td>
+<td class="py-2.5 px-3 text-right font-bold text-primary num-tabular text-sm">4,89%</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full bg-error-container text-on-error-container">
+                      Repassa Cliente
+                    </span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<div class="flex items-center justify-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary p-1"><span class="material-symbols-outlined text-[16px]">edit</span></button>
+<button class="hover:text-primary p-1"><span class="material-symbols-outlined text-[16px]">history</span></button>
+<button class="hover:text-error p-1"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Linha 6: Cielo Débito Elo -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-2.5 px-3 font-medium">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span>Cielo</span>
+</div>
+</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold bg-secondary-container text-on-secondary-container">
+                      Elo
+                    </span>
+</td>
+<td class="py-2.5 px-3">
+<span class="font-medium text-tertiary">Débito</span>
+</td>
+<td class="py-2.5 px-3 text-on-surface-variant font-mono">À vista (1x)</td>
+<td class="py-2.5 px-3 font-mono text-on-surface">D+1 útil</td>
+<td class="py-2.5 px-3 text-right font-bold text-tertiary num-tabular text-sm">1,55%</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full bg-surface-container-high text-on-secondary-container">
+                      Loja absorve
+                    </span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<div class="flex items-center justify-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary p-1"><span class="material-symbols-outlined text-[16px]">edit</span></button>
+<button class="hover:text-primary p-1"><span class="material-symbols-outlined text-[16px]">history</span></button>
+<button class="hover:text-error p-1"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Linha 7: Cielo Crédito D+30 Padrão -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-2.5 px-3 font-medium">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span>Cielo</span>
+</div>
+</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold bg-surface-container text-on-secondary-container">
+                      Todas as bandeiras
+                    </span>
+</td>
+<td class="py-2.5 px-3">
+<span class="font-medium text-primary">Crédito à Vista</span>
+</td>
+<td class="py-2.5 px-3 text-on-surface-variant font-mono">1x</td>
+<td class="py-2.5 px-3 font-mono text-on-surface">D+30 corridos</td>
+<td class="py-2.5 px-3 text-right font-bold text-primary num-tabular text-sm">3,10%</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full bg-surface-container-high text-on-secondary-container">
+                      Loja absorve
+                    </span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<div class="flex items-center justify-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary p-1"><span class="material-symbols-outlined text-[16px]">edit</span></button>
+<button class="hover:text-primary p-1"><span class="material-symbols-outlined text-[16px]">history</span></button>
+<button class="hover:text-error p-1"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Linha 8: PagBank Crédito Parcelado Backup -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-2.5 px-3 font-medium">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>PagBank</span>
+</div>
+</td>
+<td class="py-2.5 px-3">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold bg-surface-container text-on-secondary-container">
+                      Todas as bandeiras
+                    </span>
+</td>
+<td class="py-2.5 px-3">
+<span class="font-medium text-on-surface">Crédito Parcelado</span>
+</td>
+<td class="py-2.5 px-3 text-on-surface-variant font-mono font-medium">2x a 6x</td>
+<td class="py-2.5 px-3 font-mono text-on-surface">D+14 dias</td>
+<td class="py-2.5 px-3 text-right font-bold text-primary num-tabular text-sm">4,20%</td>
+<td class="py-2.5 px-3 text-center">
+<span class="inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full bg-error-container text-on-error-container">
+                      Repassa Cliente
+                    </span>
+</td>
+<td class="py-2.5 px-3 text-center">
+<div class="flex items-center justify-center gap-1 text-on-surface-variant">
+<button class="hover:text-primary p-1"><span class="material-symbols-outlined text-[16px]">edit</span></button>
+<button class="hover:text-primary p-1"><span class="material-symbols-outlined text-[16px]">history</span></button>
+<button class="hover:text-error p-1"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Rodapé de Paginação da Tabela -->
+<div class="p-3 border-t border-outline-variant/40 flex items-center justify-between text-xs bg-surface-container-low/20">
+<span class="text-on-surface-variant">
+              Exibindo <strong class="text-on-surface">1–8</strong> de <strong class="text-on-surface">24</strong> taxas configuradas
+            </span>
+<div class="flex items-center gap-1">
+<button class="px-2 py-1 rounded border border-outline-variant/60 bg-surface-container-lowest text-on-surface-variant hover:text-on-surface disabled:opacity-40" disabled="">
+                Anterior
+              </button>
+<button class="px-2.5 py-1 rounded bg-primary text-on-primary font-bold">1</button>
+<button class="px-2.5 py-1 rounded hover:bg-surface-container text-on-surface font-medium">2</button>
+<button class="px-2.5 py-1 rounded hover:bg-surface-container text-on-surface font-medium">3</button>
+<button class="px-2 py-1 rounded border border-outline-variant/60 bg-surface-container-lowest text-on-surface hover:bg-surface-container">
+                Próxima
+              </button>
+</div>
+</div>
+</div>
+<!-- ================================================================= -->
+<!-- COLUNA DIREITA: FORMULÁRIO COMPACTO "NOVA TAXA MDR" (~32% = col-span-4) -->
+<!-- ================================================================= -->
+<div class="lg:col-span-4 bg-surface-container-lowest border border-outline-variant/60 rounded-xl shadow-xs overflow-hidden flex flex-col">
+<!-- Cabeçalho do Card -->
+<div class="p-4 border-b border-outline-variant/40 bg-surface-container-low/40">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">add_card</span>
+<h2 class="text-sm font-bold font-headline text-on-surface">Cadastrar Nova Taxa MDR</h2>
+</div>
+<p class="text-xs text-on-surface-variant mt-0.5">
+              Adicione regra de MDR por adquirente e faixa de parcelamento.
+            </p>
+</div>
+<!-- Formulário Compacto -->
+<form class="p-4 flex flex-col gap-3.5 text-xs">
+<!-- Campo 1: Operadora -->
+<div>
+<label class="block font-semibold text-on-surface mb-1">Operadora / Adquirente <span class="text-error">*</span></label>
+<select class="w-full text-xs rounded-lg border border-outline-variant bg-surface-container-lowest focus:ring-1 focus:ring-primary focus:border-primary text-on-surface">
+<option selected="" value="stone">Stone Pagamentos</option>
+<option value="cielo">Cielo</option>
+<option value="pagbank">PagBank / PagSeguro</option>
+<option value="rede">Rede (Itaú)</option>
+<option value="safrapay">SafraPay</option>
+</select>
+</div>
+<!-- Campo 2: Bandeira -->
+<div>
+<label class="block font-semibold text-on-surface mb-1">Bandeira do Cartão <span class="text-error">*</span></label>
+<select class="w-full text-xs rounded-lg border border-outline-variant bg-surface-container-lowest focus:ring-1 focus:ring-primary focus:border-primary text-on-surface">
+<option value="todas">Todas as Bandeiras (Padrão Geral)</option>
+<option value="visa">Visa</option>
+<option selected="" value="mastercard">Mastercard</option>
+<option value="elo">Elo</option>
+<option value="hipercard">Hipercard</option>
+<option value="amex">American Express</option>
+</select>
+</div>
+<!-- Campo 3: Modalidade com Toggle Pills -->
+<div>
+<label class="block font-semibold text-on-surface mb-1.5">Modalidade / Método <span class="text-error">*</span></label>
+<div class="grid grid-cols-3 gap-1 bg-surface-container p-1 rounded-lg text-center font-medium">
+<button class="py-1 px-1.5 rounded text-[11px] text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors" type="button">
+                  Débito
+                </button>
+<button class="py-1 px-1.5 rounded text-[11px] text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low transition-colors" type="button">
+                  Crédito 1x
+                </button>
+<button class="py-1 px-1.5 rounded text-[11px] bg-surface-container-lowest font-bold text-primary shadow-xs" type="button">
+                  Parcelado
+                </button>
+</div>
+</div>
+<!-- Campo 4: Faixa de Parcelas (De - Até) -->
+<div class="grid grid-cols-2 gap-2">
+<div>
+<label class="block font-semibold text-on-surface mb-1">De (Parcela)</label>
+<input class="w-full text-xs rounded-lg border border-outline-variant bg-surface-container-lowest focus:ring-1 focus:ring-primary font-mono text-center" max="24" min="1" type="number" value="2"/>
+</div>
+<div>
+<label class="block font-semibold text-on-surface mb-1">Até (Parcela)</label>
+<input class="w-full text-xs rounded-lg border border-outline-variant bg-surface-container-lowest focus:ring-1 focus:ring-primary font-mono text-center" max="24" min="1" type="number" value="6"/>
+</div>
+</div>
+<!-- Campo 5: Taxa Contratada (%) -->
+<div>
+<label class="block font-semibold text-on-surface mb-1">Taxa Contratada (MDR %) <span class="text-error">*</span></label>
+<div class="relative">
+<input class="w-full text-xs rounded-lg border border-outline-variant bg-surface-container-lowest focus:ring-1 focus:ring-primary font-bold font-mono text-on-surface pr-8" placeholder="0,00" type="text" value="2,95"/>
+<span class="absolute inset-y-0 right-0 pr-3 flex items-center text-outline font-semibold pointer-events-none">%</span>
+</div>
+<span class="text-[10px] text-on-surface-variant mt-0.5 block">Exemplo negociado: 2,95% no contrato vigente.</span>
+</div>
+<!-- Campo 6: Prazo de Liquidação -->
+<div>
+<label class="block font-semibold text-on-surface mb-1">Prazo de Liquidação / Repasse</label>
+<select class="w-full text-xs rounded-lg border border-outline-variant bg-surface-container-lowest focus:ring-1 focus:ring-primary text-on-surface">
+<option selected="" value="d1_antecipado">D+1 útil (Antecipação Automática)</option>
+<option value="d30">D+30 dias corridos</option>
+<option value="d14">D+14 dias corridos</option>
+<option value="d0">D+0 (Liquidação imediata)</option>
+<option value="fluxo">Conforme vencimento de cada parcela</option>
+</select>
+</div>
+<!-- Campo 7: Regra de Repasse (Checkbox) -->
+<div class="pt-1">
+<label class="flex items-start gap-2 cursor-pointer select-none">
+<input class="mt-0.5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-[11px] leading-tight text-on-surface">
+                  Repassar acréscimo de taxa para o cliente final no momento da venda no PDV
+                </span>
+</label>
+</div>
+<!-- Botões de Ação do Formulário -->
+<div class="flex flex-col gap-2 pt-2 border-t border-outline-variant/30 mt-1">
+<button class="w-full py-2.5 px-3 rounded-lg bg-tertiary-container hover:bg-tertiary text-on-tertiary font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-colors" type="button">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+<span>Adicionar Taxa [Enter]</span>
+</button>
+<button class="w-full py-1.5 px-3 rounded-lg bg-surface-container-lowest border border-outline-variant/60 hover:bg-surface-container-low text-on-surface-variant hover:text-on-surface font-medium text-xs transition-colors" type="reset">
+                Limpar Campos
+              </button>
+</div>
+</form>
+</div>
+</div>
+</main>
+<!-- 2.5 BARRA DE STATUS INFERIOR / FOOTER DO SISTEMA -->
+<footer class="h-8 bg-surface-container-lowest border-t border-outline-variant/40 px-6 flex items-center justify-between text-[11px] text-on-surface-variant shrink-0">
+<div class="flex items-center gap-4">
+<span class="flex items-center gap-1 text-tertiary font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+          Conexão TEF Segura (TLS 1.3)
+        </span>
+<span class="text-outline-variant">|</span>
+<span>Última sincronização de taxas: <strong>Hoje, 14:32</strong></span>
+<span class="text-outline-variant">|</span>
+<span>Homologação SiTef: <strong>OK</strong></span>
+</div>
+<div class="flex items-center gap-3">
+<span class="hidden sm:inline">Atalhos rápidos:</span>
+<span class="bg-surface-container px-1.5 py-0.5 rounded font-mono text-[10px] text-on-surface">F1 PDV</span>
+<span class="bg-surface-container px-1.5 py-0.5 rounded font-mono text-[10px] text-on-surface">F3 Simulador</span>
+<span class="bg-surface-container px-1.5 py-0.5 rounded font-mono text-[10px] text-on-surface">Ctrl+K Busca</span>
+</div>
+</footer>
+</div>
+</body></html>

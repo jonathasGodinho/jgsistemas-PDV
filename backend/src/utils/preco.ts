@@ -1,4 +1,5 @@
 import prisma from '../db';
+import { moduloAtivo } from './modulos';
 
 export const precoBaseDe = (produto: any, variante?: any): number =>
     variante ? Number(variante.salePrice ?? produto.salePrice) : Number(produto.salePrice);
@@ -12,6 +13,7 @@ export const resolverPreco = async (
     quantidade: number,
     precoBase: number
 ): Promise<number | null> => {
+    if (!moduloAtivo('precos')) return null;
     let tabelaId: string | null = null;
 
     if (clienteId) {

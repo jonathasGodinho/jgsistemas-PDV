@@ -92,12 +92,17 @@ router.get('/movimentacoes', async (_req: any, res: any) => {
         take: 100
     });
 
+    const userIds = [...new Set(movs.map(m => m.userId).filter(Boolean))] as string[];
+    const usuarios = userIds.length ? await prisma.user.findMany({ where: { id: { in: userIds } }, select: { id: true, name: true } }) : [];
+    const nomes = new Map(usuarios.map(u => [u.id, u.name]));
+
     return res.json(movs.map(m => ({
         id: m.id,
         tipo: m.type,
         quantidade: m.quantity,
         motivo: m.reason,
         produto: m.Inventory.Product.name,
+        operador: m.userId ? nomes.get(m.userId) ?? null : null,
         data: m.createdAt
     })));
 });

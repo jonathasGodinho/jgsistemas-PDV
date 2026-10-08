@@ -6,6 +6,28 @@ import { requerPermissao } from '../middlewares/auth';
 
 const router = Router();
 
+// Campos fiscais aceitos no cadastro (texto livre, validados no tamanho)
+const CAMPOS_FISCAIS: Record<string, string> = { ncm: 'ncm', cest: 'cest', cfop: 'cfop', csosn: 'csosn', cst: 'cst' };
+const fiscaisDoCorpo = (body: any, existente?: any) => {
+    const out: any = {};
+    for (const [campo, coluna] of Object.entries(CAMPOS_FISCAIS)) {
+        if (body[campo] === undefined) continue;
+        const v = String(body[campo] ?? '').replace(/[^0-9A-Za-z.]/g, '').slice(0, 12);
+        out[coluna] = v || null;
+    }
+    void existente;
+    return out;
+};
+// Foto: data URL de imagem (até ~1,5 MB). null/'' remove.
+const fotosDoCorpo = (foto: any): string[] | undefined => {
+    if (foto === undefined) return undefined;
+    if (!foto) return [];
+    const f = String(foto);
+    if (!/^data:image\/(png|jpe?g|webp);base64,/i.test(f) || f.length > 2_000_000) return undefined;
+    return [f];
+};
+const inteiroOuNull = (v: any) => (v === undefined ? undefined : Math.max(0, Math.round(Number(v) || 0)));
+
 // GET /api/produtos - Lista produtos (com estoque e categoria), busca opcional
 router.get('/', async (req: any, res: any) => {
     const { busca } = req.query;
@@ -57,8 +79,13 @@ router.get('/', async (req: any, res: any) => {
             estoque: p.Inventory.filter(i => i.variantId === v.id).reduce((s, i) => s + i.quantity, 0)
         })),
         estoque: p.Inventory.reduce((s, i) => s + i.quantity, 0),
+        minimo: p.Inventory.reduce((s, i) => s + i.minQuantity, 0),
+        maximo: p.Inventory.reduce((s, i) => s + (i.maxQuantity ?? 0), 0),
         ativo: p.isActive,
-        unidade: p.unit
+        unidade: p.unit,
+        descricao: p.description,
+        foto: p.photos?.[0] ?? null,
+        ncm: p.ncm, cest: p.cest, cfop: p.cfop, csosn: p.csosn, cst: p.cst
     })));
 });
 
@@ -111,7 +138,7 @@ router.get('/:codigo', async (req: any, res: any) => {
 
 // POST /api/produtos - Cria um novo produto com estoque inicial e variantes opcionais
 router.post('/', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
-    const { nome, codigo, sku, preco, custo, categoriaId, marcaId, colecaoId, estoque, unidade, variantes } = req.body;
+    const { nome, codigo, sku, preco, custo, categoriaId, marcaId, colecaoId, estoque, unidade, variantes, minimo, maximo, descricao, foto } = req.body;
 
     if (!nome || nome.trim() === '') {
         return res.status(400).json({ erro: "Informe o nome do produto!" });
@@ -158,7 +185,10 @@ router.post('/', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: 
             salePrice: precoNum,
             profitMargin: Number(margem.toFixed(2)),
             unit: unidade || 'UN',
-            isActive: true,
+            description: descricao ? String(descricao).slice(0, 2000) : null,
+            photos: fotosDoCorpo(foto) ?? [],
+            ...fiscaisDoCorpo(req.body),
+            isActive: req.body.ativo === undefined ? true : Boolean(req.body.ativo),
             createdAt: new Date(),
             updatedAt: new Date()
         }
@@ -215,8 +245,8 @@ router.post('/', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: 
             productId: produto.id,
             branchId: filial.id,
             quantity: temVariantes ? 0 : qtdEstoque,
-            minQuantity: 0,
-            maxQuantity: 0,
+            minQuantity: inteiroOuNull(minimo) ?? 0,
+            maxQuantity: inteiroOuNull(maximo) ?? 0,
             createdAt: new Date(),
             updatedAt: new Date()
         }
@@ -228,7 +258,7 @@ router.post('/', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: 
 // PUT /api/produtos/:id - Atualiza produto e/ou estoque
 router.put('/:id', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     const { id } = req.params;
-    const { nome, codigo, sku, preco, custo, categoriaId, marcaId, colecaoId, estoque, unidade, ativo, variantes } = req.body;
+    const { nome, codigo, sku, preco, custo, categoriaId, marcaId, colecaoId, estoque, unidade, ativo, variantes, minimo, maximo, descricao, foto } = req.body;
 
     const produtoExistente = await prisma.product.findUnique({ where: { id } });
     if (!produtoExistente) {
@@ -271,6 +301,9 @@ router.put('/:id', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req
             profitMargin: Number(margem.toFixed(2)),
             unit: unidade || produtoExistente.unit,
             isActive: ativo !== undefined ? Boolean(ativo) : produtoExistente.isActive,
+            ...(descricao !== undefined ? { description: descricao ? String(descricao).slice(0, 2000) : null } : {}),
+            ...(fotosDoCorpo(foto) !== undefined ? { photos: fotosDoCorpo(foto) } : {}),
+            ...fiscaisDoCorpo(req.body),
             updatedAt: new Date()
         }
     });
@@ -324,6 +357,21 @@ router.put('/:id', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req
             });
         }
         void existentes;
+    }
+
+    // Estoque mínimo/máximo ficam no registro de estoque do produto base
+    if (minimo !== undefined || maximo !== undefined) {
+        const base = await prisma.inventory.findFirst({ where: { productId: id, variantId: null, branchId: filial.id } });
+        const dados: any = { updatedAt: new Date() };
+        if (minimo !== undefined) dados.minQuantity = inteiroOuNull(minimo);
+        if (maximo !== undefined) dados.maxQuantity = inteiroOuNull(maximo);
+        if (base) {
+            await prisma.inventory.update({ where: { id: base.id }, data: dados });
+        } else {
+            await prisma.inventory.create({
+                data: { id: randomUUID(), productId: id, branchId: filial.id, quantity: 0, minQuantity: dados.minQuantity ?? 0, maxQuantity: dados.maxQuantity ?? 0, createdAt: new Date(), updatedAt: new Date() }
+            });
+        }
     }
 
     if (estoque !== undefined) {

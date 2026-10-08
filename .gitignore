@@ -1,6 +1,11 @@
 # Segredos e ambiente — nunca versionar
 **/.env
+**/.env.*
 !**/.env.example
+# Credenciais de nuvem (chaves de conta de serviço)
+**/*-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].json
+.vercel
+
 
 # Dados do Painel SaaS (clientes, senhas de instalação, logs de instâncias)
 dados/
@@ -17,3 +22,6 @@ Thumbs.db
 
 # Backups locais
 *.bak
+
+.vercel
+.env*

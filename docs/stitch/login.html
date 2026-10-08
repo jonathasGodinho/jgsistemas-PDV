@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login · JG Sistemas ERP</title>
+<!-- Fontes Google Inter e Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-primary-fixed-variant": "#0e4688",
+            "on-primary": "#ffffff",
+            "on-background": "#0b1c30",
+            "tertiary-fixed-dim": "#62df7d",
+            "error-container": "#ffdad6",
+            "surface-bright": "#f8f9ff",
+            "secondary-container": "#bfd5fe",
+            "on-tertiary-container": "#5dda7a",
+            "secondary-fixed": "#d5e3ff",
+            "inverse-surface": "#213145",
+            "surface-container-high": "#dce9ff",
+            "primary-container": "#1d4f91",
+            "on-tertiary": "#ffffff",
+            "on-secondary-fixed": "#011b3b",
+            "outline": "#737782",
+            "on-secondary-container": "#475c7f",
+            "on-secondary-fixed-variant": "#324769",
+            "on-tertiary-fixed-variant": "#005320",
+            "secondary": "#4a5f82",
+            "primary-fixed-dim": "#a9c7ff",
+            "on-surface-variant": "#434750",
+            "surface": "#f8f9ff",
+            "primary": "#003873",
+            "background": "#f8f9ff",
+            "on-tertiary-fixed": "#002109",
+            "on-primary-container": "#a2c3ff",
+            "error": "#ba1a1a",
+            "surface-tint": "#305ea1",
+            "surface-container": "#e5eeff",
+            "surface-dim": "#cbdbf5",
+            "on-surface": "#0b1c30",
+            "surface-container-highest": "#d3e4fe",
+            "inverse-on-surface": "#eaf1ff",
+            "tertiary-fixed": "#7ffc97",
+            "primary-fixed": "#d6e3ff",
+            "surface-container-low": "#eff4ff",
+            "outline-variant": "#c3c6d2",
+            "on-error-container": "#93000a",
+            "on-error": "#ffffff",
+            "surface-variant": "#d3e4fe",
+            "secondary-fixed-dim": "#b2c7f0",
+            "tertiary-container": "#005d25",
+            "on-secondary": "#ffffff",
+            "tertiary": "#004319",
+            "on-primary-fixed": "#001b3e",
+            "inverse-primary": "#a9c7ff"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            headline: ["Inter", "sans-serif"],
+            display: ["Inter", "sans-serif"],
+            body: ["Inter", "sans-serif"],
+            label: ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    input[type="password"] {
+      letter-spacing: 0.18em;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#0F2747] font-body text-on-surface antialiased flex flex-col justify-between selection:bg-primary-container selection:text-white">
+<!-- Header Superior Técnico e Minimalista -->
+<header class="w-full px-6 py-4 flex justify-between items-center text-xs text-slate-300">
+<div class="flex items-center gap-2">
+<span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span class="font-medium tracking-wide">Servidores Operacionais</span>
+</div>
+<div class="hidden sm:flex items-center gap-4 text-slate-400">
+<span>Terminal PDV/ERP #01</span>
+<span>·</span>
+<span>IP 192.168.1.104</span>
+</div>
+</header>
+<!-- Container Central -->
+<main class="w-full flex-1 flex items-center justify-center p-4">
+<div class="w-full max-w-[420px] bg-white rounded-lg shadow-2xl border border-slate-200/20 overflow-hidden">
+<!-- Cabeçalho do Card -->
+<div class="px-8 pt-8 pb-4 text-center sm:text-left flex flex-col sm:flex-row sm:items-center gap-4 border-b border-slate-100">
+<div class="w-10 h-10 rounded-lg bg-[#16A34A] text-white flex items-center justify-center font-bold text-lg tracking-wider shadow-sm flex-shrink-0 mx-auto sm:mx-0">
+          JG
+        </div>
+<div>
+<h1 class="text-xl font-bold text-slate-900 tracking-tight leading-none">
+            JG Sistemas
+          </h1>
+<p class="text-sm text-[#64748B] mt-1 font-normal">
+            Acesse com seu operador
+          </p>
+</div>
+</div>
+<div class="p-8 space-y-5">
+<!-- Mensagem de Alerta de Bloqueio -->
+<div class="bg-red-50 border border-red-200 rounded-lg p-3 text-xs leading-relaxed flex items-start gap-2.5 text-[#DC2626]" role="alert">
+<span class="material-symbols-outlined fill text-[#DC2626] text-lg mt-0.5 select-none" data-icon="lock_clock">lock_clock</span>
+<div class="flex-1">
+<span class="font-semibold block text-red-700 mb-0.5">Acesso temporariamente restrito</span>
+            Conta bloqueada após 5 tentativas inválidas. Tente novamente em 15 minutos ou fale com o administrador.
+          </div>
+</div>
+<!-- Formulário de Login -->
+<form class="space-y-4" id="loginForm" onsubmit="event.preventDefault();">
+<!-- Campo Operador -->
+<div>
+<label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" for="operador">
+              Operador
+            </label>
+<div class="relative flex items-center">
+<span class="absolute left-3 text-slate-400 select-none flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-[18px]" data-icon="badge">badge</span>
+</span>
+<input autocomplete="username" class="w-full pl-9 pr-14 h-10 text-sm bg-white border border-slate-300 rounded-lg text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#1D4F91] focus:border-[#1D4F91] transition duration-150" id="operador" name="operador" placeholder="juliana.gomes" type="text" value="juliana.gomes"/>
+<button class="absolute right-2 px-2 py-0.5 bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-600 font-mono text-xs rounded shadow-sm transition active:scale-95 flex items-center gap-1 cursor-pointer" id="btnF2" title="Pressione F2 para selecionar na lista de operadores cadastrados" type="button">
+<span>[F2]</span>
+</button>
+</div>
+<p class="text-[11px] text-slate-500 mt-1 flex justify-between">
+<span>Matrícula ou usuário de rede</span>
+<span class="text-slate-400 font-mono">F2: Buscar</span>
+</p>
+</div>
+<!-- Campo Senha -->
+<div>
+<div class="flex justify-between items-center mb-1.5">
+<label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider" for="senha">
+                Senha
+              </label>
+<span class="text-[11px] text-slate-400 font-mono">Enter: Confirmar</span>
+</div>
+<div class="relative flex items-center">
+<span class="absolute left-3 text-slate-400 select-none flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-[18px]" data-icon="key">key</span>
+</span>
+<input autocomplete="current-password" class="w-full pl-9 pr-10 h-10 text-sm bg-white border border-slate-300 rounded-lg text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#1D4F91] focus:border-[#1D4F91] transition duration-150" id="senha" name="senha" placeholder="••••••••" type="password" value="senha1234"/>
+<button class="absolute right-2 text-slate-400 hover:text-slate-600 p-1.5 rounded transition flex items-center justify-center focus:outline-none" id="togglePassword" title="Mostrar/ocultar senha" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="visibility" id="pwdIcon">visibility</span>
+</button>
+</div>
+</div>
+<!-- Botão Principal -->
+<div class="pt-2">
+<button class="w-full h-10 bg-[#1D4F91] hover:bg-[#153e73] active:bg-[#0f2d54] text-white font-medium text-sm rounded-lg transition-colors shadow-sm flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1D4F91]" type="submit">
+<span>Entrar</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</form>
+<!-- Ações Auxiliares -->
+<div class="pt-1 text-center border-t border-slate-100">
+<a class="inline-block text-xs text-slate-500 hover:text-[#1D4F91] hover:underline focus:outline-none focus:ring-1 focus:ring-[#1D4F91] rounded px-1 py-0.5 transition" href="#recuperar-senha">
+            Esqueci minha senha
+          </a>
+</div>
+</div>
+<!-- Barra de Status do Card ERP -->
+<div class="bg-slate-50 px-8 py-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px] text-emerald-600" data-icon="verified_user">verified_user</span>
+          Criptografia TLS 1.3
+        </span>
+<span class="font-medium">Modo Desktop</span>
+</div>
+</div>
+</main>
+<!-- Rodapé Global da Aplicação -->
+<footer class="w-full py-4 px-8 border-t border-slate-700/50 bg-[#0F2747] text-center">
+<div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-slate-400">
+<div class="flex items-center gap-2">
+<span class="font-bold text-slate-300">JG Sistemas</span>
+<span>·</span>
+<span>v3.2.0</span>
+</div>
+<div class="flex items-center gap-4 text-slate-400">
+<span class="hover:text-slate-200 transition">Suporte (11) 4000-1234</span>
+<span>·</span>
+<span class="text-slate-500">© 2025 JG Sistemas · Todos os direitos reservados</span>
+</div>
+</div>
+</footer>
+<!-- Modal / Drawer Rápido de Seleção de Operador (Ativado por F2) -->
+<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4" id="modalF2">
+<div class="bg-white rounded-lg shadow-xl max-w-md w-full border border-slate-200 overflow-hidden">
+<div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="badge">badge</span>
+<h2 class="text-sm font-semibold text-slate-900">Operadores Ativos · Consulta rápida (F2)</h2>
+</div>
+<button class="text-slate-400 hover:text-slate-700 text-sm font-medium" id="closeModalF2">✕</button>
+</div>
+<div class="p-4 space-y-2 max-h-60 overflow-y-auto">
+<button class="operator-opt w-full text-left p-2.5 rounded-lg border border-slate-200 hover:border-primary-container hover:bg-slate-50 flex justify-between items-center transition" data-user="juliana.gomes" type="button">
+<div>
+<p class="text-xs font-semibold text-slate-800">Juliana Gomes</p>
+<p class="text-[11px] text-slate-500">juliana.gomes · Gerente Geral</p>
+</div>
+<span class="text-[11px] font-mono px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded border border-emerald-200">Caixa 01</span>
+</button>
+<button class="operator-opt w-full text-left p-2.5 rounded-lg border border-slate-200 hover:border-primary-container hover:bg-slate-50 flex justify-between items-center transition" data-user="marcos.silva" type="button">
+<div>
+<p class="text-xs font-semibold text-slate-800">Marcos Silva</p>
+<p class="text-[11px] text-slate-500">marcos.silva · Operador PDV</p>
+</div>
+<span class="text-[11px] font-mono px-2 py-0.5 bg-slate-100 text-slate-600 rounded border border-slate-200">Caixa 02</span>
+</button>
+<button class="operator-opt w-full text-left p-2.5 rounded-lg border border-slate-200 hover:border-primary-container hover:bg-slate-50 flex justify-between items-center transition" data-user="amanda.souza" type="button">
+<div>
+<p class="text-xs font-semibold text-slate-800">Amanda Souza</p>
+<p class="text-[11px] text-slate-500">amanda.souza · Caixa Líder</p>
+</div>
+<span class="text-[11px] font-mono px-2 py-0.5 bg-slate-100 text-slate-600 rounded border border-slate-200">Caixa 03</span>
+</button>
+</div>
+<div class="px-5 py-3 bg-slate-50 border-t border-slate-100 flex justify-between items-center text-[11px] text-slate-500">
+<span>Clique no operador ou use setas</span>
+<span class="font-mono">[ESC] para fechar</span>
+</div>
+</div>
+</div>
+<!-- Micro-interações nativas com teclado ERP -->
+<script>
+    const senhaInput = document.getElementById('senha');
+    const togglePasswordBtn = document.getElementById('togglePassword');
+    const pwdIcon = document.getElementById('pwdIcon');
+    const modalF2 = document.getElementById('modalF2');
+    const btnF2 = document.getElementById('btnF2');
+    const closeModalF2 = document.getElementById('closeModalF2');
+    const operadorInput = document.getElementById('operador');
+    const operatorOpts = document.querySelectorAll('.operator-opt');
+
+    // Alternar visibilidade da senha
+    togglePasswordBtn.addEventListener('click', () => {
+      if (senhaInput.type === 'password') {
+        senhaInput.type = 'text';
+        pwdIcon.textContent = 'visibility_off';
+      } else {
+        senhaInput.type = 'password';
+        pwdIcon.textContent = 'visibility';
+      }
+    });
+
+    // Abrir Modal F2
+    function openF2Modal() {
+      modalF2.classList.remove('hidden');
+      modalF2.classList.add('flex');
+    }
+
+    // Fechar Modal F2
+    function closeF2Modal() {
+      modalF2.classList.add('hidden');
+      modalF2.classList.remove('flex');
+      operadorInput.focus();
+    }
+
+    btnF2.addEventListener('click', openF2Modal);
+    closeModalF2.addEventListener('click', closeF2Modal);
+
+    // Seleção de operador
+    operatorOpts.forEach(btn => {
+      btn.addEventListener('click', () => {
+        operadorInput.value = btn.getAttribute('data-user');
+        closeF2Modal();
+        senhaInput.focus();
+        senhaInput.select();
+      });
+    });
+
+    // Atalhos de teclado típicos de sistemas ERP de varejo
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'F2') {
+        e.preventDefault();
+        openF2Modal();
+      } else if (e.key === 'Escape') {
+        if (!modalF2.classList.contains('hidden')) {
+          closeF2Modal();
+        }
+      }
+    });
+  </script>
+</body></html>

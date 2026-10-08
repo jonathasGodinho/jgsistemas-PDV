@@ -6,35 +6,14 @@
     <meta name="google" content="notranslate">
     <title>Promoções - JG Sistemas</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
-        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
-        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
-        header a:hover { color: white; }
-        main { padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
         @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
-        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
-        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
-        .painel-corpo { padding: 14px; }
         .campo { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
         .campo label { font-size: 11px; color: #656d78; font-weight: bold; text-transform: uppercase; }
         .campo input, .campo select { padding: 9px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; width: 100%; }
         .campo select[multiple] { min-height: 120px; }
         .linha { display: flex; gap: 10px; }
         .linha .campo { flex: 1; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { background-color: #134074; color: white; padding: 8px; text-align: left; text-transform: uppercase; font-size: 11px; }
-        td { padding: 8px; border-bottom: 1px solid #e6e9ed; color: #333; }
-        tr:nth-child(even) { background-color: #f8f9fa; }
-        .btn { border: none; border-radius: 4px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; }
-        .btn-azul { background-color: #134074; color: white; }
-        .btn-verde { background-color: #00a651; color: white; }
-        .btn-perigo { background-color: #d9534f; color: white; }
-        .btn-amarelo { background-color: #f0ad4e; color: white; }
-        .btn-mini { padding: 4px 8px; font-size: 12px; }
-        .btn-block { width: 100%; padding: 12px; font-size: 15px; }
-        .sem-dados { text-align: center; color: #8b95a1; padding: 24px; font-size: 14px; }
         .badge { display: inline-block; padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
         .b-verde { background: #d8f3e3; color: #008c45; }
         .b-cinza { background: #e6e9ed; color: #656d78; }
@@ -44,15 +23,13 @@
         .alvo { display: none; }
         .dica { font-size: 11px; color: #8b95a1; margin-top: 4px; }
     </style>
+    <link rel="stylesheet" href="/ui/jg.css">
 </head>
-<body>
-
-    <header>
-        <div>JG SISTEMAS - PROMOÇÕES</div>
-        <div><a href="/">← Menu Principal</a></div>
-    </header>
-
+<body class="jg" data-pagina="promocoes">
     <main>
+        <div class="page-head">
+            <div><h1>Promoções</h1><div class="sub">Leve X pague Y, descontos por produto, categoria ou marca</div></div>
+        </div>
         <div class="grid">
             <div class="painel">
                 <div class="painel-titulo"><span id="titulo-form">Nova Promoção</span></div>
@@ -137,7 +114,7 @@
                             <input type="date" id="f-fim">
                         </div>
                     </div>
-                    <div class="check" style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                    <div class="row mb-16" style="gap:8px">
                         <input type="checkbox" id="f-ativa" checked style="width:auto;">
                         <label for="f-ativa" style="font-size:12px; color:#333;">Ativa imediatamente</label>
                     </div>
@@ -167,10 +144,8 @@
             </div>
         </div>
     </main>
-
-    <footer>© 2026 JG Sistemas</footer>
-
     <script src="/seguranca.js"></script>
+    <script src="/ui/shell.js"></script>
     <script>
         const API_BASE = '';
 
@@ -280,9 +255,9 @@
                                 : '<span class="badge b-cinza">Fora do período</span>'}
                         </td>
                         <td style="text-align:center; white-space:nowrap;">
-                            <button class="btn btn-mini btn-azul" onclick="editarPromocao('${p.id}')">Editar</button>
+                            <button class="btn-icone" title="Editar" onclick="editarPromocao('${p.id}')"><span class="ms">edit</span></button>
                             ${p.pausada
-                                ? `<button class="btn btn-mini btn-verde" onclick="alternarAtiva('${p.id}', true)">Ativar</button>`
+                                ? `<button class="btn-icone" title="Ativar" onclick="alternarAtiva('${p.id}', true)"><span class="ms">toggle_on</span></button>`
                                 : `<button class="btn btn-mini btn-amarelo" onclick="alternarAtiva('${p.id}', false)">Pausar</button>`}
                             <button class="btn btn-mini btn-perigo" onclick="excluirPromocao('${p.id}', '${esc(p.nome.replace(/'/g, "\\'"))}')">Excluir</button>
                         </td>

@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Categorias e Marcas | JG Sistemas ERP</title>
+<!-- Fontes Google & Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration conforme Design Tokens -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "tertiary-fixed": "#7ffc97",
+            "secondary-container": "#bfd5fe",
+            "inverse-surface": "#213145",
+            "tertiary-fixed-dim": "#62df7d",
+            "surface-dim": "#cbdbf5",
+            "surface-bright": "#f8f9ff",
+            "on-secondary-container": "#475c7f",
+            "on-primary-fixed": "#001b3e",
+            "on-error-container": "#93000a",
+            "secondary-fixed-dim": "#b2c7f0",
+            "error": "#ba1a1a",
+            "on-tertiary-fixed": "#002109",
+            "tertiary-container": "#005d25",
+            "secondary": "#4a5f82",
+            "on-error": "#ffffff",
+            "surface-container-highest": "#d3e4fe",
+            "outline-variant": "#c3c6d2",
+            "primary-container": "#1d4f91",
+            "on-tertiary": "#ffffff",
+            "on-primary": "#ffffff",
+            "tertiary": "#004319",
+            "surface-variant": "#d3e4fe",
+            "inverse-on-surface": "#eaf1ff",
+            "inverse-primary": "#a9c7ff",
+            "outline": "#737782",
+            "on-secondary-fixed": "#011b3b",
+            "surface-container": "#e5eeff",
+            "error-container": "#ffdad6",
+            "primary-fixed-dim": "#a9c7ff",
+            "on-secondary": "#ffffff",
+            "on-primary-container": "#a2c3ff",
+            "surface-container-low": "#eff4ff",
+            "surface-container-high": "#dce9ff",
+            "primary-fixed": "#d6e3ff",
+            "on-surface": "#0b1c30",
+            "on-secondary-fixed-variant": "#324769",
+            "background": "#f8f9ff",
+            "surface-container-lowest": "#ffffff",
+            "secondary-fixed": "#d5e3ff",
+            "primary": "#003873",
+            "surface-tint": "#305ea1",
+            "surface": "#f8f9ff",
+            "on-tertiary-fixed-variant": "#005320",
+            "on-tertiary-container": "#5dda7a",
+            "on-surface-variant": "#434750",
+            "on-primary-fixed-variant": "#0e4688",
+            "on-background": "#0b1c30"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Inter", "sans-serif"],
+            "display": ["Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Inter', sans-serif;
+      font-variant-numeric: tabular-nums;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-fill {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+  </style>
+</head>
+<body class="bg-[#F4F6FA] text-on-surface antialiased overflow-x-hidden min-h-screen flex">
+<!-- ========================================================================= -->
+<!-- SIDEBAR FIXA 248px (Seguindo JSON & Design System JG Sistemas)           -->
+<!-- ========================================================================= -->
+<aside class="fixed top-0 left-0 h-screen w-[248px] bg-on-surface dark:bg-on-surface border-r border-outline-variant/30 dark:border-outline/20 shadow-sm dark:shadow-none flex flex-col justify-between p-4 z-40 select-none">
+<!-- Topo da Sidebar: Logotipo & Subtítulo -->
+<div class="flex flex-col gap-5">
+<div class="flex items-center gap-2.5 px-2">
+<div class="w-8 h-8 rounded-lg bg-tertiary-container flex items-center justify-center text-tertiary-fixed font-bold font-headline text-base shadow-sm">
+          JG
+        </div>
+<div class="flex flex-col">
+<span class="font-headline font-bold text-surface text-base tracking-tight leading-none">JG Sistemas</span>
+<span class="text-[11px] text-outline-variant mt-1">ERP Varejo &amp; Moda</span>
+</div>
+</div>
+<!-- Navegação Agrupada -->
+<nav class="flex flex-col gap-1 text-[13px] font-body">
+<!-- 1. Início -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="home">home</span>
+<span>Início</span>
+</a>
+<!-- 2. Vendas -->
+<a class="flex items-center justify-between px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors cursor-pointer" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]" data-icon="point_of_sale">point_of_sale</span>
+<span>Vendas</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-outline-variant" data-icon="expand_more">expand_more</span>
+</a>
+<!-- 3. Clientes -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="group">group</span>
+<span>Clientes</span>
+</a>
+<!-- 4. Catálogo (Expandido / Grupo com Item Ativo) -->
+<div class="flex flex-col gap-0.5">
+<div class="flex items-center justify-between px-3 py-2 text-surface font-semibold bg-surface-container-high/10 rounded-lg cursor-pointer">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-tertiary-fixed" data-icon="inventory_2">inventory_2</span>
+<span class="text-surface font-medium">Catálogo</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-tertiary-fixed rotate-180" data-icon="expand_more">expand_more</span>
+</div>
+<!-- Subitens do Catálogo -->
+<div class="flex flex-col pl-7 pr-1 py-1 gap-1 border-l border-outline-variant/20 ml-5 my-0.5">
+<a class="flex items-center gap-2 px-2.5 py-1.5 text-xs text-outline-variant hover:text-surface rounded transition-colors" href="#">
+<span>Produtos</span>
+</a>
+<!-- Item ATIVO: Categorias e Marcas -->
+<a class="flex items-center justify-between px-2.5 py-1.5 text-xs text-surface bg-primary-container rounded font-medium shadow-xs" href="#">
+<span>Categorias e marcas</span>
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed"></span>
+</a>
+<a class="flex items-center gap-2 px-2.5 py-1.5 text-xs text-outline-variant hover:text-surface rounded transition-colors" href="#">
+<span>Promoções</span>
+</a>
+<a class="flex items-center gap-2 px-2.5 py-1.5 text-xs text-outline-variant hover:text-surface rounded transition-colors" href="#">
+<span>Tabelas de preço</span>
+</a>
+</div>
+</div>
+<!-- 5. Estoque -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="warehouse">warehouse</span>
+<span>Estoque</span>
+</a>
+<!-- 6. Financeiro -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="account_balance">account_balance</span>
+<span>Financeiro</span>
+</a>
+<!-- 7. Pessoas -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="badge">badge</span>
+<span>Pessoas</span>
+</a>
+<!-- 8. Relatórios -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="bar_chart">bar_chart</span>
+<span>Relatórios</span>
+</a>
+<!-- 9. Administração -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+<span>Administração</span>
+</a>
+</nav>
+</div>
+<!-- Rodapé da Sidebar (Segmento e Status de Versão) -->
+<div class="pt-3 border-t border-outline-variant/20 flex flex-col gap-2">
+<div class="flex items-center justify-between px-2 py-1.5 rounded bg-surface-container-high/10 text-xs">
+<div class="flex items-center gap-2 text-surface font-medium">
+<span class="material-symbols-outlined text-[16px] text-tertiary-fixed" data-icon="storefront">storefront</span>
+<span>Varejo · Moda</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed" title="Online"></span>
+</div>
+<div class="px-2 flex items-center justify-between text-[11px] text-outline-variant">
+<span>Online (Sincronizado)</span>
+<span class="font-mono text-[10px]">v3.4.1</span>
+</div>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- TOPBAR FIXA (left-[248px], h-14, branca com breadcrumb & atalhos)          -->
+<!-- ========================================================================= -->
+<header class="fixed top-0 left-[248px] right-0 h-14 bg-surface-container-lowest border-b border-outline-variant/30 flex items-center justify-between px-6 z-30 shadow-xs">
+<!-- Lado Esquerdo: Breadcrumb & Busca Global -->
+<div class="flex items-center gap-6">
+<!-- Breadcrumb -->
+<nav class="flex items-center gap-1.5 text-xs text-secondary font-medium">
+<span class="hover:text-primary cursor-pointer">Catálogo</span>
+<span class="material-symbols-outlined text-[14px] text-outline" data-icon="chevron_right">chevron_right</span>
+<span class="text-on-surface font-semibold">Categorias e marcas</span>
+</nav>
+<!-- Input de Busca Global -->
+<div class="relative w-80">
+<span class="absolute inset-y-0 left-0 flex items-center pl-2.5 pointer-events-none text-outline">
+<span class="material-symbols-outlined text-[18px]" data-icon="search">search</span>
+</span>
+<input class="w-full text-xs pl-8 pr-12 py-1.5 rounded-lg border border-outline-variant/60 bg-surface-container-lowest focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-outline/70" placeholder="Buscar módulo, produto ou cliente (Ctrl+K)" type="text"/>
+<div class="absolute inset-y-0 right-0 flex items-center pr-2">
+<kbd class="px-1.5 py-0.5 text-[10px] bg-[#F4F6FA] border border-outline-variant/60 rounded text-secondary font-mono">⌘K</kbd>
+</div>
+</div>
+</div>
+<!-- Lado Direito: Caixa Chip, Ações de Topo e Avatar -->
+<div class="flex items-center gap-3">
+<!-- Chip Caixa Aberto (Verde de Sucesso do DS) -->
+<div class="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-full text-xs font-medium">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span>Caixa 01 · Aberto</span>
+</div>
+<!-- Botão Primário: Abrir PDV -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 bg-[#16A34A] hover:bg-[#15803d] text-white rounded-lg text-xs font-semibold shadow-xs transition duration-150 active:scale-95">
+<span class="material-symbols-outlined text-[16px]" data-icon="point_of_sale">point_of_sale</span>
+<span>Abrir PDV</span>
+<span class="bg-black/20 text-white/90 text-[10px] px-1 py-0.2 rounded font-mono ml-0.5">F1</span>
+</button>
+<!-- Divisor Vertical -->
+<div class="h-5 w-[1px] bg-outline-variant/40 mx-1"></div>
+<!-- Ícones de Ação: Notificações & Ajuda -->
+<div class="flex items-center gap-1 text-secondary">
+<button class="relative p-1.5 rounded-lg hover:bg-surface-container-high transition-colors text-secondary hover:text-on-surface" title="Notificações">
+<span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full ring-2 ring-white"></span>
+</button>
+<button class="p-1.5 rounded-lg hover:bg-surface-container-high transition-colors text-secondary hover:text-on-surface" title="Ajuda">
+<span class="material-symbols-outlined text-[20px]" data-icon="help">help</span>
+</button>
+</div>
+<!-- Perfil Operador -->
+<div class="flex items-center gap-2 pl-2">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container font-semibold text-xs flex items-center justify-center border border-white shadow-xs">
+          JG
+        </div>
+<div class="flex flex-col text-left">
+<span class="text-xs font-semibold text-on-surface leading-tight">Juliana Gomes</span>
+<span class="text-[10px] text-secondary leading-tight">Gerente</span>
+</div>
+</div>
+</div>
+</header>
+<!-- ========================================================================= -->
+<!-- CONTEÚDO PRINCIPAL (Canvas 1440x900 responsivo com layout estendido)     -->
+<!-- ========================================================================= -->
+<main class="ml-[248px] mt-14 flex-1 p-6 bg-[#F4F6FA] min-h-[calc(100vh-56px)] flex flex-col justify-between">
+<div class="max-w-[1280px] w-full mx-auto space-y-5">
+<!-- Cabeçalho da Página: Título, Descrição e Ações Rápidas -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<h1 class="text-2xl font-semibold text-on-surface tracking-tight font-headline">Categorias e marcas</h1>
+<p class="text-xs text-secondary mt-0.5">Estruture o catálogo da loja por grupos, fabricantes e coleções sazonais de moda.</p>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex items-center gap-1.5 px-3 py-2 bg-surface-container-lowest border border-outline-variant/60 hover:bg-surface-container-low text-on-surface rounded-lg text-xs font-medium shadow-xs transition duration-150">
+<span class="material-symbols-outlined text-[16px] text-secondary" data-icon="file_download">file_download</span>
+<span>Exportar</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-2 bg-surface-container-lowest border border-outline-variant/60 hover:bg-surface-container-low text-primary rounded-lg text-xs font-medium shadow-xs transition duration-150">
+<span class="material-symbols-outlined text-[16px]" data-icon="menu_book">menu_book</span>
+<span>Guia de Estrutura</span>
+</button>
+</div>
+</div>
+<!-- Abas de Navegação (Tabs) -->
+<div class="border-b border-outline-variant/40 flex items-center gap-2">
+<!-- Aba 1: Categorias -->
+<button class="flex items-center gap-2 px-4 py-2.5 text-xs font-medium text-secondary hover:text-on-surface hover:border-outline-variant/80 border-b-2 border-transparent transition-all">
+<span>Categorias</span>
+<span class="px-1.5 py-0.5 text-[10px] bg-outline-variant/20 text-secondary rounded-full font-mono">18</span>
+</button>
+<!-- Aba 2: Marcas -->
+<button class="flex items-center gap-2 px-4 py-2.5 text-xs font-medium text-secondary hover:text-on-surface hover:border-outline-variant/80 border-b-2 border-transparent transition-all">
+<span>Marcas</span>
+<span class="px-1.5 py-0.5 text-[10px] bg-outline-variant/20 text-secondary rounded-full font-mono">32</span>
+</button>
+<!-- Aba 3: Coleções (ABA ATIVA) -->
+<button class="flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-primary border-b-2 border-primary bg-primary/5 rounded-t-lg transition-all">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="style">style</span>
+<span>Coleções</span>
+<span class="px-2 py-0.5 text-[10px] bg-primary text-white rounded-full font-mono">7</span>
+</button>
+</div>
+<!-- Cards de Métricas / KPI (Bento-like Clean Cards) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- KPI 1: Total de Coleções -->
+<div class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-3.5 shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-primary border border-outline-variant/20">
+<span class="material-symbols-outlined text-[22px]" data-icon="collections_bookmark">collections_bookmark</span>
+</div>
+<div>
+<span class="text-[11px] font-medium text-secondary uppercase tracking-wider block">Total de Coleções</span>
+<div class="flex items-baseline gap-2">
+<span class="text-xl font-bold text-on-surface font-headline tabular-nums">7</span>
+<span class="text-[11px] text-emerald-600 font-medium">6 ativas · 1 arquivada</span>
+</div>
+</div>
+</div>
+<span class="text-[10px] text-outline font-mono bg-surface-container-low px-2 py-1 rounded">2026/2027</span>
+</div>
+<!-- KPI 2: Produtos Vinculados -->
+<div class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-3.5 shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-700 border border-emerald-100">
+<span class="material-symbols-outlined text-[22px]" data-icon="checkroom">checkroom</span>
+</div>
+<div>
+<span class="text-[11px] font-medium text-secondary uppercase tracking-wider block">Produtos Vinculados</span>
+<div class="flex items-baseline gap-2">
+<span class="text-xl font-bold text-on-surface font-headline tabular-nums">842</span>
+<span class="text-[11px] text-secondary">peças em catálogo</span>
+</div>
+</div>
+</div>
+<span class="text-[10px] text-emerald-700 font-medium bg-emerald-50 px-2 py-1 rounded">91% cobertos</span>
+</div>
+<!-- KPI 3: Coleção Vigente Principal -->
+<div class="bg-surface-container-lowest border border-amber-200/80 rounded-xl p-3.5 shadow-sm flex items-center justify-between bg-gradient-to-r from-amber-50/40 to-transparent">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-amber-100/70 flex items-center justify-center text-amber-800 border border-amber-200">
+<span class="material-symbols-outlined text-[22px]" data-icon="wb_sunny">wb_sunny</span>
+</div>
+<div>
+<span class="text-[11px] font-medium text-amber-900 uppercase tracking-wider block">Coleção Vigente</span>
+<div class="flex items-center gap-1.5">
+<span class="text-base font-bold text-on-surface font-headline">Verão 2027</span>
+<span class="text-[10px] bg-amber-200/80 text-amber-900 font-semibold px-1.5 py-0.2 rounded">Vitrine</span>
+</div>
+</div>
+</div>
+<span class="text-xs text-secondary font-mono">248 produtos</span>
+</div>
+</div>
+<!-- Formulário Inline: Adicionar Nova Coleção -->
+<section class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-4 shadow-sm">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+<h2 class="text-xs font-bold text-on-surface tracking-wide uppercase">Nova Coleção</h2>
+</div>
+<span class="text-[11px] text-secondary">Os campos marcados com * são de preenchimento obrigatório</span>
+</div>
+<form class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+<!-- Campo 1: Nome da Coleção (Col 4) -->
+<div class="md:col-span-4 flex flex-col gap-1">
+<label class="text-xs font-medium text-on-surface-variant" for="col-nome">Nome da Coleção *</label>
+<input class="w-full text-xs px-3 py-2 rounded-lg border border-outline-variant/60 focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-outline/70 bg-white" id="col-nome" placeholder="Ex: Alto Verão Tropical 2027" type="text"/>
+</div>
+<!-- Campo 2: Temporada (Col 2) -->
+<div class="md:col-span-2 flex flex-col gap-1">
+<label class="text-xs font-medium text-on-surface-variant" for="col-temporada">Temporada *</label>
+<select class="w-full text-xs px-3 py-2 rounded-lg border border-outline-variant/60 focus:ring-1 focus:ring-primary focus:border-primary bg-white text-on-surface" id="col-temporada">
+<option selected="" value="verao">Verão</option>
+<option value="inverno">Inverno</option>
+<option value="primavera">Primavera</option>
+<option value="outono">Outono</option>
+<option value="permanente">Permanente</option>
+</select>
+</div>
+<!-- Campo 3: Ano (Col 2) -->
+<div class="md:col-span-2 flex flex-col gap-1">
+<label class="text-xs font-medium text-on-surface-variant" for="col-ano">Ano *</label>
+<input class="w-full text-xs px-3 py-2 rounded-lg border border-outline-variant/60 focus:ring-1 focus:ring-primary focus:border-primary bg-white tabular-nums" id="col-ano" type="number" value="2027"/>
+</div>
+<!-- Campo 4: Período de Vigência (Col 2) -->
+<div class="md:col-span-2 flex flex-col gap-1">
+<label class="text-xs font-medium text-on-surface-variant" for="col-periodo">Vigência (Opcional)</label>
+<input class="w-full text-xs px-3 py-2 rounded-lg border border-outline-variant/60 focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-outline/70 bg-white" id="col-periodo" placeholder="Ex: Dez a Março" type="text"/>
+</div>
+<!-- Ações do Formulário: Salvar e Limpar (Col 2) -->
+<div class="md:col-span-2 flex items-center gap-2">
+<button class="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-[#16A34A] hover:bg-[#15803d] text-white rounded-lg text-xs font-semibold shadow-xs transition duration-150 active:scale-95" type="button">
+<span class="material-symbols-outlined text-[16px]" data-icon="add">add</span>
+<span>Adicionar</span>
+</button>
+<button class="px-2.5 py-2 border border-outline-variant/60 hover:bg-surface-container-low text-secondary rounded-lg text-xs font-medium transition" title="Limpar formulário" type="reset">
+              Limpar
+            </button>
+</div>
+</form>
+</section>
+<!-- Barra de Filtros e Busca de Registros -->
+<div class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-3 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
+<div class="flex items-center gap-2.5 w-full sm:w-auto flex-1">
+<!-- Campo de Busca na Tabela -->
+<div class="relative w-full max-w-sm">
+<span class="absolute inset-y-0 left-0 flex items-center pl-2.5 pointer-events-none text-outline">
+<span class="material-symbols-outlined text-[18px]" data-icon="filter_list">filter_list</span>
+</span>
+<input class="w-full text-xs pl-8 pr-3 py-1.5 rounded-lg border border-outline-variant/60 bg-surface-container-low focus:bg-white focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-outline/70" placeholder="Buscar por nome ou temporada..." type="text"/>
+</div>
+<!-- Filtro: Temporada -->
+<select class="text-xs px-2.5 py-1.5 rounded-lg border border-outline-variant/60 bg-white text-secondary font-medium">
+<option>Temporada: Todas</option>
+<option>Verão</option>
+<option>Inverno</option>
+<option>Primavera</option>
+<option>Outono</option>
+<option>Permanente</option>
+</select>
+<!-- Filtro: Status -->
+<select class="text-xs px-2.5 py-1.5 rounded-lg border border-outline-variant/60 bg-white text-secondary font-medium">
+<option>Status: Todos (Ativos/Inativos)</option>
+<option>Somente Ativos</option>
+<option>Somente Inativos</option>
+</select>
+</div>
+<!-- Contador de Resultados -->
+<div class="text-xs text-secondary whitespace-nowrap self-end sm:self-center font-medium">
+          Exibindo <span class="font-bold text-on-surface">7</span> de <span class="font-bold text-on-surface">7</span> coleções
+        </div>
+</div>
+<!-- Tabela de Dados Completa e Limpa (44px row, design tabular de alta densidade) -->
+<div class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl shadow-xs overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse text-[13px]">
+<thead>
+<tr class="bg-[#F8FAFC] border-b border-outline-variant/30 text-[11px] font-semibold text-secondary uppercase tracking-wider">
+<th class="py-3 px-4 w-10 text-center">
+<input class="rounded border-outline-variant/80 text-primary focus:ring-0 focus:ring-offset-0 w-3.5 h-3.5 cursor-pointer" type="checkbox"/>
+</th>
+<th class="py-3 px-4">Nome da Coleção</th>
+<th class="py-3 px-4">Temporada</th>
+<th class="py-3 px-4 text-center">Ano</th>
+<th class="py-3 px-4">Nº de Produtos</th>
+<th class="py-3 px-4 text-center">Status</th>
+<th class="py-3 px-4 text-right">Ações</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20">
+<!-- Linha 1: Verão 2027 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-2.5 px-4 text-center">
+<input class="rounded border-outline-variant/80 text-primary focus:ring-0 focus:ring-offset-0 w-3.5 h-3.5 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-2.5 px-4">
+<div class="flex items-center gap-2">
+<span class="font-semibold text-on-surface">Verão 2027</span>
+<span class="px-1.5 py-0.2 rounded text-[10px] bg-amber-50 text-amber-700 border border-amber-200 font-medium">Vitrine</span>
+</div>
+<span class="text-[11px] text-secondary">Código: COL-007 · Vigência: Nov/26 a Mar/27</span>
+</td>
+<td class="py-2.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
+<span class="material-symbols-outlined text-[13px]" data-icon="light_mode">light_mode</span>
+                    Verão
+                  </span>
+</td>
+<td class="py-2.5 px-4 text-center font-mono font-medium text-on-surface">
+                  2027
+                </td>
+<td class="py-2.5 px-4">
+<a class="inline-flex items-center gap-1 font-semibold text-primary hover:underline" href="#">
+<span class="material-symbols-outlined text-[15px]" data-icon="inventory">inventory</span>
+<span>248 produtos</span>
+</a>
+</td>
+<td class="py-2.5 px-4 text-center">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    Ativo
+                  </span>
+</td>
+<td class="py-2.5 px-4 text-right">
+<div class="inline-flex items-center gap-1 text-secondary">
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded transition" title="Editar Coleção">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded transition" title="Ver Produtos">
+<span class="material-symbols-outlined text-[18px]" data-icon="visibility">visibility</span>
+</button>
+<button class="p-1 hover:text-error hover:bg-red-50 rounded transition" title="Desativar">
+<span class="material-symbols-outlined text-[18px]" data-icon="archive">archive</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 2: Inverno 2026 — Sensações -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-2.5 px-4 text-center">
+<input class="rounded border-outline-variant/80 text-primary focus:ring-0 focus:ring-offset-0 w-3.5 h-3.5 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-2.5 px-4">
+<span class="font-semibold text-on-surface">Inverno 2026 — Sensações</span>
+<span class="block text-[11px] text-secondary">Código: COL-006 · Vigência: Mai/26 a Ago/26</span>
+</td>
+<td class="py-2.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+<span class="material-symbols-outlined text-[13px]" data-icon="ac_unit">ac_unit</span>
+                    Inverno
+                  </span>
+</td>
+<td class="py-2.5 px-4 text-center font-mono font-medium text-on-surface">
+                  2026
+                </td>
+<td class="py-2.5 px-4">
+<a class="inline-flex items-center gap-1 font-semibold text-primary hover:underline" href="#">
+<span class="material-symbols-outlined text-[15px]" data-icon="inventory">inventory</span>
+<span>192 produtos</span>
+</a>
+</td>
+<td class="py-2.5 px-4 text-center">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    Ativo
+                  </span>
+</td>
+<td class="py-2.5 px-4 text-right">
+<div class="inline-flex items-center gap-1 text-secondary">
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded transition" title="Editar Coleção">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded transition" title="Ver Produtos">
+<span class="material-symbols-outlined text-[18px]" data-icon="visibility">visibility</span>
+</button>
+<button class="p-1 hover:text-error hover:bg-red-50 rounded transition" title="Desativar">
+<span class="material-symbols-outlined text-[18px]" data-icon="archive">archive</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 3: Básicos Essenciais -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-2.5 px-4 text-center">
+<input class="rounded border-outline-variant/80 text-primary focus:ring-0 focus:ring-offset-0 w-3.5 h-3.5 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-2.5 px-4">
+<div class="flex items-center gap-1.5">
+<span class="font-semibold text-on-surface">Básicos Essenciais</span>
+<span class="px-1.5 py-0.2 rounded text-[10px] bg-purple-50 text-purple-700 border border-purple-200 font-medium">Linha Contínua</span>
+</div>
+<span class="text-[11px] text-secondary">Código: COL-001 · Reposição automática</span>
+</td>
+<td class="py-2.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800 border border-slate-200">
+<span class="material-symbols-outlined text-[13px]" data-icon="all_inclusive">all_inclusive</span>
+                    Permanente
+                  </span>
+</td>
+<td class="py-2.5 px-4 text-center font-mono text-xs text-secondary">
+                  Permanente
+                </td>
+<td class="py-2.5 px-4">
+<a class="inline-flex items-center gap-1 font-semibold text-primary hover:underline" href="#">
+<span class="material-symbols-outlined text-[15px]" data-icon="inventory">inventory</span>
+<span>145 produtos</span>
+</a>
+</td>
+<td class="py-2.5 px-4 text-center">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    Ativo
+                  </span>
+</td>
+<td class="py-2.5 px-4 text-right">
+<div class="inline-flex items-center gap-1 text-secondary">
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded transition" title="Editar Coleção">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded transition" title="Ver Produtos">
+<span class="material-symbols-outlined text-[18px]" data-icon="visibility">visibility</span>
+</button>
+<button class="p-1 hover:text-error hover:bg-red-50 rounded transition" title="Desativar">
+<span class="material-symbols-outlined text-[18px]" data-icon="archive">archive</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 4: Festa Primavera 2026 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-2.5 px-4 text-center">
+<input class="rounded border-outline-variant/80 text-primary focus:ring-0 focus:ring-offset-0 w-3.5 h-3.5 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-2.5 px-4">
+<span class="font-semibold text-on-surface">Festa Primavera 2026</span>
+<span class="block text-[11px] text-secondary">Código: COL-005 · Vestidos e tecidos fluidos</span>
+</td>
+<td class="py-2.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-pink-100 text-pink-800 border border-pink-200">
+<span class="material-symbols-outlined text-[13px]" data-icon="local_florist">local_florist</span>
+                    Primavera
+                  </span>
+</td>
+<td class="py-2.5 px-4 text-center font-mono font-medium text-on-surface">
+                  2026
+                </td>
+<td class="py-2.5 px-4">
+<a class="inline-flex items-center gap-1 font-semibold text-primary hover:underline" href="#">
+<span class="material-symbols-outlined text-[15px]" data-icon="inventory">inventory</span>
+<span>118 produtos</span>
+</a>
+</td>
+<td class="py-2.5 px-4 text-center">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    Ativo
+                  </span>
+</td>
+<td class="py-2.5 px-4 text-right">
+<div class="inline-flex items-center gap-1 text-secondary">
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded transition" title="Editar Coleção">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded transition" title="Ver Produtos">
+<span class="material-symbols-outlined text-[18px]" data-icon="visibility">visibility</span>
+</button>
+<button class="p-1 hover:text-error hover:bg-red-50 rounded transition" title="Desativar">
+<span class="material-symbols-outlined text-[18px]" data-icon="archive">archive</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 5: Outono Conforto 2026 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-2.5 px-4 text-center">
+<input class="rounded border-outline-variant/80 text-primary focus:ring-0 focus:ring-offset-0 w-3.5 h-3.5 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-2.5 px-4">
+<span class="font-semibold text-on-surface">Outono Conforto 2026</span>
+<span class="block text-[11px] text-secondary">Código: COL-004 · Tricôs e alfaiataria leve</span>
+</td>
+<td class="py-2.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200">
+<span class="material-symbols-outlined text-[13px]" data-icon="eco">eco</span>
+                    Outono
+                  </span>
+</td>
+<td class="py-2.5 px-4 text-center font-mono font-medium text-on-surface">
+                  2026
+                </td>
+<td class="py-2.5 px-4">
+<a class="inline-flex items-center gap-1 font-semibold text-primary hover:underline" href="#">
+<span class="material-symbols-outlined text-[15px]" data-icon="inventory">inventory</span>
+<span>94 produtos</span>
+</a>
+</td>
+<td class="py-2.5 px-4 text-center">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    Ativo
+                  </span>
+</td>
+<td class="py-2.5 px-4 text-right">
+<div class="inline-flex items-center gap-1 text-secondary">
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded transition" title="Editar Coleção">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded transition" title="Ver Produtos">
+<span class="material-symbols-outlined text-[18px]" data-icon="visibility">visibility</span>
+</button>
+<button class="p-1 hover:text-error hover:bg-red-50 rounded transition" title="Desativar">
+<span class="material-symbols-outlined text-[18px]" data-icon="archive">archive</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 6: Resort & Praia 2026/27 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-2.5 px-4 text-center">
+<input class="rounded border-outline-variant/80 text-primary focus:ring-0 focus:ring-offset-0 w-3.5 h-3.5 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-2.5 px-4">
+<span class="font-semibold text-on-surface">Resort &amp; Praia 2026/27</span>
+<span class="block text-[11px] text-secondary">Código: COL-003 · Moda balneário e saídas de praia</span>
+</td>
+<td class="py-2.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
+<span class="material-symbols-outlined text-[13px]" data-icon="surfing">surfing</span>
+                    Verão
+                  </span>
+</td>
+<td class="py-2.5 px-4 text-center font-mono font-medium text-on-surface">
+                  2026
+                </td>
+<td class="py-2.5 px-4">
+<a class="inline-flex items-center gap-1 font-semibold text-primary hover:underline" href="#">
+<span class="material-symbols-outlined text-[15px]" data-icon="inventory">inventory</span>
+<span>45 produtos</span>
+</a>
+</td>
+<td class="py-2.5 px-4 text-center">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    Ativo
+                  </span>
+</td>
+<td class="py-2.5 px-4 text-right">
+<div class="inline-flex items-center gap-1 text-secondary">
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded transition" title="Editar Coleção">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded transition" title="Ver Produtos">
+<span class="material-symbols-outlined text-[18px]" data-icon="visibility">visibility</span>
+</button>
+<button class="p-1 hover:text-error hover:bg-red-50 rounded transition" title="Desativar">
+<span class="material-symbols-outlined text-[18px]" data-icon="archive">archive</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 7: Liquidação Inverno 2025 (Inativa) -->
+<tr class="hover:bg-surface-container-low/50 transition-colors bg-slate-50/50">
+<td class="py-2.5 px-4 text-center">
+<input class="rounded border-outline-variant/80 text-primary focus:ring-0 focus:ring-offset-0 w-3.5 h-3.5 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-2.5 px-4">
+<div class="flex items-center gap-1.5">
+<span class="font-medium text-secondary line-through">Liquidação Inverno 2025</span>
+<span class="px-1.5 py-0.2 rounded text-[10px] bg-slate-200 text-slate-700 font-mono">Arquivada</span>
+</div>
+<span class="text-[11px] text-outline">Código: COL-002 · Encerrada em Setembro/25</span>
+</td>
+<td class="py-2.5 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-200 text-slate-700">
+<span class="material-symbols-outlined text-[13px]" data-icon="ac_unit">ac_unit</span>
+                    Inverno
+                  </span>
+</td>
+<td class="py-2.5 px-4 text-center font-mono text-outline">
+                  2025
+                </td>
+<td class="py-2.5 px-4">
+<span class="inline-flex items-center gap-1 text-xs text-outline">
+<span class="material-symbols-outlined text-[15px]" data-icon="inventory_2">inventory_2</span>
+<span>0 produtos</span>
+</span>
+</td>
+<td class="py-2.5 px-4 text-center">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-slate-200 text-slate-600">
+<span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                    Inativo
+                  </span>
+</td>
+<td class="py-2.5 px-4 text-right">
+<div class="inline-flex items-center gap-1 text-outline">
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded transition" title="Reativar Coleção">
+<span class="material-symbols-outlined text-[18px]" data-icon="unarchive">unarchive</span>
+</button>
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded transition" title="Ver Histórico">
+<span class="material-symbols-outlined text-[18px]" data-icon="history">history</span>
+</button>
+<button class="p-1 hover:text-error hover:bg-red-50 rounded transition" title="Excluir Definitivamente">
+<span class="material-symbols-outlined text-[18px]" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Rodapé da Tabela: Paginação Simples e Informações -->
+<div class="px-4 py-3 bg-[#F8FAFC] border-t border-outline-variant/30 flex items-center justify-between text-xs text-secondary">
+<div class="flex items-center gap-2">
+<span>Linhas por página:</span>
+<select class="text-xs px-2 py-1 rounded border border-outline-variant/60 bg-white font-medium text-on-surface">
+<option>10</option>
+<option>25</option>
+<option>50</option>
+</select>
+<span class="text-outline">· Total de 7 itens listados</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="mr-2 text-on-surface font-medium">Página 1 de 1</span>
+<button class="p-1 rounded border border-outline-variant/40 bg-white text-outline disabled:opacity-40 cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="p-1 rounded border border-outline-variant/40 bg-white text-outline disabled:opacity-40 cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Rodapé Institucional Padrão do ERP JG Sistemas -->
+<footer class="mt-8 pt-4 border-t border-outline-variant/30 flex flex-col sm:flex-row items-center justify-between text-[11px] text-secondary gap-2 max-w-[1280px] w-full mx-auto">
+<div class="flex items-center gap-2">
+<span>© 2025 JG Sistemas v2.4.12</span>
+<span>·</span>
+<span>Todos os direitos reservados</span>
+</div>
+<div class="flex items-center gap-4">
+<span>Suporte Técnico: <strong>0800 555-0192</strong></span>
+<span>·</span>
+<a class="text-primary hover:underline font-medium" href="#">Termos de Uso</a>
+<span>·</span>
+<a class="text-primary hover:underline font-medium" href="#">Políticas de Privacidade</a>
+</div>
+</footer>
+</main>
+</body></html>

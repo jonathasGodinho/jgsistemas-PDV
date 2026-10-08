@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>JG Sistemas - Cartões e Recebíveis</title>
+<!-- Inter Font -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container-lowest": "#ffffff",
+            "on-error-container": "#93000a",
+            "tertiary": "#004319",
+            "on-tertiary": "#ffffff",
+            "on-error": "#ffffff",
+            "error": "#ba1a1a",
+            "background": "#f8f9ff",
+            "outline": "#737782",
+            "on-primary-fixed": "#001b3e",
+            "inverse-primary": "#a9c7ff",
+            "surface-bright": "#f8f9ff",
+            "secondary-fixed-dim": "#b2c7f0",
+            "on-surface-variant": "#434750",
+            "on-primary-container": "#a2c3ff",
+            "secondary-fixed": "#d5e3ff",
+            "on-background": "#0b1c30",
+            "surface-container": "#e5eeff",
+            "primary-fixed-dim": "#a9c7ff",
+            "primary-fixed": "#d6e3ff",
+            "on-secondary": "#ffffff",
+            "on-tertiary-container": "#5dda7a",
+            "on-tertiary-fixed-variant": "#005320",
+            "on-secondary-fixed-variant": "#324769",
+            "secondary-container": "#bfd5fe",
+            "on-tertiary-fixed": "#002109",
+            "on-primary-fixed-variant": "#0e4688",
+            "on-primary": "#ffffff",
+            "surface-container-low": "#eff4ff",
+            "surface-tint": "#305ea1",
+            "tertiary-fixed-dim": "#62df7d",
+            "surface": "#f8f9ff",
+            "secondary": "#4a5f82",
+            "tertiary-container": "#005d25",
+            "error-container": "#ffdad6",
+            "outline-variant": "#c3c6d2",
+            "inverse-on-surface": "#eaf1ff",
+            "surface-container-highest": "#d3e4fe",
+            "on-secondary-container": "#475c7f",
+            "surface-dim": "#cbdbf5",
+            "surface-container-high": "#dce9ff",
+            "primary": "#003873",
+            "inverse-surface": "#213145",
+            "primary-container": "#1d4f91",
+            "tertiary-fixed": "#7ffc97",
+            "on-secondary-fixed": "#011b3b",
+            "surface-variant": "#d3e4fe",
+            "on-surface": "#0b1c30"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Inter"],
+            "display": ["Inter"],
+            "body": ["Inter"],
+            "label": ["Inter"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Inter', sans-serif;
+      font-variant-numeric: tabular-nums;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 20px;
+      line-height: 1;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface antialiased overflow-x-hidden min-h-screen flex">
+<!-- ========================================================================= -->
+<!-- SIDEBAR FIXA (248px)                                                      -->
+<!-- ========================================================================= -->
+<aside class="fixed top-0 left-0 h-screen w-[248px] flex flex-col z-40 bg-primary border-r border-outline-variant/20 select-none">
+<!-- Brand / Cabeçalho da Sidebar -->
+<div class="h-14 flex items-center gap-3 px-4 border-b border-primary-container/40">
+<div class="w-8 h-8 rounded-lg bg-tertiary-container flex items-center justify-center text-white font-bold text-sm tracking-tight shadow-sm">
+        JG
+      </div>
+<div class="flex flex-col">
+<span class="font-headline text-sm font-bold text-on-primary tracking-tight leading-tight">JG Sistemas</span>
+<span class="text-[11px] text-primary-fixed-dim font-medium leading-none mt-0.5">Varejo · Moda</span>
+</div>
+</div>
+<!-- Navegação Primária -->
+<nav class="flex-1 overflow-y-auto px-2.5 py-3 space-y-1 custom-scrollbar text-xs font-medium">
+<!-- Início -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Início</span>
+</a>
+<!-- Vendas -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="point_of_sale">point_of_sale</span>
+<span>Vendas</span>
+</a>
+<!-- Clientes -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span>Clientes</span>
+</a>
+<!-- Catálogo -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span>Catálogo</span>
+</a>
+<!-- Estoque -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="warehouse">warehouse</span>
+<span>Estoque</span>
+</a>
+<!-- Financeiro (ATIVO & EXPANDIDO) -->
+<div class="space-y-1 pt-0.5">
+<a class="flex items-center justify-between px-3 py-2 rounded-lg bg-primary-container text-on-primary font-semibold border-l-4 border-tertiary-fixed" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="account_balance">account_balance</span>
+<span>Financeiro</span>
+</div>
+<span class="material-symbols-outlined text-[16px]" data-icon="expand_more">expand_more</span>
+</a>
+<!-- Subitens Financeiro -->
+<div class="ml-4 pl-3 border-l border-primary-container/60 space-y-0.5 pt-0.5">
+<a class="flex items-center gap-2 py-1.5 px-2 rounded text-primary-fixed-dim hover:text-on-primary text-[11px] transition-colors" href="#">
+<span>Visão geral</span>
+</a>
+<a class="flex items-center gap-2 py-1.5 px-2 rounded text-primary-fixed-dim hover:text-on-primary text-[11px] transition-colors" href="#">
+<span>Contas a pagar e receber</span>
+</a>
+<a class="flex items-center justify-between py-1.5 px-2 rounded text-tertiary-fixed font-semibold bg-primary-container/60 text-[11px] transition-colors" href="#">
+<span>Cartões · Recebíveis</span>
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed"></span>
+</a>
+<a class="flex items-center gap-2 py-1.5 px-2 rounded text-primary-fixed-dim hover:text-on-primary text-[11px] transition-colors" href="#">
+<span>Fluxo de caixa</span>
+</a>
+</div>
+</div>
+<!-- Pessoas -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="badge">badge</span>
+<span>Pessoas</span>
+</a>
+<!-- Relatórios -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+<span>Relatórios</span>
+</a>
+<!-- Administração -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Administração</span>
+</a>
+</nav>
+<!-- Rodapé Sidebar -->
+<div class="p-3 border-t border-primary-container/40 space-y-2 bg-primary">
+<div class="flex items-center justify-between px-2 py-1.5 rounded bg-primary-container/30 text-[11px] text-primary-fixed-dim font-medium">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span class="text-on-primary font-medium">Online</span>
+</div>
+<span class="text-[10px] text-primary-fixed-dim">v3.4.1</span>
+</div>
+<div class="flex items-center justify-between px-2 text-[11px] text-primary-fixed-dim">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="storefront">storefront</span>
+<span>Varejo · Moda</span>
+</div>
+<button class="hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]" data-icon="tune">tune</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- TOPBAR FIXA (56px)                                                        -->
+<!-- ========================================================================= -->
+<header class="fixed top-0 left-[248px] right-0 h-14 z-30 bg-surface-container-lowest border-b border-outline-variant/60 flex items-center justify-between px-6 shadow-sm">
+<!-- Breadcrumbs e Busca -->
+<div class="flex items-center gap-5 flex-1 max-w-2xl">
+<!-- Breadcrumb -->
+<nav class="hidden xl:flex items-center gap-1.5 text-xs text-on-surface-variant font-medium whitespace-nowrap">
+<span>Financeiro</span>
+<span class="text-outline-variant">/</span>
+<span>Cartões</span>
+<span class="text-outline-variant">/</span>
+<span class="text-primary font-semibold">Recebíveis</span>
+</nav>
+<span class="hidden xl:block h-4 w-[1px] bg-outline-variant"></span>
+<!-- Busca Global -->
+<div class="relative w-full max-w-md">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]" data-icon="search">search</span>
+</span>
+<input class="w-full h-8 pl-9 pr-14 text-xs rounded-lg bg-surface-container-low border border-outline-variant/50 focus:border-primary focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary text-on-surface placeholder:text-outline transition-all" placeholder="Buscar módulo, produto ou transação..." type="text"/>
+<span class="absolute inset-y-0 right-0 flex items-center pr-2">
+<kbd class="px-1.5 py-0.5 text-[10px] font-semibold text-secondary bg-surface-container rounded border border-outline-variant/70 shadow-2xs">Ctrl+K</kbd>
+</span>
+</div>
+</div>
+<!-- Ações e Operador Topbar -->
+<div class="flex items-center gap-3">
+<!-- Status Caixa -->
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
+<span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+<span>Caixa 01 · Aberto</span>
+</div>
+<!-- Botão Primário PDV -->
+<button class="h-8 px-3 rounded-lg bg-primary hover:bg-primary-container text-on-primary text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-[16px]" data-icon="point_of_sale">point_of_sale</span>
+<span>Abrir PDV [F1]</span>
+</button>
+<div class="h-5 w-[1px] bg-outline-variant mx-0.5"></div>
+<!-- Notificações e Ajuda -->
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-surface-container-low transition-colors relative" title="Notificações">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-surface-container-low transition-colors" title="Ajuda">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+</div>
+<!-- Avatar Usuário -->
+<div class="flex items-center gap-2 pl-2 border-l border-outline-variant/50 cursor-pointer">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary font-bold text-xs flex items-center justify-center shadow-xs">
+          JG
+        </div>
+<div class="hidden md:flex flex-col text-left">
+<span class="text-xs font-semibold text-on-surface leading-tight">Juliana Gomes</span>
+<span class="text-[10px] text-secondary leading-none">Gerente Geral</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-secondary" data-icon="keyboard_arrow_down">keyboard_arrow_down</span>
+</div>
+</div>
+</header>
+<!-- ========================================================================= -->
+<!-- CONTEÚDO PRINCIPAL (1440 layout - left offset 248px, top offset 56px)     -->
+<!-- ========================================================================= -->
+<main class="ml-[248px] mt-14 flex-1 pb-32 min-h-[calc(100vh-56px)] bg-background">
+<div class="p-6 max-w-[1520px] mx-auto space-y-6">
+<!-- CABEÇALHO DA PÁGINA COM AÇÕES PRINCIPAIS -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<h1 class="text-2xl font-bold tracking-tight text-on-surface font-headline flex items-center gap-2.5">
+            Cartões e Recebíveis
+            <span class="text-xs px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-medium">Módulo Financeiro</span>
+</h1>
+<p class="text-xs text-on-surface-variant mt-0.5">
+            Conciliação de vendas em cartão, acompanhamento de repasses e antecipação de recebíveis.
+          </p>
+</div>
+<div class="flex items-center gap-2.5">
+<button class="h-9 px-3.5 rounded-lg border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-on-surface text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs">
+<span class="material-symbols-outlined text-[18px]" data-icon="file_download">file_download</span>
+<span>Exportar Relatório [F8]</span>
+</button>
+<button class="h-9 px-4 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="sync_alt">sync_alt</span>
+<span>Conciliar Lote [F2]</span>
+</button>
+</div>
+</div>
+<!-- ABAS DE NAVEGAÇÃO INTERNA -->
+<div class="border-b border-outline-variant/60 flex items-center gap-8">
+<button class="relative pb-3 text-xs font-semibold text-primary border-b-2 border-primary flex items-center gap-2">
+<span>Recebíveis</span>
+<span class="px-1.5 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed text-[10px] font-bold">142</span>
+</button>
+<button class="relative pb-3 text-xs font-medium text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-1.5">
+<span>Projeção de repasses</span>
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+</button>
+<button class="relative pb-3 text-xs font-medium text-on-surface-variant hover:text-on-surface transition-colors">
+<span>Operadoras e taxas</span>
+</button>
+</div>
+<!-- CARDS DE RESUMO (KPIS) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Card 1: A receber líquido -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant/60 shadow-2xs hover:shadow-xs transition-shadow relative overflow-hidden">
+<div class="absolute top-0 left-0 right-0 h-1 bg-primary"></div>
+<div class="flex items-center justify-between text-on-surface-variant mb-2">
+<span class="text-xs font-semibold text-primary">A receber líquido</span>
+<div class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]" data-icon="payments">payments</span>
+</div>
+</div>
+<div class="text-2xl font-bold tracking-tight text-on-surface mb-1 font-headline">
+            R$ 18.240,55
+          </div>
+<div class="flex items-center gap-1.5 text-[11px] text-emerald-700 font-medium">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span>
+<span>+14,2% vs. mês anterior</span>
+</div>
+</div>
+<!-- Card 2: Antecipado -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant/60 shadow-2xs hover:shadow-xs transition-shadow relative overflow-hidden">
+<div class="absolute top-0 left-0 right-0 h-1 bg-secondary"></div>
+<div class="flex items-center justify-between text-on-surface-variant mb-2">
+<span class="text-xs font-semibold text-secondary">Antecipado no mês</span>
+<div class="w-8 h-8 rounded-lg bg-secondary/10 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]" data-icon="bolt">bolt</span>
+</div>
+</div>
+<div class="text-2xl font-bold tracking-tight text-on-surface mb-1 font-headline">
+            R$ 3.100,00
+          </div>
+<div class="flex items-center gap-1.5 text-[11px] text-secondary font-medium">
+<span class="material-symbols-outlined text-[14px]" data-icon="schedule">schedule</span>
+<span>2 operações liquidadas</span>
+</div>
+</div>
+<!-- Card 3: Pago / Liquidado -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant/60 shadow-2xs hover:shadow-xs transition-shadow relative overflow-hidden">
+<div class="absolute top-0 left-0 right-0 h-1 bg-emerald-600"></div>
+<div class="flex items-center justify-between text-on-surface-variant mb-2">
+<span class="text-xs font-semibold text-emerald-800">Total liquidado (Pago)</span>
+<div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]" data-icon="check_circle">check_circle</span>
+</div>
+</div>
+<div class="text-2xl font-bold tracking-tight text-on-surface mb-1 font-headline">
+            R$ 42.880,10
+          </div>
+<div class="flex items-center gap-1.5 text-[11px] text-emerald-700 font-medium">
+<span class="material-symbols-outlined text-[14px]" data-icon="check">check</span>
+<span>100% conciliado c/ extrato</span>
+</div>
+</div>
+<!-- Card 4: Total Bruto -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant/60 shadow-2xs hover:shadow-xs transition-shadow relative overflow-hidden">
+<div class="absolute top-0 left-0 right-0 h-1 bg-outline-variant"></div>
+<div class="flex items-center justify-between text-on-surface-variant mb-2">
+<span class="text-xs font-semibold text-on-surface-variant">Total bruto em carteira</span>
+<div class="w-8 h-8 rounded-lg bg-surface-container-high text-on-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]" data-icon="receipt_long">receipt_long</span>
+</div>
+</div>
+<div class="text-2xl font-bold tracking-tight text-on-surface mb-1 font-headline">
+            R$ 19.020,00
+          </div>
+<div class="flex items-center gap-1.5 text-[11px] text-on-surface-variant font-medium">
+<span>Taxa MDR média: <strong>4,10%</strong></span>
+</div>
+</div>
+</div>
+<!-- BARRA DE FILTROS AVANÇADA -->
+<div class="bg-surface-container-lowest p-3.5 rounded-xl border border-outline-variant/60 shadow-2xs space-y-3">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+<!-- Busca por Venda/NSU -->
+<div class="md:col-span-3 relative">
+<span class="absolute inset-y-0 left-0 flex items-center pl-2.5 text-on-surface-variant pointer-events-none">
+<span class="material-symbols-outlined text-[18px]" data-icon="search">search</span>
+</span>
+<input class="w-full h-8 pl-8 pr-3 text-xs rounded-lg bg-surface-container-low border border-outline-variant/60 focus:bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary text-on-surface placeholder:text-outline" placeholder="Venda, NSU ou autorização..." type="text"/>
+</div>
+<!-- Filtro Status -->
+<div class="md:col-span-2">
+<select class="w-full h-8 text-xs rounded-lg bg-surface-container-low border border-outline-variant/60 text-on-surface px-2.5 focus:border-primary focus:ring-1 focus:ring-primary">
+<option value="">Status: Todos</option>
+<option selected="" value="pendente">Status: Pendente</option>
+<option value="pago">Status: Pago</option>
+<option value="antecipado">Status: Antecipado</option>
+</select>
+</div>
+<!-- Filtro Operadora -->
+<div class="md:col-span-2">
+<select class="w-full h-8 text-xs rounded-lg bg-surface-container-low border border-outline-variant/60 text-on-surface px-2.5 focus:border-primary focus:ring-1 focus:ring-primary">
+<option value="">Operadora: Todas</option>
+<option value="stone">Stone</option>
+<option value="cielo">Cielo</option>
+<option value="pagseguro">PagSeguro</option>
+<option value="rede">Rede</option>
+</select>
+</div>
+<!-- Filtro Bandeira -->
+<div class="md:col-span-2">
+<select class="w-full h-8 text-xs rounded-lg bg-surface-container-low border border-outline-variant/60 text-on-surface px-2.5 focus:border-primary focus:ring-1 focus:ring-primary">
+<option value="">Bandeira: Todas</option>
+<option value="visa">Visa</option>
+<option value="mastercard">Mastercard</option>
+<option value="elo">Elo</option>
+<option value="hipercard">Hipercard</option>
+</select>
+</div>
+<!-- Filtro Período -->
+<div class="md:col-span-3 flex items-center gap-1.5">
+<div class="relative flex-1">
+<input class="w-full h-8 px-2.5 text-xs rounded-lg bg-surface-container-low border border-outline-variant/60 text-on-surface font-medium focus:border-primary focus:ring-1 focus:ring-primary" type="text" value="01/10/2026 a 31/10/2026"/>
+</div>
+<button class="h-8 px-3 rounded-lg bg-primary hover:bg-primary-container text-on-primary text-xs font-semibold transition-colors flex items-center justify-center">
+              Filtrar
+            </button>
+<button class="h-8 px-2 rounded-lg border border-outline-variant/70 text-on-surface-variant hover:bg-surface-container-low text-xs transition-colors" title="Limpar Filtros">
+<span class="material-symbols-outlined text-[16px]" data-icon="filter_alt_off">filter_alt_off</span>
+</button>
+</div>
+</div>
+</div>
+<!-- TABELA DE RECEBÍVEIS -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/60 shadow-2xs overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse text-xs">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant/60 text-on-surface-variant font-semibold select-none h-10">
+<th class="py-2.5 px-3 w-10 text-center">
+<input checked="" class="w-3.5 h-3.5 text-primary rounded border-outline-variant focus:ring-primary" type="checkbox"/>
+</th>
+<th class="py-2.5 px-3">Venda / NSU</th>
+<th class="py-2.5 px-3">Operadora</th>
+<th class="py-2.5 px-3">Bandeira</th>
+<th class="py-2.5 px-3 text-center">Parcela</th>
+<th class="py-2.5 px-3 text-right">Valor Bruto</th>
+<th class="py-2.5 px-3 text-right">Taxa (MDR)</th>
+<th class="py-2.5 px-3 text-right font-bold text-on-surface">Valor Líquido</th>
+<th class="py-2.5 px-3">Previsão Repasse</th>
+<th class="py-2.5 px-3 text-center">Status</th>
+<th class="py-2.5 px-3 text-center w-28">Ações</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30 text-on-surface font-medium">
+<!-- Linha 1 (SELECIONADA PARA ANTECIPAÇÃO) -->
+<tr class="bg-primary/5 hover:bg-primary/10 transition-colors h-11">
+<td class="py-2 px-3 text-center">
+<input checked="" class="w-3.5 h-3.5 text-primary rounded border-outline-variant focus:ring-primary" type="checkbox"/>
+</td>
+<td class="py-2 px-3">
+<div class="font-semibold text-primary">#004.512</div>
+<div class="text-[10px] text-secondary font-mono">NSU: 981240182</div>
+</td>
+<td class="py-2 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                    Stone
+                  </span>
+</td>
+<td class="py-2 px-3">
+<div class="flex items-center gap-1.5">
+<span class="font-bold text-blue-900 text-[11px]">VISA</span>
+<span class="text-[10px] text-on-surface-variant">Crédito</span>
+</div>
+</td>
+<td class="py-2 px-3 text-center font-mono">1/3</td>
+<td class="py-2 px-3 text-right font-medium">R$ 1.250,00</td>
+<td class="py-2 px-3 text-right text-error font-medium">
+                  -R$ 31,25 <span class="text-[10px] text-secondary">(2,50%)</span>
+</td>
+<td class="py-2 px-3 text-right font-bold text-on-surface font-mono">
+                  R$ 1.218,75
+                </td>
+<td class="py-2 px-3 font-mono">
+                  18/10/2026
+                </td>
+<td class="py-2 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-900 border border-amber-300">
+                    Pendente
+                  </span>
+</td>
+<td class="py-2 px-3 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container-high text-primary" title="Antecipar esta parcela">
+<span class="material-symbols-outlined text-[17px]" data-icon="bolt">bolt</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container-high text-emerald-700" title="Dar Baixa Manual">
+<span class="material-symbols-outlined text-[17px]" data-icon="check_circle">check_circle</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container-high text-on-surface-variant" title="Mais opções">
+<span class="material-symbols-outlined text-[17px]" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 2 (SELECIONADA PARA ANTECIPAÇÃO) -->
+<tr class="bg-primary/5 hover:bg-primary/10 transition-colors h-11">
+<td class="py-2 px-3 text-center">
+<input checked="" class="w-3.5 h-3.5 text-primary rounded border-outline-variant focus:ring-primary" type="checkbox"/>
+</td>
+<td class="py-2 px-3">
+<div class="font-semibold text-primary">#004.509</div>
+<div class="text-[10px] text-secondary font-mono">NSU: 843219011</div>
+</td>
+<td class="py-2 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-sky-50 text-sky-800 border border-sky-200">
+<span class="w-1.5 h-1.5 rounded-full bg-sky-600"></span>
+                    Cielo
+                  </span>
+</td>
+<td class="py-2 px-3">
+<div class="flex items-center gap-1.5">
+<span class="font-bold text-red-600 text-[11px]">Mastercard</span>
+<span class="text-[10px] text-on-surface-variant">Crédito</span>
+</div>
+</td>
+<td class="py-2 px-3 text-center font-mono">2/3</td>
+<td class="py-2 px-3 text-right font-medium">R$ 1.800,00</td>
+<td class="py-2 px-3 text-right text-error font-medium">
+                  -R$ 48,60 <span class="text-[10px] text-secondary">(2,70%)</span>
+</td>
+<td class="py-2 px-3 text-right font-bold text-on-surface font-mono">
+                  R$ 1.751,40
+                </td>
+<td class="py-2 px-3 font-mono">
+                  24/10/2026
+                </td>
+<td class="py-2 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-900 border border-amber-300">
+                    Pendente
+                  </span>
+</td>
+<td class="py-2 px-3 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container-high text-primary" title="Antecipar esta parcela">
+<span class="material-symbols-outlined text-[17px]" data-icon="bolt">bolt</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container-high text-emerald-700" title="Dar Baixa Manual">
+<span class="material-symbols-outlined text-[17px]" data-icon="check_circle">check_circle</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container-high text-on-surface-variant" title="Mais opções">
+<span class="material-symbols-outlined text-[17px]" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 3 (SELECIONADA PARA ANTECIPAÇÃO) -->
+<tr class="bg-primary/5 hover:bg-primary/10 transition-colors h-11">
+<td class="py-2 px-3 text-center">
+<input checked="" class="w-3.5 h-3.5 text-primary rounded border-outline-variant focus:ring-primary" type="checkbox"/>
+</td>
+<td class="py-2 px-3">
+<div class="font-semibold text-primary">#004.498</div>
+<div class="text-[10px] text-secondary font-mono">NSU: 671092833</div>
+</td>
+<td class="py-2 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>
+                    PagSeguro
+                  </span>
+</td>
+<td class="py-2 px-3">
+<div class="flex items-center gap-1.5">
+<span class="font-bold text-gray-800 text-[11px]">Elo</span>
+<span class="text-[10px] text-on-surface-variant">Crédito</span>
+</div>
+</td>
+<td class="py-2 px-3 text-center font-mono">1/2</td>
+<td class="py-2 px-3 text-right font-medium">R$ 1.200,00</td>
+<td class="py-2 px-3 text-right text-error font-medium">
+                  -R$ 34,80 <span class="text-[10px] text-secondary">(2,90%)</span>
+</td>
+<td class="py-2 px-3 text-right font-bold text-on-surface font-mono">
+                  R$ 1.165,20
+                </td>
+<td class="py-2 px-3 font-mono">
+                  28/10/2026
+                </td>
+<td class="py-2 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-900 border border-amber-300">
+                    Pendente
+                  </span>
+</td>
+<td class="py-2 px-3 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container-high text-primary" title="Antecipar esta parcela">
+<span class="material-symbols-outlined text-[17px]" data-icon="bolt">bolt</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container-high text-emerald-700" title="Dar Baixa Manual">
+<span class="material-symbols-outlined text-[17px]" data-icon="check_circle">check_circle</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container-high text-on-surface-variant" title="Mais opções">
+<span class="material-symbols-outlined text-[17px]" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 4 (PAGA / LIQUIDADA) -->
+<tr class="hover:bg-surface-container-low transition-colors h-11">
+<td class="py-2 px-3 text-center">
+<input class="w-3.5 h-3.5 text-outline rounded opacity-40" disabled="" type="checkbox"/>
+</td>
+<td class="py-2 px-3">
+<div class="font-semibold text-on-surface">#004.492</div>
+<div class="text-[10px] text-secondary font-mono">NSU: 554310921</div>
+</td>
+<td class="py-2 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                    Stone
+                  </span>
+</td>
+<td class="py-2 px-3">
+<div class="flex items-center gap-1.5">
+<span class="font-bold text-blue-900 text-[11px]">VISA</span>
+<span class="text-[10px] text-on-surface-variant">Débito</span>
+</div>
+</td>
+<td class="py-2 px-3 text-center font-mono">1/1</td>
+<td class="py-2 px-3 text-right font-medium">R$ 480,00</td>
+<td class="py-2 px-3 text-right text-error font-medium">
+                  -R$ 6,24 <span class="text-[10px] text-secondary">(1,30%)</span>
+</td>
+<td class="py-2 px-3 text-right font-bold text-on-surface font-mono">
+                  R$ 473,76
+                </td>
+<td class="py-2 px-3 font-mono text-secondary">
+                  03/10/2026
+                </td>
+<td class="py-2 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-900 border border-emerald-300">
+                    Pago
+                  </span>
+</td>
+<td class="py-2 px-3 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container-high text-on-surface-variant" title="Ver Comprovante">
+<span class="material-symbols-outlined text-[17px]" data-icon="receipt">receipt</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container-high text-on-surface-variant" title="Mais opções">
+<span class="material-symbols-outlined text-[17px]" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 5 (ANTECIPADO ANTERIORMENTE) -->
+<tr class="hover:bg-surface-container-low transition-colors h-11">
+<td class="py-2 px-3 text-center">
+<input class="w-3.5 h-3.5 text-outline rounded opacity-40" disabled="" type="checkbox"/>
+</td>
+<td class="py-2 px-3">
+<div class="font-semibold text-on-surface">#004.485</div>
+<div class="text-[10px] text-secondary font-mono">NSU: 441092834</div>
+</td>
+<td class="py-2 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-sky-50 text-sky-800 border border-sky-200">
+<span class="w-1.5 h-1.5 rounded-full bg-sky-600"></span>
+                    Cielo
+                  </span>
+</td>
+<td class="py-2 px-3">
+<div class="flex items-center gap-1.5">
+<span class="font-bold text-red-600 text-[11px]">Mastercard</span>
+<span class="text-[10px] text-on-surface-variant">Crédito</span>
+</div>
+</td>
+<td class="py-2 px-3 text-center font-mono">3/3</td>
+<td class="py-2 px-3 text-right font-medium">R$ 2.400,00</td>
+<td class="py-2 px-3 text-right text-error font-medium">
+                  -R$ 67,20 <span class="text-[10px] text-secondary">(2,80%)</span>
+</td>
+<td class="py-2 px-3 text-right font-bold text-on-surface font-mono">
+                  R$ 2.332,80
+                </td>
+<td class="py-2 px-3 font-mono text-secondary">
+                  05/10/2026
+                </td>
+<td class="py-2 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-100 text-blue-900 border border-blue-300">
+                    Antecipado
+                  </span>
+</td>
+<td class="py-2 px-3 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container-high text-on-surface-variant" title="Ver Detalhes do Repasse">
+<span class="material-symbols-outlined text-[17px]" data-icon="visibility">visibility</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container-high text-on-surface-variant" title="Mais opções">
+<span class="material-symbols-outlined text-[17px]" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 6 (PENDENTE - NÃO SELECIONADA) -->
+<tr class="hover:bg-surface-container-low transition-colors h-11">
+<td class="py-2 px-3 text-center">
+<input class="w-3.5 h-3.5 text-primary rounded border-outline-variant focus:ring-primary" type="checkbox"/>
+</td>
+<td class="py-2 px-3">
+<div class="font-semibold text-primary">#004.479</div>
+<div class="text-[10px] text-secondary font-mono">NSU: 320918731</div>
+</td>
+<td class="py-2 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                    Stone
+                  </span>
+</td>
+<td class="py-2 px-3">
+<div class="flex items-center gap-1.5">
+<span class="font-bold text-blue-900 text-[11px]">VISA</span>
+<span class="text-[10px] text-on-surface-variant">Crédito</span>
+</div>
+</td>
+<td class="py-2 px-3 text-center font-mono">1/1</td>
+<td class="py-2 px-3 text-right font-medium">R$ 690,00</td>
+<td class="py-2 px-3 text-right text-error font-medium">
+                  -R$ 16,56 <span class="text-[10px] text-secondary">(2,40%)</span>
+</td>
+<td class="py-2 px-3 text-right font-bold text-on-surface font-mono">
+                  R$ 673,44
+                </td>
+<td class="py-2 px-3 font-mono">
+                  30/10/2026
+                </td>
+<td class="py-2 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-900 border border-amber-300">
+                    Pendente
+                  </span>
+</td>
+<td class="py-2 px-3 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container-high text-primary" title="Antecipar esta parcela">
+<span class="material-symbols-outlined text-[17px]" data-icon="bolt">bolt</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container-high text-emerald-700" title="Dar Baixa Manual">
+<span class="material-symbols-outlined text-[17px]" data-icon="check_circle">check_circle</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container-high text-on-surface-variant" title="Mais opções">
+<span class="material-symbols-outlined text-[17px]" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 7 (PAGA) -->
+<tr class="hover:bg-surface-container-low transition-colors h-11">
+<td class="py-2 px-3 text-center">
+<input class="w-3.5 h-3.5 text-outline rounded opacity-40" disabled="" type="checkbox"/>
+</td>
+<td class="py-2 px-3">
+<div class="font-semibold text-on-surface">#004.471</div>
+<div class="text-[10px] text-secondary font-mono">NSU: 298104716</div>
+</td>
+<td class="py-2 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                    Stone
+                  </span>
+</td>
+<td class="py-2 px-3">
+<div class="flex items-center gap-1.5">
+<span class="font-bold text-red-600 text-[11px]">Mastercard</span>
+<span class="text-[10px] text-on-surface-variant">Débito</span>
+</div>
+</td>
+<td class="py-2 px-3 text-center font-mono">1/1</td>
+<td class="py-2 px-3 text-right font-medium">R$ 310,00</td>
+<td class="py-2 px-3 text-right text-error font-medium">
+                  -R$ 4,03 <span class="text-[10px] text-secondary">(1,30%)</span>
+</td>
+<td class="py-2 px-3 text-right font-bold text-on-surface font-mono">
+                  R$ 305,97
+                </td>
+<td class="py-2 px-3 font-mono text-secondary">
+                  02/10/2026
+                </td>
+<td class="py-2 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-900 border border-emerald-300">
+                    Pago
+                  </span>
+</td>
+<td class="py-2 px-3 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container-high text-on-surface-variant" title="Ver Comprovante">
+<span class="material-symbols-outlined text-[17px]" data-icon="receipt">receipt</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container-high text-on-surface-variant" title="Mais opções">
+<span class="material-symbols-outlined text-[17px]" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 8 (PENDENTE) -->
+<tr class="hover:bg-surface-container-low transition-colors h-11">
+<td class="py-2 px-3 text-center">
+<input class="w-3.5 h-3.5 text-primary rounded border-outline-variant focus:ring-primary" type="checkbox"/>
+</td>
+<td class="py-2 px-3">
+<div class="font-semibold text-primary">#004.468</div>
+<div class="text-[10px] text-secondary font-mono">NSU: 182736450</div>
+</td>
+<td class="py-2 px-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>
+                    PagSeguro
+                  </span>
+</td>
+<td class="py-2 px-3">
+<div class="flex items-center gap-1.5">
+<span class="font-bold text-amber-700 text-[11px]">Hipercard</span>
+<span class="text-[10px] text-on-surface-variant">Crédito</span>
+</div>
+</td>
+<td class="py-2 px-3 text-center font-mono">2/2</td>
+<td class="py-2 px-3 text-right font-medium">R$ 550,00</td>
+<td class="py-2 px-3 text-right text-error font-medium">
+                  -R$ 17,05 <span class="text-[10px] text-secondary">(3,10%)</span>
+</td>
+<td class="py-2 px-3 text-right font-bold text-on-surface font-mono">
+                  R$ 532,95
+                </td>
+<td class="py-2 px-3 font-mono">
+                  31/10/2026
+                </td>
+<td class="py-2 px-3 text-center">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-900 border border-amber-300">
+                    Pendente
+                  </span>
+</td>
+<td class="py-2 px-3 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container-high text-primary" title="Antecipar esta parcela">
+<span class="material-symbols-outlined text-[17px]" data-icon="bolt">bolt</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container-high text-emerald-700" title="Dar Baixa Manual">
+<span class="material-symbols-outlined text-[17px]" data-icon="check_circle">check_circle</span>
+</button>
+<button class="p-1 rounded hover:bg-surface-container-high text-on-surface-variant" title="Mais opções">
+<span class="material-symbols-outlined text-[17px]" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Rodapé da Tabela / Paginação -->
+<div class="flex items-center justify-between px-4 py-3 border-t border-outline-variant/60 bg-surface-container-lowest text-xs text-on-surface-variant">
+<div class="flex items-center gap-3">
+<span>Exibindo <strong>1-8</strong> de <strong>142</strong> recebíveis</span>
+<div class="flex items-center gap-1.5 border-l border-outline-variant/60 pl-3">
+<span>Linhas por página:</span>
+<select class="h-6 text-xs rounded border border-outline-variant/60 bg-surface-container-low text-on-surface px-1 focus:ring-0">
+<option>8</option>
+<option>15</option>
+<option>30</option>
+<option>50</option>
+</select>
+</div>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-1 rounded border border-outline-variant/60 hover:bg-surface-container-low disabled:opacity-40" disabled="">
+<span class="material-symbols-outlined text-[16px]" data-icon="first_page">first_page</span>
+</button>
+<button class="p-1 rounded border border-outline-variant/60 hover:bg-surface-container-low disabled:opacity-40" disabled="">
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-6 h-6 rounded bg-primary text-on-primary font-bold text-xs">1</button>
+<button class="w-6 h-6 rounded hover:bg-surface-container-low text-on-surface font-medium text-xs">2</button>
+<button class="w-6 h-6 rounded hover:bg-surface-container-low text-on-surface font-medium text-xs">3</button>
+<span class="px-1 text-outline">...</span>
+<button class="w-6 h-6 rounded hover:bg-surface-container-low text-on-surface font-medium text-xs">18</button>
+<button class="p-1 rounded border border-outline-variant/60 hover:bg-surface-container-low">
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+</button>
+<button class="p-1 rounded border border-outline-variant/60 hover:bg-surface-container-low">
+<span class="material-symbols-outlined text-[16px]" data-icon="last_page">last_page</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- ========================================================================= -->
+<!-- BARRA STICKY INFERIOR PARA ANTECIPAÇÃO DE RECEBÍVEIS                       -->
+<!-- ========================================================================= -->
+<div class="fixed bottom-8 left-[248px] right-0 z-30 px-6 pointer-events-none">
+<div class="max-w-[1520px] mx-auto pointer-events-auto">
+<div class="bg-primary text-on-primary rounded-xl p-3.5 px-5 shadow-xl border border-primary-container flex flex-col md:flex-row items-center justify-between gap-4">
+<!-- Info Selecionados -->
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-tertiary-fixed text-tertiary flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[20px]" data-icon="bolt">bolt</span>
+</div>
+<div>
+<div class="text-xs font-semibold flex items-center gap-2">
+<span class="bg-white/20 px-2 py-0.5 rounded text-[11px]">3 parcelas selecionadas</span>
+<span>Total a antecipar: <strong>R$ 4.250,00 bruto</strong></span>
+</div>
+<div class="text-[11px] text-primary-fixed-dim mt-0.5">
+              Valor líquido estimado a cair em conta: <span class="text-tertiary-fixed font-bold font-mono">R$ 4.095,20</span>
+</div>
+</div>
+</div>
+<!-- Parâmetros de Simulação e Ação -->
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 text-xs">
+<span class="text-primary-fixed-dim whitespace-nowrap">Taxa de antecipação (%):</span>
+<div class="relative w-20">
+<input class="w-full h-8 px-2.5 text-xs text-right font-bold rounded bg-primary-container/80 text-on-primary border border-primary-fixed-dim/40 focus:border-tertiary-fixed focus:ring-0" type="text" value="1,89"/>
+</div>
+</div>
+<div class="hidden lg:flex flex-col text-right">
+<span class="text-[10px] text-primary-fixed-dim">Custo estimado da antecipação</span>
+<span class="text-xs font-bold text-amber-300 font-mono">-R$ 74,80</span>
+</div>
+<button class="h-9 px-4 rounded-lg bg-tertiary-fixed text-tertiary hover:bg-tertiary-fixed-dim font-bold text-xs flex items-center gap-1.5 transition-colors shadow-md cursor-pointer">
+<span class="material-symbols-outlined text-[18px]" data-icon="bolt">bolt</span>
+<span>Antecipar pendentes</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- ========================================================================= -->
+<!-- FOOTER INSTITUCIONAL / STATUS BAR (h-8)                                   -->
+<!-- ========================================================================= -->
+<footer class="fixed bottom-0 left-[248px] right-0 h-8 z-20 bg-surface-container-lowest border-t border-outline-variant/60 flex items-center justify-between px-6 text-xs text-on-surface-variant select-none">
+<div class="flex items-center gap-2">
+<span class="font-medium text-[11px]">© 2026 JG Sistemas de Gestão Comercial S.A.</span>
+<span class="text-outline-variant">·</span>
+<span class="text-[11px] text-secondary">Licenciado para Moda &amp; Estilo Ltda.</span>
+</div>
+<!-- Atalhos de Teclado no Rodapé -->
+<div class="flex items-center gap-4 text-[11px]">
+<div class="flex items-center gap-1.5">
+<kbd class="px-1 py-0.2 rounded bg-surface-container text-[10px] font-semibold text-secondary border border-outline-variant/60">F1</kbd>
+<span>PDV</span>
+</div>
+<div class="flex items-center gap-1.5">
+<kbd class="px-1 py-0.2 rounded bg-surface-container text-[10px] font-semibold text-secondary border border-outline-variant/60">F2</kbd>
+<span>Novo Lote</span>
+</div>
+<div class="flex items-center gap-1.5">
+<kbd class="px-1 py-0.2 rounded bg-surface-container text-[10px] font-semibold text-secondary border border-outline-variant/60">F8</kbd>
+<span>Exportar</span>
+</div>
+<div class="flex items-center gap-1.5">
+<kbd class="px-1 py-0.2 rounded bg-surface-container text-[10px] font-semibold text-secondary border border-outline-variant/60">Esc</kbd>
+<span>Voltar</span>
+</div>
+</div>
+</footer>
+</body></html>

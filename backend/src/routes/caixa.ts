@@ -37,6 +37,18 @@ const calcularVendasAbertas = async (caixa: any) => {
     return Number(vendas.reduce((s, v) => s + Number(v.total), 0).toFixed(2));
 };
 
+// Total recebido por forma de pagamento desde a abertura (resumo do turno)
+const vendasPorMetodo = async (caixa: any) => {
+    const pagamentos = await prisma.salePayment.groupBy({
+        by: ['method'],
+        where: { Sale: { status: 'COMPLETED', createdAt: { gte: caixa.openedAt } } },
+        _sum: { amount: true }
+    });
+    const porMetodo: Record<string, number> = {};
+    for (const p of pagamentos) porMetodo[p.method] = Number(Number(p._sum.amount ?? 0).toFixed(2));
+    return porMetodo;
+};
+
 // GET /api/caixa - Status dos caixas (abertos + histórico + registradoras disponíveis)
 // Operador de caixa (SELLER) vê somente os registros do próprio caixa.
 router.get('/', async (req: any, res: any) => {
@@ -71,8 +83,11 @@ router.get('/', async (req: any, res: any) => {
         historico.push(serializar(r, vendas));
     }
 
+    const aberto = abertos[0] ? historico[registros.indexOf(abertos[0])] : null;
+    if (aberto) aberto.porMetodo = await vendasPorMetodo(abertos[0]);
+
     return res.json({
-        aberto: abertos[0] ? historico[registros.indexOf(abertos[0])] : null,
+        aberto,
         numeros,
         numerosAbertos,
         historico

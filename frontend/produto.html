@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>Produto - JG Sistemas</title>
+    <link rel="stylesheet" href="/ui/jg.css">
+    <style>
+        .foto-box { width: 100%; aspect-ratio: 1; border: 1px dashed var(--border-strong); border-radius: var(--radius); background: var(--surface-2); display: flex; align-items: center; justify-content: center; overflow: hidden; color: var(--text-3); }
+        .foto-box img { width: 100%; height: 100%; object-fit: cover; }
+body.jg .foto-box .ms { font-size: 48px; }
+        .painel-aba { display: none; }
+        .painel-aba.ativa { display: block; }
+        .grade-sel { display: grid; grid-template-columns: 1fr 1fr auto; gap: 14px; align-items: end; }
+        .grade-sel .chips { min-height: 40px; padding: 5px; border: 1px solid var(--border-strong); border-radius: var(--radius); background: #fff; align-items: center; }
+        .grade-sel .chips input { border: 0 !important; box-shadow: none !important; height: 28px !important; flex: 1; min-width: 90px; padding: 0 4px !important; }
+        .chip .x { margin-left: 2px; }
+        #tabela-grade input { height: 34px; padding: 0 8px; font-size: 13px; }
+        #tabela-grade input.num { text-align: right; }
+        .margem-box .valor { font-size: 22px; }
+        .resumo-lateral { position: sticky; top: calc(var(--topbar-h) + 20px); }
+        @media (max-width: 900px) { .grade-sel { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body class="jg" data-pagina="produtos" data-titulo="Cadastro de produto">
+    <main>
+        <div class="page-head">
+            <div>
+                <div class="row" style="gap:10px"><a class="btn-icone" href="/produtos.html" title="Voltar"><span class="ms">arrow_back</span></a><h1 id="titulo">Novo produto</h1><span id="badge-situacao"></span></div>
+                <div class="sub" id="subtitulo">Preencha os dados e salve. Campos com * são obrigatórios.</div>
+            </div>
+        </div>
+
+        <div class="abas" role="tablist">
+            <button class="aba ativa" data-aba="geral"><span class="ms sm">info</span>Geral</button>
+            <button class="aba" data-aba="precos"><span class="ms sm">payments</span>Preços</button>
+            <button class="aba" data-aba="estoque"><span class="ms sm">warehouse</span>Estoque</button>
+            <button class="aba" data-aba="fiscal"><span class="ms sm">receipt</span>Fiscal</button>
+            <button class="aba" data-aba="variacoes"><span class="ms sm">grid_view</span>Variações <span class="contador" id="cont-variacoes">0</span></button>
+        </div>
+
+        <div class="grid g-main-side" style="align-items:start;grid-template-columns:minmax(0,1fr) 300px">
+            <div>
+                <!-- Geral -->
+                <div class="card painel-aba ativa" id="aba-geral">
+                    <div class="card-body">
+                        <div class="form-grid">
+                            <div class="campo span-2"><label for="p-nome">Nome do produto *</label><input type="text" id="p-nome" placeholder="Ex.: Vestido Midi Floral"></div>
+                            <div class="campo"><label for="p-codigo">Código de barras</label><input type="text" id="p-codigo" placeholder="Ex.: 7891234560012" inputmode="numeric"></div>
+                            <div class="campo"><label for="p-sku">SKU</label><input type="text" id="p-sku" placeholder="Ex.: VMF-001"></div>
+                            <div class="campo"><label for="p-categoria">Categoria</label><select id="p-categoria"></select></div>
+                            <div class="campo"><label for="p-marca">Marca</label><select id="p-marca"></select></div>
+                            <div class="campo"><label for="p-colecao">Coleção</label><select id="p-colecao"></select></div>
+                            <div class="campo"><label for="p-unidade">Unidade</label><select id="p-unidade"><option>UN</option><option>PC</option><option>KG</option><option>LT</option><option>CX</option><option>PAR</option><option>KIT</option><option>MT</option></select></div>
+                            <div class="campo span-2"><label for="p-descricao">Descrição</label><textarea id="p-descricao" rows="3" placeholder="Detalhes do produto, tecido, composição..."></textarea></div>
+                        </div>
+                        <label class="toggle"><input type="checkbox" id="p-ativo" checked><span class="trilho"></span><span>Ativo no PDV (disponível para venda)</span></label>
+                    </div>
+                </div>
+
+                <!-- Preços -->
+                <div class="card painel-aba" id="aba-precos">
+                    <div class="card-body">
+                        <div class="form-grid c3" style="align-items:end">
+                            <div class="campo"><label for="p-preco">Preço de venda (R$) *</label><input type="text" id="p-preco" placeholder="0,00" inputmode="decimal"></div>
+                            <div class="campo"><label for="p-custo">Custo (R$)</label><input type="text" id="p-custo" placeholder="0,00" inputmode="decimal"></div>
+                            <div class="campo"><div class="destaque margem-box" id="margem-box"><div class="rotulo">Margem calculada</div><div class="valor" id="p-margem">—</div></div></div>
+                        </div>
+                        <div class="row between mt-8 mb-16"><h3 class="jg-section-title">Preços por tabela</h3><a href="/tabelas-preco.html" style="font-size:13px">Gerenciar tabelas</a></div>
+                        <div class="tabela-wrap" style="border:1px solid var(--border)">
+                            <table><thead><tr><th>Tabela</th><th class="right">Qtd mínima</th><th>Regra</th><th class="right">Preço resultante</th></tr></thead>
+                            <tbody id="tabela-precos"><tr><td colspan="4" class="sem-dados">Salve o produto para vê-lo nas tabelas de preço.</td></tr></tbody></table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estoque -->
+                <div class="card painel-aba" id="aba-estoque">
+                    <div class="card-body">
+                        <div class="form-grid c3">
+                            <div class="campo"><label for="p-estoque">Estoque atual</label><input type="number" id="p-estoque" value="0" min="0"><div class="dica" id="dica-estoque">Use a tela de Estoque para entradas e saídas com motivo.</div></div>
+                            <div class="campo"><label for="p-minimo">Estoque mínimo</label><input type="number" id="p-minimo" value="0" min="0"><div class="dica">Abaixo disso o produto aparece como "estoque baixo".</div></div>
+                            <div class="campo"><label for="p-maximo">Estoque máximo</label><input type="number" id="p-maximo" value="0" min="0"></div>
+                        </div>
+                        <div class="alerta hidden" id="aviso-grade"><span class="ms">info</span><div>Este produto usa grade de variações: o estoque é controlado por variação (aba Variações) e o estoque do produto base fica em 0.</div></div>
+                    </div>
+                </div>
+
+                <!-- Fiscal -->
+                <div class="card painel-aba" id="aba-fiscal">
+                    <div class="card-body">
+                        <div class="form-grid c3">
+                            <div class="campo"><label for="p-ncm">NCM</label><input type="text" id="p-ncm" placeholder="Ex.: 6204.44.00" maxlength="10"></div>
+                            <div class="campo"><label for="p-cest">CEST</label><input type="text" id="p-cest" placeholder="Opcional" maxlength="9"></div>
+                            <div class="campo"><label for="p-cfop">CFOP</label><input type="text" id="p-cfop" placeholder="Ex.: 5102" maxlength="4"></div>
+                            <div class="campo"><label for="p-csosn">CSOSN (Simples Nacional)</label><input type="text" id="p-csosn" placeholder="Ex.: 102" maxlength="3"></div>
+                            <div class="campo"><label for="p-cst">CST (regime normal)</label><input type="text" id="p-cst" placeholder="Ex.: 00" maxlength="3"></div>
+                        </div>
+                        <div class="alerta"><span class="ms">info</span><div>Campos em branco usam os padrões da empresa definidos em <a href="/configuracoes.html#fiscal">Configurações › Fiscal</a>.</div></div>
+                    </div>
+                </div>
+
+                <!-- Variações -->
+                <div class="card painel-aba" id="aba-variacoes">
+                    <div class="card-body">
+                        <div class="grade-sel mb-16">
+                            <div><label>Cores</label><div class="chips" id="chips-cor"><input type="text" id="in-cor" placeholder="Digite e tecle Enter"></div></div>
+                            <div><label>Tamanhos</label><div class="chips" id="chips-tam"><input type="text" id="in-tam" placeholder="Ex.: P, M, G, GG"></div></div>
+                            <button class="btn btn-primario" type="button" onclick="gerarGrade()"><span class="ms">grid_on</span>Gerar grade</button>
+                        </div>
+                        <div class="tabela-wrap" style="border:1px solid var(--border)">
+                            <table style="min-width:720px;">
+                                <thead><tr><th>Cor</th><th>Tamanho</th><th>SKU</th><th>Código</th><th class="right">Preço</th><th class="right">Custo</th><th class="right">Qtd</th><th class="acoes"></th></tr></thead>
+                                <tbody id="tabela-grade"></tbody>
+                            </table>
+                        </div>
+                        <div class="row between mt-8">
+                            <button type="button" class="btn btn-sm" onclick="adicionarLinhaGrade()"><span class="ms">add</span>Adicionar variação</button>
+                            <span class="muted" style="font-size:12px">Preço e custo em branco usam os valores do produto.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lateral: foto e resumo -->
+            <div class="stack resumo-lateral">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="foto-box" id="foto-box"><span class="ms">add_photo_alternate</span></div>
+                        <div class="row mt-8" style="gap:6px">
+                            <label class="btn btn-sm" style="margin:0;flex:1"><span class="ms">upload</span>Enviar foto<input type="file" id="p-foto" accept="image/png,image/jpeg,image/webp" class="hidden"></label>
+                            <button class="btn btn-sm btn-fantasma" type="button" id="remover-foto" title="Remover foto"><span class="ms">delete</span></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-head"><h3>Resumo</h3></div>
+                    <div class="card-body">
+                        <div class="resumo-linhas">
+                            <div class="l"><span>Preço</span><b id="r-preco">—</b></div>
+                            <div class="l"><span>Custo</span><b id="r-custo">—</b></div>
+                            <div class="l"><span>Margem</span><b id="r-margem">—</b></div>
+                            <div class="l"><span>Estoque</span><b id="r-estoque">—</b></div>
+                            <div class="l"><span>Variações</span><b id="r-variacoes">0</b></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="barra-fixa">
+            <a class="btn" href="/produtos.html">Cancelar</a>
+            <button class="btn btn-sucesso" id="btn-salvar" onclick="salvarProduto()"><span class="ms">check</span>Salvar <span class="kbd">Ctrl S</span></button>
+        </div>
+    </main>
+
+    <script src="/seguranca.js"></script>
+    <script src="/ui/shell.js"></script>
+    <script>
+        const qs = new URLSearchParams(location.search);
+        const ID = qs.get('id');
+        const DUPLICAR = qs.get('duplicar');
+        let produto = null;
+        let grade = [];
+        let foto = undefined; // undefined = não mexer; '' = remover; data URL = nova
+        let cores = [], tamanhos = [];
+
+        const fmt = (v) => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const parseMoeda = (v) => parseFloat(String(v ?? '').replace(/\./g, '').replace(',', '.')) || 0;
+        const paraCampo = (v) => (v === null || v === undefined || v === '') ? '' : Number(v).toFixed(2).replace('.', ',');
+        const $ = (id) => document.getElementById(id);
+
+        async function api(url, metodo = 'GET', corpo = null) {
+            const opcoes = { method: metodo, headers: { 'Content-Type': 'application/json' } };
+            if (corpo) opcoes.body = JSON.stringify(corpo);
+            const r = await fetch(url, opcoes);
+            if (r.status === 401) { localStorage.removeItem('jg_operador'); location.href = '/login.html'; throw new Error('Sessão expirada.'); }
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.erro || 'Erro na requisição');
+            return d;
+        }
+        (function () { const op = JG.operador(); if (op && op.papel === 'SELLER') location.href = '/'; })();
+
+        // ---------- abas
+        document.querySelectorAll('[data-aba]').forEach(b => b.addEventListener('click', () => {
+            document.querySelectorAll('[data-aba]').forEach(x => x.classList.toggle('ativa', x === b));
+            document.querySelectorAll('.painel-aba').forEach(p => p.classList.toggle('ativa', p.id === 'aba-' + b.dataset.aba));
+            history.replaceState(null, '', location.search + '#' + b.dataset.aba);
+        }));
+        if (location.hash) { const b = document.querySelector(`[data-aba="${location.hash.slice(1)}"]`); if (b) b.click(); }
+
+        // ---------- selects
+        async function carregarListas() {
+            const [cats, mars, cols] = await Promise.all([
+                api('/api/categorias').catch(() => []), api('/api/marcas').catch(() => []), api('/api/colecoes').catch(() => [])
+            ]);
+            const opts = (lista, vazio) => `<option value="">${vazio}</option>` + lista.map(x => `<option value="${esc(x.id)}">${esc(x.nome)}</option>`).join('');
+            $('p-categoria').innerHTML = opts(cats, 'Sem categoria');
+            $('p-marca').innerHTML = opts(mars, 'Sem marca');
+            $('p-colecao').innerHTML = opts(cols, 'Sem coleção');
+        }
+
+        // ---------- resumo e margem
+        function atualizarResumo() {
+            const preco = parseMoeda($('p-preco').value);
+            const custo = parseMoeda($('p-custo').value);
+            const margem = preco > 0 ? (preco - custo) / preco * 100 : null;
+            const box = $('margem-box');
+            $('p-margem').textContent = margem === null ? '—' : margem.toFixed(1).replace('.', ',') + '%';
+            box.className = 'destaque margem-box' + (margem === null ? '' : margem >= 0 ? ' verde' : ' vermelho');
+            $('r-preco').textContent = preco ? fmt(preco) : '—';
+            $('r-custo').textContent = custo ? fmt(custo) : '—';
+            $('r-margem').textContent = margem === null ? '—' : margem.toFixed(1).replace('.', ',') + '%';
+            const temGrade = grade.some(g => g.cor || g.tamanho || g.sku || g.codigo);
+            const est = temGrade ? grade.reduce((s, g) => s + (Number(g.estoque) || 0), 0) : (Number($('p-estoque').value) || 0);
+            $('r-estoque').textContent = est + ' un';
+            $('r-variacoes').textContent = grade.length;
+            $('cont-variacoes').textContent = grade.length;
+            $('p-estoque').disabled = temGrade;
+            $('aviso-grade').classList.toggle('hidden', !temGrade);
+        }
+        ['p-preco', 'p-custo', 'p-estoque'].forEach(id => $(id).addEventListener('input', atualizarResumo));
+        ['p-preco', 'p-custo'].forEach(id => $(id).addEventListener('blur', () => { if ($(id).value.trim()) $(id).value = paraCampo(parseMoeda($(id).value)); }));
+
+        // ---------- foto
+        function mostrarFoto(src) {
+            $('foto-box').innerHTML = src ? `<img src="${esc(src)}" alt="Foto do produto">` : '<span class="ms">add_photo_alternate</span>';
+        }
+        $('p-foto').addEventListener('change', () => {
+            const arq = $('p-foto').files[0];
+            if (!arq) return;
+            if (arq.size > 1400000) { JG.toast('A foto deve ter até 1,4 MB.', 'erro'); return; }
+            const r = new FileReader();
+            r.onload = () => { foto = r.result; mostrarFoto(foto); };
+            r.readAsDataURL(arq);
+        });
+        $('remover-foto').onclick = () => { foto = ''; mostrarFoto(null); };
+
+        // ---------- grade de variações
+        function renderChips(lista, el, input) {
+            el.querySelectorAll('.chip').forEach(c => c.remove());
+            lista.forEach((v, i) => {
+                const c = document.createElement('span');
+                c.className = 'chip ativo';
+                c.innerHTML = `${esc(v)} <span class="ms x" data-i="${i}">close</span>`;
+                el.insertBefore(c, input);
+            });
+        }
+        function ligarChips(inputId, boxId, lista) {
+            const input = $(inputId), box = $(boxId);
+            input.addEventListener('keydown', (e) => {
+                if ((e.key === 'Enter' || e.key === ',') && input.value.trim()) {
+                    e.preventDefault();
+                    input.value.split(',').map(x => x.trim().toUpperCase()).filter(Boolean).forEach(v => { if (!lista.includes(v)) lista.push(v); });
+                    input.value = '';
+                    renderChips(lista, box, input);
+                } else if (e.key === 'Backspace' && !input.value && lista.length) {
+                    lista.pop(); renderChips(lista, box, input);
+                }
+            });
+            box.addEventListener('click', (e) => {
+                const x = e.target.closest('.x');
+                if (x) { lista.splice(Number(x.dataset.i), 1); renderChips(lista, box, input); }
+                else input.focus();
+            });
+        }
+        ligarChips('in-cor', 'chips-cor', cores);
+        ligarChips('in-tam', 'chips-tam', tamanhos);
+
+        function gerarGrade() {
+            ['in-cor', 'in-tam'].forEach(id => { const i = $(id); if (i.value.trim()) i.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' })); });
+            const cs = cores.length ? cores : [''];
+            const ts = tamanhos.length ? tamanhos : [''];
+            if (!cores.length && !tamanhos.length) { JG.toast('Informe ao menos uma cor ou um tamanho.', 'alerta'); return; }
+            const base = ($('p-sku').value.trim() || 'SKU').toUpperCase();
+            let novas = 0;
+            cs.forEach(c => ts.forEach(t => {
+                if (grade.some(g => (g.cor || '') === c && (g.tamanho || '') === t)) return;
+                grade.push({ cor: c, tamanho: t, sku: [base, c.slice(0, 3), t].filter(Boolean).join('-'), codigo: '', preco: '', custo: '', estoque: 0 });
+                novas++;
+            }));
+            renderizarGrade();
+            JG.toast(novas ? `${novas} variação(ões) adicionada(s).` : 'Essas combinações já estão na grade.', novas ? 'sucesso' : 'alerta');
+        }
+        function adicionarLinhaGrade(linha) {
+            grade.push(linha || { cor: '', tamanho: '', sku: '', codigo: '', preco: '', custo: '', estoque: 0 });
+            renderizarGrade();
+        }
+        function removerLinhaGrade(i) { grade.splice(i, 1); renderizarGrade(); }
+        function renderizarGrade() {
+            const tbody = $('tabela-grade');
+            if (!grade.length) {
+                tbody.innerHTML = '<tr><td colspan="8"><div class="estado-vazio" style="padding:24px"><span class="ms">grid_view</span><p>Sem variações. Informe cores e tamanhos e clique em "Gerar grade".</p></div></td></tr>';
+            } else {
+                const campo = (i, k, extra = '') => `<input type="text" value="${esc(grade[i][k] ?? '')}" data-i="${i}" data-k="${k}" ${extra}>`;
+                tbody.innerHTML = grade.map((g, i) => `<tr>
+                    <td>${campo(i, 'cor')}</td><td>${campo(i, 'tamanho', 'style="width:70px"')}</td><td>${campo(i, 'sku')}</td><td>${campo(i, 'codigo')}</td>
+                    <td>${campo(i, 'preco', 'class="num" inputmode="decimal" style="width:90px" placeholder="' + esc($('p-preco').value || '0,00') + '"')}</td>
+                    <td>${campo(i, 'custo', 'class="num" inputmode="decimal" style="width:90px" placeholder="' + esc($('p-custo').value || '0,00') + '"')}</td>
+                    <td><input type="number" min="0" value="${Number(g.estoque) || 0}" data-i="${i}" data-k="estoque" class="num" style="width:70px"></td>
+                    <td class="acoes"><button type="button" class="btn-icone perigo" title="Remover" onclick="removerLinhaGrade(${i})"><span class="ms">delete</span></button></td></tr>`).join('');
+            }
+            atualizarResumo();
+        }
+        $('tabela-grade').addEventListener('input', (e) => {
+            const t = e.target;
+            if (t.dataset.i === undefined) return;
+            grade[Number(t.dataset.i)][t.dataset.k] = t.dataset.k === 'estoque' ? (Number(t.value) || 0) : t.value;
+            atualizarResumo();
+        });
+
+        // ---------- preços por tabela
+        async function carregarPrecosTabela(p) {
+            const tbody = $('tabela-precos');
+            try {
+                const tabelas = await api('/api/tabelas-preco');
+                const detalhes = await Promise.all(tabelas.filter(t => t.itens > 0).map(t => api('/api/tabelas-preco/' + t.id).catch(() => null)));
+                const linhas = [];
+                detalhes.filter(Boolean).forEach(t => t.itens.filter(i => i.produtoId === p.id).forEach(i => {
+                    const final = i.preco !== null ? i.preco : p.preco * (1 + (i.percentual || 0) / 100);
+                    const regra = i.preco !== null ? `Preço fixo ${fmt(i.preco)}` : `${i.percentual > 0 ? '+' : ''}${String(i.percentual).replace('.', ',')}% sobre o preço base`;
+                    linhas.push(`<tr><td><b>${esc(t.nome)}</b> ${t.padrao ? '<span class="badge azul sem-ponto">Padrão</span>' : ''}</td><td class="right">${i.minQtd || 1}</td><td>${esc(regra)}</td><td class="right"><b>${fmt(final)}</b></td></tr>`);
+                }));
+                tbody.innerHTML = linhas.length ? linhas.join('') : '<tr><td colspan="4" class="sem-dados">Este produto não tem preço especial em nenhuma tabela.</td></tr>';
+            } catch (e) {
+                tbody.innerHTML = '<tr><td colspan="4" class="sem-dados">Não foi possível carregar as tabelas de preço.</td></tr>';
+            }
+        }
+
+        // ---------- carregar / salvar
+        function preencher(p, duplicando) {
+            $('p-nome').value = duplicando ? p.nome + ' (CÓPIA)' : p.nome;
+            $('p-codigo').value = duplicando ? '' : (p.codigo || '');
+            $('p-sku').value = duplicando ? '' : (p.sku || '');
+            $('p-preco').value = paraCampo(p.preco);
+            $('p-custo').value = paraCampo(p.custo);
+            $('p-categoria').value = p.categoriaId || '';
+            $('p-marca').value = p.marcaId || '';
+            $('p-colecao').value = p.colecaoId || '';
+            $('p-unidade').value = p.unidade || 'UN';
+            $('p-descricao').value = p.descricao || '';
+            $('p-estoque').value = duplicando ? 0 : (p.estoque || 0);
+            $('p-minimo').value = p.minimo || 0;
+            $('p-maximo').value = p.maximo || 0;
+            $('p-ativo').checked = p.ativo;
+            ['ncm', 'cest', 'cfop', 'csosn', 'cst'].forEach(k => $('p-' + k).value = p[k] || '');
+            grade = (p.variantes || []).map(v => ({
+                cor: v.cor || '', tamanho: v.tamanho || '', sku: duplicando ? '' : (v.sku || ''), codigo: duplicando ? '' : (v.codigo || ''),
+                preco: v.preco !== null && v.preco !== undefined ? paraCampo(v.preco) : '', custo: v.custo !== null && v.custo !== undefined ? paraCampo(v.custo) : '',
+                estoque: duplicando ? 0 : (v.estoque || 0)
+            }));
+            cores.push(...new Set(grade.map(g => g.cor).filter(Boolean)));
+            tamanhos.push(...new Set(grade.map(g => g.tamanho).filter(Boolean)));
+            renderChips(cores, $('chips-cor'), $('in-cor'));
+            renderChips(tamanhos, $('chips-tam'), $('in-tam'));
+            if (p.foto) { foto = duplicando ? p.foto : undefined; mostrarFoto(p.foto); }
+        }
+
+        async function salvarProduto() {
+            const gradeValida = grade.filter(g => g.cor || g.tamanho || g.sku || g.codigo);
+            const corpo = {
+                nome: $('p-nome').value.trim(),
+                codigo: $('p-codigo').value.trim(),
+                sku: $('p-sku').value.trim(),
+                preco: parseMoeda($('p-preco').value),
+                custo: parseMoeda($('p-custo').value),
+                categoriaId: $('p-categoria').value,
+                marcaId: $('p-marca').value,
+                colecaoId: $('p-colecao').value,
+                unidade: $('p-unidade').value,
+                descricao: $('p-descricao').value.trim(),
+                estoque: gradeValida.length ? 0 : (parseInt($('p-estoque').value) || 0),
+                minimo: parseInt($('p-minimo').value) || 0,
+                maximo: parseInt($('p-maximo').value) || 0,
+                ativo: $('p-ativo').checked,
+                ncm: $('p-ncm').value.trim(), cest: $('p-cest').value.trim(), cfop: $('p-cfop').value.trim(),
+                csosn: $('p-csosn').value.trim(), cst: $('p-cst').value.trim(),
+                variantes: gradeValida.map(g => ({
+                    cor: g.cor, tamanho: g.tamanho, sku: g.sku, codigo: g.codigo,
+                    preco: g.preco === '' ? '' : parseMoeda(g.preco), custo: g.custo === '' ? '' : parseMoeda(g.custo),
+                    estoque: Number(g.estoque) || 0
+                }))
+            };
+            if (foto !== undefined) corpo.foto = foto;
+            if (!corpo.nome) { document.querySelector('[data-aba="geral"]').click(); $('p-nome').focus(); JG.toast('Informe o nome do produto.', 'alerta'); return; }
+            if (!corpo.preco) { document.querySelector('[data-aba="precos"]').click(); $('p-preco').focus(); JG.toast('Informe o preço de venda.', 'alerta'); return; }
+            const btn = $('btn-salvar');
+            btn.disabled = true;
+            try {
+                if (ID) await api(`/api/produtos/${encodeURIComponent(ID)}`, 'PUT', corpo);
+                else await api('/api/produtos', 'POST', corpo);
+                alert(ID ? 'Produto atualizado com sucesso.' : 'Produto cadastrado com sucesso.');
+                location.href = '/produtos.html';
+            } catch (e) { JG.toast(e.message, 'erro'); }
+            finally { btn.disabled = false; }
+        }
+        document.addEventListener('keydown', (e) => { if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) { e.preventDefault(); salvarProduto(); } });
+
+        (async () => {
+            try {
+                await carregarListas();
+                const alvo = ID || DUPLICAR;
+                if (alvo) {
+                    const lista = await api('/api/produtos');
+                    produto = lista.find(p => p.id === alvo);
+                    if (!produto) { JG.toast('Produto não encontrado.', 'erro'); return; }
+                    preencher(produto, !!DUPLICAR);
+                    if (ID) {
+                        $('titulo').textContent = produto.nome;
+                        document.title = produto.nome + ' - JG Sistemas';
+                        $('subtitulo').textContent = [produto.codigo ? 'Código ' + produto.codigo : '', produto.sku ? 'SKU ' + produto.sku : '', produto.categoria].filter(Boolean).join(' · ') || 'Editar produto';
+                        $('badge-situacao').innerHTML = `<span class="badge ${produto.ativo ? 'ativo' : 'inativo'}">${produto.ativo ? 'Ativo' : 'Inativo'}</span>`;
+                        carregarPrecosTabela(produto);
+                    } else {
+                        $('titulo').textContent = 'Novo produto (cópia)';
+                    }
+                }
+                renderizarGrade();
+                $('p-nome').focus();
+            } catch (e) { JG.toast('Falha ao carregar dados: ' + e.message, 'erro'); renderizarGrade(); }
+        })();
+    </script>
+</body>
+</html>

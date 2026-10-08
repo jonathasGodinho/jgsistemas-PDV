@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Promoções &amp; Campanhas — JG Sistemas</title>
+<!-- Fontes Google Inter e Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS com Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-container": "#e5eeff",
+            "on-secondary-fixed-variant": "#324769",
+            "on-secondary-fixed": "#011b3b",
+            "inverse-surface": "#213145",
+            "surface": "#f8f9ff",
+            "surface-variant": "#d3e4fe",
+            "surface-container-high": "#dce9ff",
+            "primary": "#003873",
+            "background": "#f8f9ff",
+            "on-tertiary-fixed": "#002109",
+            "tertiary": "#004319",
+            "primary-fixed-dim": "#a9c7ff",
+            "on-error": "#ffffff",
+            "on-background": "#0b1c30",
+            "inverse-on-surface": "#eaf1ff",
+            "tertiary-fixed": "#7ffc97",
+            "tertiary-container": "#005d25",
+            "surface-container-low": "#eff4ff",
+            "error": "#ba1a1a",
+            "primary-container": "#1d4f91",
+            "on-primary": "#ffffff",
+            "secondary-container": "#bfd5fe",
+            "surface-tint": "#305ea1",
+            "surface-container-lowest": "#ffffff",
+            "tertiary-fixed-dim": "#62df7d",
+            "surface-dim": "#cbdbf5",
+            "on-primary-container": "#a2c3ff",
+            "outline": "#737782",
+            "on-primary-fixed-variant": "#0e4688",
+            "on-tertiary-container": "#5dda7a",
+            "primary-fixed": "#d6e3ff",
+            "secondary-fixed-dim": "#b2c7f0",
+            "secondary": "#4a5f82",
+            "on-tertiary": "#ffffff",
+            "on-secondary-container": "#475c7f",
+            "error-container": "#ffdad6",
+            "on-surface-variant": "#434750",
+            "outline-variant": "#c3c6d2",
+            "on-primary-fixed": "#001b3e",
+            "inverse-primary": "#a9c7ff",
+            "on-surface": "#0b1c30",
+            "on-tertiary-fixed-variant": "#005320",
+            "surface-container-highest": "#d3e4fe",
+            "surface-bright": "#f8f9ff",
+            "secondary-fixed": "#d5e3ff",
+            "on-secondary": "#ffffff",
+            "on-error-container": "#93000a"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            headline: ["Inter", "sans-serif"],
+            display: ["Inter", "sans-serif"],
+            body: ["Inter", "sans-serif"],
+            label: ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Inter', sans-serif;
+      font-variant-numeric: tabular-nums;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 19px;
+      line-height: 1;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #c3c6d2;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface flex h-screen w-screen overflow-hidden text-[13px] antialiased select-none">
+<!-- SIDEBAR FIXA ESQUERDA (248px) -->
+<aside class="fixed top-0 left-0 h-screen w-[248px] bg-on-surface text-surface z-40 flex flex-col justify-between border-r border-outline/20 shadow-sm select-none">
+<!-- Topo da Sidebar: Brand Logo -->
+<div class="p-4 border-b border-outline/20">
+<div class="flex items-center gap-3">
+<div class="h-9 w-9 rounded-lg bg-tertiary-container flex items-center justify-center font-bold text-surface text-sm tracking-wider shadow-inner">
+          JG
+        </div>
+<div class="flex flex-col">
+<span class="font-headline font-bold text-surface text-sm leading-tight tracking-wide">JG Sistemas</span>
+<span class="text-[11px] text-outline-variant font-medium">ERP Corporativo</span>
+</div>
+</div>
+</div>
+<!-- Navegação Vertical com Submenu Expandido de Catálogo -->
+<nav class="flex-1 overflow-y-auto px-3 py-3 custom-scrollbar flex flex-col gap-1 text-[13px]">
+<!-- Início -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface rounded-lg transition-colors hover:bg-primary/50" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-medium">Início</span>
+</a>
+<!-- Vendas -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface rounded-lg transition-colors hover:bg-primary/50" href="#">
+<span class="material-symbols-outlined" data-icon="point_of_sale">point_of_sale</span>
+<span class="font-medium">Vendas</span>
+</a>
+<!-- Clientes -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface rounded-lg transition-colors hover:bg-primary/50" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-medium">Clientes</span>
+</a>
+<!-- Catálogo (Agrupador Ativo / Expandido) -->
+<div class="flex flex-col rounded-lg bg-surface-container-high/10 pb-1">
+<a class="flex items-center justify-between px-3 py-2 text-surface font-semibold rounded-lg bg-primary/40" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary-fixed" data-icon="inventory_2">inventory_2</span>
+<span>Catálogo</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-outline-variant" data-icon="expand_more">expand_more</span>
+</a>
+<!-- Subitens de Catálogo -->
+<div class="pl-9 pr-2 py-1 flex flex-col gap-1 text-[12.5px]">
+<a class="py-1.5 px-2 rounded text-outline-variant hover:text-surface hover:bg-primary/30 transition-colors" href="#">Produtos</a>
+<a class="py-1.5 px-2 rounded text-outline-variant hover:text-surface hover:bg-primary/30 transition-colors" href="#">Categorias e marcas</a>
+<!-- PROMOÇÕES ATIVO DESTAQUE CONFORME O DESIGN SYSTEM & PROMPT -->
+<a class="py-1.5 px-2 rounded bg-primary-container text-surface font-semibold flex items-center justify-between shadow-xs" href="#">
+<span>Promoções</span>
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed"></span>
+</a>
+<a class="py-1.5 px-2 rounded text-outline-variant hover:text-surface hover:bg-primary/30 transition-colors" href="#">Tabelas de preço</a>
+</div>
+</div>
+<!-- Estoque -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface rounded-lg transition-colors hover:bg-primary/50" href="#">
+<span class="material-symbols-outlined" data-icon="warehouse">warehouse</span>
+<span class="font-medium">Estoque</span>
+</a>
+<!-- Financeiro -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface rounded-lg transition-colors hover:bg-primary/50" href="#">
+<span class="material-symbols-outlined" data-icon="account_balance">account_balance</span>
+<span class="font-medium">Financeiro</span>
+</a>
+<!-- Pessoas -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface rounded-lg transition-colors hover:bg-primary/50" href="#">
+<span class="material-symbols-outlined" data-icon="badge">badge</span>
+<span class="font-medium">Pessoas</span>
+</a>
+<!-- Relatórios -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface rounded-lg transition-colors hover:bg-primary/50" href="#">
+<span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+<span class="font-medium">Relatórios</span>
+</a>
+<!-- Administração -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface rounded-lg transition-colors hover:bg-primary/50" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-medium">Administração</span>
+</a>
+</nav>
+<!-- Rodapé da Sidebar com Segmento e Status -->
+<div class="p-3 border-t border-outline/20 bg-surface-container-high/5">
+<div class="flex items-center justify-between px-2 py-1.5 text-xs text-outline-variant">
+<span class="flex items-center gap-1.5 font-medium text-surface">
+<span class="material-symbols-outlined text-[16px] text-tertiary-fixed" data-icon="storefront">storefront</span>
+          Varejo · Moda
+        </span>
+<span class="text-[10px] bg-primary/60 px-1.5 py-0.5 rounded text-surface-variant font-mono">v3.4.1</span>
+</div>
+<div class="flex items-center gap-2 px-2 mt-1 text-[11px] text-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed animate-pulse"></span>
+<span>Online (Sincronizado)</span>
+</div>
+</div>
+</aside>
+<!-- ÁREA DIREITA: TOPBAR + CONTEÚDO PRINCIPAL (DESKTOP 1440x900) -->
+<div class="flex-1 ml-[248px] flex flex-col h-screen overflow-hidden">
+<!-- TOPBAR FIXA (56px / h-14) -->
+<header class="h-14 bg-surface-container-lowest border-b border-outline-variant/30 px-6 flex items-center justify-between shrink-0 z-30 shadow-xs">
+<!-- Lado Esquerdo: Breadcrumb -->
+<div class="flex items-center gap-2 text-xs">
+<span class="text-secondary font-medium">Catálogo</span>
+<span class="text-outline-variant">/</span>
+<span class="text-primary font-semibold text-sm">Promoções</span>
+</div>
+<!-- Centro: Busca Global com Atalho -->
+<div class="w-96 max-w-md relative hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-outline text-[18px]" data-icon="search">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant/40 rounded-lg pl-9 pr-14 py-1.5 text-xs text-on-surface focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all" placeholder="Buscar módulo, produto ou cliente..." type="text"/>
+<kbd class="absolute right-2.5 top-2 px-1.5 py-0.5 text-[10px] font-semibold text-secondary bg-surface-container-lowest border border-outline-variant/50 rounded shadow-2xs">Ctrl K</kbd>
+</div>
+<!-- Lado Direito: Ações Caixa + Notificações + Usuário -->
+<div class="flex items-center gap-3">
+<!-- Chip de Caixa Aberto -->
+<div class="flex items-center gap-2 px-2.5 py-1 rounded-full bg-tertiary-fixed/20 border border-tertiary-container/30 text-tertiary text-xs font-medium">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-ping"></span>
+<span>Caixa 01 · Aberto</span>
+</div>
+<!-- Botão Primário Abrir PDV -->
+<button class="bg-primary-container hover:bg-primary text-surface px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-xs">
+<span class="material-symbols-outlined text-[17px]" data-icon="point_of_sale">point_of_sale</span>
+<span>Abrir PDV</span>
+<span class="text-[10px] bg-primary/70 px-1 py-0.2 rounded font-mono">F1</span>
+</button>
+<div class="h-5 w-px bg-outline-variant/40 mx-1"></div>
+<!-- Sino com Badge -->
+<button class="relative p-1.5 text-secondary hover:text-on-surface rounded-lg hover:bg-surface-container-high transition-colors" title="Notificações">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-error ring-2 ring-surface-container-lowest"></span>
+</button>
+<!-- Ajuda -->
+<button class="p-1.5 text-secondary hover:text-on-surface rounded-lg hover:bg-surface-container-high transition-colors" title="Ajuda">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<!-- Perfil do Usuário -->
+<div class="flex items-center gap-2 pl-2">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-primary font-bold text-xs ring-1 ring-outline-variant/40">
+            JG
+          </div>
+<div class="hidden lg:flex flex-col text-left leading-tight">
+<span class="text-xs font-semibold text-on-surface">Juliana Gomes</span>
+<span class="text-[10px] text-secondary">Gerente</span>
+</div>
+</div>
+</div>
+</header>
+<!-- CONTEÚDO PRINCIPAL (SCROLLÁVEL) -->
+<main class="flex-1 overflow-y-auto p-5 custom-scrollbar bg-surface space-y-4">
+<!-- CABEÇALHO DA PÁGINA + KPIS -->
+<section class="flex flex-col gap-3">
+<!-- Linha de Título e Botões de Ação Topo -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<h1 class="text-xl font-headline font-bold text-on-surface tracking-tight">Promoções e Campanhas</h1>
+<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-tertiary-fixed/30 text-tertiary border border-tertiary-container/20">
+              6 ativas
+            </span>
+<span class="text-secondary text-xs hidden md:inline">• Gerencie regras automáticas de desconto de balcão, combos progressivos e campanhas sazonais do PDV.</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low text-secondary font-medium px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 transition-colors shadow-2xs">
+<span class="material-symbols-outlined text-[16px]" data-icon="download">download</span>
+<span>Exportar Regras</span>
+</button>
+<button class="bg-tertiary-container hover:bg-tertiary text-surface font-semibold px-3.5 py-1.5 rounded-lg text-xs flex items-center gap-1.5 transition-colors shadow-xs">
+<span class="material-symbols-outlined text-[16px]" data-icon="add">add</span>
+<span>+ Nova Promoção</span>
+</button>
+</div>
+</div>
+<!-- 4 KPI Cards Compactos -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+<!-- KPI 1 -->
+<div class="bg-surface-container-lowest p-3.5 rounded-lg border border-outline-variant/40 shadow-xs flex items-center justify-between">
+<div>
+<p class="text-[11px] font-medium text-secondary uppercase tracking-wider">Promoções Ativas</p>
+<h3 class="text-lg font-bold text-on-surface mt-0.5">6 campanhas</h3>
+<p class="text-[11px] text-on-tertiary-container flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[13px]" data-icon="event_upcoming">event_upcoming</span>
+                3 terminam nesta semana
+              </p>
+</div>
+<div class="p-2 rounded-lg bg-surface-container-low text-primary">
+<span class="material-symbols-outlined text-[20px]" data-icon="campaign">campaign</span>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="bg-surface-container-lowest p-3.5 rounded-lg border border-outline-variant/40 shadow-xs flex items-center justify-between">
+<div>
+<p class="text-[11px] font-medium text-secondary uppercase tracking-wider">Vendas c/ Promoção (Mês)</p>
+<h3 class="text-lg font-bold text-on-surface mt-0.5">R$ 18.420,00</h3>
+<p class="text-[11px] text-tertiary font-semibold flex items-center gap-0.5 mt-0.5">
+<span class="material-symbols-outlined text-[13px]" data-icon="trending_up">trending_up</span>
+                +14% vs mês ant.
+              </p>
+</div>
+<div class="p-2 rounded-lg bg-surface-container-low text-tertiary">
+<span class="material-symbols-outlined text-[20px]" data-icon="payments">payments</span>
+</div>
+</div>
+<!-- KPI 3 -->
+<div class="bg-surface-container-lowest p-3.5 rounded-lg border border-outline-variant/40 shadow-xs flex items-center justify-between">
+<div>
+<p class="text-[11px] font-medium text-secondary uppercase tracking-wider">Desconto Médio Aplicado</p>
+<h3 class="text-lg font-bold text-on-surface mt-0.5">12,8%</h3>
+<p class="text-[11px] text-secondary flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[13px] text-tertiary" data-icon="check_circle">check_circle</span>
+                Dentro da margem segura
+              </p>
+</div>
+<div class="p-2 rounded-lg bg-surface-container-low text-secondary">
+<span class="material-symbols-outlined text-[20px]" data-icon="percent">percent</span>
+</div>
+</div>
+<!-- KPI 4 -->
+<div class="bg-surface-container-lowest p-3.5 rounded-lg border border-outline-variant/40 shadow-xs flex items-center justify-between">
+<div>
+<p class="text-[11px] font-medium text-secondary uppercase tracking-wider">Impacto no Ticket Médio</p>
+<h3 class="text-lg font-bold text-on-surface mt-0.5">R$ 241,63</h3>
+<p class="text-[11px] text-tertiary font-semibold flex items-center gap-0.5 mt-0.5">
+<span class="material-symbols-outlined text-[13px]" data-icon="arrow_upward">arrow_upward</span>
+                +18,4% nos combos
+              </p>
+</div>
+<div class="p-2 rounded-lg bg-surface-container-low text-primary-container">
+<span class="material-symbols-outlined text-[20px]" data-icon="shopping_basket">shopping_basket</span>
+</div>
+</div>
+</div>
+</section>
+<!-- LAYOUT DIVIDIDO EM 2 COLUNAS (60% / 40%) -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+<!-- COLUNA ESQUERDA: LISTA & GESTÃO DE PROMOÇÕES (~60% = col-span-7) -->
+<div class="lg:col-span-7 bg-surface-container-lowest rounded-lg border border-outline-variant/40 shadow-xs flex flex-col">
+<!-- Barra de Filtros da Tabela -->
+<div class="p-3 border-b border-outline-variant/30 flex flex-wrap items-center justify-between gap-2 bg-surface-container-low/30 rounded-t-lg">
+<!-- Campo de Busca -->
+<div class="relative flex-1 min-w-[200px]">
+<span class="material-symbols-outlined absolute left-2.5 top-2 text-outline text-[16px]" data-icon="search">search</span>
+<input class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-lg pl-8 pr-3 py-1.5 text-xs text-on-surface placeholder-secondary focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container" placeholder="Buscar por nome da campanha, código ou produto..." type="text"/>
+</div>
+<!-- Seletor de Status -->
+<div class="flex items-center gap-2">
+<select class="bg-surface-container-lowest border border-outline-variant/50 rounded-lg px-2.5 py-1.5 text-xs text-on-surface font-medium focus:outline-none focus:border-primary-container">
+<option selected="">Status: Todas</option>
+<option>Ativas</option>
+<option>Agendadas</option>
+<option>Encerradas</option>
+</select>
+<select class="bg-surface-container-lowest border border-outline-variant/50 rounded-lg px-2.5 py-1.5 text-xs text-on-surface font-medium focus:outline-none focus:border-primary-container">
+<option selected="">Tipo: Todos</option>
+<option>Desconto %</option>
+<option>Desconto em R$</option>
+<option>Leve X Pague Y</option>
+<option>Compre e Ganhe</option>
+<option>Progressivo</option>
+</select>
+</div>
+</div>
+<!-- Tabela de Promoções -->
+<div class="overflow-x-auto">
+<table class="w-full text-left text-xs border-collapse">
+<thead>
+<tr class="bg-surface-container-low/70 border-b border-outline-variant/30 text-secondary font-semibold">
+<th class="py-2.5 pl-3.5 pr-2 w-8">
+<input class="rounded border-outline-variant text-primary focus:ring-0 w-3.5 h-3.5" type="checkbox"/>
+</th>
+<th class="py-2.5 px-3">Promoção &amp; Código</th>
+<th class="py-2.5 px-2">Escopo / Aplicação</th>
+<th class="py-2.5 px-2">Período de Vigência</th>
+<th class="py-2.5 px-2">Regras / Gatilho</th>
+<th class="py-2.5 px-2 text-center">Status</th>
+<th class="py-2.5 pr-3.5 pl-2 text-right">Ações</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20">
+<!-- Linha 1 -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="py-3 pl-3.5 pr-2">
+<input class="rounded border-outline-variant text-primary focus:ring-0 w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="py-3 px-3">
+<div class="font-semibold text-on-surface">Leve 3 Pague 2 Meias</div>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="text-[10px] text-secondary font-mono">PRM-018</span>
+<span class="px-1.5 py-0.2 rounded text-[10px] bg-secondary-container/40 text-on-secondary-container font-medium">Leve X Pague Y</span>
+</div>
+</td>
+<td class="py-3 px-2">
+<span class="text-on-surface-variant font-medium">Acessórios &amp; Meias</span>
+</td>
+<td class="py-3 px-2">
+<div class="text-[11px] text-on-surface">01/10/2026 – 15/10/2026</div>
+<span class="inline-flex items-center gap-1 text-[10px] text-tertiary font-semibold mt-0.5">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                      Ativa hoje · Restam 7 dias
+                    </span>
+</td>
+<td class="py-3 px-2">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface text-[11px] font-mono">Mín. 3 peças</span>
+</td>
+<td class="py-3 px-2 text-center">
+<!-- Toggle Switch Ativo -->
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-8 h-4.5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-tertiary-container"></div>
+</label>
+</td>
+<td class="py-3 pr-3.5 pl-2 text-right">
+<div class="flex items-center justify-end gap-1 text-secondary">
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded" title="Editar">
+<span class="material-symbols-outlined text-[16px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded" title="Duplicar">
+<span class="material-symbols-outlined text-[16px]" data-icon="content_copy">content_copy</span>
+</button>
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded" title="Histórico de Utilização">
+<span class="material-symbols-outlined text-[16px]" data-icon="history">history</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 2 (Destaque selecionado) -->
+<tr class="bg-surface-container-high/20 hover:bg-surface-container-high/30 transition-colors border-l-2 border-l-primary-container">
+<td class="py-3 pl-3.5 pr-2">
+<input checked="" class="rounded border-outline-variant text-primary focus:ring-0 w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="py-3 px-3">
+<div class="font-bold text-primary">Semana do Jeans 20%</div>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="text-[10px] text-secondary font-mono">PRM-022</span>
+<span class="px-1.5 py-0.2 rounded text-[10px] bg-primary-fixed text-primary font-medium">Desconto %</span>
+</div>
+</td>
+<td class="py-3 px-2">
+<span class="text-on-surface-variant font-medium">Jeanswear (Denim Co.)</span>
+</td>
+<td class="py-3 px-2">
+<div class="text-[11px] text-on-surface">05/10/2026 – 12/10/2026</div>
+<span class="inline-flex items-center gap-1 text-[10px] text-tertiary font-semibold mt-0.5">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                      Ativa hoje · Restam 4 dias
+                    </span>
+</td>
+<td class="py-3 px-2">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface text-[11px] font-mono">Mín. 1 peça</span>
+</td>
+<td class="py-3 px-2 text-center">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-8 h-4.5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-tertiary-container"></div>
+</label>
+</td>
+<td class="py-3 pr-3.5 pl-2 text-right">
+<div class="flex items-center justify-end gap-1 text-secondary">
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded" title="Editar">
+<span class="material-symbols-outlined text-[16px] text-primary" data-icon="edit">edit</span>
+</button>
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded" title="Duplicar">
+<span class="material-symbols-outlined text-[16px]" data-icon="content_copy">content_copy</span>
+</button>
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded" title="Histórico de Utilização">
+<span class="material-symbols-outlined text-[16px]" data-icon="history">history</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 3 -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="py-3 pl-3.5 pr-2">
+<input class="rounded border-outline-variant text-primary focus:ring-0 w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="py-3 px-3">
+<div class="font-semibold text-on-surface">R$ 30 off acima de R$ 200</div>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="text-[10px] text-secondary font-mono">PRM-025</span>
+<span class="px-1.5 py-0.2 rounded text-[10px] bg-secondary-container/40 text-on-secondary-container font-medium">Desconto em R$</span>
+</div>
+</td>
+<td class="py-3 px-2">
+<span class="text-on-surface-variant font-medium">Todo o Catálogo (Geral)</span>
+</td>
+<td class="py-3 px-2">
+<div class="text-[11px] text-on-surface">01/10/2026 – 31/10/2026</div>
+<span class="inline-flex items-center gap-1 text-[10px] text-tertiary font-semibold mt-0.5">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                      Ativa hoje · Mês inteiro
+                    </span>
+</td>
+<td class="py-3 px-2">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface text-[11px] font-mono">Valor mín. R$ 200,00</span>
+</td>
+<td class="py-3 px-2 text-center">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-8 h-4.5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-tertiary-container"></div>
+</label>
+</td>
+<td class="py-3 pr-3.5 pl-2 text-right">
+<div class="flex items-center justify-end gap-1 text-secondary">
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded" title="Editar">
+<span class="material-symbols-outlined text-[16px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded" title="Duplicar">
+<span class="material-symbols-outlined text-[16px]" data-icon="content_copy">content_copy</span>
+</button>
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded" title="Histórico de Utilização">
+<span class="material-symbols-outlined text-[16px]" data-icon="history">history</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 4 -->
+<tr class="hover:bg-surface-container-low/40 transition-colors">
+<td class="py-3 pl-3.5 pr-2">
+<input class="rounded border-outline-variant text-primary focus:ring-0 w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="py-3 px-3">
+<div class="font-semibold text-on-surface">Progressivo Camisetas</div>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="text-[10px] text-secondary font-mono">PRM-031</span>
+<span class="px-1.5 py-0.2 rounded text-[10px] bg-secondary-container/40 text-on-secondary-container font-medium">Progressivo Qtd</span>
+</div>
+</td>
+<td class="py-3 px-2">
+<span class="text-on-surface-variant font-medium">Camisetas Básicas</span>
+</td>
+<td class="py-3 px-2">
+<div class="text-[11px] text-on-surface">10/10/2026 – 25/10/2026</div>
+<span class="inline-flex items-center gap-1 text-[10px] text-secondary font-medium mt-0.5">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                      Agendada · Inicia em 3 dias
+                    </span>
+</td>
+<td class="py-3 px-2">
+<span class="text-[10.5px] text-secondary font-mono">2un: 10% | 3un: 15% | 4+: 20%</span>
+</td>
+<td class="py-3 px-2 text-center">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-8 h-4.5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-tertiary-container"></div>
+</label>
+</td>
+<td class="py-3 pr-3.5 pl-2 text-right">
+<div class="flex items-center justify-end gap-1 text-secondary">
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded" title="Editar">
+<span class="material-symbols-outlined text-[16px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded" title="Duplicar">
+<span class="material-symbols-outlined text-[16px]" data-icon="content_copy">content_copy</span>
+</button>
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded" title="Histórico de Utilização">
+<span class="material-symbols-outlined text-[16px]" data-icon="history">history</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 5 -->
+<tr class="hover:bg-surface-container-low/40 transition-colors opacity-90">
+<td class="py-3 pl-3.5 pr-2">
+<input class="rounded border-outline-variant text-primary focus:ring-0 w-3.5 h-3.5" type="checkbox"/>
+</td>
+<td class="py-3 px-3">
+<div class="font-semibold text-on-surface">Compre Jaqueta e Leve Cinto Grátis</div>
+<div class="flex items-center gap-1.5 mt-0.5">
+<span class="text-[10px] text-secondary font-mono">PRM-034</span>
+<span class="px-1.5 py-0.2 rounded text-[10px] bg-secondary-container/40 text-on-secondary-container font-medium">Compre e Ganhe</span>
+</div>
+</td>
+<td class="py-3 px-2">
+<span class="text-on-surface-variant font-medium">Jaqueta Jeans + Cinto</span>
+</td>
+<td class="py-3 px-2">
+<div class="text-[11px] text-on-surface">01/10/2026 – 10/10/2026</div>
+<span class="inline-flex items-center gap-1 text-[10px] text-error font-medium mt-0.5">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                      Encerra amanhã
+                    </span>
+</td>
+<td class="py-3 px-2">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface text-[11px] font-mono">1x Jaqueta Oversized</span>
+</td>
+<td class="py-3 px-2 text-center">
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-8 h-4.5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-tertiary-container"></div>
+</label>
+</td>
+<td class="py-3 pr-3.5 pl-2 text-right">
+<div class="flex items-center justify-end gap-1 text-secondary">
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded" title="Editar">
+<span class="material-symbols-outlined text-[16px]" data-icon="edit">edit</span>
+</button>
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded" title="Duplicar">
+<span class="material-symbols-outlined text-[16px]" data-icon="content_copy">content_copy</span>
+</button>
+<button class="p-1 hover:text-primary hover:bg-surface-container rounded" title="Histórico de Utilização">
+<span class="material-symbols-outlined text-[16px]" data-icon="history">history</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Rodapé da Tabela: Paginação -->
+<div class="p-3 border-t border-outline-variant/30 flex items-center justify-between text-xs text-secondary bg-surface-container-low/20 rounded-b-lg">
+<span>Exibindo <b class="text-on-surface">1–5</b> de <b>14</b> promoções cadastradas</span>
+<div class="flex items-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container text-secondary disabled:opacity-40" disabled="">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="px-2 py-0.5 rounded bg-primary-container text-surface font-semibold text-xs">1</button>
+<button class="px-2 py-0.5 rounded hover:bg-surface-container text-on-surface text-xs">2</button>
+<button class="px-2 py-0.5 rounded hover:bg-surface-container text-on-surface text-xs">3</button>
+<button class="p-1 rounded hover:bg-surface-container text-secondary">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- COLUNA DIREITA: PAINEL DE CRIAÇÃO / EDIÇÃO (~40% = col-span-5) -->
+<div class="lg:col-span-5 bg-surface-container-lowest rounded-lg border border-outline-variant/40 shadow-xs flex flex-col">
+<!-- Cabeçalho do Card Formulário -->
+<div class="p-4 border-b border-outline-variant/30 flex items-center justify-between bg-surface-container-low/20 rounded-t-lg">
+<div>
+<div class="flex items-center gap-2">
+<h2 class="text-sm font-bold text-on-surface font-headline">Criar Nova Promoção</h2>
+<span class="px-2 py-0.5 rounded text-[10px] bg-secondary-container/50 text-on-secondary-container font-semibold uppercase tracking-wider">
+                  Rascunho
+                </span>
+</div>
+<p class="text-[11px] text-secondary mt-0.5">Defina condições e descontos aplicados no caixa do PDV.</p>
+</div>
+<button class="text-secondary hover:text-on-surface p-1 rounded hover:bg-surface-container" title="Fechar ou recolher">
+<span class="material-symbols-outlined text-[18px]" data-icon="close">close</span>
+</button>
+</div>
+<!-- Formulário Completo -->
+<form class="p-4 space-y-4 text-xs">
+<!-- 1. Nome da Campanha -->
+<div>
+<label class="block font-semibold text-on-surface mb-1">
+                Nome da Campanha <span class="text-error">*</span>
+</label>
+<input class="w-full bg-surface-container-low/40 border border-outline-variant rounded-lg px-3 py-2 text-xs font-medium text-on-surface focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container" placeholder="Ex: Semana do Jeans 20% Off" type="text" value="Semana do Jeans 20% Off"/>
+</div>
+<!-- 2. Tipo de Promoção (Radio Cards) -->
+<div>
+<label class="block font-semibold text-on-surface mb-1.5">
+                Tipo de Promoção <span class="text-error">*</span>
+</label>
+<div class="space-y-1.5">
+<!-- Opção 1 -->
+<label class="flex items-center justify-between p-2 rounded-lg border border-outline-variant/50 hover:bg-surface-container-low/30 cursor-pointer transition-colors">
+<div class="flex items-center gap-2.5">
+<input class="text-primary focus:ring-0" name="promo_type" type="radio"/>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">Leve X Pague Y</span>
+<span class="text-[10px] text-secondary">Ex: Leve 3 camisetas e pague somente 2</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary text-[16px]" data-icon="layers">layers</span>
+</label>
+<!-- Opção 2 -->
+<label class="flex items-center justify-between p-2 rounded-lg border border-outline-variant/50 hover:bg-surface-container-low/30 cursor-pointer transition-colors">
+<div class="flex items-center gap-2.5">
+<input class="text-primary focus:ring-0" name="promo_type" type="radio"/>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">Compre X e leve grátis</span>
+<span class="text-[10px] text-secondary">Brinde condicionado / cross-sell automático</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary text-[16px]" data-icon="featured_seasonal_and_gifts">featured_seasonal_and_gifts</span>
+</label>
+<!-- Opção 3 (SELECIONADO) -->
+<label class="flex items-center justify-between p-2 rounded-lg border-2 border-primary-container bg-surface-container-high/30 cursor-pointer">
+<div class="flex items-center gap-2.5">
+<input checked="" class="text-primary focus:ring-0" name="promo_type" type="radio"/>
+<div class="flex flex-col">
+<span class="font-bold text-primary">Desconto % (Percentual)</span>
+<span class="text-[10px] text-secondary">Aplica abatimento percentual sobre o valor bruto</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="check_circle">check_circle</span>
+</label>
+<!-- Opção 4 -->
+<label class="flex items-center justify-between p-2 rounded-lg border border-outline-variant/50 hover:bg-surface-container-low/30 cursor-pointer transition-colors">
+<div class="flex items-center gap-2.5">
+<input class="text-primary focus:ring-0" name="promo_type" type="radio"/>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">Desconto em R$ (Fixo)</span>
+<span class="text-[10px] text-secondary">Ex: R$ 30 off em compras acima de R$ 200</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary text-[16px]" data-icon="attach_money">attach_money</span>
+</label>
+<!-- Opção 5 -->
+<label class="flex items-center justify-between p-2 rounded-lg border border-outline-variant/50 hover:bg-surface-container-low/30 cursor-pointer transition-colors">
+<div class="flex items-center gap-2.5">
+<input class="text-primary focus:ring-0" name="promo_type" type="radio"/>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">Desconto progressivo por volume</span>
+<span class="text-[10px] text-secondary">Desconto aumenta proporcionalmente à quantidade</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary text-[16px]" data-icon="trending_up">trending_up</span>
+</label>
+</div>
+</div>
+<!-- 3. Valor do Desconto / Regra -->
+<div class="p-3 bg-surface-container-low/30 rounded-lg border border-outline-variant/40 space-y-3">
+<div class="grid grid-cols-2 gap-3">
+<div>
+<label class="block font-semibold text-on-surface mb-1">Percentual de Desconto</label>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg pl-3 pr-7 py-1.5 text-xs font-bold text-on-surface focus:outline-none focus:border-primary-container" type="text" value="20"/>
+<span class="absolute right-2.5 top-1.5 text-secondary font-bold">%</span>
+</div>
+</div>
+<div>
+<label class="block font-semibold text-on-surface mb-1">Qtd. Mínima de Peças</label>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg pl-3 pr-8 py-1.5 text-xs font-bold text-on-surface focus:outline-none focus:border-primary-container" min="1" type="number" value="1"/>
+<span class="absolute right-2.5 top-1.5 text-secondary text-[11px]">un</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2 pt-1">
+<input class="rounded border-outline-variant text-primary focus:ring-0 w-3.5 h-3.5" id="accumulate" type="checkbox"/>
+<label class="text-[11.5px] text-secondary cursor-pointer select-none" for="accumulate">
+                  Permitir acumular com outros cupons ou promoções ativas
+                </label>
+</div>
+</div>
+<!-- 4. Escopo de Aplicação -->
+<div>
+<label class="block font-semibold text-on-surface mb-1.5">
+                Escopo de Aplicação <span class="text-error">*</span>
+</label>
+<!-- Tabs/Radio Inline de Filtro -->
+<div class="grid grid-cols-4 gap-1 p-0.5 bg-surface-container-low rounded-lg text-center text-[11px] font-semibold text-secondary mb-2">
+<button class="py-1 rounded text-secondary hover:text-on-surface" type="button">Produtos</button>
+<button class="py-1 rounded bg-surface-container-lowest text-primary shadow-2xs" type="button">Categoria</button>
+<button class="py-1 rounded text-secondary hover:text-on-surface" type="button">Marca</button>
+<button class="py-1 rounded text-secondary hover:text-on-surface" type="button">Toda a Loja</button>
+</div>
+<!-- Chips / Tags Removíveis -->
+<div class="border border-outline-variant rounded-lg p-2 bg-surface-container-lowest min-h-[44px] flex flex-wrap items-center gap-1.5">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-secondary-container/40 text-on-secondary-fixed text-[11px] font-medium rounded-full border border-outline-variant/40">
+                  Jeans
+                  <button class="hover:text-error flex items-center" type="button">
+<span class="material-symbols-outlined text-[13px]" data-icon="close">close</span>
+</button>
+</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-secondary-container/40 text-on-secondary-fixed text-[11px] font-medium rounded-full border border-outline-variant/40">
+                  Calças
+                  <button class="hover:text-error flex items-center" type="button">
+<span class="material-symbols-outlined text-[13px]" data-icon="close">close</span>
+</button>
+</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-secondary-container/40 text-on-secondary-fixed text-[11px] font-medium rounded-full border border-outline-variant/40">
+                  Marca Denim Co.
+                  <button class="hover:text-error flex items-center" type="button">
+<span class="material-symbols-outlined text-[13px]" data-icon="close">close</span>
+</button>
+</span>
+<button class="inline-flex items-center gap-0.5 px-2 py-0.5 text-[11px] font-semibold text-primary hover:bg-surface-container rounded-full transition-colors ml-auto" type="button">
+<span class="material-symbols-outlined text-[14px]" data-icon="add">add</span>
+                  Adicionar filtro
+                </button>
+</div>
+</div>
+<!-- 5. Vigência da Promoção -->
+<div>
+<label class="block font-semibold text-on-surface mb-1">
+                Vigência da Promoção <span class="text-error">*</span>
+</label>
+<div class="grid grid-cols-2 gap-3">
+<div>
+<span class="text-[10px] text-secondary font-medium block mb-0.5">Data Início</span>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-2.5 py-1.5 text-xs text-on-surface focus:outline-none focus:border-primary-container" type="date" value="2026-10-01"/>
+</div>
+</div>
+<div>
+<span class="text-[10px] text-secondary font-medium block mb-0.5">Data Término</span>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-2.5 py-1.5 text-xs text-on-surface focus:outline-none focus:border-primary-container" type="date" value="2026-10-15"/>
+</div>
+</div>
+</div>
+</div>
+<!-- 6. Configurações Adicionais -->
+<div class="pt-2 border-t border-outline-variant/30 space-y-2.5">
+<div class="flex items-center justify-between">
+<div>
+<span class="font-semibold text-on-surface block text-xs">Ativar promoção imediatamente no PDV</span>
+<span class="text-[10px] text-secondary">Sincroniza com os caixas online em menos de 10s</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-8 h-4.5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-tertiary-container"></div>
+</label>
+</div>
+<div class="flex items-center gap-2">
+<input checked="" class="rounded border-outline-variant text-primary focus:ring-0 w-3.5 h-3.5" id="show_receipt" type="checkbox"/>
+<label class="text-[11.5px] text-on-surface cursor-pointer select-none" for="show_receipt">
+                  Exibir aviso promocional no cupom e visor do cliente
+                </label>
+</div>
+</div>
+<!-- 7. Rodapé do Formulário -->
+<div class="pt-3 border-t border-outline-variant/30 flex items-center justify-end gap-2.5">
+<button class="px-3.5 py-2 rounded-lg border border-outline-variant text-secondary hover:text-on-surface hover:bg-surface-container font-medium text-xs transition-colors" type="button">
+                Cancelar / Limpar
+              </button>
+<button class="px-4 py-2 rounded-lg bg-tertiary-container hover:bg-tertiary text-surface font-semibold text-xs flex items-center gap-1.5 shadow-sm transition-colors" type="submit">
+<span class="material-symbols-outlined text-[16px]" data-icon="check">check</span>
+<span>Salvar Promoção</span>
+<span class="text-[10px] bg-tertiary/60 px-1 py-0.2 rounded font-mono">F10</span>
+</button>
+</div>
+</form>
+</div>
+</section>
+</main>
+</div>
+</body></html>

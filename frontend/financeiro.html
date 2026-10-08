@@ -4,531 +4,296 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google" content="notranslate">
-    <title>Financeiro - JG Sistemas</title>
+    <title>Contas a pagar e receber - JG Sistemas</title>
+    <link rel="stylesheet" href="/ui/jg.css">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
-        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
-        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
-        header a:hover { color: white; }
-        main { padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; }
-        .abas { display: flex; gap: 4px; margin-bottom: 16px; }
-        .aba { padding: 10px 18px; background: #d5dae0; color: #333; border: none; border-radius: 4px 4px 0 0; font-weight: bold; font-size: 13px; cursor: pointer; text-transform: uppercase; }
-        .aba.ativa { background-color: #134074; color: white; }
-        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 0 4px 4px 4px; overflow: hidden; }
-        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
-        .painel-titulo .resumo { font-size: 12px; color: #aab2bd; font-weight: normal; }
-        .painel-corpo { padding: 14px; }
-        .toolbar { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; align-items: center; }
-        .toolbar input, .toolbar select { padding: 10px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { background-color: #134074; color: white; padding: 10px; text-align: left; text-transform: uppercase; font-size: 12px; }
-        td { padding: 10px; border-bottom: 1px solid #e6e9ed; color: #333; }
-        tr:nth-child(even) { background-color: #f8f9fa; }
-        tr:hover { background-color: #eef2f7; }
-        .btn { border: none; border-radius: 4px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; }
-        .btn-azul { background-color: #134074; color: white; }
-        .btn-azul:hover { background-color: #0b2545; }
-        .btn-verde { background-color: #00a651; color: white; }
-        .btn-verde:hover { background-color: #007a3d; }
-        .btn-vermelho { background-color: #d9534f; color: white; }
-        .btn-vermelho:hover { background-color: #b0433f; }
-        .btn-amarelo { background-color: #f0ad4e; color: white; }
-        .btn-amarelo:hover { background-color: #c98a2b; }
-        .btn-mini { padding: 4px 8px; font-size: 12px; margin-right: 4px; }
-        .sem-dados { text-align: center; color: #8b95a1; padding: 30px; font-size: 14px; }
-        .status { font-weight: bold; padding: 3px 8px; border-radius: 3px; font-size: 11px; }
-        .status.PENDING { color: #c98a2b; background: #fdf3e3; }
-        .status.PAID { color: #00a651; background: #e3f7ec; }
-        .status.OVERDUE { color: #d9534f; background: #fdeaea; }
-        .status.CANCELLED { color: #8b95a1; background: #eceff1; }
-        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
-        .card { background: white; border: 1px solid #ccd1d9; border-radius: 4px; padding: 16px; }
-        .card .rotulo { font-size: 11px; text-transform: uppercase; color: #8b95a1; font-weight: bold; }
-        .card .valor { font-size: 24px; font-weight: bold; color: #134074; margin-top: 6px; }
-        .card .detalhe { font-size: 12px; color: #656d78; margin-top: 6px; }
-        .verde { color: #00a651 !important; }
-        .vermelho { color: #d9534f !important; }
-        .amarelo { color: #c98a2b !important; }
-
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 100; }
-        .modal-overlay.active { display: flex; }
-        .modal { background: white; border-radius: 6px; width: 500px; max-width: 94vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
-        .modal-head { background-color: #0b2545; color: white; padding: 14px 18px; font-weight: bold; font-size: 15px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
-        .modal-head .close { cursor: pointer; font-size: 20px; color: #aab2bd; }
-        .modal-head .close:hover { color: white; }
-        .modal-body { padding: 18px; }
-        .modal label { font-size: 12px; color: #656d78; font-weight: bold; display: block; margin: 12px 0 5px; text-transform: uppercase; }
-        .modal input, .modal select, .modal textarea { width: 100%; padding: 10px; font-size: 15px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; background: white; }
-        .modal textarea { resize: vertical; font-family: inherit; }
-
-        footer { background-color: #134074; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
+        .filtros .campo { width: 160px; }
+        tr.vencida td:first-child { box-shadow: inset 3px 0 0 var(--red); }
     </style>
 </head>
-<body>
-
-    <header>
-        <div>JG SISTEMAS - FINANCEIRO</div>
-        <div><a href="/">← Menu Principal</a></div>
-    </header>
-
+<body class="jg" data-pagina="financeiro">
     <main>
+        <div class="page-head">
+            <div><h1>Contas a pagar e receber</h1><div class="sub">Lançamentos, baixas e vencimentos</div></div>
+            <div class="acoes">
+                <a class="btn" href="/financeiro-visao.html"><span class="ms">monitoring</span>Visão geral</a>
+                <button class="btn btn-sucesso" onclick="abrirModalConta()"><span class="ms">add</span>Nova conta</button>
+            </div>
+        </div>
+
         <div class="abas">
-            <button class="aba ativa" id="aba-resumo" onclick="mudarAba('resumo')">Resumo</button>
-            <button class="aba" id="aba-receber" onclick="mudarAba('receber')">Contas a Receber</button>
-            <button class="aba" id="aba-pagar" onclick="mudarAba('pagar')">Contas a Pagar</button>
-            <button class="aba" id="aba-caixa" onclick="mudarAba('caixa')">Caixa</button>
+            <button class="aba ativa" data-tipo="receber"><span class="ms sm">call_received</span>A receber <span class="contador" id="cont-receber">0</span></button>
+            <button class="aba" data-tipo="pagar"><span class="ms sm">call_made</span>A pagar <span class="contador" id="cont-pagar">0</span></button>
         </div>
 
-        <!-- RESUMO -->
-        <div class="painel" id="secao-resumo">
-            <div class="painel-titulo"><span>Fluxo de Caixa</span><span class="resumo" id="resumo-data"></span></div>
-            <div class="painel-corpo">
-                <div class="cards">
-                    <div class="card">
-                        <div class="rotulo">Vendas de Hoje</div>
-                        <div class="valor verde" id="r-vendas">R$ 0,00</div>
-                        <div class="detalhe" id="r-vendas-qtd"></div>
+        <div class="kpis" id="kpis"></div>
+
+        <div class="card">
+            <div class="card-body" style="padding-bottom:0">
+                <div class="filtros">
+                    <div class="chips" id="chips-status">
+                        <button class="chip ativo" data-status="ABERTAS">Em aberto</button>
+                        <button class="chip" data-status="PENDING">Pendentes</button>
+                        <button class="chip" data-status="OVERDUE">Vencidas</button>
+                        <button class="chip" data-status="PAID">Baixadas</button>
+                        <button class="chip" data-status="CANCELLED">Canceladas</button>
+                        <button class="chip" data-status="">Todas</button>
                     </div>
-                    <div class="card">
-                        <div class="rotulo">Vendas por Forma de Pagamento</div>
-                        <div class="valor" id="r-metodos" style="font-size:14px;">-</div>
-                    </div>
-                    <div class="card">
-                        <div class="rotulo">A Receber</div>
-                        <div class="valor amarelo" id="r-receber">R$ 0,00</div>
-                        <div class="detalhe" id="r-receber-det"></div>
-                    </div>
-                    <div class="card">
-                        <div class="rotulo">A Pagar</div>
-                        <div class="valor vermelho" id="r-pagar">R$ 0,00</div>
-                        <div class="detalhe" id="r-pagar-det"></div>
-                    </div>
-                    <div class="card">
-                        <div class="rotulo">Caixa</div>
-                        <div class="valor" id="r-caixa-status" style="font-size:18px;">Fechado</div>
-                        <div class="detalhe" id="r-caixa-valor"></div>
-                    </div>
+                    <div class="campo"><label for="f-de">Vencimento de</label><input type="date" id="f-de"></div>
+                    <div class="campo"><label for="f-ate">até</label><input type="date" id="f-ate"></div>
+                    <div class="campo"><label for="f-categoria">Categoria</label><select id="f-categoria"><option value="">Todas</option></select></div>
+                    <div class="input-icone" style="flex:1;min-width:200px"><span class="ms">search</span><input type="text" id="f-busca" placeholder="Descrição, documento, fornecedor ou cliente"></div>
                 </div>
             </div>
-        </div>
-
-        <!-- CONTAS A RECEBER -->
-        <div class="painel" id="secao-receber" style="display:none;">
-            <div class="painel-titulo"><span>Contas a Receber</span><span class="resumo" id="resumo-receber"></span></div>
-            <div class="painel-corpo">
-                <div class="toolbar">
-                    <select id="filtro-receber" onchange="carregarReceber()">
-                        <option value="">Todas</option>
-                        <option value="PENDING">Pendentes</option>
-                        <option value="OVERDUE">Vencidas</option>
-                        <option value="PAID">Baixadas</option>
-                        <option value="CANCELLED">Canceladas</option>
-                    </select>
-                    <button class="btn btn-verde" onclick="abrirModalConta('RECEIVE')">Nova Conta a Receber</button>
-                    <a href="/recebiveis.html"><button class="btn btn-amarelo">Recebíveis de Cartão</button></a>
-                </div>
-                <div class="table-container" style="overflow-x: auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Descrição</th>
-                                <th>Vencimento</th>
-                                <th style="text-align: right;">Valor</th>
-                                <th>Categoria</th>
-                                <th>Status</th>
-                                <th style="text-align: center;">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabela-receber"><tr><td colspan="6" class="sem-dados">Carregando...</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- CONTAS A PAGAR -->
-        <div class="painel" id="secao-pagar" style="display:none;">
-            <div class="painel-titulo"><span>Contas a Pagar</span><span class="resumo" id="resumo-pagar"></span></div>
-            <div class="painel-corpo">
-                <div class="toolbar">
-                    <select id="filtro-pagar" onchange="carregarPagar()">
-                        <option value="">Todas</option>
-                        <option value="PENDING">Pendentes</option>
-                        <option value="OVERDUE">Vencidas</option>
-                        <option value="PAID">Baixadas</option>
-                        <option value="CANCELLED">Canceladas</option>
-                    </select>
-                    <button class="btn btn-verde" onclick="abrirModalConta('PAY')">Nova Conta a Pagar</button>
-                </div>
-                <div class="table-container" style="overflow-x: auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Descrição</th>
-                                <th>Vencimento</th>
-                                <th style="text-align: right;">Valor</th>
-                                <th>Fornecedor</th>
-                                <th>Status</th>
-                                <th style="text-align: center;">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabela-pagar"><tr><td colspan="6" class="sem-dados">Carregando...</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- CAIXA -->
-        <div class="painel" id="secao-caixa" style="display:none;">
-            <div class="painel-titulo"><span>Caixa</span></div>
-            <div class="painel-corpo">
-                <div id="caixa-fechado">
-                    <div class="sem-dados" style="padding: 10px 0 20px;">Nenhum caixa aberto no momento.</div>
-                    <button class="btn btn-verde" onclick="abrirCaixa()">Abrir Caixa</button>
-                </div>
-                <div id="caixa-aberto" style="display:none;">
-                    <div class="cards" style="margin-bottom: 16px;">
-                        <div class="card"><div class="rotulo">Abertura</div><div class="valor" id="cx-abertura">R$ 0,00</div></div>
-                        <div class="card"><div class="rotulo">Vendas</div><div class="valor verde" id="cx-vendas">R$ 0,00</div></div>
-                        <div class="card"><div class="rotulo">Suprimentos</div><div class="valor verde" id="cx-entradas">R$ 0,00</div></div>
-                        <div class="card"><div class="rotulo">Sangrias</div><div class="valor vermelho" id="cx-saidas">R$ 0,00</div></div>
-                        <div class="card"><div class="rotulo">Previsão em Caixa</div><div class="valor" id="cx-previsao">R$ 0,00</div></div>
-                    </div>
-                    <div class="toolbar">
-                        <button class="btn btn-verde" onclick="abrirModalCaixa('suprimento')">Suprimento</button>
-                        <button class="btn btn-amarelo" onclick="abrirModalCaixa('sangria')">Sangria</button>
-                        <button class="btn btn-vermelho" onclick="fecharCaixa()">Fechar Caixa</button>
-                    </div>
-                </div>
+            <div class="tabela-wrap">
+                <table>
+                    <thead><tr><th>Descrição</th><th id="th-pessoa">Cliente</th><th>Vencimento</th><th class="right">Valor</th><th>Categoria</th><th>Documento</th><th>Status</th><th class="acoes">Ações</th></tr></thead>
+                    <tbody id="tabela-contas"><tr><td colspan="8" class="sem-dados">Carregando...</td></tr></tbody>
+                    <tfoot><tr><td colspan="3">Total filtrado</td><td class="right" id="total-filtrado">R$ 0,00</td><td colspan="4"></td></tr></tfoot>
+                </table>
             </div>
         </div>
     </main>
 
-    <footer>© 2026 JG Sistemas</footer>
-
-    <!-- Modal de conta -->
-    <div class="modal-overlay" id="modal-conta">
+    <!-- Drawer: nova conta -->
+    <div class="modal-overlay drawer" id="modal-conta">
         <div class="modal">
-            <div class="modal-head">
-                <span id="conta-titulo">Nova Conta</span>
-                <span class="close" onclick="fecharModalConta()">&times;</span>
-            </div>
+            <div class="modal-head"><span id="conta-titulo">Nova conta</span><span class="close" onclick="fecharModalConta()">&times;</span></div>
             <div class="modal-body">
-                <input type="hidden" id="ct-tipo">
-                <label>Descrição *</label>
-                <input type="text" id="ct-descricao" placeholder="Ex.: Duplicata 001, Aluguel do mês...">
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                    <div>
-                        <label>Valor *</label>
-                        <input type="text" id="ct-valor" placeholder="0,00" inputmode="decimal">
-                    </div>
-                    <div>
-                        <label>Vencimento *</label>
-                        <input type="date" id="ct-vencimento">
-                    </div>
+                <div class="campo"><label>Tipo</label>
+                    <div class="chips"><button type="button" class="chip" data-novo="RECEIVE"><span class="ms sm">call_received</span>A receber</button><button type="button" class="chip" data-novo="PAY"><span class="ms sm">call_made</span>A pagar</button></div>
+                    <input type="hidden" id="ct-tipo"></div>
+                <div class="campo"><label for="ct-descricao">Descrição *</label><input type="text" id="ct-descricao" placeholder="Ex.: Aluguel loja Out/2026"></div>
+                <div class="form-grid">
+                    <div class="campo"><label for="ct-valor">Valor (R$) *</label><input type="text" id="ct-valor" placeholder="0,00" inputmode="decimal"></div>
+                    <div class="campo"><label for="ct-vencimento">Vencimento *</label><input type="date" id="ct-vencimento"></div>
+                    <div class="campo"><label for="ct-categoria">Categoria</label><input type="text" id="ct-categoria" list="lista-categorias" placeholder="Ex.: Aluguel"><datalist id="lista-categorias"></datalist></div>
+                    <div class="campo"><label for="ct-documento">Documento</label><input type="text" id="ct-documento" placeholder="Ex.: NF 1234"></div>
                 </div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                    <div>
-                        <label>Categoria</label>
-                        <input type="text" id="ct-categoria" placeholder="Ex.: Operacional">
-                    </div>
-                    <div>
-                        <label>Documento</label>
-                        <input type="text" id="ct-documento" placeholder="Ex.: NF 1234">
-                    </div>
+                <div class="campo" id="box-fornecedor"><label for="ct-fornecedor">Fornecedor</label><select id="ct-fornecedor"><option value="">Nenhum</option></select></div>
+                <div class="campo"><label for="ct-notas">Observações</label><textarea id="ct-notas" rows="3" placeholder="Anotações..."></textarea></div>
+                <div class="form-grid">
+                    <div class="campo"><label for="ct-repetir">Repetir (meses)</label><input type="number" id="ct-repetir" min="1" max="24" value="1"><div class="dica">Lança uma conta por mês com o mesmo valor.</div></div>
                 </div>
-                <label>Observações</label>
-                <textarea id="ct-notas" rows="2" placeholder="Anotações..."></textarea>
-                <button class="btn btn-azul" style="width:100%; margin-top:16px; padding:13px; font-size:15px;" onclick="salvarConta()">Lançar Conta</button>
             </div>
+            <div class="modal-foot"><button class="btn" onclick="fecharModalConta()">Cancelar</button><button class="btn btn-sucesso" onclick="salvarConta()"><span class="ms">check</span>Salvar</button></div>
         </div>
     </div>
 
-    <!-- Modal caixa -->
-    <div class="modal-overlay" id="modal-caixa">
-        <div class="modal">
-            <div class="modal-head">
-                <span id="caixa-titulo">Suprimento</span>
-                <span class="close" onclick="fecharModalCaixa()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="mx-tipo">
-                <label id="mx-label-valor">Valor *</label>
-                <input type="text" id="mx-valor" placeholder="0,00" inputmode="decimal">
-                <label>Observações</label>
-                <input type="text" id="mx-observacoes" placeholder="Motivo...">
-                <button class="btn btn-azul" style="width:100%; margin-top:16px; padding:13px; font-size:15px;" onclick="salvarCaixa()">Confirmar</button>
-            </div>
+    <!-- Modal confirmação -->
+    <div class="modal-overlay" id="modal-confirmar">
+        <div class="modal sm">
+            <div class="modal-head"><span id="cf-titulo">Confirmar</span><span class="close" onclick="fecharConfirmar()">&times;</span></div>
+            <div class="modal-body"><p style="margin:0" id="cf-texto"></p></div>
+            <div class="modal-foot"><button class="btn" onclick="fecharConfirmar()">Voltar</button><button class="btn" id="cf-ok">Confirmar</button></div>
         </div>
     </div>
 
     <script src="/seguranca.js"></script>
+    <script src="/ui/shell.js"></script>
     <script>
-        const API_BASE = '';
-
-        const formatarMoeda = v => `R$ ${Number(v).toFixed(2).replace('.', ',')}`;
-        const parseMoeda = v => parseFloat(String(v).replace(',', '.')) || 0;
-
-        function obterOperador() {
-            try {
-                const raw = localStorage.getItem('jg_operador');
-                return raw ? JSON.parse(raw) : null;
-            } catch (e) { return null; }
-        }
-
-        function tokenAuth() {
-            const op = obterOperador();
-            return op && op.token ? { 'Authorization': 'Bearer ' + op.token } : {};
-        }
-
-        function bloquearCaixa() {
-            const op = obterOperador();
-            if (!op) { window.location.href = '/login.html'; return true; }
-            if (op.papel === 'SELLER') { window.location.href = '/'; return true; }
-            return false;
-        }
+        const $ = (id) => document.getElementById(id);
+        const formatarMoeda = v => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const parseMoeda = (v) => parseFloat(String(v ?? '').replace(/\./g, '').replace(',', '.')) || 0;
+        const STATUS = {
+            PENDING: ['Pendente', 'pendente'], OVERDUE: ['Vencido', 'vencido'],
+            PAID: ['Pago', 'pago'], CANCELLED: ['Cancelado', 'cancelado']
+        };
+        let aba = 'receber';
+        let statusFiltro = 'ABERTAS';
+        const contas = { receber: [], pagar: [] };
 
         async function api(url, metodo = 'GET', corpo = null) {
-            const opcoes = { method: metodo, headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()) };
+            const opcoes = { method: metodo, headers: { 'Content-Type': 'application/json' } };
             if (corpo) opcoes.body = JSON.stringify(corpo);
-            const response = await fetch(`${API_BASE}${url}`, opcoes);
-            if (response.status === 401) {
-                localStorage.removeItem('jg_operador');
-                window.location.href = '/login.html';
-                throw new Error('Sessão expirada.');
-            }
-            const dados = await response.json();
-            if (!response.ok) throw new Error(dados.erro || 'Erro na requisição');
-            return dados;
+            const r = await fetch(url, opcoes);
+            if (r.status === 401) { localStorage.removeItem('jg_operador'); location.href = '/login.html'; throw new Error('Sessão expirada.'); }
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.erro || 'Erro na requisição');
+            return d;
         }
+        (function () { const op = JG.operador(); if (op && op.papel === 'SELLER') location.href = '/'; })();
 
-        bloquearCaixa();
+        function hoje0() { const d = new Date(); d.setHours(0, 0, 0, 0); return d; }
+        function vencida(c) { return (c.status === 'PENDING' || c.status === 'OVERDUE') && new Date(c.vencimento) < hoje0(); }
+        function statusReal(c) { return vencida(c) ? 'OVERDUE' : c.status; }
 
-        const STATUS = {
-            PENDING: { txt: 'PENDENTE', cls: 'PENDING' },
-            OVERDUE: { txt: 'VENCIDA', cls: 'OVERDUE' },
-            PAID: { txt: 'BAIXADA', cls: 'PAID' },
-            CANCELLED: { txt: 'CANCELADA', cls: 'CANCELLED' }
-        };
-
-        function formatarData(d) {
-            if (!d) return '-';
-            const dt = new Date(d);
-            return dt.toLocaleDateString('pt-BR');
-        }
-
-        const NOMES_METODOS = {
-            MONEY: 'Dinheiro', PIX: 'PIX', CREDIT_CARD: 'Crédito',
-            DEBIT_CARD: 'Débito', CREDIARIO: 'Crediário', VOUCHER: 'Vale',
-            TRANSFER: 'Transferência'
-        };
-
-        // ===== Abas =====
-        function mudarAba(aba) {
-            ['resumo', 'receber', 'pagar', 'caixa'].forEach(a => {
-                document.getElementById(`secao-${a}`).style.display = a === aba ? '' : 'none';
-                document.getElementById(`aba-${a}`).classList.toggle('ativa', a === aba);
-            });
-            if (aba === 'resumo') carregarResumo();
-            if (aba === 'receber') carregarReceber();
-            if (aba === 'pagar') carregarPagar();
-            if (aba === 'caixa') carregarCaixa();
-        }
-
-        // ===== Resumo =====
-        async function carregarResumo() {
+        async function carregar() {
             try {
-                const r = await api('/api/financeiro/resumo');
-                document.getElementById('resumo-data').innerText = new Date().toLocaleDateString('pt-BR');
-                document.getElementById('r-vendas').innerText = formatarMoeda(r.vendasHoje.total);
-                document.getElementById('r-vendas-qtd').innerText = `${r.vendasHoje.quantidade} venda(s) hoje`;
-
-                const metodos = Object.entries(r.vendasHoje.porMetodo)
-                    .map(([m, v]) => `${esc(NOMES_METODOS[m] || m)}: ${formatarMoeda(v)}`)
-                    .join('<br>') || 'Nenhuma venda hoje';
-                document.getElementById('r-metodos').innerHTML = metodos;
-
-                document.getElementById('r-receber').innerText = formatarMoeda(r.receber.total);
-                document.getElementById('r-receber-det').innerHTML =
-                    `${r.receber.quantidade} conta(s) | <span class="vermelho">${formatarMoeda(r.receber.vencidas)} vencidas</span>`;
-                document.getElementById('r-pagar').innerText = formatarMoeda(r.pagar.total);
-                document.getElementById('r-pagar-det').innerHTML =
-                    `${r.pagar.quantidade} conta(s) | <span class="vermelho">${formatarMoeda(r.pagar.vencidas)} vencidas</span>`;
-
-                if (r.caixa) {
-                    document.getElementById('r-caixa-status').innerText = 'ABERTO';
-                    document.getElementById('r-caixa-status').style.color = '#00a651';
-                    const prev = r.caixa.abertura + r.caixa.vendas + r.caixa.entradas - r.caixa.saidas;
-                    document.getElementById('r-caixa-valor').innerHTML =
-                        `Abertura ${formatarMoeda(r.caixa.abertura)} | Previsão ${formatarMoeda(prev)}`;
-                } else {
-                    document.getElementById('r-caixa-status').innerText = 'FECHADO';
-                    document.getElementById('r-caixa-status').style.color = '#8b95a1';
-                    document.getElementById('r-caixa-valor').innerText = 'Nenhum caixa aberto';
-                }
-            } catch (e) { alert(e.message); }
+                const [r, p] = await Promise.all([api('/api/financeiro/receber'), api('/api/financeiro/pagar')]);
+                contas.receber = r; contas.pagar = p;
+                ['receber', 'pagar'].forEach(t => $('cont-' + t).textContent = contas[t].filter(c => c.status === 'PENDING' || c.status === 'OVERDUE').length);
+                const cats = [...new Set([...r, ...p].map(c => c.categoria).filter(Boolean))].sort();
+                const atual = $('f-categoria').value;
+                $('f-categoria').innerHTML = '<option value="">Todas</option>' + cats.map(c => `<option>${esc(c)}</option>`).join('');
+                $('f-categoria').value = cats.includes(atual) ? atual : '';
+                $('lista-categorias').innerHTML = cats.map(c => `<option value="${esc(c)}">`).join('');
+                renderizar();
+            } catch (e) { JG.toast(e.message, 'erro'); }
         }
 
-        // ===== Contas =====
-        async function carregarContas(aba) {
-            const tipo = aba === 'receber' ? 'RECEIVE' : 'PAY';
-            const filtro = document.getElementById(`filtro-${aba}`).value;
-            const url = `/api/financeiro/${aba}${filtro ? '?status=' + filtro : ''}`;
-            const contas = await api(url);
-            const tbody = document.getElementById(`tabela-${aba}`);
-            const resumo = document.getElementById(`resumo-${aba}`);
+        function filtradas() {
+            const de = $('f-de').value, ate = $('f-ate').value, cat = $('f-categoria').value;
+            const q = $('f-busca').value.trim().toLowerCase();
+            return contas[aba].filter(c => {
+                const st = statusReal(c);
+                if (statusFiltro === 'ABERTAS' && !(st === 'PENDING' || st === 'OVERDUE')) return false;
+                if (statusFiltro && statusFiltro !== 'ABERTAS' && st !== statusFiltro) return false;
+                const v = String(c.vencimento).slice(0, 10);
+                if (de && v < de) return false;
+                if (ate && v > ate) return false;
+                if (cat && c.categoria !== cat) return false;
+                if (q && ![c.descricao, c.documento, c.fornecedor, c.cliente, c.categoria].join(' ').toLowerCase().includes(q)) return false;
+                return true;
+            });
+        }
 
-            if (contas.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="sem-dados">Nenhuma conta encontrada</td></tr>`;
-                resumo.innerText = '';
+        function renderizarKpis() {
+            const lista = contas[aba];
+            const abertas = lista.filter(c => c.status === 'PENDING' || c.status === 'OVERDUE');
+            const venc = abertas.filter(vencida);
+            const semana = abertas.filter(c => { const d = new Date(c.vencimento); const h = hoje0(); return d >= h && d < new Date(h.getTime() + 7 * 86400000); });
+            const inicioMes = new Date(); inicioMes.setDate(1); inicioMes.setHours(0, 0, 0, 0);
+            const pagasMes = lista.filter(c => c.status === 'PAID' && c.dataPagamento && new Date(c.dataPagamento) >= inicioMes);
+            const soma = (l, k = 'valor') => l.reduce((s, c) => s + Number(c[k] || c.valor || 0), 0);
+            const rec = aba === 'receber';
+            $('kpis').innerHTML = [
+                [rec ? 'Total a receber' : 'Total a pagar', formatarMoeda(soma(abertas)), `${abertas.length} título(s)`, rec ? 'call_received' : 'call_made', ''],
+                ['Vencidas', formatarMoeda(soma(venc)), `${venc.length} título(s)`, 'event_busy', venc.length ? 'vermelho' : ''],
+                ['Vencem em 7 dias', formatarMoeda(soma(semana)), `${semana.length} título(s)`, 'event_upcoming', semana.length ? 'ambar' : ''],
+                [rec ? 'Recebido no mês' : 'Pago no mês', formatarMoeda(soma(pagasMes, 'valorPago')), `${pagasMes.length} baixa(s)`, 'task_alt', 'verde']
+            ].map(([r, v, rod, ic, cor]) => `<div class="kpi ${cor}"><div class="kpi-top"><span>${r}</span><span class="ms">${ic}</span></div><div class="kpi-valor">${v}</div><div class="kpi-rodape">${rod}</div></div>`).join('');
+        }
+
+        function renderizar() {
+            renderizarKpis();
+            $('th-pessoa').textContent = aba === 'receber' ? 'Cliente' : 'Fornecedor';
+            const lista = filtradas();
+            const tbody = $('tabela-contas');
+            $('total-filtrado').textContent = formatarMoeda(lista.reduce((s, c) => s + c.valor, 0));
+            if (!lista.length) {
+                tbody.innerHTML = `<tr><td colspan="8"><div class="estado-vazio"><span class="ms">receipt_long</span><p>Nenhuma conta com esses filtros.</p><button class="btn btn-sucesso" onclick="abrirModalConta()"><span class="ms">add</span>Nova conta</button></div></td></tr>`;
                 return;
             }
-            const pendente = contas.filter(c => c.status === 'PENDING' || c.status === 'OVERDUE');
-            resumo.innerText = `${contas.length} conta(s) | ${formatarMoeda(pendente.reduce((s, c) => s + c.valor, 0))} em aberto`;
-
-            tbody.innerHTML = contas.map(c => {
-                const st = STATUS[c.status] || { txt: c.status, cls: 'CANCELLED' };
-                const podeBaixar = c.status === 'PENDING' || c.status === 'OVERDUE';
-                const atrasada = c.atrasada ? ' <strong style="color:#d9534f;">(atrasada)</strong>' : '';
-                return `
-                <tr>
-                    <td><strong>${esc(c.descricao)}</strong>${atrasada}<br><small style="color:#8b95a1;">${esc(c.categoria || c.documento || '')}</small></td>
-                    <td>${formatarData(c.vencimento)}</td>
-                    <td style="text-align:right;"><strong>${formatarMoeda(c.valor)}</strong></td>
-                    <td>${esc(c.fornecedor || '-')}</td>
-                    <td><span class="status ${st.cls}">${esc(st.txt)}</span></td>
-                    <td style="text-align:center;">
-                        ${podeBaixar ? `<button class="btn btn-mini btn-verde" onclick="baixarConta('${c.id}')">Baixar</button>` : ''}
-                        ${c.status === 'PENDING' || c.status === 'OVERDUE' ? `<button class="btn btn-mini btn-vermelho" onclick="cancelarConta('${c.id}')">Cancelar</button>` : ''}
-                    </td>
+            tbody.innerHTML = lista.map(c => {
+                const st = statusReal(c);
+                const [txt, cls] = STATUS[st] || [st, 'cinza'];
+                const aberta = c.status === 'PENDING' || c.status === 'OVERDUE';
+                const pessoa = aba === 'receber' ? (c.cliente || '—') : (c.fornecedor || '—');
+                return `<tr class="${st === 'OVERDUE' ? 'vencida' : ''}">
+                    <td><b>${esc(c.descricao)}</b>${c.notas ? `<br><small>${esc(c.notas)}</small>` : ''}</td>
+                    <td>${esc(pessoa)}</td>
+                    <td class="${st === 'OVERDUE' ? 'txt-vermelho' : ''}">${new Date(c.vencimento).toLocaleDateString('pt-BR')}</td>
+                    <td class="right"><b>${formatarMoeda(c.valor)}</b>${c.status === 'PAID' && c.valorPago && c.valorPago !== c.valor ? `<br><small>pago ${formatarMoeda(c.valorPago)}</small>` : ''}</td>
+                    <td>${c.categoria ? `<span class="chip" style="height:24px;cursor:default">${esc(c.categoria)}</span>` : '—'}</td>
+                    <td>${esc(c.documento || (c.venda ? 'Venda ' + c.venda : '—'))}</td>
+                    <td><span class="badge ${cls}">${txt}</span>${c.status === 'PAID' && c.dataPagamento ? `<br><small>${new Date(c.dataPagamento).toLocaleDateString('pt-BR')}</small>` : ''}</td>
+                    <td class="acoes">${aberta ? `
+                        <button class="btn-icone" style="color:var(--green)" title="Dar baixa" onclick="baixarConta('${c.id}')"><span class="ms">task_alt</span></button>
+                        <button class="btn-icone perigo" title="Cancelar" onclick="cancelarConta('${c.id}')"><span class="ms">cancel</span></button>` : ''}</td>
                 </tr>`;
             }).join('');
         }
 
-        async function carregarReceber() {
-            try { await carregarContas('receber'); } catch (e) { alert(e.message); }
+        function trocarAba(t) {
+            aba = t;
+            document.querySelectorAll('[data-tipo]').forEach(b => b.classList.toggle('ativa', b.dataset.tipo === t));
+            history.replaceState(null, '', '#' + t);
+            renderizar();
         }
-        async function carregarPagar() {
-            try { await carregarContas('pagar'); } catch (e) { alert(e.message); }
-        }
+        document.querySelectorAll('[data-tipo]').forEach(b => b.addEventListener('click', () => trocarAba(b.dataset.tipo)));
+        document.querySelectorAll('[data-status]').forEach(b => b.addEventListener('click', () => {
+            statusFiltro = b.dataset.status;
+            document.querySelectorAll('[data-status]').forEach(x => x.classList.toggle('ativo', x === b));
+            renderizar();
+        }));
+        ['f-de', 'f-ate', 'f-categoria', 'f-busca'].forEach(id => $(id).addEventListener('input', renderizar));
 
-        function abrirModalConta(tipo) {
-            document.getElementById('ct-tipo').value = tipo;
-            document.getElementById('conta-titulo').innerText =
-                tipo === 'RECEIVE' ? 'Nova Conta a Receber' : 'Nova Conta a Pagar';
-            document.getElementById('ct-descricao').value = '';
-            document.getElementById('ct-valor').value = '';
-            document.getElementById('ct-vencimento').value = new Date().toISOString().slice(0, 10);
-            document.getElementById('ct-categoria').value = '';
-            document.getElementById('ct-documento').value = '';
-            document.getElementById('ct-notas').value = '';
-            document.getElementById('modal-conta').classList.add('active');
+        // ---------- confirmação
+        function confirmar(titulo, texto, rotulo, cls) {
+            return new Promise(resolve => {
+                $('cf-titulo').textContent = titulo; $('cf-texto').textContent = texto;
+                $('cf-ok').textContent = rotulo; $('cf-ok').className = 'btn ' + cls;
+                $('cf-ok').onclick = () => { window._cfResolve = null; fecharConfirmar(); resolve(true); };
+                window._cfResolve = resolve;
+                $('modal-confirmar').classList.add('active');
+            });
         }
-
-        function fecharModalConta() {
-            document.getElementById('modal-conta').classList.remove('active');
-        }
-
-        async function salvarConta() {
-            const corpo = {
-                tipo: document.getElementById('ct-tipo').value,
-                descricao: document.getElementById('ct-descricao').value.trim(),
-                valor: parseMoeda(document.getElementById('ct-valor').value),
-                vencimento: document.getElementById('ct-vencimento').value,
-                categoria: document.getElementById('ct-categoria').value.trim(),
-                documento: document.getElementById('ct-documento').value.trim(),
-                notas: document.getElementById('ct-notas').value.trim()
-            };
-            if (!corpo.descricao) { alert("Informe a descrição!"); return; }
-            if (!corpo.valor || corpo.valor <= 0) { alert("Informe um valor válido!"); return; }
-            if (!corpo.vencimento) { alert("Informe o vencimento!"); return; }
-            try {
-                await api('/api/financeiro/transacao', 'POST', corpo);
-                fecharModalConta();
-                const aba = corpo.tipo === 'RECEIVE' ? 'receber' : 'pagar';
-                await carregarContas(aba);
-            } catch (e) { alert(e.message); }
-        }
+        function fecharConfirmar() { $('modal-confirmar').classList.remove('active'); if (window._cfResolve) { window._cfResolve(false); window._cfResolve = null; } }
 
         async function baixarConta(id) {
-            if (!confirm("Confirmar baixa desta conta?")) return;
-            try {
-                await api(`/api/financeiro/baixar/${id}`, 'POST');
-                await carregarContas(document.querySelector('.aba.ativa').id.replace('aba-', ''));
-            } catch (e) { alert(e.message); }
+            const c = contas[aba].find(x => x.id === id);
+            if (!await confirmar(aba === 'receber' ? 'Dar baixa (recebimento)' : 'Dar baixa (pagamento)', `${c.descricao} · ${formatarMoeda(c.valor)}`, 'Dar baixa', 'btn-sucesso')) return;
+            try { await api(`/api/financeiro/baixar/${id}`, 'POST'); JG.toast('Baixa registrada.', 'sucesso'); await carregar(); }
+            catch (e) { JG.toast(e.message, 'erro'); }
         }
-
         async function cancelarConta(id) {
-            if (!confirm("Cancelar esta conta?")) return;
-            try {
-                await api(`/api/financeiro/transacao/${id}`, 'DELETE');
-                await carregarContas(document.querySelector('.aba.ativa').id.replace('aba-', ''));
-            } catch (e) { alert(e.message); }
+            const c = contas[aba].find(x => x.id === id);
+            if (!await confirmar('Cancelar conta', `Cancelar "${c.descricao}" de ${formatarMoeda(c.valor)}?`, 'Cancelar conta', 'btn-perigo')) return;
+            try { await api(`/api/financeiro/transacao/${id}`, 'DELETE'); JG.toast('Conta cancelada.', 'sucesso'); await carregar(); }
+            catch (e) { JG.toast(e.message, 'erro'); }
         }
 
-        // ===== Caixa (fluxo Ecocentauro em /caixa.html) =====
-        let caixaAberto = null;
-
-        async function carregarCaixa() {
-            try {
-                const cx = await api('/api/caixa/aberto');
-                caixaAberto = cx;
-                const aberto = cx !== null;
-                document.getElementById('caixa-fechado').style.display = aberto ? 'none' : '';
-                document.getElementById('caixa-aberto').style.display = aberto ? '' : 'none';
-                if (aberto) {
-                    document.getElementById('cx-abertura').innerText = formatarMoeda(cx.abertura);
-                    document.getElementById('cx-vendas').innerText = formatarMoeda(cx.vendas);
-                    document.getElementById('cx-entradas').innerText = formatarMoeda(cx.entradas);
-                    document.getElementById('cx-saidas').innerText = formatarMoeda(cx.saidas);
-                    document.getElementById('cx-previsao').innerText = formatarMoeda(cx.previsao);
-                }
-            } catch (e) { alert(e.message); }
+        // ---------- nova conta
+        function definirTipoNovo(tipo) {
+            $('ct-tipo').value = tipo;
+            document.querySelectorAll('[data-novo]').forEach(b => b.classList.toggle('ativo', b.dataset.novo === tipo));
+            $('box-fornecedor').classList.toggle('hidden', tipo !== 'PAY');
+            $('conta-titulo').textContent = tipo === 'RECEIVE' ? 'Nova conta a receber' : 'Nova conta a pagar';
         }
-
-        function abrirCaixa() {
-            window.location.href = '/caixa.html';
+        document.querySelectorAll('[data-novo]').forEach(b => b.addEventListener('click', () => definirTipoNovo(b.dataset.novo)));
+        let fornecedoresCarregados = false;
+        async function abrirModalConta(tipo) {
+            definirTipoNovo(tipo || (aba === 'pagar' ? 'PAY' : 'RECEIVE'));
+            ['ct-descricao', 'ct-valor', 'ct-categoria', 'ct-documento', 'ct-notas'].forEach(i => $(i).value = '');
+            $('ct-vencimento').value = new Date().toISOString().slice(0, 10);
+            $('ct-repetir').value = 1;
+            $('ct-fornecedor').value = '';
+            $('modal-conta').classList.add('active');
+            setTimeout(() => $('ct-descricao').focus(), 60);
+            if (!fornecedoresCarregados) {
+                try {
+                    const f = await api('/api/fornecedores');
+                    $('ct-fornecedor').innerHTML = '<option value="">Nenhum</option>' + f.map(x => `<option value="${esc(x.id)}">${esc(x.nome)}</option>`).join('');
+                    fornecedoresCarregados = true;
+                } catch (e) { /* módulo de estoque pode estar desligado */ }
+            }
         }
-
-        function abrirModalCaixa(tipo) {
-            if (!caixaAberto) { alert("Nenhuma registradora aberta!"); return; }
-            document.getElementById('mx-tipo').value = tipo;
-            document.getElementById('caixa-titulo').innerText = tipo === 'sangria' ? 'Sangria' : 'Suprimento';
-            document.getElementById('mx-label-valor').innerText = tipo === 'sangria' ? 'Valor da sangria *' : 'Valor do suprimento *';
-            document.getElementById('mx-valor').value = '';
-            document.getElementById('mx-observacoes').value = '';
-            document.getElementById('modal-caixa').classList.add('active');
-        }
-
-        function fecharModalCaixa() {
-            document.getElementById('modal-caixa').classList.remove('active');
-        }
-
-        async function salvarCaixa() {
-            const tipo = document.getElementById('mx-tipo').value;
-            const corpo = {
-                numero: caixaAberto.numero,
-                valor: parseMoeda(document.getElementById('mx-valor').value),
-                observacoes: document.getElementById('mx-observacoes').value.trim()
+        function fecharModalConta() { $('modal-conta').classList.remove('active'); }
+        async function salvarConta() {
+            const base = {
+                tipo: $('ct-tipo').value,
+                descricao: $('ct-descricao').value.trim(),
+                valor: parseMoeda($('ct-valor').value),
+                vencimento: $('ct-vencimento').value,
+                categoria: $('ct-categoria').value.trim(),
+                documento: $('ct-documento').value.trim(),
+                notas: $('ct-notas').value.trim(),
+                fornecedorId: $('ct-tipo').value === 'PAY' ? ($('ct-fornecedor').value || null) : null
             };
-            if (!corpo.valor || corpo.valor <= 0) { alert("Informe um valor válido!"); return; }
+            if (!base.descricao) { JG.toast('Informe a descrição.', 'alerta'); return; }
+            if (!base.valor || base.valor <= 0) { JG.toast('Informe um valor válido.', 'alerta'); return; }
+            if (!base.vencimento) { JG.toast('Informe o vencimento.', 'alerta'); return; }
+            const meses = Math.max(1, Math.min(24, parseInt($('ct-repetir').value) || 1));
             try {
-                await api(`/api/caixa/${tipo}`, 'POST', corpo);
-                fecharModalCaixa();
-                await carregarCaixa();
-            } catch (e) { alert(e.message); }
-        }
-
-        function fecharCaixa() {
-            window.location.href = '/caixa.html';
+                for (let i = 0; i < meses; i++) {
+                    const d = new Date(base.vencimento + 'T00:00:00');
+                    d.setMonth(d.getMonth() + i);
+                    const venc = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                    await api('/api/financeiro/transacao', 'POST', { ...base, vencimento: venc, descricao: meses > 1 ? `${base.descricao} (${i + 1}/${meses})` : base.descricao });
+                }
+                fecharModalConta();
+                JG.toast(meses > 1 ? `${meses} contas lançadas.` : 'Conta lançada.', 'sucesso');
+                trocarAba(base.tipo === 'RECEIVE' ? 'receber' : 'pagar');
+                await carregar();
+            } catch (e) { JG.toast(e.message, 'erro'); }
         }
 
         (async () => {
-            try {
-                await carregarResumo();
-            } catch (e) {
-                alert("Falha ao carregar dados: " + e.message);
-            }
+            const h = location.hash.slice(1);
+            if (h === 'pagar' || h === 'receber') trocarAba(h);
+            await carregar();
+            if (new URLSearchParams(location.search).get('nova')) abrirModalConta();
         })();
     </script>
 </body>

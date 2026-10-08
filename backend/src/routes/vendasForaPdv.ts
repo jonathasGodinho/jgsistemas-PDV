@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { moduloAtivo } from '../utils/modulos';
 import { randomUUID } from 'crypto';
 import prisma from '../db';
 import { autenticar, ehOperadorDeCaixa } from '../middlewares/auth';
@@ -322,7 +323,7 @@ router.post('/', async (req: any, res: any) => {
                 });
             }
 
-            const cashbackPct = Number(await obterSetting<number>('cashback_percentual', 0)) || 0;
+            const cashbackPct = moduloAtivo('fidelidade') ? (Number(await obterSetting<number>('cashback_percentual', 0)) || 0) : 0;
             if (cashbackPct > 0) {
                 const valorCashback = Number((totalFinal * cashbackPct / 100).toFixed(2));
                 if (valorCashback > 0) {

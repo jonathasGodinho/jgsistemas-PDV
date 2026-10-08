@@ -6,295 +6,141 @@
     <meta name="google" content="notranslate">
     <title>Cadastro de Funcionários - JG Sistemas</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
-        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
-        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
-        header a:hover { color: white; }
-        main { padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; }
-        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
-        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; }
-        .painel-corpo { padding: 14px; }
-        .toolbar { display: flex; gap: 10px; margin-bottom: 14px; }
-        .toolbar input { flex: 1; padding: 10px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { background-color: #134074; color: white; padding: 10px; text-align: left; text-transform: uppercase; font-size: 12px; }
-        td { padding: 10px; border-bottom: 1px solid #e6e9ed; color: #333; }
-        tr:nth-child(even) { background-color: #f8f9fa; }
-        tr:hover { background-color: #eef2f7; }
-        .btn { border: none; border-radius: 4px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; }
-        .btn-azul { background-color: #134074; color: white; }
-        .btn-azul:hover { background-color: #0b2545; }
-        .btn-verde { background-color: #00a651; color: white; }
-        .btn-verde:hover { background-color: #007a3d; }
-        .btn-perigo { background-color: #d9534f; color: white; }
-        .btn-perigo:hover { background-color: #b0433f; }
-        .btn-mini { padding: 4px 8px; font-size: 12px; margin-right: 4px; }
-        .situacao { font-weight: bold; }
-        .situacao.ativo { color: #00a651; }
-        .situacao.inativo { color: #d9534f; }
-        .sem-dados { text-align: center; color: #8b95a1; padding: 30px; font-size: 14px; }
-
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 100; }
-        .modal-overlay.active { display: flex; }
-        .modal { background: white; border-radius: 6px; width: 780px; max-width: 96vw; max-height: 92vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
-        .modal-head { background-color: #0b2545; color: white; padding: 14px 18px; font-weight: bold; font-size: 15px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; }
-        .modal-head .close { cursor: pointer; font-size: 20px; color: #aab2bd; }
-        .modal-head .close:hover { color: white; }
-        .modal-body { padding: 18px; }
-        .modal .secao { background: #eef2f7; border-left: 4px solid #134074; padding: 8px 12px; font-size: 12px; font-weight: bold; text-transform: uppercase; color: #134074; margin: 18px 0 10px; }
-        .modal label { font-size: 12px; color: #656d78; font-weight: bold; display: block; margin: 10px 0 4px; text-transform: uppercase; }
-        .modal input, .modal select, .modal textarea { width: 100%; padding: 9px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; background: white; }
-        .modal textarea { resize: vertical; font-family: inherit; }
-        .modal .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .modal .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-        .modal .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
-        .modal-check { display: flex; align-items: center; gap: 8px; margin-top: 14px; }
-        .modal-check input { width: auto; }
-        .modal-check label { margin: 0; }
-
-        footer { background-color: #134074; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
-
-        @media (max-width: 800px) {
-            .modal .grid-2, .modal .grid-3, .modal .grid-4 { grid-template-columns: 1fr; }
-        }
+        .cel-func { display: flex; align-items: center; gap: 10px; }
+        .cel-func .jg-avatar { width: 32px; height: 32px; font-size: 11px; background: var(--primary-soft); color: var(--primary); }
+        .cel-func b { display: block; font-weight: 600; }
+        .sec-func { display: none; }
+        .sec-func.ativa { display: block; }
+        body.jg .modal .abas { margin: -4px 0 16px; }
     </style>
+    <link rel="stylesheet" href="/ui/jg.css">
 </head>
-<body>
-
-    <header>
-        <div>JG SISTEMAS - CADASTRO DE FUNCIONÁRIOS</div>
-        <div><a href="/">← Menu Principal</a></div>
-    </header>
-
+<body class="jg" data-pagina="colaboradores">
     <main>
-        <div class="painel">
-            <div class="painel-titulo">Funcionários</div>
-            <div class="painel-corpo">
-                <div class="toolbar">
-                    <input type="text" id="busca" placeholder="Buscar por nome, matrícula, CPF, cargo ou departamento...">
-                    <button class="btn btn-azul" onclick="buscarFuncionarios()">Buscar</button>
-                    <button class="btn btn-verde" onclick="abrirModalFuncionario()">Novo Funcionário</button>
+        <div class="page-head">
+            <div><h1>Colaboradores</h1><div class="sub" id="contador">Cadastro de funcionários, contrato e pagamento</div></div>
+            <div class="acoes">
+                <a class="btn" href="/configuracoes.html#usuarios"><span class="ms">key</span>Acesso ao sistema</a>
+                <button class="btn btn-sucesso" onclick="abrirModalFuncionario()"><span class="ms">person_add</span>Novo colaborador</button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body" style="padding-bottom:0">
+                <div class="filtros">
+                    <div class="input-icone" style="flex:1;min-width:260px"><span class="ms">search</span><input type="text" id="busca" placeholder="Buscar por nome, matrícula, CPF, cargo ou departamento"></div>
+                    <select id="f-cargo" style="width:180px" aria-label="Cargo"><option value="">Todos os cargos</option></select>
+                    <select id="f-situacao" style="width:160px" aria-label="Situação"><option value="">Todas</option><option value="ativo">Ativos</option><option value="inativo">Inativos</option></select>
+                    <button class="btn" onclick="buscarFuncionarios()"><span class="ms">search</span>Buscar</button>
                 </div>
-                <div class="table-container" style="overflow-x: auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Matrícula</th>
-                                <th>Nome</th>
-                                <th>Cargo</th>
-                                <th>Departamento</th>
-                                <th>Admissão</th>
-                                <th style="text-align: right;">Salário</th>
-                                <th>Situação</th>
-                                <th style="text-align: center;">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabela-funcionarios">
-                            <tr><td colspan="8" class="sem-dados">Carregando...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+            </div>
+            <div class="tabela-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Matrícula</th>
+                            <th>Nome</th>
+                            <th>Cargo</th>
+                            <th>Departamento</th>
+                            <th>Admissão</th>
+                            <th class="right">Salário</th>
+                            <th class="right">Comissão</th>
+                            <th>Situação</th>
+                            <th class="acoes">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-funcionarios">
+                        <tr><td colspan="9" class="sem-dados">Carregando...</td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </main>
-
-    <footer>© 2026 JG Sistemas</footer>
-
-    <!-- Modal de funcionário -->
+    <!-- Ficha do colaborador -->
     <div class="modal-overlay" id="modal-funcionario">
-        <div class="modal">
+        <div class="modal lg">
             <div class="modal-head">
-                <span id="modal-titulo">Novo Funcionário</span>
+                <span id="modal-titulo">Novo colaborador</span>
                 <span class="close" onclick="fecharModalFuncionario()">&times;</span>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="e-id">
+                <div class="abas">
+                    <button type="button" class="aba ativa" data-sec="pessoais"><span class="ms sm">person</span>Dados pessoais</button>
+                    <button type="button" class="aba" data-sec="endereco"><span class="ms sm">home</span>Endereço</button>
+                    <button type="button" class="aba" data-sec="contrato"><span class="ms sm">work</span>Contrato</button>
+                    <button type="button" class="aba" data-sec="pagamento"><span class="ms sm">account_balance</span>Pagamento</button>
+                </div>
 
-                <div class="secao">Dados Pessoais</div>
-                <div class="grid-3">
-                    <div>
-                        <label>Matrícula</label>
-                        <input type="text" id="e-codigo" placeholder="Ex.: 001">
-                    </div>
-                    <div>
-                        <label>Nome do Funcionário *</label>
-                        <input type="text" id="e-nome" placeholder="Nome completo">
-                    </div>
-                    <div>
-                        <label>Data de Nascimento</label>
-                        <input type="date" id="e-nascimento">
-                    </div>
-                </div>
-                <div class="grid-3">
-                    <div>
-                        <label>CPF</label>
-                        <input type="text" id="e-documento" placeholder="000.000.000-00">
-                    </div>
-                    <div>
-                        <label>RG</label>
-                        <input type="text" id="e-rg" placeholder="00.000.000-0">
-                    </div>
-                    <div>
-                        <label>Sexo</label>
-                        <select id="e-sexo">
-                            <option value="">Selecione...</option>
-                            <option value="M">Masculino</option>
-                            <option value="F">Feminino</option>
-                            <option value="O">Outro</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="grid-2">
-                    <div>
-                        <label>Estado Civil</label>
-                        <select id="e-estadoCivil">
-                            <option value="">Selecione...</option>
-                            <option value="SOLTEIRO">Solteiro(a)</option>
-                            <option value="CASADO">Casado(a)</option>
-                            <option value="DIVORCIADO">Divorciado(a)</option>
-                            <option value="VIUVO">Viúvo(a)</option>
-                            <option value="UNIAO_ESTAVEL">União Estável</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Email</label>
-                        <input type="email" id="e-email" placeholder="funcionario@email.com">
-                    </div>
-                </div>
-                <div class="grid-2">
-                    <div>
-                        <label>Telefone</label>
-                        <input type="text" id="e-telefone" placeholder="(00) 0000-0000">
-                    </div>
-                    <div>
-                        <label>Celular</label>
-                        <input type="text" id="e-celular" placeholder="(00) 00000-0000">
+                <div class="sec-func ativa" id="sec-pessoais">
+                    <div class="form-grid c3">
+                        <div class="campo"><label for="e-codigo">Matrícula</label><input type="text" id="e-codigo" placeholder="Ex.: 0007"></div>
+                        <div class="campo span-2"><label for="e-nome">Nome completo *</label><input type="text" id="e-nome" placeholder="Nome completo"></div>
+                        <div class="campo"><label for="e-nascimento">Nascimento</label><input type="date" id="e-nascimento"></div>
+                        <div class="campo"><label for="e-documento">CPF</label><input type="text" id="e-documento" placeholder="000.000.000-00"></div>
+                        <div class="campo"><label for="e-rg">RG</label><input type="text" id="e-rg" placeholder="00.000.000-0"></div>
+                        <div class="campo"><label for="e-sexo">Sexo</label>
+                            <select id="e-sexo"><option value="">Selecione...</option><option value="M">Masculino</option><option value="F">Feminino</option><option value="O">Outro</option></select></div>
+                        <div class="campo"><label for="e-estadoCivil">Estado civil</label>
+                            <select id="e-estadoCivil"><option value="">Selecione...</option><option value="SOLTEIRO">Solteiro(a)</option><option value="CASADO">Casado(a)</option><option value="DIVORCIADO">Divorciado(a)</option><option value="VIUVO">Viúvo(a)</option><option value="UNIAO_ESTAVEL">União estável</option></select></div>
+                        <div class="campo"><label for="e-email">E-mail</label><input type="email" id="e-email" placeholder="colaborador@email.com"></div>
+                        <div class="campo"><label for="e-telefone">Telefone</label><input type="text" id="e-telefone" placeholder="(00) 0000-0000"></div>
+                        <div class="campo"><label for="e-celular">Celular</label><input type="text" id="e-celular" placeholder="(00) 00000-0000"></div>
                     </div>
                 </div>
 
-                <div class="secao">Endereço</div>
-                <div class="grid-4">
-                    <div>
-                        <label>CEP</label>
-                        <input type="text" id="e-cep" placeholder="00000-000">
-                    </div>
-                    <div>
-                        <label>Endereço</label>
-                        <input type="text" id="e-endereco" placeholder="Rua/Av.">
-                    </div>
-                    <div>
-                        <label>Número</label>
-                        <input type="text" id="e-numero" placeholder="123">
-                    </div>
-                    <div>
-                        <label>Complemento</label>
-                        <input type="text" id="e-complemento" placeholder="Apto, bloco...">
-                    </div>
-                </div>
-                <div class="grid-3">
-                    <div>
-                        <label>Bairro</label>
-                        <input type="text" id="e-bairro" placeholder="Centro">
-                    </div>
-                    <div>
-                        <label>Cidade</label>
-                        <input type="text" id="e-cidade" placeholder="São Paulo">
-                    </div>
-                    <div>
-                        <label>Estado (UF)</label>
-                        <input type="text" id="e-estado" placeholder="SP" maxlength="2">
+                <div class="sec-func" id="sec-endereco">
+                    <div class="form-grid c4">
+                        <div class="campo"><label for="e-cep">CEP</label><div class="input-grupo"><input type="text" id="e-cep" placeholder="00000-000"><button class="btn" type="button" onclick="JG.buscarCep('e-')" title="Buscar CEP"><span class="ms">search</span></button></div></div>
+                        <div class="campo span-2"><label for="e-endereco">Endereço</label><input type="text" id="e-endereco" placeholder="Rua/Av."></div>
+                        <div class="campo"><label for="e-numero">Número</label><input type="text" id="e-numero" placeholder="123"></div>
+                        <div class="campo"><label for="e-complemento">Complemento</label><input type="text" id="e-complemento" placeholder="Apto, bloco..."></div>
+                        <div class="campo"><label for="e-bairro">Bairro</label><input type="text" id="e-bairro" placeholder="Centro"></div>
+                        <div class="campo"><label for="e-cidade">Cidade</label><input type="text" id="e-cidade" placeholder="São Paulo"></div>
+                        <div class="campo"><label for="e-estado">UF</label><input type="text" id="e-estado" placeholder="SP" maxlength="2"></div>
                     </div>
                 </div>
 
-                <div class="secao">Dados Profissionais</div>
-                <div class="grid-3">
-                    <div>
-                        <label>Cargo</label>
-                        <input type="text" id="e-cargo" placeholder="Ex.: Vendedor">
+                <div class="sec-func" id="sec-contrato">
+                    <div class="form-grid c3">
+                        <div class="campo"><label for="e-cargo">Cargo</label><input type="text" id="e-cargo" placeholder="Ex.: Vendedora" list="lista-cargos"><datalist id="lista-cargos"></datalist></div>
+                        <div class="campo"><label for="e-departamento">Departamento</label><input type="text" id="e-departamento" placeholder="Ex.: Vendas"></div>
+                        <div class="campo"><label for="e-admissao">Admissão</label><input type="date" id="e-admissao"></div>
+                        <div class="campo"><label for="e-salario">Salário base (R$)</label><input type="text" id="e-salario" placeholder="0,00" inputmode="decimal"></div>
+                        <div class="campo"><label for="e-valeTransporte">Vale-transporte (R$)</label><input type="text" id="e-valeTransporte" placeholder="0,00" inputmode="decimal"></div>
+                        <div class="campo"><label for="e-valeAlimentacao">Vale-alimentação (R$)</label><input type="text" id="e-valeAlimentacao" placeholder="0,00" inputmode="decimal"></div>
+                        <div class="campo"><label for="e-comissao">Comissão padrão (%)</label><input type="text" id="e-comissao" placeholder="0,00" inputmode="decimal"></div>
                     </div>
-                    <div>
-                        <label>Departamento</label>
-                        <input type="text" id="e-departamento" placeholder="Ex.: Vendas">
-                    </div>
-                    <div>
-                        <label>Data de Admissão</label>
-                        <input type="date" id="e-admissao">
-                    </div>
+                    <div class="campo"><label for="e-observacoes">Observações</label><textarea id="e-observacoes" rows="2" placeholder="Anotações sobre o colaborador..."></textarea></div>
+                    <label class="toggle"><input type="checkbox" id="e-ativo" checked><span class="trilho"></span><span>Colaborador ativo</span></label>
                 </div>
 
-                <div class="secao">Salário e Benefícios</div>
-                <div class="grid-4">
-                    <div>
-                        <label>Salário Base (R$)</label>
-                        <input type="text" id="e-salario" placeholder="0,00" inputmode="decimal">
-                    </div>
-                    <div>
-                        <label>Comissão (%)</label>
-                        <input type="text" id="e-comissao" placeholder="0,00" inputmode="decimal">
-                    </div>
-                    <div>
-                        <label>Vale Transporte (R$)</label>
-                        <input type="text" id="e-valeTransporte" placeholder="0,00" inputmode="decimal">
-                    </div>
-                    <div>
-                        <label>Vale Alimentação (R$)</label>
-                        <input type="text" id="e-valeAlimentacao" placeholder="0,00" inputmode="decimal">
+                <div class="sec-func" id="sec-pagamento">
+                    <div class="form-grid">
+                        <div class="campo"><label for="e-formaPagamento">Forma de pagamento</label>
+                            <select id="e-formaPagamento"><option value="">Selecione...</option><option value="BANCO">Crédito em conta</option><option value="DINHEIRO">Dinheiro</option><option value="CHEQUE">Cheque</option></select></div>
+                        <div class="campo"><label for="e-banco">Banco</label><input type="text" id="e-banco" placeholder="Ex.: Banco do Brasil"></div>
+                        <div class="campo"><label for="e-agencia">Agência</label><input type="text" id="e-agencia" placeholder="0000"></div>
+                        <div class="campo"><label for="e-conta">Conta</label><input type="text" id="e-conta" placeholder="00000-0"></div>
+                        <div class="campo"><label for="e-tipoConta">Tipo de conta</label>
+                            <select id="e-tipoConta"><option value="">Selecione...</option><option value="CORRENTE">Conta corrente</option><option value="POUPANCA">Poupança</option><option value="SALARIO">Conta salário</option></select></div>
                     </div>
                 </div>
-                <div class="grid-4">
-                    <div>
-                        <label>Forma de Pagamento</label>
-                        <select id="e-formaPagamento">
-                            <option value="">Selecione...</option>
-                            <option value="BANCO">Crédito em Conta</option>
-                            <option value="DINHEIRO">Dinheiro</option>
-                            <option value="CHEQUE">Cheque</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Banco</label>
-                        <input type="text" id="e-banco" placeholder="Ex.: Banco do Brasil">
-                    </div>
-                    <div>
-                        <label>Agência</label>
-                        <input type="text" id="e-agencia" placeholder="0000">
-                    </div>
-                    <div>
-                        <label>Conta</label>
-                        <input type="text" id="e-conta" placeholder="00000-0">
-                    </div>
-                </div>
-                <div>
-                    <label>Tipo de Conta</label>
-                    <select id="e-tipoConta">
-                        <option value="">Selecione...</option>
-                        <option value="CORRENTE">Conta Corrente</option>
-                        <option value="POUPANCA">Poupança</option>
-                        <option value="SALARIO">Conta Salário</option>
-                    </select>
-                </div>
-
-                <div class="secao">Observações</div>
-                <textarea id="e-observacoes" rows="2" placeholder="Anotações sobre o funcionário..."></textarea>
-
-                <div class="modal-check">
-                    <input type="checkbox" id="e-ativo" checked>
-                    <label for="e-ativo">Funcionário ativo</label>
-                </div>
-
-                <button class="btn btn-azul" style="width: 100%; margin-top: 16px; padding: 13px; font-size: 15px;" onclick="salvarFuncionario()">Salvar Funcionário</button>
+            </div>
+            <div class="modal-foot">
+                <button class="btn" onclick="fecharModalFuncionario()">Cancelar</button>
+                <button class="btn btn-sucesso" onclick="salvarFuncionario()"><span class="ms">check</span>Salvar</button>
             </div>
         </div>
     </div>
 
     <script src="/seguranca.js"></script>
+    <script src="/ui/shell.js"></script>
     <script>
         const API_BASE = '';
         let funcionarios = [];
 
         function formatarMoeda(valor) {
-            return `R$ ${Number(valor).toFixed(2).replace('.', ',')}`;
+            return Number(valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
         function obterOperador() {
@@ -343,29 +189,47 @@
 
         function renderizarFuncionarios() {
             const tbody = document.getElementById('tabela-funcionarios');
-            if (funcionarios.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" class="sem-dados">Nenhum funcionário encontrado</td></tr>';
+            const cargos = [...new Set(funcionarios.map(f => (f.cargo || '').trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+            const selCargo = document.getElementById('f-cargo');
+            const atualCargo = selCargo.value;
+            selCargo.innerHTML = '<option value="">Todos os cargos</option>' + cargos.map(c => `<option>${esc(c)}</option>`).join('');
+            selCargo.value = cargos.includes(atualCargo) ? atualCargo : '';
+            document.getElementById('lista-cargos').innerHTML = cargos.map(c => `<option value="${esc(c)}">`).join('');
+            const sit = document.getElementById('f-situacao').value;
+            const lista = funcionarios.filter(f => (!selCargo.value || (f.cargo || '').trim() === selCargo.value) && (!sit || (sit === 'ativo') === !!f.ativo));
+            document.getElementById('contador').textContent = `${funcionarios.filter(f => f.ativo).length} ativo(s) de ${funcionarios.length} colaborador(es)`;
+            if (lista.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9"><div class="estado-vazio"><span class="ms">badge</span><p>Nenhum colaborador encontrado.</p><button class="btn btn-sucesso" onclick="abrirModalFuncionario()"><span class="ms">person_add</span>Novo colaborador</button></div></td></tr>';
                 return;
             }
-            tbody.innerHTML = funcionarios.map(f => `
+            tbody.innerHTML = lista.map(f => `
                 <tr>
-                    <td>${esc(f.codigo || '-')}</td>
-                    <td><strong>${esc(f.nome)}</strong><br><small style="color:#8b95a1;">${esc(f.email || '')}</small></td>
-                    <td>${esc(f.cargo || '-')}</td>
-                    <td>${esc(f.departamento || '-')}</td>
-                    <td>${f.admissao ? new Date(f.admissao).toLocaleDateString('pt-BR') : '-'}</td>
-                    <td style="text-align: right;"><strong>${formatarMoeda(f.salario)}</strong></td>
-                    <td><span class="situacao ${f.ativo ? 'ativo' : 'inativo'}">${f.ativo ? 'ATIVO' : 'INATIVO'}</span></td>
-                    <td style="text-align: center;">
-                        <button class="btn btn-mini btn-azul" onclick="abrirModalFuncionario('${f.id}')">Editar</button>
-                        <button class="btn btn-mini btn-perigo" onclick="excluirFuncionario('${f.id}', '${esc(f.nome)}')">Excluir</button>
+                    <td class="num">${esc(f.codigo || '—')}</td>
+                    <td><div class="cel-func"><div class="jg-avatar">${esc(JG.iniciais(f.nome))}</div><div><b>${esc(f.nome)}</b><small>${esc(f.email || f.celular || '')}</small></div></div></td>
+                    <td>${esc(f.cargo || '—')}</td>
+                    <td>${esc(f.departamento || '—')}</td>
+                    <td>${f.admissao ? new Date(f.admissao).toLocaleDateString('pt-BR') : '—'}</td>
+                    <td class="right">${formatarMoeda(f.salario)}</td>
+                    <td class="right">${Number(f.comissao || 0) ? Number(f.comissao).toFixed(2).replace('.', ',') + '%' : '—'}</td>
+                    <td><span class="badge ${f.ativo ? 'ativo' : 'inativo'}">${f.ativo ? 'Ativo' : 'Inativo'}</span></td>
+                    <td class="acoes">
+                        <button class="btn-icone" title="Editar" onclick="abrirModalFuncionario('${f.id}')"><span class="ms">edit</span></button>
+                        <button class="btn-icone perigo" title="Excluir" onclick="excluirFuncionario('${f.id}', '${esc(f.nome)}')"><span class="ms">delete</span></button>
                     </td>
                 </tr>
             `).join('');
         }
 
+        function mostrarSecao(nome) {
+            document.querySelectorAll('[data-sec]').forEach(b => b.classList.toggle('ativa', b.dataset.sec === nome));
+            document.querySelectorAll('.sec-func').forEach(sx => sx.classList.toggle('ativa', sx.id === 'sec-' + nome));
+        }
+        document.querySelectorAll('[data-sec]').forEach(b => b.addEventListener('click', () => mostrarSecao(b.dataset.sec)));
+        ['f-cargo', 'f-situacao'].forEach(id => document.getElementById(id).addEventListener('change', renderizarFuncionarios));
+
         function abrirModalFuncionario(id = null) {
-            document.getElementById('modal-titulo').innerText = id ? 'Editar Funcionário' : 'Novo Funcionário';
+            document.getElementById('modal-titulo').innerText = id ? 'Editar colaborador' : 'Novo colaborador';
+            mostrarSecao('pessoais');
             document.getElementById('e-id').value = id || '';
             const campos = ['e-codigo', 'e-nome', 'e-nascimento', 'e-documento', 'e-rg', 'e-sexo', 'e-estadoCivil', 'e-email', 'e-telefone', 'e-celular', 'e-cep', 'e-endereco', 'e-numero', 'e-complemento', 'e-bairro', 'e-cidade', 'e-estado', 'e-cargo', 'e-departamento', 'e-admissao', 'e-salario', 'e-comissao', 'e-valeTransporte', 'e-valeAlimentacao', 'e-formaPagamento', 'e-banco', 'e-agencia', 'e-conta', 'e-tipoConta', 'e-observacoes'];
             campos.forEach(campo => document.getElementById(campo).value = '');

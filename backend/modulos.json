@@ -1,0 +1,208 @@
+{
+  "_comentario": "Catálogo de módulos do ERP. Lido pelo backend (utils/modulos.ts) e pelo Painel do Administrador. Módulos essenciais (Início, PDV/Caixa, Consulta de vendas, Clientes, Produtos, Categorias, Auditoria, Configurações) não entram aqui: estão sempre ativos.",
+  "modulos": [
+    {
+      "chave": "orcamentos",
+      "nome": "Orçamentos",
+      "grupo": "Vendas",
+      "descricao": "Salvar vendas como orçamento e efetivar depois.",
+      "icone": "request_quote",
+      "paginas": [
+        "/orcamentos.html"
+      ],
+      "apis": []
+    },
+    {
+      "chave": "trocas",
+      "nome": "Trocas e devoluções",
+      "grupo": "Vendas",
+      "descricao": "Devolução de itens e troca por novos produtos.",
+      "icone": "sync_alt",
+      "paginas": [
+        "/trocas.html"
+      ],
+      "apis": [
+        "/api/trocas"
+      ]
+    },
+    {
+      "chave": "crediario",
+      "nome": "Crediário",
+      "grupo": "Vendas",
+      "descricao": "Venda a prazo com parcelas, contrato e carnê.",
+      "icone": "credit_score",
+      "paginas": [
+        "/vendas-fora-pdv.html"
+      ],
+      "apis": [
+        "/api/vendas-fora-pdv"
+      ]
+    },
+    {
+      "chave": "cobranca",
+      "nome": "Cobrança e renegociação",
+      "grupo": "Clientes",
+      "descricao": "Inadimplência, contato por WhatsApp e renegociação.",
+      "icone": "notification_important",
+      "paginas": [
+        "/cobranca.html"
+      ],
+      "apis": [
+        "/api/relatorios/inadimplencia"
+      ]
+    },
+    {
+      "chave": "fidelidade",
+      "nome": "Fidelidade e cashback",
+      "grupo": "Clientes",
+      "descricao": "Cashback nas vendas, saldo e extrato por cliente.",
+      "icone": "loyalty",
+      "paginas": [
+        "/fidelidade.html"
+      ],
+      "apis": [
+        "/api/fidelidade"
+      ]
+    },
+    {
+      "chave": "precos",
+      "nome": "Promoções e tabelas de preço",
+      "grupo": "Catálogo",
+      "descricao": "Leve X pague Y, descontos e preços por cliente.",
+      "icone": "sell",
+      "paginas": [
+        "/promocoes.html",
+        "/tabelas-preco.html"
+      ],
+      "apis": []
+    },
+    {
+      "chave": "estoque",
+      "nome": "Estoque e compras",
+      "grupo": "Estoque",
+      "descricao": "Posição, movimentações, pedidos de compra e fornecedores.",
+      "icone": "warehouse",
+      "paginas": [
+        "/estoque.html",
+        "/compras.html",
+        "/fornecedores.html"
+      ],
+      "apis": [
+        "/api/compras"
+      ]
+    },
+    {
+      "chave": "inventario",
+      "nome": "Inventário",
+      "grupo": "Estoque",
+      "descricao": "Contagem de estoque e ajuste das divergências.",
+      "icone": "fact_check",
+      "paginas": [
+        "/inventario.html"
+      ],
+      "apis": [
+        "/api/inventario"
+      ]
+    },
+    {
+      "chave": "financeiro",
+      "nome": "Contas a pagar e receber",
+      "grupo": "Financeiro",
+      "descricao": "Lançamentos, baixas e fluxo de caixa.",
+      "icone": "payments",
+      "paginas": [
+        "/financeiro.html",
+        "/financeiro-visao.html"
+      ],
+      "apis": []
+    },
+    {
+      "chave": "cartoes",
+      "nome": "Cartões e recebíveis",
+      "grupo": "Financeiro",
+      "descricao": "Recebíveis, antecipação, taxas MDR e conciliação.",
+      "icone": "credit_card",
+      "paginas": [
+        "/recebiveis.html",
+        "/projecao-repasses.html",
+        "/operadoras.html",
+        "/conciliacao.html"
+      ],
+      "apis": [
+        "/api/conciliacao"
+      ]
+    },
+    {
+      "chave": "nfce",
+      "nome": "NFC-e",
+      "grupo": "Fiscal",
+      "descricao": "Emissão da nota fiscal do consumidor no PDV.",
+      "icone": "receipt",
+      "paginas": [],
+      "apis": []
+    },
+    {
+      "chave": "nfse",
+      "nome": "NFS-e",
+      "grupo": "Fiscal",
+      "descricao": "Nota fiscal de serviços (salões).",
+      "icone": "description",
+      "paginas": [],
+      "apis": [],
+      "futuro": true
+    },
+    {
+      "chave": "agenda",
+      "nome": "Agenda",
+      "grupo": "Serviços",
+      "descricao": "Agendamento de horários por profissional.",
+      "icone": "calendar_month",
+      "paginas": [],
+      "apis": [],
+      "futuro": true
+    },
+    {
+      "chave": "comandas",
+      "nome": "Comandas",
+      "grupo": "Serviços",
+      "descricao": "Comandas abertas por cliente no salão.",
+      "icone": "assignment",
+      "paginas": [],
+      "apis": [],
+      "futuro": true
+    },
+    {
+      "chave": "comissoes",
+      "nome": "Comissões por serviço",
+      "grupo": "Serviços",
+      "descricao": "Comissão por serviço e profissional.",
+      "icone": "percent",
+      "paginas": [],
+      "apis": [],
+      "futuro": true
+    },
+    {
+      "chave": "colaboradores",
+      "nome": "Colaboradores",
+      "grupo": "Pessoas",
+      "descricao": "Cadastro, contrato, acesso e comissão.",
+      "icone": "badge",
+      "paginas": [
+        "/funcionarios.html"
+      ],
+      "apis": []
+    },
+    {
+      "chave": "relatorios",
+      "nome": "Relatórios gerenciais",
+      "grupo": "Relatórios",
+      "descricao": "Fechamento de caixa, ranking, comissões e mais.",
+      "icone": "analytics",
+      "paginas": [
+        "/relatorios.html",
+        "/relatorio-caixas.html"
+      ],
+      "apis": []
+    }
+  ]
+}

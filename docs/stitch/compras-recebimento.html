@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Compras – Recebimento · JG Sistemas</title>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Theme Configuration -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "background": "#f8f9ff",
+            "surface-container": "#e5eeff",
+            "primary-container": "#1d4f91",
+            "inverse-primary": "#a9c7ff",
+            "on-tertiary-fixed": "#002109",
+            "surface-container-lowest": "#ffffff",
+            "surface-variant": "#d3e4fe",
+            "on-surface-variant": "#434750",
+            "on-secondary-fixed": "#011b3b",
+            "on-secondary-container": "#475c7f",
+            "surface-container-highest": "#d3e4fe",
+            "inverse-surface": "#213145",
+            "secondary": "#4a5f82",
+            "on-surface": "#0b1c30",
+            "secondary-fixed": "#d5e3ff",
+            "on-primary-fixed-variant": "#0e4688",
+            "on-tertiary-container": "#5dda7a",
+            "error-container": "#ffdad6",
+            "on-error": "#ffffff",
+            "on-error-container": "#93000a",
+            "tertiary-fixed": "#7ffc97",
+            "surface-container-high": "#dce9ff",
+            "on-primary-fixed": "#001b3e",
+            "secondary-fixed-dim": "#b2c7f0",
+            "tertiary-container": "#005d25",
+            "surface-tint": "#305ea1",
+            "surface-dim": "#cbdbf5",
+            "on-tertiary": "#ffffff",
+            "outline-variant": "#c3c6d2",
+            "inverse-on-surface": "#eaf1ff",
+            "surface": "#f8f9ff",
+            "primary-fixed-dim": "#a9c7ff",
+            "surface-bright": "#f8f9ff",
+            "tertiary": "#004319",
+            "error": "#ba1a1a",
+            "tertiary-fixed-dim": "#62df7d",
+            "on-tertiary-fixed-variant": "#005320",
+            "on-primary": "#ffffff",
+            "on-primary-container": "#a2c3ff",
+            "secondary-container": "#bfd5fe",
+            "on-secondary": "#ffffff",
+            "on-background": "#0b1c30",
+            "primary": "#003873",
+            "outline": "#737782",
+            "primary-fixed": "#d6e3ff",
+            "surface-container-low": "#eff4ff",
+            "on-secondary-fixed-variant": "#324769"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Inter", "sans-serif"],
+            "display": ["Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Inter', sans-serif;
+      font-variant-numeric: tabular-nums;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body class="bg-[#F4F6FA] text-on-surface antialiased min-h-screen flex selection:bg-primary selection:text-white">
+<!-- SIDEBAR FIXA (248px) -->
+<aside class="fixed top-0 left-0 h-screen w-[248px] bg-on-surface text-surface flex flex-col justify-between p-4 z-40 select-none shadow-sm">
+<!-- Topo da Sidebar: Logo & Subtítulo -->
+<div class="flex flex-col gap-5">
+<div class="flex items-center gap-2.5 px-1 py-1">
+<div class="w-8 h-8 rounded-lg bg-tertiary-container flex items-center justify-center text-white font-bold text-sm tracking-wider shadow-sm">
+          JG
+        </div>
+<div class="flex flex-col">
+<span class="font-headline font-bold text-surface text-sm tracking-tight leading-none">JG Sistemas</span>
+<span class="text-[10px] text-outline-variant mt-1 leading-none font-medium">ERP Empresarial · Loja Centro</span>
+</div>
+</div>
+<!-- Navegação Principal -->
+<nav class="flex flex-col gap-1 text-[13px] font-medium font-body overflow-y-auto max-h-[calc(100vh-200px)] pr-1">
+<!-- Início -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">home</span>
+<span>Início</span>
+</a>
+<!-- Vendas -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">point_of_sale</span>
+<span>Vendas</span>
+</a>
+<!-- Clientes -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">group</span>
+<span>Clientes</span>
+</a>
+<!-- Catálogo -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+<span>Catálogo</span>
+</a>
+<!-- Estoque (Aberto / Submenu) -->
+<div class="flex flex-col">
+<div class="flex items-center justify-between px-3 py-2 text-surface rounded-lg bg-primary/40 font-semibold cursor-pointer">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[18px] text-tertiary-fixed">warehouse</span>
+<span>Estoque</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-outline-variant">expand_less</span>
+</div>
+<!-- Submenu Estoque -->
+<div class="pl-8 pr-1 py-1 flex flex-col gap-1 text-xs">
+<a class="py-1.5 px-2.5 text-outline-variant hover:text-surface rounded transition-colors" href="#">Posição de estoque</a>
+<a class="py-1.5 px-2.5 text-outline-variant hover:text-surface rounded transition-colors" href="#">Inventário físico</a>
+<!-- Item ATIVO -->
+<a class="py-1.5 px-2.5 text-surface font-semibold bg-primary-container rounded flex items-center justify-between shadow-xs" href="#">
+<span>Compras &amp; Pedidos</span>
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed"></span>
+</a>
+<a class="py-1.5 px-2.5 text-outline-variant hover:text-surface rounded transition-colors" href="#">Fornecedores</a>
+</div>
+</div>
+<!-- Financeiro -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">account_balance</span>
+<span>Financeiro</span>
+</a>
+<!-- Pessoas -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">badge</span>
+<span>Pessoas</span>
+</a>
+<!-- Relatórios -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">bar_chart</span>
+<span>Relatórios</span>
+</a>
+<!-- Administração -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+<span>Administração</span>
+</a>
+</nav>
+</div>
+<!-- Rodapé da Sidebar -->
+<div class="border-t border-outline/20 pt-3 flex flex-col gap-2 text-xs">
+<div class="flex items-center justify-between px-2 text-outline-variant font-medium">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">storefront</span>
+<span>Varejo · Moda</span>
+</span>
+<span class="flex items-center gap-1 text-[11px] text-tertiary-fixed font-semibold">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed animate-pulse"></span>
+          Online
+        </span>
+</div>
+<div class="px-2 text-[10px] text-outline-variant/70">
+        v3.4.1 · Loja Matriz 01
+      </div>
+</div>
+</aside>
+<!-- TOPBAR FIXA (56px h-14) -->
+<header class="fixed top-0 left-[248px] right-0 h-14 bg-surface-container-lowest border-b border-[#E2E8F0] px-6 flex items-center justify-between z-30 shadow-xs">
+<!-- Breadcrumb e Contexto -->
+<div class="flex items-center gap-2 text-xs text-secondary font-medium">
+<span>Estoque</span>
+<span class="material-symbols-outlined text-[14px] text-outline-variant">chevron_right</span>
+<span>Compras</span>
+<span class="material-symbols-outlined text-[14px] text-outline-variant">chevron_right</span>
+<span class="text-on-surface font-semibold">Pedido #PC-0087</span>
+<span class="material-symbols-outlined text-[14px] text-outline-variant">chevron_right</span>
+<span class="text-primary font-semibold">Recebimento de Mercadorias</span>
+</div>
+<!-- Centro / Direita: Busca, Caixa Status, Ações Rápidas & Usuário -->
+<div class="flex items-center gap-4">
+<!-- Busca Global com atalho Ctrl+K -->
+<div class="relative w-72">
+<span class="material-symbols-outlined text-[18px] text-outline absolute left-3 top-2.5">search</span>
+<input class="w-full h-9 pl-9 pr-14 text-xs bg-[#F4F6FA] border border-[#E2E8F0] rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-on-surface placeholder:text-secondary/70" placeholder="Buscar módulo, produto ou cliente..." type="text"/>
+<span class="absolute right-2 top-2 px-1.5 py-0.5 text-[10px] font-semibold bg-surface-container-high text-secondary rounded border border-[#E2E8F0]">Ctrl+K</span>
+</div>
+<!-- Pill Caixa 01 · Aberto -->
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
+<span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+<span>Caixa 01 · Aberto</span>
+</div>
+<!-- Botão Abrir PDV [F1] -->
+<button class="h-9 px-3.5 bg-primary text-white text-xs font-semibold rounded-lg flex items-center gap-1.5 hover:bg-primary-container transition active:scale-95 shadow-xs">
+<span class="material-symbols-outlined text-[16px]">point_of_sale</span>
+<span>Abrir PDV</span>
+<span class="text-[10px] opacity-75 font-normal ml-0.5 bg-white/20 px-1 py-0.2 rounded">F1</span>
+</button>
+<div class="h-5 w-px bg-[#E2E8F0]"></div>
+<!-- Ícones Auxiliares -->
+<button class="relative p-1.5 text-secondary hover:text-on-surface hover:bg-surface-container-low rounded-lg transition" title="Notificações">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full ring-2 ring-white"></span>
+</button>
+<button class="p-1.5 text-secondary hover:text-on-surface hover:bg-surface-container-low rounded-lg transition" title="Ajuda do Sistema">
+<span class="material-symbols-outlined text-[20px]">help</span>
+</button>
+<!-- Avatar Juliana Gomes -->
+<div class="flex items-center gap-2 pl-1 cursor-pointer">
+<div class="w-8 h-8 rounded-full bg-primary-container text-white font-bold text-xs flex items-center justify-center ring-2 ring-primary/20">
+          JG
+        </div>
+<div class="flex flex-col text-left">
+<span class="text-xs font-semibold text-on-surface leading-tight">Juliana Gomes</span>
+<span class="text-[10px] text-secondary leading-tight">Gerente</span>
+</div>
+</div>
+</div>
+</header>
+<!-- CONTEÚDO PRINCIPAL (Deslocado por 248px na lateral e 56px no topo) -->
+<main class="ml-[248px] mt-14 flex-1 p-6 max-w-[1192px] overflow-x-hidden">
+<!-- CABEÇALHO DA PÁGINA & AÇÕES PRINCIPAIS -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+<div>
+<div class="flex items-center gap-3">
+<h1 class="text-[22px] font-semibold text-[#0F172A] tracking-tight leading-snug">
+            Recebimento de Mercadorias — Pedido #PC-0087
+          </h1>
+<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-300 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">pending_actions</span>
+            Aguardando Entrega / Em Conferência
+          </span>
+</div>
+<p class="text-xs text-secondary mt-0.5">
+          Conferência física de itens, conciliação fiscal e entrada automática no estoque e contas a pagar.
+        </p>
+</div>
+<!-- Barra de Ações do Cabeçalho -->
+<div class="flex items-center gap-2.5">
+<button class="h-9 px-3 text-xs font-medium text-secondary hover:text-on-surface bg-white border border-[#E2E8F0] rounded-lg hover:bg-surface-container-low flex items-center gap-1.5 transition shadow-xs">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>Ver Pedido de Compra Original</span>
+</button>
+<button class="h-9 px-3.5 text-xs font-medium text-primary hover:text-primary-container bg-surface-container-high border border-primary/20 rounded-lg flex items-center gap-1.5 transition shadow-xs">
+<span class="material-symbols-outlined text-[16px]">upload_file</span>
+<span>Importar XML da NF-e</span>
+</button>
+</div>
+</div>
+<!-- CARTÃO RESUMO DO PEDIDO -->
+<div class="bg-surface-container-lowest border border-[#E2E8F0] rounded-xl p-4 mb-6 shadow-xs">
+<div class="grid grid-cols-1 md:grid-cols-5 gap-4 divide-y md:divide-y-0 md:divide-x divide-[#E2E8F0] text-xs">
+<!-- Fornecedor -->
+<div class="pr-2">
+<span class="text-[11px] font-semibold text-secondary uppercase tracking-wider block mb-1">Fornecedor</span>
+<div class="font-semibold text-on-surface text-[13px] leading-tight">Jeans Brasil Confecções EIRELI</div>
+<div class="text-[11px] text-secondary mt-0.5">CNPJ: 22.451.980/0001-19</div>
+<div class="text-[11px] text-secondary mt-0.5 flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-primary">person</span>
+            Fernanda Souza (Comercial)
+          </div>
+</div>
+<!-- Data de Emissão -->
+<div class="md:px-4 pt-3 md:pt-0">
+<span class="text-[11px] font-semibold text-secondary uppercase tracking-wider block mb-1">Emissão do Pedido</span>
+<div class="font-semibold text-on-surface text-[13px]">02/10/2026</div>
+<div class="text-[11px] text-secondary mt-0.5">Prazo negociado: 6 dias úteis</div>
+</div>
+<!-- Previsão de Entrega -->
+<div class="md:px-4 pt-3 md:pt-0">
+<span class="text-[11px] font-semibold text-secondary uppercase tracking-wider block mb-1">Previsão de Entrega</span>
+<div class="font-semibold text-amber-700 text-[13px] flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">event</span>
+            Hoje (08/10/2026)
+          </div>
+<div class="text-[11px] text-secondary mt-0.5">Status: No prazo previsto</div>
+</div>
+<!-- Valor Total Pedido -->
+<div class="md:px-4 pt-3 md:pt-0">
+<span class="text-[11px] font-semibold text-secondary uppercase tracking-wider block mb-1">Valor Total Encomendado</span>
+<div class="font-bold text-on-surface text-[15px] tabular-nums">R$ 6.480,00</div>
+<div class="text-[11px] text-secondary mt-0.5">120 peças encomendadas (4 SKUs)</div>
+</div>
+<!-- Comprador Responsável -->
+<div class="md:pl-4 pt-3 md:pt-0">
+<span class="text-[11px] font-semibold text-secondary uppercase tracking-wider block mb-1">Comprador Responsável</span>
+<div class="font-semibold text-on-surface text-[13px]">Juliana Gomes</div>
+<div class="text-[11px] text-secondary mt-0.5">Departamento de Compras Matriz</div>
+</div>
+</div>
+</div>
+<!-- TABELA DE CONFERÊNCIA FÍSICA DOS ITENS -->
+<div class="bg-surface-container-lowest border border-[#E2E8F0] rounded-xl overflow-hidden shadow-xs mb-6">
+<!-- Cabeçalho do Card -->
+<div class="px-5 py-3.5 bg-surface-container-low/50 border-b border-[#E2E8F0] flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary">fact_check</span>
+<h2 class="text-sm font-semibold text-on-surface">Itens do Pedido para Conferência (4 referências)</h2>
+<span class="text-xs text-secondary bg-surface-container-high px-2 py-0.5 rounded font-medium">Bipagem ativa</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="h-8 px-3 text-xs font-medium text-emerald-800 bg-emerald-100/70 border border-emerald-300 rounded-lg hover:bg-emerald-200/80 transition flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px]">done_all</span>
+<span>Conferir Tudo como Recebido</span>
+</button>
+</div>
+</div>
+<!-- Tabela dos Itens -->
+<div class="overflow-x-auto">
+<table class="w-full text-left text-xs border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-secondary border-b border-[#E2E8F0] uppercase tracking-wider text-[11px] font-semibold">
+<th class="py-3 px-4">Produto &amp; Variação / SKU</th>
+<th class="py-3 px-3 text-center">Qtd Pedida</th>
+<th class="py-3 px-4 text-center">Qtd Recebida</th>
+<th class="py-3 px-4">Diferença / Status</th>
+<th class="py-3 px-4 text-right">Custo Unitário</th>
+<th class="py-3 px-4 text-right">Subtotal Recebido</th>
+<th class="py-3 px-4 text-center">Ações</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#E2E8F0] text-on-surface">
+<!-- Linha 1: Calça Skinny 38 -->
+<tr class="hover:bg-surface-container-low/40 transition">
+<td class="py-3 px-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary font-bold text-xs border border-[#E2E8F0] shrink-0">
+<span class="material-symbols-outlined text-[20px]">checkroom</span>
+</div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface text-[13px]">Calça Jeans Skinny Alta Lavagem Clara</span>
+<div class="flex items-center gap-2 text-[11px] text-secondary mt-0.5">
+<span class="font-medium bg-[#F1F5F9] px-1.5 py-0.2 rounded border border-[#E2E8F0]">Tam 38</span>
+<span>SKU: JNS-42091-38</span>
+<span class="text-outline">·</span>
+<span class="font-mono text-[10px]">EAN: 7891029384727</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 text-center font-semibold text-secondary tabular-nums">40 un</td>
+<td class="py-3 px-4 text-center">
+<div class="inline-flex items-center border border-emerald-500 rounded-lg bg-emerald-50/50 p-0.5">
+<button class="w-6 h-6 flex items-center justify-center text-emerald-800 hover:bg-emerald-100 rounded text-xs font-bold">-</button>
+<input class="w-10 h-6 text-center text-xs font-bold bg-transparent border-0 p-0 text-emerald-900 focus:ring-0 tabular-nums" type="text" value="40"/>
+<button class="w-6 h-6 flex items-center justify-center text-emerald-800 hover:bg-emerald-100 rounded text-xs font-bold">+</button>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                  Completo (0 un)
+                </span>
+</td>
+<td class="py-3 px-4 text-right tabular-nums text-secondary font-medium">R$ 48,00</td>
+<td class="py-3 px-4 text-right tabular-nums font-bold text-on-surface">R$ 1.920,00</td>
+<td class="py-3 px-4 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1 hover:bg-surface-container rounded text-secondary hover:text-primary" title="Bipar código de barras">
+<span class="material-symbols-outlined text-[18px]">barcode_scanner</span>
+</button>
+<button class="p-1 hover:bg-surface-container rounded text-secondary" title="Opções">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 2: Calça Skinny 40 (FALTA DE 4 PEÇAS) -->
+<tr class="bg-amber-50/40 hover:bg-amber-50/70 transition">
+<td class="py-3 px-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary font-bold text-xs border border-[#E2E8F0] shrink-0">
+<span class="material-symbols-outlined text-[20px]">checkroom</span>
+</div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface text-[13px]">Calça Jeans Skinny Alta Lavagem Clara</span>
+<div class="flex items-center gap-2 text-[11px] text-secondary mt-0.5">
+<span class="font-medium bg-[#F1F5F9] px-1.5 py-0.2 rounded border border-[#E2E8F0]">Tam 40</span>
+<span>SKU: JNS-42091-40</span>
+<span class="text-outline">·</span>
+<span class="font-mono text-[10px]">EAN: 7891029384728</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 text-center font-semibold text-secondary tabular-nums">40 un</td>
+<td class="py-3 px-4 text-center">
+<div class="inline-flex items-center border-2 border-amber-500 rounded-lg bg-amber-50 p-0.5 shadow-xs">
+<button class="w-6 h-6 flex items-center justify-center text-amber-800 hover:bg-amber-100 rounded text-xs font-bold">-</button>
+<input class="w-10 h-6 text-center text-xs font-extrabold bg-transparent border-0 p-0 text-amber-900 focus:ring-0 tabular-nums" type="text" value="36"/>
+<button class="w-6 h-6 flex items-center justify-center text-amber-800 hover:bg-amber-100 rounded text-xs font-bold">+</button>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold bg-amber-100 text-amber-900 border border-amber-300">
+<span class="material-symbols-outlined text-[15px] text-amber-700">warning</span>
+                  -4 un (Entrega Parcial / Falta)
+                </span>
+</td>
+<td class="py-3 px-4 text-right tabular-nums text-secondary font-medium">R$ 48,00</td>
+<td class="py-3 px-4 text-right tabular-nums font-bold text-amber-900">
+                R$ 1.728,00
+                <span class="block text-[10px] text-secondary line-through font-normal">R$ 1.920,00</span>
+</td>
+<td class="py-3 px-4 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1 hover:bg-surface-container rounded text-secondary hover:text-primary" title="Bipar código de barras">
+<span class="material-symbols-outlined text-[18px]">barcode_scanner</span>
+</button>
+<button class="p-1 hover:bg-surface-container rounded text-secondary" title="Opções">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 3: Calça Skinny Lavagem Escura 38 -->
+<tr class="hover:bg-surface-container-low/40 transition">
+<td class="py-3 px-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary font-bold text-xs border border-[#E2E8F0] shrink-0">
+<span class="material-symbols-outlined text-[20px]">checkroom</span>
+</div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface text-[13px]">Calça Jeans Skinny Alta Lavagem Escura</span>
+<div class="flex items-center gap-2 text-[11px] text-secondary mt-0.5">
+<span class="font-medium bg-[#F1F5F9] px-1.5 py-0.2 rounded border border-[#E2E8F0]">Tam 38</span>
+<span>SKU: JNS-42092-38</span>
+<span class="text-outline">·</span>
+<span class="font-mono text-[10px]">EAN: 7891029384735</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 text-center font-semibold text-secondary tabular-nums">20 un</td>
+<td class="py-3 px-4 text-center">
+<div class="inline-flex items-center border border-emerald-500 rounded-lg bg-emerald-50/50 p-0.5">
+<button class="w-6 h-6 flex items-center justify-center text-emerald-800 hover:bg-emerald-100 rounded text-xs font-bold">-</button>
+<input class="w-10 h-6 text-center text-xs font-bold bg-transparent border-0 p-0 text-emerald-900 focus:ring-0 tabular-nums" type="text" value="20"/>
+<button class="w-6 h-6 flex items-center justify-center text-emerald-800 hover:bg-emerald-100 rounded text-xs font-bold">+</button>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                  Completo (0 un)
+                </span>
+</td>
+<td class="py-3 px-4 text-right tabular-nums text-secondary font-medium">R$ 52,00</td>
+<td class="py-3 px-4 text-right tabular-nums font-bold text-on-surface">R$ 1.040,00</td>
+<td class="py-3 px-4 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1 hover:bg-surface-container rounded text-secondary hover:text-primary" title="Bipar código de barras">
+<span class="material-symbols-outlined text-[18px]">barcode_scanner</span>
+</button>
+<button class="p-1 hover:bg-surface-container rounded text-secondary" title="Opções">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Linha 4: Jaqueta Jeans Oversized M -->
+<tr class="hover:bg-surface-container-low/40 transition">
+<td class="py-3 px-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary font-bold text-xs border border-[#E2E8F0] shrink-0">
+<span class="material-symbols-outlined text-[20px]">dry_cleaning</span>
+</div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface text-[13px]">Jaqueta Jeans Oversized Destroyed</span>
+<div class="flex items-center gap-2 text-[11px] text-secondary mt-0.5">
+<span class="font-medium bg-[#F1F5F9] px-1.5 py-0.2 rounded border border-[#E2E8F0]">Tam M</span>
+<span>SKU: JKT-84819-M</span>
+<span class="text-outline">·</span>
+<span class="font-mono text-[10px]">EAN: 7891029384819</span>
+</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 text-center font-semibold text-secondary tabular-nums">20 un</td>
+<td class="py-3 px-4 text-center">
+<div class="inline-flex items-center border border-emerald-500 rounded-lg bg-emerald-50/50 p-0.5">
+<button class="w-6 h-6 flex items-center justify-center text-emerald-800 hover:bg-emerald-100 rounded text-xs font-bold">-</button>
+<input class="w-10 h-6 text-center text-xs font-bold bg-transparent border-0 p-0 text-emerald-900 focus:ring-0 tabular-nums" type="text" value="20"/>
+<button class="w-6 h-6 flex items-center justify-center text-emerald-800 hover:bg-emerald-100 rounded text-xs font-bold">+</button>
+</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                  Completo (0 un)
+                </span>
+</td>
+<td class="py-3 px-4 text-right tabular-nums text-secondary font-medium">R$ 78,00</td>
+<td class="py-3 px-4 text-right tabular-nums font-bold text-on-surface">R$ 1.560,00</td>
+<td class="py-3 px-4 text-center">
+<div class="flex items-center justify-center gap-1">
+<button class="p-1 hover:bg-surface-container rounded text-secondary hover:text-primary" title="Bipar código de barras">
+<span class="material-symbols-outlined text-[18px]">barcode_scanner</span>
+</button>
+<button class="p-1 hover:bg-surface-container rounded text-secondary" title="Opções">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- RODAPÉ DA TABELA: TOTALIZADORES & TRATAMENTO DE SALDO -->
+<div class="bg-surface-container-low/70 border-t border-[#E2E8F0] p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs">
+<div class="flex flex-wrap items-center gap-6">
+<div>
+<span class="text-secondary block text-[11px] font-medium">Total Pedido:</span>
+<span class="font-bold text-on-surface text-sm tabular-nums">120 un <span class="text-secondary font-normal">(R$ 6.480,00)</span></span>
+</div>
+<div class="h-8 w-px bg-[#E2E8F0]"></div>
+<div>
+<span class="text-emerald-800 block text-[11px] font-semibold">Total Conferido / Recebido:</span>
+<span class="font-bold text-emerald-700 text-sm tabular-nums">116 un <span class="font-semibold text-emerald-800">(R$ 6.248,00)</span></span>
+</div>
+<div class="h-8 w-px bg-[#E2E8F0]"></div>
+<div>
+<span class="text-amber-800 block text-[11px] font-semibold">Saldo Pendente Fornecedor:</span>
+<span class="font-bold text-amber-700 text-sm tabular-nums">4 un <span class="text-error font-medium">(-R$ 192,00)</span></span>
+</div>
+</div>
+<!-- Opções de Saldo Residual -->
+<div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-[#E2E8F0]">
+<span class="text-[11px] font-semibold text-secondary">Ação para o saldo restante:</span>
+<label class="flex items-center gap-1 text-[11px] text-on-surface cursor-pointer">
+<input checked="" class="text-primary focus:ring-primary h-3.5 w-3.5" name="saldo_action" type="radio"/>
+<span>Gerar pendência p/ próxima remessa</span>
+</label>
+<span class="text-outline">·</span>
+<label class="flex items-center gap-1 text-[11px] text-secondary cursor-pointer hover:text-on-surface">
+<input class="text-primary focus:ring-primary h-3.5 w-3.5" name="saldo_action" type="radio"/>
+<span>Cancelar saldo residual</span>
+</label>
+</div>
+</div>
+</div>
+<!-- DADOS FISCAIS E CONDICIONAIS DE PAGAMENTO (2 COLUNAS) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+<!-- Coluna da Esquerda (7 colunas): Formulário Fiscal & Condições -->
+<div class="lg:col-span-7 bg-surface-container-lowest border border-[#E2E8F0] rounded-xl p-5 shadow-xs">
+<h3 class="text-sm font-semibold text-on-surface mb-4 flex items-center gap-2 pb-2 border-b border-[#E2E8F0]">
+<span class="material-symbols-outlined text-[18px] text-primary">receipt_long</span>
+          Dados Fiscais &amp; Condições do Contas a Pagar
+        </h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+<!-- Nº da Nota Fiscal -->
+<div class="sm:col-span-2">
+<label class="block font-medium text-secondary mb-1">Nº da Nota Fiscal (DANFE)</label>
+<div class="relative">
+<input class="w-full h-9 px-3 text-xs font-semibold bg-white border border-[#E2E8F0] rounded-lg focus:ring-1 focus:ring-primary focus:border-primary text-on-surface" type="text" value="NF-e 004.892 - Série 1"/>
+</div>
+<p class="text-[10px] text-secondary font-mono mt-1">Chave: 3526 1022 4519 8000 0119 5500 1000 0048 9210 9384 7212</p>
+</div>
+<!-- Data de Emissão da NF -->
+<div>
+<label class="block font-medium text-secondary mb-1">Data de Emissão da NF</label>
+<div class="relative">
+<input class="w-full h-9 px-3 text-xs bg-white border border-[#E2E8F0] rounded-lg focus:ring-1 focus:ring-primary focus:border-primary text-on-surface tabular-nums" type="text" value="06/10/2026"/>
+<span class="material-symbols-outlined text-[16px] text-secondary absolute right-2.5 top-2.5">calendar_today</span>
+</div>
+</div>
+<!-- Vencimento da Conta a Pagar -->
+<div>
+<label class="block font-medium text-secondary mb-1">Vencimento da Conta a Pagar (30 DDL)</label>
+<div class="relative">
+<input class="w-full h-9 px-3 text-xs bg-white border border-[#E2E8F0] rounded-lg focus:ring-1 focus:ring-primary focus:border-primary text-on-surface tabular-nums font-semibold" type="date" value="2026-11-02"/>
+</div>
+</div>
+<!-- Forma de Pagamento Prevista -->
+<div class="sm:col-span-2">
+<label class="block font-medium text-secondary mb-1">Forma de Pagamento Prevista</label>
+<select class="w-full h-9 px-3 text-xs bg-white border border-[#E2E8F0] rounded-lg focus:ring-1 focus:ring-primary focus:border-primary text-on-surface font-medium">
+<option selected="">Boleto Bancário (30 DDL) — Fornecedor Homologado</option>
+<option>Pix CNPJ (À Vista)</option>
+<option>Transferência TED / DOC</option>
+<option>Carteira / Prazo Especial</option>
+</select>
+</div>
+<!-- Observações do Recebimento -->
+<div class="sm:col-span-2">
+<label class="block font-medium text-secondary mb-1">Observações do Recebimento</label>
+<textarea class="w-full p-2.5 text-xs bg-white border border-[#E2E8F0] rounded-lg focus:ring-1 focus:ring-primary focus:border-primary text-on-surface resize-none leading-relaxed" rows="3">Mercadoria entregue pela transportadora Braspress com 1 caixa avariada; constatada falta de 4 peças do tamanho 40. Notificado fornecedor via WhatsApp comercial.</textarea>
+</div>
+</div>
+</div>
+<!-- Coluna da Direita (5 colunas): Aviso, Resumo & Botões de Ação -->
+<div class="lg:col-span-5 flex flex-col justify-between gap-4">
+<!-- Box Informativo Azul -->
+<div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-blue-900 shadow-xs">
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-[20px] text-primary shrink-0 mt-0.5">info</span>
+<div class="text-xs leading-relaxed">
+<span class="font-semibold block mb-1 text-primary">Impacto Automático no Sistema:</span>
+              Ao confirmar, será gerada a entrada no estoque dos <strong>116 itens recebidos</strong> e uma conta a pagar de <strong>R$ 6.300,00</strong> com vencimento em <strong>02/11/2026</strong> em nome de <em>Jeans Brasil Confecções</em>.
+            </div>
+</div>
+</div>
+<!-- Card de Resumo Financeiro da Entrada -->
+<div class="bg-surface-container-lowest border border-[#E2E8F0] rounded-xl p-4 shadow-xs">
+<h4 class="text-xs font-semibold text-secondary uppercase tracking-wider mb-3">Conciliação Financeira</h4>
+<div class="space-y-2 text-xs">
+<div class="flex justify-between items-center text-secondary">
+<span>Valor Original Pedido:</span>
+<span class="tabular-nums font-medium text-on-surface">R$ 6.480,00</span>
+</div>
+<div class="flex justify-between items-center text-amber-800">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">remove_circle</span>
+                Dedução de Faltas (-4 un):
+              </span>
+<span class="tabular-nums font-semibold">-R$ 180,00</span>
+</div>
+<div class="flex justify-between items-center text-secondary">
+<span>Frete Incluso:</span>
+<span class="tabular-nums font-medium text-on-surface">R$ 0,00 (FOB negociado)</span>
+</div>
+<div class="border-t border-[#E2E8F0] pt-2 flex justify-between items-center">
+<div>
+<span class="text-xs font-bold text-on-surface block">Total a Faturar / Entrada em Estoque:</span>
+<span class="text-[10px] text-secondary">116 unidades prontas para venda</span>
+</div>
+<span class="text-lg font-bold text-primary tabular-nums">R$ 6.300,00</span>
+</div>
+</div>
+</div>
+<!-- Ações de Finalização -->
+<div class="flex flex-col gap-2 pt-1">
+<button class="w-full h-11 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-semibold text-sm rounded-lg flex items-center justify-center gap-2 shadow-sm transition">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+<span>Confirmar Recebimento [F10]</span>
+</button>
+<div class="grid grid-cols-2 gap-2">
+<button class="h-9 px-3 text-xs font-medium text-secondary hover:text-on-surface bg-white border border-[#E2E8F0] rounded-lg hover:bg-surface-container-low flex items-center justify-center gap-1 transition shadow-xs">
+<span class="material-symbols-outlined text-[16px]">arrow_back</span>
+<span>Cancelar / Voltar</span>
+</button>
+<button class="h-9 px-3 text-xs font-medium text-primary bg-surface-container-high hover:bg-surface-variant border border-primary/20 rounded-lg flex items-center justify-center gap-1 transition shadow-xs">
+<span class="material-symbols-outlined text-[16px]">save</span>
+<span>Salvar Parcial</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- MICRO-INTERAÇÕES JS (Teclas de atalho F1 e F10) -->
+<script>
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'F10') {
+        event.preventDefault();
+        alert('Confirmação de recebimento iniciada! Atualizando 116 itens no estoque e gerando contas a pagar.');
+      } else if (event.key === 'F1') {
+        event.preventDefault();
+        alert('Atalho [F1]: Abrindo Frente de Caixa PDV...');
+      }
+    });
+  </script>
+</body></html>

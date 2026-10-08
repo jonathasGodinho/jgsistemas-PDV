@@ -4,206 +4,166 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google" content="notranslate">
-    <title>PDV - Sistema Ecocentauro Clone</title>
+    <title>PDV - JG Sistemas</title>
+    <link rel="stylesheet" href="/ui/jg.css">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #eef1f5; height: 100vh; display: grid; grid-template-rows: 104px 1fr 38px; overflow: hidden; }
-        header { background: linear-gradient(90deg, #0b2545, #2c3e91); color: white; display: flex; justify-content: space-between; align-items: center; padding: 10px 24px; }
-        .header-brand { display: flex; align-items: center; gap: 14px; min-width: 0; }
-        .header-brand img { height: 54px; width: auto; max-width: 220px; object-fit: contain; background: white; border-radius: 6px; padding: 3px; }
-        .header-nome { font-size: 30px; font-weight: 800; letter-spacing: 0.5px; line-height: 1.1; text-shadow: 0 1px 2px rgba(0,0,0,0.3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .header-right { display: flex; align-items: center; gap: 22px; }
-        .header-links { display: flex; gap: 12px; font-size: 12px; }
-        .header-links a { color: #c8d2e8; text-decoration: none; }
-        .header-links a:hover { color: white; text-decoration: underline; }
-        .relogio-box { text-align: right; }
-        .relogio-data { font-size: 13px; color: #c8d2e8; font-weight: normal; text-transform: capitalize; }
-        .relogio { font-family: 'Consolas', 'Courier New', monospace; font-size: 34px; font-weight: 800; line-height: 1.05; letter-spacing: 1px; }
-        .pdv-container { display: grid; grid-template-columns: 1fr 340px; gap: 14px; padding: 14px; height: 100%; overflow: hidden; }
-        .left-panel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; display: grid; grid-template-rows: 1fr auto 96px; overflow: hidden; }
-        .ultimo-item { background: #f8f9fa; border-top: 1px solid #e6e9ed; padding: 5px 14px; font-size: 12px; color: #656d78; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .ultimo-item .ui-label { font-weight: bold; color: #134074; margin-right: 8px; text-transform: uppercase; }
-        .ultimo-item #desc-ultimo-item { color: #333; font-weight: bold; }
-        .table-container { overflow-y: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { background-color: #134074; color: white; position: sticky; top: 0; padding: 9px 10px; text-align: left; text-transform: uppercase; }
-        td { padding: 9px 10px; border-bottom: 1px solid #dde3ea; color: #333; }
-        tr:nth-child(even) { background-color: #f6f8fa; }
-        tr:hover { background-color: #eef2f7; }
-        .input-bar { background-color: #e6e9ed; padding: 12px 14px; display: grid; grid-template-columns: 1fr 140px; gap: 12px; align-items: center; border-top: 2px solid #134074; }
-        .input-bar input { width: 100%; padding: 11px; font-size: 17px; font-weight: bold; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
-        .right-panel { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
-        .box-info { background: white; border: 1px solid #ccd1d9; border-radius: 4px; padding: 10px 14px; }
-        .box-info label { font-size: 11px; color: #656d78; font-weight: bold; display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
-        .box-info .value { font-size: 26px; font-weight: 700; color: #134074; text-align: center; }
-        .box-info select { width: 100%; padding: 8px; font-size: 13px; font-weight: bold; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; background: white; }
-        .total-box { background-color: #0b2545; color: #00ff66; border: none; }
-        .total-box label { color: #aab2bd; }
-        .total-box .value { color: #00ff66; font-size: 38px; }
-        footer { background-color: #134074; color: white; display: flex; align-items: center; justify-content: space-around; flex-wrap: wrap; font-size: 11px; font-weight: bold; padding: 0 10px; gap: 4px 10px; }
-        .key-hint { background: rgba(255, 255, 255, 0.2); padding: 2px 6px; border-radius: 3px; margin-right: 5px; }
-        .caixa-aviso { position: fixed; top: 50px; left: 0; right: 0; z-index: 50; background-color: #d9534f; color: white; padding: 8px 20px; font-size: 13px; font-weight: bold; display: none; }
-        .caixa-aviso a { color: #fff; margin-left: 8px; text-decoration: underline; }
-
-        /* Modal de fechamento de venda / cupom */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 100; }
-        .modal-overlay.active { display: flex; }
-        .modal { background: white; border-radius: 6px; width: 420px; max-width: 94vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
-        .modal-head { background-color: #0b2545; color: white; padding: 14px 18px; font-weight: bold; font-size: 15px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
-        .modal-head .close { cursor: pointer; font-size: 20px; color: #aab2bd; }
-        .modal-head .close:hover { color: white; }
-        .modal-body { padding: 18px; }
-        .modal label { font-size: 12px; color: #656d78; font-weight: bold; display: block; margin: 12px 0 5px; text-transform: uppercase; }
-        .modal select, .modal input { width: 100%; padding: 11px; font-size: 16px; font-weight: bold; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; background: white; }
-        .btn-primary { background-color: #134074; color: white; border: none; padding: 13px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 16px; text-transform: uppercase; }
-        .btn-primary:hover { background-color: #0b2545; }
-        .btn-primary:disabled { background-color: #aab2bd; cursor: not-allowed; }
-        .linha-valor { display: flex; justify-content: space-between; font-size: 14px; padding: 5px 0; color: #333; }
-        .linha-valor .rotulo { color: #656d78; font-weight: bold; text-transform: uppercase; font-size: 12px; padding-top: 3px; }
-        .linha-valor.destaque { font-size: 20px; font-weight: 800; color: #0b2545; border-top: 2px solid #134074; margin-top: 8px; padding-top: 10px; }
-        .troco-info { text-align: center; font-size: 30px; font-weight: 800; color: #00a651; margin-top: 10px; }
-
-        /* Seções por forma de pagamento */
-        .pix-area { text-align: center; margin-top: 10px; }
-        .pix-area img { border: 1px solid #ccd1d9; border-radius: 6px; background: white; padding: 6px; }
-        .pix-payload { font-family: 'Courier New', monospace; font-size: 11px; background: #f4f6f8; border: 1px dashed #aab2bd; padding: 8px; margin-top: 8px; word-break: break-all; border-radius: 4px; color: #333; }
-        .btn-copiar { background-color: #0b2545; color: white; border: none; padding: 8px 14px; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 8px; text-transform: uppercase; }
-        .btn-copiar:hover { background-color: #134074; }
-        .parcelas-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
-        .parcela-btn { border: 2px solid #ccd1d9; background: white; border-radius: 4px; padding: 10px 4px; cursor: pointer; text-align: center; font-size: 13px; color: #134074; font-weight: bold; }
-        .parcela-btn:hover { border-color: #134074; }
-        .parcela-btn.selecionada { border-color: #00a651; background-color: #e8f8ef; color: #007a3d; }
-        .parcela-btn .p-valor { font-size: 12px; color: #656d78; font-weight: normal; display: block; }
-        .info-unica { text-align: center; font-size: 15px; font-weight: bold; color: #134074; margin-top: 12px; padding: 14px; border: 1px dashed #aab2bd; border-radius: 4px; background: #f8f9fa; }
-        .aviso-metodo { text-align: center; font-size: 13px; color: #656d78; margin-top: 10px; }
-
-        /* Janela de Fechamento (centralizada) */
-        #modal-pagamento, #modal-sefaz { background: rgba(0, 0, 0, 0.4); align-items: center; justify-content: center; }
-        #modal-pagamento .modal { width: 780px; max-width: 97vw; max-height: 94vh; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.45); }
-        .pg-grid { display: grid; grid-template-columns: 1fr 250px; gap: 16px; }
+        body.jg.pdv { height: 100vh; display: grid; grid-template-rows: auto auto 1fr auto; overflow: hidden; background: var(--bg); }
+        /* Faixa superior */
+        .pdv-topo { display: flex; align-items: center; gap: 18px; height: 52px; padding: 0 18px; background: var(--navy); color: #CBD5E1; font-size: 13px; }
+        .pdv-topo .marca { display: flex; align-items: center; gap: 10px; min-width: 0; }
+        .pdv-topo .marca img { height: 30px; width: auto; max-width: 140px; object-fit: contain; background: #fff; border-radius: 6px; padding: 2px; }
+        .pdv-topo .header-nome { color: #fff; font-weight: 700; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 360px; }
+        .pdv-topo .info { display: flex; gap: 18px; margin-left: auto; align-items: center; white-space: nowrap; }
+        .pdv-topo .info .it { display: flex; align-items: center; gap: 6px; }
+        .pdv-topo .info .it .ms { font-size: 18px; color: #7F93B2; }
+        .pdv-topo .info b { color: #fff; font-weight: 600; }
+        .pdv-topo .relogio-box { text-align: right; line-height: 1.1; }
+        .pdv-topo .relogio { font-family: var(--mono); font-size: 20px; font-weight: 700; color: #fff; }
+        .pdv-topo .relogio-data { font-size: 11px; color: #9FB3D1; text-transform: capitalize; }
+        .pdv-topo .links { display: flex; gap: 4px; }
+        .pdv-topo .links a { color: #CBD5E1; text-decoration: none; padding: 6px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; font-size: 12px; }
+        .pdv-topo .links a:hover { background: var(--navy-2); color: #fff; }
+        .pdv-topo .links .ms { font-size: 17px; }
+        /* Avisos sempre abaixo da faixa, nunca por cima */
+        .pdv-avisos { display: flex; flex-direction: column; }
+        .caixa-aviso, #aviso-estoque { display: none; align-items: center; gap: 8px; padding: 8px 18px; font-size: 13px; font-weight: 600; }
+        .caixa-aviso { background: var(--red-soft); color: #7F1D1D; border-bottom: 1px solid #F5C2C2; }
+        .caixa-aviso a { color: var(--red); margin-left: 6px; }
+        #aviso-estoque { background: var(--amber-soft); color: #7C4A03; border-bottom: 1px solid #F5D9A8; }
+        /* Corpo */
+        .pdv-container { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 14px; padding: 14px; min-height: 0; overflow: hidden; }
+        .left-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); display: grid; grid-template-rows: 1fr auto auto; overflow: hidden; min-height: 0; }
+        .table-container { overflow-y: auto; min-height: 0; }
+        body.jg #tabela-itens td { height: 46px; font-size: 14.5px; }
+        body.jg #tabela-itens td.num { text-align: right; font-variant-numeric: tabular-nums; }
+        body.jg #tabela-itens tbody tr:last-child td { background: var(--primary-soft); font-weight: 600; }
+        body.jg #tabela-itens tr.linha-sema-estoque td { color: var(--red); font-weight: 700; background: var(--red-soft); }
+        .ultimo-item { border-top: 1px solid var(--border); padding: 8px 16px; font-size: 13px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background: var(--surface-2); }
+        .ultimo-item .ui-label { font-weight: 600; color: var(--primary); margin-right: 8px; }
+        .ultimo-item #desc-ultimo-item { color: var(--text); font-weight: 600; }
+        .input-bar { display: grid; grid-template-columns: 1fr 130px; gap: 12px; padding: 14px 16px; border-top: 1px solid var(--border); }
+        body.jg .input-bar input { height: 58px; font-size: 22px; font-weight: 700; border-width: 2px; border-color: var(--primary); }
+        body.jg .input-bar input#quantidade { border-color: var(--border-strong); text-align: center; }
+        .input-bar .rot { font-size: 11.5px; color: var(--text-2); margin-bottom: 4px; display: block; }
+        /* Painel direito */
+        .right-panel { display: flex; flex-direction: column; gap: 12px; min-height: 0; overflow-y: auto; }
+        .box-info { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 12px 16px; }
+        .box-info label { font-size: 12px; color: var(--text-2); font-weight: 500; display: block; margin-bottom: 4px; }
+        .box-info .value { font-size: 22px; font-weight: 700; color: var(--text); text-align: right; font-variant-numeric: tabular-nums; }
+        .box-cliente { cursor: pointer; }
+        .box-cliente:hover { border-color: var(--primary); }
+        .box-cliente .nome { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .box-cliente .cash { font-size: 12.5px; color: var(--green); margin-top: 4px; }
+        .resumo-pdv .l { display: flex; justify-content: space-between; align-items: baseline; padding: 7px 0; border-bottom: 1px dashed var(--border); font-size: 14px; }
+        .resumo-pdv .l:last-child { border-bottom: 0; }
+        .resumo-pdv .l span { color: var(--text-2); }
+        .resumo-pdv .l b { font-size: 17px; font-variant-numeric: tabular-nums; }
+        .total-box { background: var(--navy); border: 0; padding: 18px 16px; }
+        body.jg .total-box label { color: #CBD5E1; font-size: 13px; font-weight: 600; letter-spacing: .06em; }
+        .total-box .value { color: #4ADE80; font-size: 46px; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; }
+        /* Rodapé de atalhos */
+        .pdv-rodape { display: flex; align-items: center; gap: 6px 18px; flex-wrap: wrap; padding: 10px 18px; background: var(--surface); border-top: 1px solid var(--border); font-size: 12.5px; color: var(--text-2); }
+        .pdv-rodape .k { display: inline-flex; align-items: center; gap: 6px; }
+        .pdv-rodape .k b { color: var(--text); font-weight: 600; }
+        .pdv-rodape .status { margin-left: auto; display: flex; gap: 14px; }
+        /* Modais do PDV */
+        body.jg .modal .btn-primary { margin-top: 10px; width: 100%; height: 44px; border-radius: var(--radius); border: 0; background: var(--primary); color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; }
+        body.jg .modal .btn-primary:hover { background: var(--primary-hover); }
+        body.jg .modal .btn-primary:disabled { background: var(--border-strong); cursor: not-allowed; }
+        body.jg .modal .btn-primary.verde { background: var(--green); }
+        body.jg .modal .btn-primary.verde:hover { background: var(--green-hover); }
+        body.jg .modal .btn-primary.cinza { background: #fff; color: var(--text); border: 1px solid var(--border-strong); }
+        .modal-erro { color: var(--red); font-size: 13px; font-weight: 600; margin-top: 10px; text-align: center; }
+        #modal-pagamento .modal { width: 900px; max-width: 97vw; }
+        .pg-grid { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 18px; }
         .pg-formas { display: flex; flex-direction: column; gap: 8px; }
-        .pg-forma { display: flex; align-items: center; gap: 10px; border: 1px solid #ccd1d9; border-radius: 4px; padding: 7px 10px; cursor: pointer; background: #fff; }
-        .pg-forma.selecionada { border-color: #00a651; background-color: #e8f8ef; }
-        .pg-forma .tecla { background: #134074; color: white; font-weight: bold; border-radius: 3px; padding: 3px 7px; font-size: 11px; width: 42px; text-align: center; flex: none; }
-        .pg-forma.selecionada .tecla { background: #00a651; }
-        .pg-forma .nome { flex: 1; font-weight: bold; color: #333; font-size: 14px; }
-        .pg-forma input { width: 120px; text-align: right; font-weight: bold; padding: 6px 8px; font-size: 15px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; background: white; }
-        .pg-forma input:disabled { background: #f0f2f5; color: #8b95a1; }
-        .pg-totais { display: flex; flex-direction: column; gap: 12px; }
-        .pg-total-bloco { border: 1px solid #ccd1d9; border-radius: 6px; padding: 14px; text-align: center; background: white; }
-        .pg-total-bloco label { font-size: 11px; color: #656d78; font-weight: bold; text-transform: uppercase; display: block; letter-spacing: 0.4px; }
-        .pg-total-bloco .valor { font-size: 32px; font-weight: 800; color: #134074; margin-top: 4px; }
-        .pg-total-bloco.destaque { background: #0b2545; border: none; }
-        .pg-total-bloco.destaque label { color: #aab2bd; }
-        .pg-total-bloco.destaque .valor { color: #00ff66; font-size: 38px; }
-        .pg-extras { margin-top: 14px; padding-top: 12px; border-top: 1px solid #e6e9ed; }
-        .pg-rodape { display: flex; flex-wrap: wrap; gap: 10px 16px; margin-top: 14px; padding-top: 12px; border-top: 1px solid #e6e9ed; font-size: 12px; color: #656d78; align-items: center; }
-        .pg-rodape .tecla { background: #0b2545; color: white; border-radius: 3px; padding: 2px 6px; font-size: 11px; font-weight: bold; }
-
-        /* Janela de Processamento */
-        #modal-sefaz .modal { width: 420px; border-radius: 8px; box-shadow: 0 8px 30px rgba(0,0,0,0.45); margin: 0; }
+        .pg-forma { display: flex; align-items: center; gap: 12px; border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 12px; cursor: pointer; background: #fff; }
+        .pg-forma:hover { border-color: var(--primary); }
+        .pg-forma.selecionada { border-color: var(--green); background: var(--green-soft); box-shadow: 0 0 0 1px var(--green); }
+        .pg-forma .tecla { font-family: var(--mono); font-size: 12px; font-weight: 700; background: var(--surface-2); border: 1px solid var(--border); border-radius: 5px; padding: 3px 0; width: 38px; text-align: center; flex: none; }
+        .pg-forma.selecionada .tecla { background: var(--green); color: #fff; border-color: var(--green); }
+        .pg-forma .nome { flex: 1; font-weight: 600; font-size: 14px; }
+        body.jg .pg-forma input { width: 140px; height: 38px; text-align: right; font-weight: 700; font-size: 16px; }
+        .pg-totais { display: flex; flex-direction: column; gap: 10px; }
+        .pg-total-bloco { border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; text-align: right; background: #fff; }
+        .pg-total-bloco label { font-size: 12px; color: var(--text-2); font-weight: 500; display: block; text-align: left; margin: 0 !important; }
+        .pg-total-bloco .valor { font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums; }
+        .pg-total-bloco.destaque { background: var(--navy); border: 0; }
+        body.jg .pg-total-bloco.destaque label { color: #CBD5E1; }
+        .pg-total-bloco.destaque .valor { color: #4ADE80; font-size: 34px; }
+        .pg-extras { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
+        .pg-rodape { display: flex; flex-wrap: wrap; gap: 8px 14px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-2); align-items: center; }
+        .pix-area { text-align: center; margin-top: 12px; }
+        .pix-area img { border: 1px solid var(--border); border-radius: var(--radius); background: #fff; padding: 6px; }
+        .pix-payload { font-family: var(--mono); font-size: 11px; background: var(--surface-2); border: 1px dashed var(--border-strong); padding: 8px; margin-top: 8px; word-break: break-all; border-radius: var(--radius-sm); }
+        .btn-copiar { margin-top: 8px; height: 34px; padding: 0 14px; border-radius: var(--radius); border: 1px solid var(--border-strong); background: #fff; font-weight: 600; cursor: pointer; }
+        .parcelas-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
+        .parcela-btn { border: 1px solid var(--border-strong); background: #fff; border-radius: var(--radius); padding: 9px 4px; cursor: pointer; text-align: center; font-size: 13px; font-weight: 700; }
+        .parcela-btn:hover { border-color: var(--primary); }
+        .parcela-btn.selecionada { border-color: var(--green); background: var(--green-soft); color: #15803D; box-shadow: 0 0 0 1px var(--green); }
+        .parcela-btn .p-valor { font-size: 12px; color: var(--text-2); font-weight: 400; display: block; }
+        .info-unica { text-align: center; font-size: 14px; font-weight: 600; margin-top: 12px; padding: 14px; border: 1px dashed var(--border-strong); border-radius: var(--radius); background: var(--surface-2); }
+        .aviso-metodo { text-align: center; font-size: 13px; color: var(--text-2); margin-top: 10px; }
+        #pg-erro { display: none; margin-top: 14px; padding: 10px 12px; background: var(--red-soft); border: 1px solid #F5C2C2; border-radius: var(--radius); color: #7F1D1D; font-size: 13px; }
+        #pg-erro .pg-erro-titulo { font-weight: 700; margin-bottom: 4px; }
+        #modal-sefaz .modal { width: 420px; }
         .proc-linha { display: flex; align-items: center; gap: 14px; }
-        .proc-icone { font-size: 40px; color: #e67e22; flex: none; }
+        .proc-icone { font-size: 36px; color: var(--amber); flex: none; }
         .proc-texto { flex: 1; }
-        #modal-sefaz .sefaz-spinner { width: 46px; height: 46px; border-width: 5px; margin: 0; flex: none; }
-
-        /* Tela de transmissão para a SEFAZ */
-        #modal-sefaz .modal { width: 360px; text-align: center; }
-        .sefaz-spinner { width: 56px; height: 56px; margin: 16px auto 14px; border: 6px solid #dbe2ea; border-top-color: #134074; border-radius: 50%; animation: girar 0.9s linear infinite; }
+        .sefaz-spinner { width: 46px; height: 46px; border: 5px solid #E2E8F0; border-top-color: var(--primary); border-radius: 50%; animation: girar .9s linear infinite; flex: none; }
         @keyframes girar { to { transform: rotate(360deg); } }
-        .sefaz-titulo { font-size: 16px; font-weight: 800; color: #0b2545; text-transform: uppercase; }
-        .sefaz-status { font-size: 13px; color: #656d78; margin-top: 8px; min-height: 18px; }
-        .sefaz-ok { color: #00a651; }
-        .sefaz-erro { color: #d9534f; }
-
-        /* Busca de produtos */
-        #busca-input { width: 100%; padding: 11px; font-size: 16px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
-        .busca-tabela-container { margin-top: 12px; max-height: 320px; overflow-y: auto; border: 1px solid #ccd1d9; border-radius: 4px; }
-        .busca-tabela { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .busca-tabela th { background-color: #134074; color: white; position: sticky; top: 0; padding: 8px; text-align: left; text-transform: uppercase; font-size: 12px; }
-        .busca-tabela td { padding: 9px; border-bottom: 1px solid #e6e9ed; color: #333; cursor: pointer; }
-        .busca-tabela tr:nth-child(even) { background-color: #f8f9fa; }
-        .busca-tabela tr:hover { background-color: #eef2f7; }
-        .busca-tabela tr.sel { background-color: #134074; }
-        .busca-tabela tr.sel td { color: white; }
-        .busca-hint { font-size: 12px; color: #656d78; margin-top: 10px; text-align: center; }
-        .btn-remover { background-color: #d9534f; color: white; border: none; padding: 5px 10px; font-size: 12px; font-weight: bold; border-radius: 3px; cursor: pointer; }
-        .btn-remover:hover { background-color: #c9302c; }
-        .modal-erro { color: #d9534f; font-size: 13px; font-weight: bold; margin-top: 10px; text-align: center; }
-
-        /* Itens sem estoque suficiente */
-        #tabela-itens tr.linha-sema-estoque td { color: #d9534f; font-weight: bold; background-color: #fdecea; }
-        #aviso-estoque { position: fixed; top: 50px; left: 0; right: 0; z-index: 49; background-color: #e67e22; color: white; padding: 8px 20px; font-size: 13px; font-weight: bold; display: none; }
-
-        /* Aviso de erro dentro do modal de pagamento */
-        #pg-erro { display: none; margin-top: 14px; padding: 10px 12px; background: #fdecea; border: 1px solid #d9534f; border-radius: 4px; color: #a32c28; font-size: 13px; }
-        #pg-erro .pg-erro-titulo { font-weight: bold; margin-bottom: 4px; }
-        #pg-erro .btn-abrir-estoque { margin-top: 8px; }
-
-        /* Cupom */
-        .cupom { font-family: 'Courier New', monospace; font-size: 12px; background: #fffef5; border: 1px dashed #999; padding: 14px; color: #222; }
+        .sefaz-titulo { font-size: 16px; font-weight: 700; }
+        .sefaz-status { font-size: 13px; color: var(--text-2); margin-top: 6px; min-height: 18px; }
+        .sefaz-ok { color: var(--green); }
+        .sefaz-erro { color: var(--red); }
+        #busca-input, #cliente-input { height: 46px; font-size: 16px; }
+        .busca-tabela-container { margin-top: 12px; max-height: 340px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+        .busca-tabela td { cursor: pointer; }
+        body.jg .busca-tabela tr.sel td { background: var(--primary); color: #fff; }
+        .busca-hint { font-size: 12px; color: var(--text-2); margin-top: 10px; text-align: center; }
+        .cupom { font-family: var(--mono); font-size: 12px; background: #fff; border: 1px dashed var(--border-strong); border-radius: var(--radius); padding: 14px; color: #222; max-height: 52vh; overflow-y: auto; }
         .cupom .c-top { text-align: center; margin-bottom: 8px; }
         .cupom .c-top .c-nome { font-size: 14px; font-weight: bold; }
         .cupom hr { border: none; border-top: 1px dashed #999; margin: 8px 0; }
         .cupom .c-item { display: flex; justify-content: space-between; }
         .cupom .c-total { font-weight: bold; font-size: 14px; }
-
-        /* Responsividade: telas médias e pequenas mantêm a identidade visual */
-        @media (max-width: 1024px) {
-            .pdv-container { grid-template-columns: 1fr 300px; gap: 10px; padding: 10px; }
-            .total-box .value { font-size: 34px; }
-            .header-nome { font-size: 24px; }
-            .relogio { font-size: 28px; }
-        }
-
-        @media (max-width: 768px) {
-            body { grid-template-rows: 88px 1fr 36px; }
-            .pdv-container { grid-template-columns: 1fr; grid-template-rows: 1fr auto; overflow-y: auto; }
-            .right-panel { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto auto; gap: 10px; }
-            .right-panel .total-box { grid-column: 1 / -1; }
-            .right-panel .box-cliente { grid-column: 1 / -1; }
-            .input-bar { grid-template-columns: 1fr 110px; padding: 10px; }
-            .input-bar input { font-size: 16px; padding: 10px; }
-            footer { font-size: 10px; }
+        .concluida { text-align: center; margin-bottom: 14px; }
+        .concluida .ms { font-size: 44px; color: var(--green); }
+        .concluida b { display: block; font-size: 18px; margin-top: 4px; }
+        @media (max-width: 1100px) { .pdv-topo .info .esconde { display: none; } .pdv-container { grid-template-columns: minmax(0, 1fr) 300px; } .total-box .value { font-size: 36px; } }
+        @media (max-width: 800px) {
+            body.jg.pdv { overflow: auto; height: auto; }
+            .pdv-container { grid-template-columns: 1fr; overflow: visible; }
+            .left-panel { min-height: 420px; }
             .pg-grid { grid-template-columns: 1fr; }
-        }
-
-        @media (max-width: 480px) {
-            header { font-size: 12px; padding: 0 10px; }
-            .pdv-container { padding: 8px; }
-            .right-panel { grid-template-columns: 1fr; }
-            .box-info .value { font-size: 24px; }
-            .total-box .value { font-size: 32px; }
-            th, td { padding: 8px; font-size: 12px; }
-            footer { flex-direction: column; gap: 2px; }
+            .pdv-topo .links span { display: none; }
         }
     </style>
 </head>
-<body>
+<body class="jg sem-shell pdv" data-pagina="pdv">
 
-    <header>
-        <div class="header-brand">
+    <header class="pdv-topo">
+        <div class="marca">
             <img id="header-logo" src="/logo-jg.png" alt="Logo">
             <span class="header-nome" id="header-nome">JG SISTEMAS</span>
         </div>
-        <div class="header-right">
-            <div class="relogio-box">
-                <div class="relogio-data" id="relogio-data">&nbsp;</div>
-                <div class="relogio" id="relogio">--:--:--</div>
-            </div>
-            <div class="header-links">
-                <a href="/" target="_blank" rel="noopener">MENU</a>
-                <a href="/caixa.html" target="_blank" rel="noopener">CAIXA</a>
-                <a href="/produtos.html" target="_blank" rel="noopener">GESTÃO</a>
+        <div class="info">
+            <span class="it"><span class="ms">person</span><b id="operador-lbl">—</b></span>
+            <span class="it esconde"><span class="ms">point_of_sale</span><span id="footer-terminal">Terminal 01</span></span>
+            <span class="it"><span class="ms">account_balance_wallet</span><b id="status-caixa">--</b></span>
+            <div class="relogio-box"><div class="relogio" id="relogio">--:--:--</div><div class="relogio-data" id="relogio-data">&nbsp;</div></div>
+            <div class="links">
+                <a href="/" target="_blank" rel="noopener" title="Menu"><span class="ms">home</span><span>Menu</span></a>
+                <a href="/caixa.html" target="_blank" rel="noopener" title="Caixa"><span class="ms">account_balance_wallet</span><span>Caixa</span></a>
+                <a href="/produtos.html" target="_blank" rel="noopener" title="Gestão"><span class="ms">inventory_2</span><span>Gestão</span></a>
             </div>
         </div>
     </header>
 
-    <div class="caixa-aviso" id="caixa-aviso">
-        ⚠ Caixa fechado — abra a registradora para realizar vendas. <a href="/caixa.html">Abrir Caixa</a>
+    <div class="pdv-avisos">
+        <div class="caixa-aviso" id="caixa-aviso"><span class="ms">lock</span>Caixa fechado — abra a registradora para realizar vendas. <a href="/caixa.html">Abrir caixa</a></div>
+        <div id="aviso-estoque"><span class="ms">warning</span>Algum item sem estoque suficiente — ajuste no Estoque e confirme a venda novamente.</div>
     </div>
-
-    <div id="aviso-estoque">⚠ Algum item sem estoque suficiente — ajuste na aba Estoque e confirme a venda novamente.</div>
 
     <div class="pdv-container">
         <div class="left-panel">
@@ -211,14 +171,14 @@
                 <table id="tabela-itens">
                     <thead>
                         <tr>
-                            <th style="width: 5%;">Item</th>
-                            <th style="width: 16%;">Código</th>
-                            <th style="width: 33%;">Descrição do Produto</th>
-                            <th style="width: 9%;">Qtd</th>
-                            <th style="width: 10%;">Preço Unit</th>
-                            <th style="width: 9%;">Desconto</th>
-                            <th style="width: 12%;">Subtotal</th>
-                            <th style="width: 6%;">Ação</th>
+                            <th style="width: 6%;">Nº</th>
+                            <th style="width: 15%;">Código</th>
+                            <th>Descrição</th>
+                            <th class="right" style="width: 8%;">Qtd</th>
+                            <th class="right" style="width: 11%;">Unitário</th>
+                            <th class="right" style="width: 9%;">Desconto</th>
+                            <th class="right" style="width: 12%;">Subtotal</th>
+                            <th class="acoes" style="width: 5%;"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -230,65 +190,58 @@
             <div class="ultimo-item"><span class="ui-label">Último item</span><span id="desc-ultimo-item">NENHUM ITEM</span></div>
 
             <div class="input-bar">
-                <input type="text" id="codigo-barras" placeholder="Digite o código e pressione ENTER" autofocus>
-                <input type="text" id="quantidade" value="1" style="text-align: center;" placeholder="Qtd">
+                <div><span class="rot">Código de barras ou <span class="kbd">F3</span> para buscar</span>
+                    <input type="text" id="codigo-barras" placeholder="Código de barras ou F3 para buscar" autofocus></div>
+                <div><span class="rot">Quantidade</span>
+                    <input type="text" id="quantidade" value="1" placeholder="Qtd"></div>
             </div>
         </div>
 
         <div class="right-panel">
             <select id="cliente-select" style="display:none;"></select>
-            <div class="box-info">
-                <label>Quantidade</label>
-                <div class="value" id="box-quantidade">0</div>
+            <div class="box-info box-cliente" onclick="abrirBuscaCliente && abrirBuscaCliente()" title="Trocar cliente (F2)">
+                <div class="row between"><label style="margin:0">Cliente</label><span class="kbd">F2</span></div>
+                <div class="nome"><span class="ms">person</span><span id="pdv-cliente-nome">Consumidor final</span></div>
+                <div class="cash" id="pdv-cliente-cash"></div>
             </div>
-            <div class="box-info">
-                <label>Preço</label>
-                <div class="value" id="box-preco">R$ 0,00</div>
-            </div>
-            <div class="box-info">
-                <label>Sub total preço</label>
-                <div class="value" id="box-subtotal">R$ 0,00</div>
-            </div>
-            <div class="box-info">
-                <label>Troco</label>
-                <div class="value" id="box-troco">R$ 0,00</div>
+            <div class="box-info resumo-pdv">
+                <div class="l"><span>Nº de itens</span><b id="box-quantidade">0</b></div>
+                <div class="l"><span>Último preço</span><b id="box-preco">R$ 0,00</b></div>
+                <div class="l"><span>Subtotal</span><b id="box-subtotal">R$ 0,00</b></div>
+                <div class="l"><span>Troco</span><b id="box-troco" class="txt-verde">R$ 0,00</b></div>
             </div>
             <div class="box-info total-box">
-                <label>Valor Total</label>
+                <label>TOTAL</label>
                 <div class="value" id="box-total">R$ 0,00</div>
             </div>
         </div>
     </div>
 
-    <footer>
-        <div><span class="key-hint">OP</span><span id="operador-lbl">DEV_MASTER</span></div>
-        <div><span class="key-hint">PDV</span><span id="footer-terminal">TERMINAL 01</span></div>
-        <div><span class="key-hint">CAIXA</span><span id="status-caixa">--</span></div>
-        <div><span class="key-hint">ITENS</span><span id="footer-itens">0</span></div>
-        <div><span class="key-hint">STATUS</span><span id="footer-status">AGUARDANDO</span></div>
-        <div><span class="key-hint">ENTER</span>Lançar</div>
-        <div><span class="key-hint">F2</span>Cliente</div>
-        <div><span class="key-hint">F3</span>Produto</div>
-        <div><span class="key-hint">F7</span>Cancelar</div>
-        <div><span class="key-hint">F8</span>Sem NFC-e</div>
-        <div><span class="key-hint">F12</span>Fechar</div>
+    <footer class="pdv-rodape">
+        <span class="k"><span class="kbd">ENTER</span><b>Lançar</b></span>
+        <span class="k"><span class="kbd">F2</span><b>Cliente</b></span>
+        <span class="k"><span class="kbd">F3</span><b>Produto</b></span>
+        <span class="k"><span class="kbd">F7</span><b>Cancelar item</b></span>
+        <span class="k"><span class="kbd">F8</span><b>Sem NFC-e</b></span>
+        <span class="k"><span class="kbd">F12</span><b>Fechar venda</b></span>
+        <span class="status"><span>Itens: <b id="footer-itens">0</b></span><span>Status: <b id="footer-status">AGUARDANDO</b></span></span>
     </footer>
 
     <!-- Modal de autorização do administrador (cancelamento de item) -->
     <div class="modal-overlay" id="modal-admin">
-        <div class="modal">
+        <div class="modal sm">
             <div class="modal-head">
-                <span>AUTORIZAÇÃO DO ADMINISTRADOR</span>
+                <span>Autorização do administrador</span>
                 <span class="close" onclick="fecharModalAdmin()">&times;</span>
             </div>
             <div class="modal-body">
                 <label>Item a cancelar</label>
-                <div id="cancelar-desc" style="font-size: 14px; font-weight: bold; color: #134074;"></div>
-                <label>Senha do administrador</label>
+                <div id="cancelar-desc" style="font-size: 15px; font-weight: 700;"></div>
+                <label for="admin-senha">Senha do administrador</label>
                 <input type="password" id="admin-senha" autocomplete="off">
                 <div class="modal-erro" id="modal-erro"></div>
-                <button class="btn-primary" onclick="confirmarCancelamento()">Confirmar Cancelamento</button>
-                <button class="btn-primary" style="background:#8b95a1; margin-top:8px;" onclick="fecharModalAdmin()">Cancelar</button>
+                <button class="btn-primary" style="background:var(--red)" onclick="confirmarCancelamento()">Confirmar cancelamento</button>
+                <button class="btn-primary cinza" onclick="fecharModalAdmin()">Voltar</button>
             </div>
         </div>
     </div>
@@ -297,24 +250,24 @@
     <div class="modal-overlay" id="modal-pagamento">
         <div class="modal">
             <div class="modal-head">
-                <span id="pg-titulo"><img id="pg-logo" src="/logo-jg.png" alt="" style="height:22px; vertical-align:middle; margin-right:8px; border-radius:3px;">Fechamento</span>
+                <span id="pg-titulo"><img id="pg-logo" src="/logo-jg.png" alt="" style="height:22px; vertical-align:middle; margin-right:8px; border-radius:3px;">Pagamento</span>
                 <span class="close" onclick="fecharModalPagamento()">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="pg-grid">
                     <div>
-                        <label>Formas de Pagamento</label>
+                        <label style="margin-top:0">Formas de pagamento</label>
                         <div class="pg-formas">
                             <div class="pg-forma selecionada" data-forma="MONEY" onclick="selecionarForma('MONEY')">
                                 <span class="tecla">F1</span><span class="nome">Dinheiro</span>
                                 <input type="text" id="pg-recebido" value="" placeholder="0,00" inputmode="decimal">
                             </div>
                             <div class="pg-forma" data-forma="CREDIT_CARD" onclick="selecionarForma('CREDIT_CARD')">
-                                <span class="tecla">F4</span><span class="nome">Cartão de Crédito</span>
+                                <span class="tecla">F4</span><span class="nome">Crédito</span>
                                 <input type="text" id="pg-valor-credito" value="" readonly>
                             </div>
                             <div class="pg-forma" data-forma="DEBIT_CARD" onclick="selecionarForma('DEBIT_CARD')">
-                                <span class="tecla">F5</span><span class="nome">Cartão de Débito</span>
+                                <span class="tecla">F5</span><span class="nome">Débito</span>
                                 <input type="text" id="pg-valor-debito" value="" readonly>
                             </div>
                             <div class="pg-forma" data-forma="PIX" onclick="selecionarForma('PIX')">
@@ -323,48 +276,44 @@
                             </div>
                         </div>
 
-                        <!-- Dinheiro -->
                         <div id="sec-dinheiro">
                             <div class="aviso-metodo">Informe o valor recebido para calcular o troco.</div>
                         </div>
 
-                        <!-- PIX -->
                         <div id="sec-pix" style="display:none;">
                             <div class="pix-area">
                                 <img id="pix-qr" src="" alt="QR Code PIX">
                                 <div class="pix-payload" id="pix-payload"></div>
-                                <button type="button" class="btn-copiar" onclick="copiarPix()">Copiar Código PIX</button>
+                                <button type="button" class="btn-copiar" onclick="copiarPix()"><span class="ms sm">content_copy</span> Copiar código</button>
                             </div>
-                            <div class="aviso-metodo">Aponte a câmera do celular para pagar</div>
+                            <div class="aviso-metodo">Aponte a câmera do celular para pagar.</div>
                         </div>
 
-                        <!-- Crédito -->
                         <div id="sec-credito" style="display:none;">
-                            <label>Escolha o número de parcelas</label>
+                            <label>Parcelas</label>
                             <div class="parcelas-grid" id="parcelas-grid"></div>
                         </div>
 
-                        <!-- Débito -->
                         <div id="sec-debito" style="display:none;">
                             <div class="info-unica">Pagamento em parcela única</div>
                         </div>
 
                         <div class="pg-extras">
-                            <div id="pg-promo-box" style="display:none; font-size:13px; font-weight:bold; color:#00a651; margin-bottom:8px;">
-                                <span id="pg-promo-nome">Desconto Promoção</span> <span id="pg-promo">- R$ 0,00</span>
+                            <div id="pg-promo-box" class="alerta verde" style="display:none; margin-bottom:8px;">
+                                <span class="ms">sell</span><div><span id="pg-promo-nome">Desconto promoção</span> <b id="pg-promo">- R$ 0,00</b></div>
                             </div>
-
-                            <label>Desconto (R$)</label>
-                            <input type="text" id="pg-desconto" value="" placeholder="0,00" inputmode="decimal" oninput="calcularTotalComDesconto()">
-
-                            <div id="pg-cashback-box" style="display:none;">
-                                <label>Resgatar Cashback (R$)</label>
-                                <input type="text" id="pg-cashback" value="" placeholder="0,00" inputmode="decimal" oninput="calcularTotalComDesconto()">
-                                <div style="font-size:12px; color:#00a651; font-weight:bold; margin-top:5px;" id="pg-cashback-saldo"></div>
+                            <div class="form-grid">
+                                <div class="campo" style="margin:0"><label for="pg-desconto" style="margin-top:0">Desconto (R$)</label>
+                                    <input type="text" id="pg-desconto" value="" placeholder="0,00" inputmode="decimal" oninput="calcularTotalComDesconto()"></div>
+                                <div id="pg-cashback-box" class="campo" style="display:none;margin:0">
+                                    <label for="pg-cashback" style="margin-top:0">Resgatar cashback (R$)</label>
+                                    <input type="text" id="pg-cashback" value="" placeholder="0,00" inputmode="decimal" oninput="calcularTotalComDesconto()">
+                                    <div style="font-size:12px; color:var(--green); font-weight:600; margin-top:5px;" id="pg-cashback-saldo"></div>
+                                </div>
                             </div>
-
                             <div id="pg-senha-box" style="display:none;">
-                                <label>Senha do administrador</label>
+                                <div class="alerta ambar mt-8" style="padding:8px 12px"><span class="ms">lock</span><div>Desconto acima do limite: informe a senha do administrador.</div></div>
+                                <label for="pg-senha-admin">Senha do administrador</label>
                                 <input type="password" id="pg-senha-admin" autocomplete="off">
                             </div>
 
@@ -373,40 +322,27 @@
                                 <div id="pg-erro-msg"></div>
                                 <button type="button" class="btn-primary btn-abrir-estoque" onclick="abrirEstoqueErro()">Abrir Estoque (nova aba)</button>
                             </div>
-
-                            <button class="btn-primary" id="pg-orcamento" onclick="gerarOrcamento()" style="background:#8b95a1; margin-top:8px;">Salvar como Orçamento</button>
-                            <button class="btn-primary" id="pg-confirmar" onclick="confirmarVenda()">Confirmar Venda</button>
                         </div>
                     </div>
 
                     <div class="pg-totais">
-                        <div class="pg-total-bloco">
-                            <label>Subtotal</label>
-                            <div class="valor" id="pg-subtotal">R$ 0,00</div>
-                        </div>
-                        <div class="pg-total-bloco destaque">
-                            <label>Total a pagar</label>
-                            <div class="valor" id="pg-total">R$ 0,00</div>
-                        </div>
-                        <div class="pg-total-bloco">
-                            <label>Total pago</label>
-                            <div class="valor" id="pg-total-pago">R$ 0,00</div>
-                        </div>
-                        <div class="pg-total-bloco">
-                            <label>Troco</label>
-                            <div class="valor" id="pg-troco" style="color:#00a651;">R$ 0,00</div>
-                        </div>
+                        <div class="pg-total-bloco"><label>Subtotal</label><div class="valor" id="pg-subtotal">R$ 0,00</div></div>
+                        <div class="pg-total-bloco destaque"><label>Total a pagar</label><div class="valor" id="pg-total">R$ 0,00</div></div>
+                        <div class="pg-total-bloco"><label>Total pago</label><div class="valor" id="pg-total-pago">R$ 0,00</div></div>
+                        <div class="pg-total-bloco"><label>Troco</label><div class="valor" id="pg-troco" style="color:var(--green);">R$ 0,00</div></div>
+                        <button class="btn-primary verde" id="pg-confirmar" onclick="confirmarVenda()" style="height:52px;font-size:16px">Confirmar venda <span class="kbd" style="background:rgba(255,255,255,.2);color:#fff;border-color:transparent">F9</span></button>
+                        <button class="btn-primary cinza" id="pg-orcamento" onclick="gerarOrcamento()">Salvar como orçamento</button>
                     </div>
                 </div>
 
                 <div class="pg-rodape">
-                    <span><span class="tecla">F1</span> Dinheiro</span>
-                    <span><span class="tecla">F4</span> Crédito</span>
-                    <span><span class="tecla">F5</span> Débito</span>
-                    <span><span class="tecla">F6</span> PIX</span>
-                    <span><span class="tecla">F9</span> Confirmar</span>
-                    <span><span class="tecla">F2</span> Cliente</span>
-                    <span style="margin-left:auto;"><span class="tecla">Esc</span> Voltar</span>
+                    <span><span class="kbd">F1</span> Dinheiro</span>
+                    <span><span class="kbd">F4</span> Crédito</span>
+                    <span><span class="kbd">F5</span> Débito</span>
+                    <span><span class="kbd">F6</span> PIX</span>
+                    <span><span class="kbd">F9</span> Confirmar</span>
+                    <span><span class="kbd">F2</span> Cliente</span>
+                    <span style="margin-left:auto;"><span class="kbd">Esc</span> Voltar</span>
                 </div>
             </div>
         </div>
@@ -415,15 +351,13 @@
     <!-- Modal de processamento do fechamento -->
     <div class="modal-overlay" id="modal-sefaz">
         <div class="modal">
-            <div class="modal-head">
-                <span>Processando...</span>
-            </div>
+            <div class="modal-head"><span>Processando...</span></div>
             <div class="modal-body">
                 <div class="proc-linha">
-                    <div class="proc-icone">&#9888;</div>
+                    <div class="proc-icone"><span class="ms lg">receipt_long</span></div>
                     <div class="proc-texto">
                         <div class="sefaz-titulo" id="sefaz-titulo">Aguarde!</div>
-                        <div class="sefaz-status" id="sefaz-status">Executando fechamento venda</div>
+                        <div class="sefaz-status" id="sefaz-status">Executando fechamento da venda</div>
                     </div>
                     <div class="sefaz-spinner" id="sefaz-spinner"></div>
                 </div>
@@ -433,41 +367,36 @@
 
     <!-- Modal de busca de produto -->
     <div class="modal-overlay" id="modal-busca">
-        <div class="modal">
+        <div class="modal lg">
             <div class="modal-head">
-                <span>Buscar Produto</span>
+                <span>Buscar produto</span>
                 <span class="close" onclick="fecharBusca()">&times;</span>
             </div>
             <div class="modal-body">
                 <input type="text" id="busca-input" placeholder="Digite nome, código ou SKU..." autocomplete="off">
                 <div class="busca-tabela-container">
                     <table class="busca-tabela">
-                        <thead>
-                            <tr>
-                                <th style="width: 30%;">Código</th>
-                                <th>Descrição</th>
-                                <th style="width: 18%; text-align: right;">Preço</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th style="width: 28%;">Código</th><th>Descrição</th><th class="right" style="width: 18%;">Preço</th></tr></thead>
                         <tbody id="busca-resultados"></tbody>
                     </table>
                 </div>
-                <div class="busca-hint">Seta ↑↓ para navegar · ENTER para selecionar · ESC para fechar</div>
+                <div class="busca-hint">↑↓ navegar · ENTER selecionar · ESC fechar</div>
             </div>
         </div>
     </div>
 
-    <!-- Modal de cupom -->
+    <!-- Modal de cupom / venda concluída -->
     <div class="modal-overlay" id="modal-cupom">
         <div class="modal">
             <div class="modal-head">
-                <span>Cupom Fiscal</span>
+                <span>Venda concluída</span>
                 <span class="close" onclick="fecharModalCupom()">&times;</span>
             </div>
             <div class="modal-body">
+                <div class="concluida"><span class="ms fill">check_circle</span><b>Venda registrada com sucesso</b></div>
                 <div class="cupom" id="cupom-conteudo"></div>
-                <button class="btn-primary" onclick="imprimirCupom()">Imprimir Cupom</button>
-                <button class="btn-primary" style="background:#00a651;" onclick="fecharModalCupom()">Nova Venda</button>
+                <button class="btn-primary cinza" onclick="imprimirCupom()"><span class="ms sm">print</span> Imprimir cupom</button>
+                <button class="btn-primary verde" onclick="fecharModalCupom()">Nova venda <span class="kbd" style="background:rgba(255,255,255,.2);color:#fff;border-color:transparent">ENTER</span></button>
             </div>
         </div>
     </div>
@@ -476,29 +405,25 @@
     <div class="modal-overlay" id="modal-cliente">
         <div class="modal">
             <div class="modal-head">
-                <span>Buscar Cliente</span>
+                <span>Buscar cliente</span>
                 <span class="close" onclick="fecharBuscaCliente()">&times;</span>
             </div>
             <div class="modal-body">
                 <input type="text" id="cliente-input" placeholder="Digite nome, documento ou telefone..." autocomplete="off">
                 <div class="busca-tabela-container">
                     <table class="busca-tabela">
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th style="width: 22%; text-align: right;">Limite</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>Nome</th><th class="right" style="width: 24%;">Limite</th></tr></thead>
                         <tbody id="cliente-resultados"></tbody>
                     </table>
                 </div>
-                <button class="btn-primary" style="background:#8b95a1;" onclick="limparCliente()">Consumidor Final</button>
-                <div class="busca-hint">Seta ↑↓ para navegar · ENTER para selecionar · ESC para fechar</div>
+                <button class="btn-primary cinza" onclick="limparCliente()">Consumidor final</button>
+                <div class="busca-hint">↑↓ navegar · ENTER selecionar · ESC fechar</div>
             </div>
         </div>
     </div>
 
     <script src="/seguranca.js"></script>
+    <script src="/ui/shell.js"></script>
     <script>
         const inputCodigo = document.getElementById('codigo-barras');
         const inputQtd = document.getElementById('quantidade');
@@ -577,10 +502,10 @@
                 const status = document.getElementById('status-caixa');
                 if (caixaAberto) {
                     aviso.style.display = 'none';
-                    status.innerText = `| REGISTRADORA ${caixaAberto.numero} ABERTA`;
+                    status.innerText = `Caixa ${String(caixaAberto.numero).padStart(2, '0')} · Aberto`;
                 } else {
-                    aviso.style.display = 'block';
-                    status.innerText = '| CAIXA FECHADO';
+                    aviso.style.display = 'flex';
+                    status.innerText = 'Caixa fechado';
                 }
             } catch (e) {
                 console.error('Falha ao verificar caixa:', e);
@@ -588,8 +513,9 @@
         }
 
         function formatarMoeda(valor) {
-            return `R$ ${valor.toFixed(2).replace('.', ',')}`;
+            return Number(valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
+        const fmtNum = (v, casas = 2) => Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: casas, maximumFractionDigits: casas });
 
         let clientesCache = [];
         async function carregarClientes() {
@@ -613,6 +539,10 @@
             clienteSelecionadoId = document.getElementById('cliente-select').value;
             const cli = clientesCache.find(c => c.id === clienteSelecionadoId);
             saldoCashbackCliente = cli ? cli.cashback || 0 : 0;
+            document.getElementById('pdv-cliente-nome').innerText = cli ? cli.nome : 'Consumidor final';
+            document.getElementById('pdv-cliente-cash').innerText = cli
+                ? [cli.cashback > 0 ? `Cashback disponível: ${formatarMoeda(cli.cashback)}` : '', cli.limite > 0 ? `Limite: ${formatarMoeda(cli.limite)}` : ''].filter(Boolean).join(' · ')
+                : '';
             atualizarCashbackUi();
             await recalcularPrecos();
         }
@@ -647,13 +577,13 @@
                 if (semEstoque) novaLinha.classList.add('linha-sema-estoque');
                 novaLinha.innerHTML = `
                     <td>${String(itemContador).padStart(3, '0')}</td>
-                    <td>${esc(item.codigo)}${semEstoque ? ' <span style="font-size:11px; color:#a32c28;">(sem estoque)</span>' : ''}</td>
+                    <td>${esc(item.codigo)}${semEstoque ? ' <span class="badge vencido sem-ponto">sem estoque</span>' : ''}</td>
                     <td>${esc(item.descricao)}</td>
-                    <td>${item.quantidade.toFixed(2)}</td>
-                    <td>${item.preco.toFixed(2)}</td>
-                    <td>0,00</td>
-                    <td>${valorTotalItem.toFixed(2)}</td>
-                    <td><button class="btn-remover" onclick="solicitarCancelamento(${idx})">Remover</button></td>
+                    <td class="num">${fmtNum(item.quantidade, Number.isInteger(item.quantidade) ? 0 : 3)}</td>
+                    <td class="num">${fmtNum(item.preco)}</td>
+                    <td class="num">0,00</td>
+                    <td class="num"><b>${fmtNum(valorTotalItem)}</b></td>
+                    <td class="acoes"><button class="btn-icone perigo" title="Cancelar item (F7)" onclick="solicitarCancelamento(${idx})"><span class="ms">delete</span></button></td>
                 `;
                 itemContador++;
             });
@@ -670,7 +600,7 @@
             const qtdTotal = itens.reduce((s, i) => s + (Number(i.quantidade) || 0), 0);
             const subtotal = subtotalAtual();
             const ultimo = itens.length > 0 ? itens[itens.length - 1] : null;
-            document.getElementById('box-quantidade').innerText = qtdTotal.toFixed(2).replace('.', ',');
+            document.getElementById('box-quantidade').innerText = fmtNum(qtdTotal, Number.isInteger(qtdTotal) ? 0 : 3);
             document.getElementById('box-preco').innerText = ultimo ? formatarMoeda(ultimo.preco) : formatarMoeda(0);
             document.getElementById('box-subtotal').innerText = formatarMoeda(subtotal);
             document.getElementById('box-total').innerText = formatarMoeda(subtotal);
@@ -679,7 +609,7 @@
 
         function atualizarAvisoEstoque() {
             const temFalta = itens.some(i => typeof i.estoque === 'number' && i.quantidade > i.estoque);
-            document.getElementById('aviso-estoque').style.display = temFalta ? 'block' : 'none';
+            document.getElementById('aviso-estoque').style.display = temFalta ? 'flex' : 'none';
         }
 
         // Consulta o estoque atual e marca os itens sem saldo suficiente (multi-tela: ao voltar para o PDV)
@@ -1652,6 +1582,14 @@
             fecharModalCupom();
         }
 
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && document.getElementById('modal-cupom').classList.contains('active')) {
+                e.preventDefault();
+                e.stopPropagation();
+                fecharModalCupom();
+            }
+        }, true);
+
         function fecharModalCupom() {
             document.getElementById('modal-cupom').classList.remove('active');
             inputCodigo.focus();
@@ -1660,13 +1598,9 @@
         (() => {
             const operador = obterOperador();
             if (operador) {
-                document.getElementById('operador-lbl').innerText = `OPERADOR: ${operador.nome || operador.email}`;
+                document.getElementById('operador-lbl').innerText = operador.nome || operador.email;
                 if (operador.caixaNumber) {
-                    const titulo = document.querySelector('header div');
-                    const texto = titulo && titulo.childNodes[0];
-                    if (texto && texto.nodeType === 3) {
-                        texto.textContent = `CAIXA LIVRE - TERMINAL ${String(operador.caixaNumber).padStart(2, '0')} `;
-                    }
+                    document.getElementById('footer-terminal').innerText = `Terminal ${String(operador.caixaNumber).padStart(2, '0')}`;
                 }
             } else {
                 window.location.href = '/login.html';

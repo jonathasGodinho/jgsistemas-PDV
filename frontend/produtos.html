@@ -4,232 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google" content="notranslate">
-    <title>Cadastro de Produtos - JG Sistemas</title>
+    <title>Produtos - JG Sistemas</title>
+    <link rel="stylesheet" href="/ui/jg.css">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
-        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
-        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
-        header a:hover { color: white; }
-        main { padding: 20px; display: grid; grid-template-columns: 320px 1fr; gap: 20px; align-items: start; }
-        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
-        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; }
-        .painel-corpo { padding: 14px; }
-        .toolbar { display: flex; gap: 10px; margin-bottom: 14px; }
-        .toolbar input { flex: 1; padding: 10px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { background-color: #134074; color: white; padding: 10px; text-align: left; text-transform: uppercase; font-size: 12px; }
-        td { padding: 10px; border-bottom: 1px solid #e6e9ed; color: #333; }
-        tr:nth-child(even) { background-color: #f8f9fa; }
-        tr:hover { background-color: #eef2f7; }
-        .btn { border: none; border-radius: 4px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; }
-        .btn-azul { background-color: #134074; color: white; }
-        .btn-azul:hover { background-color: #0b2545; }
-        .btn-verde { background-color: #00a651; color: white; }
-        .btn-verde:hover { background-color: #007a3d; }
-        .btn-perigo { background-color: #d9534f; color: white; }
-        .btn-perigo:hover { background-color: #b0433f; }
-        .btn-cinza { background-color: #aab2bd; color: white; }
-        .btn-cinza:hover { background-color: #8b95a1; }
-        .btn-mini { padding: 4px 8px; font-size: 12px; margin-right: 4px; }
-        .situacao { font-weight: bold; }
-        .situacao.ativo { color: #00a651; }
-        .situacao.inativo { color: #d9534f; }
-        .sem-dados { text-align: center; color: #8b95a1; padding: 30px; font-size: 14px; }
-        .cat-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; border-bottom: 1px solid #e6e9ed; font-size: 14px; }
-        .cat-item:last-child { border-bottom: none; }
-        .cat-nome { font-weight: bold; color: #134074; }
-        .cat-info { font-size: 12px; color: #8b95a1; }
-        .cat-add { display: flex; gap: 8px; margin-bottom: 12px; }
-        .cat-add input { flex: 1; padding: 9px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
-
-        /* Modal */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 100; }
-        .modal-overlay.active { display: flex; }
-        .modal { background: white; border-radius: 6px; width: 680px; max-width: 94vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
-        .modal-head { background-color: #0b2545; color: white; padding: 14px 18px; font-weight: bold; font-size: 15px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
-        .modal-head .close { cursor: pointer; font-size: 20px; color: #aab2bd; }
-        .modal-head .close:hover { color: white; }
-        .modal-body { padding: 18px; }
-        .modal label { font-size: 12px; color: #656d78; font-weight: bold; display: block; margin: 12px 0 5px; text-transform: uppercase; }
-        .modal input, .modal select { width: 100%; padding: 10px; font-size: 15px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; background: white; }
-        .modal .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .modal-check { display: flex; align-items: center; gap: 8px; margin-top: 14px; }
-        .modal-check input { width: auto; }
-        .modal-check label { margin: 0; }
-
-        footer { background-color: #134074; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
-
-        @media (max-width: 900px) {
-            main { grid-template-columns: 1fr; }
-        }
+        .cel-prod { display: flex; align-items: center; gap: 10px; }
+        .cel-prod .miniatura { flex-shrink: 0; }
+        .cel-prod b { display: block; font-weight: 600; }
+        .cel-prod small { display: block; }
+        .filtros select { width: 180px; }
     </style>
 </head>
-<body>
-
-    <header>
-        <div>JG SISTEMAS - CADASTRO DE PRODUTOS</div>
-        <div><a href="/">← Menu Principal</a></div>
-    </header>
-
+<body class="jg" data-pagina="produtos">
     <main>
-        <!-- Painel de categorias -->
-        <div class="painel">
-            <div class="painel-titulo">Categorias</div>
-            <div class="painel-corpo">
-                <div class="cat-add">
-                    <input type="text" id="nova-categoria" placeholder="Nova categoria...">
-                    <button class="btn btn-verde" onclick="adicionarCategoria()">Add</button>
-                </div>
-                <div id="lista-categorias"></div>
+        <div class="page-head">
+            <div><h1>Produtos</h1><div class="sub" id="contador">Carregando...</div></div>
+            <div class="acoes">
+                <a class="btn" href="/categorias.html"><span class="ms">category</span>Categorias e marcas</a>
+                <a class="btn btn-sucesso" href="/produto.html"><span class="ms">add</span>Novo produto</a>
             </div>
         </div>
 
-        <!-- Painel de produtos -->
-        <div class="painel">
-            <div class="painel-titulo">Produtos</div>
-            <div class="painel-corpo">
-                <div class="toolbar">
-                    <input type="text" id="busca" placeholder="Buscar por nome, código ou SKU...">
-                    <button class="btn btn-azul" onclick="buscarProdutos()">Buscar</button>
-                    <button class="btn btn-verde" onclick="abrirModalProduto()">Novo Produto</button>
-                </div>
-                <div class="table-container" style="overflow-x: auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Código</th>
-                                <th>Produto</th>
-                                <th>Categoria</th>
-                                <th style="text-align: right;">Preço</th>
-                                <th style="text-align: right;">Custo</th>
-                                <th style="text-align: right;">Estoque</th>
-                                <th>Situação</th>
-                                <th style="text-align: center;">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabela-produtos">
-                            <tr><td colspan="8" class="sem-dados">Carregando...</td></tr>
-                        </tbody>
-                    </table>
+        <div class="card">
+            <div class="card-body" style="padding-bottom:0">
+                <div class="filtros">
+                    <div class="input-icone" style="flex:1;min-width:260px"><span class="ms">search</span><input type="text" id="busca" placeholder="Buscar por nome, código ou SKU"></div>
+                    <select id="f-categoria" aria-label="Categoria"><option value="">Todas as categorias</option></select>
+                    <select id="f-marca" aria-label="Marca"><option value="">Todas as marcas</option></select>
+                    <select id="f-situacao" aria-label="Situação"><option value="">Todas as situações</option><option value="ativo">Ativos</option><option value="inativo">Inativos</option><option value="baixo">Estoque baixo</option></select>
+                    <button class="btn btn-fantasma" onclick="limparFiltros()">Limpar</button>
                 </div>
             </div>
+            <div class="tabela-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Código</th>
+                            <th>Categoria</th>
+                            <th>Marca</th>
+                            <th class="right">Preço</th>
+                            <th class="right">Custo</th>
+                            <th class="right">Margem</th>
+                            <th class="right">Estoque</th>
+                            <th>Situação</th>
+                            <th class="acoes">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-produtos">
+                        <tr><td colspan="10" class="sem-dados">Carregando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="paginacao"><span id="pag-info"></span><div class="row" style="gap:6px"><button class="btn btn-sm" id="pag-ant"><span class="ms">chevron_left</span></button><button class="btn btn-sm" id="pag-prox"><span class="ms">chevron_right</span></button></div></div>
         </div>
     </main>
 
-    <footer>© 2026 JG Sistemas</footer>
-
-    <!-- Modal de produto -->
-    <div class="modal-overlay" id="modal-produto">
-        <div class="modal">
-            <div class="modal-head">
-                <span id="modal-titulo">Novo Produto</span>
-                <span class="close" onclick="fecharModalProduto()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="p-id">
-                <label>Nome do Produto *</label>
-                <input type="text" id="p-nome" placeholder="Ex.: CAFÉ TRADICIONAL 500G">
-
-                <div class="grid-2">
-                    <div>
-                        <label>Código de Barras</label>
-                        <input type="text" id="p-codigo" placeholder="Ex.: 7891000000015">
-                    </div>
-                    <div>
-                        <label>SKU</label>
-                        <input type="text" id="p-sku" placeholder="Ex.: CAF001">
-                    </div>
-                </div>
-
-                <div class="grid-2">
-                    <div>
-                        <label>Preço de Venda *</label>
-                        <input type="text" id="p-preco" placeholder="0,00" inputmode="decimal">
-                    </div>
-                    <div>
-                        <label>Preço de Custo</label>
-                        <input type="text" id="p-custo" placeholder="0,00" inputmode="decimal">
-                    </div>
-                </div>
-
-                <div class="grid-2">
-                    <div>
-                        <label>Categoria</label>
-                        <select id="p-categoria"></select>
-                    </div>
-                    <div>
-                        <label>Estoque</label>
-                        <input type="number" id="p-estoque" value="0" min="0">
-                    </div>
-                </div>
-
-                <div class="grid-2">
-                    <div>
-                        <label>Marca</label>
-                        <select id="p-marca"></select>
-                    </div>
-                    <div>
-                        <label>Coleção</label>
-                        <select id="p-colecao"></select>
-                    </div>
-                </div>
-
-                <label style="margin-top:16px;">Grade de Variações</label>
-                <div style="border:1px solid #ccd1d9; border-radius:4px; overflow:auto; max-height:240px;">
-                    <table style="min-width:620px;">
-                        <thead>
-                            <tr>
-                                <th>Cor</th>
-                                <th>Tamanho</th>
-                                <th>SKU</th>
-                                <th>Código</th>
-                                <th style="text-align:right;">Preço</th>
-                                <th style="text-align:right;">Custo</th>
-                                <th style="text-align:right;">Qtd</th>
-                                <th style="text-align:center;"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabela-grade"></tbody>
-                    </table>
-                </div>
-                <button type="button" class="btn btn-cinza" style="margin-top:8px; width:100%;" onclick="adicionarLinhaGrade()">+ Adicionar Variação</button>
-                <div style="font-size:11px; color:#8b95a1; margin-top:4px;">Ao usar grade, o estoque é controlado por variação e o estoque do produto base passa a 0.</div>
-
-                <div class="modal-check">
-                    <input type="checkbox" id="p-ativo" checked>
-                    <label for="p-ativo">Produto ativo (disponível no PDV)</label>
-                </div>
-
-                <button class="btn btn-azul" style="width: 100%; margin-top: 16px; padding: 13px; font-size: 15px;" onclick="salvarProduto()">Salvar Produto</button>
-            </div>
-        </div>
-    </div>
-
     <script src="/seguranca.js"></script>
+    <script src="/ui/shell.js"></script>
     <script>
-        const API_BASE = '';
         let produtos = [];
         let categorias = [];
         let marcas = [];
-        let colecoes = [];
-        let grade = [];
+        let pagina = 0;
+        const POR_PAGINA = 25;
 
         function formatarMoeda(valor) {
-            return `R$ ${Number(valor).toFixed(2).replace('.', ',')}`;
+            return Number(valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
-        function obterOperador() {
-            try {
-                const raw = localStorage.getItem('jg_operador');
-                return raw ? JSON.parse(raw) : null;
-            } catch (e) { return null; }
-        }
-
-        function tokenAuth() {
-            const op = obterOperador();
-            return op && op.token ? { 'Authorization': 'Bearer ' + op.token } : {};
-        }
+        function obterOperador() { return JG.operador(); }
 
         function bloquearCaixa() {
             const op = obterOperador();
@@ -239,9 +82,9 @@
         }
 
         async function api(url, metodo = 'GET', corpo = null) {
-            const opcoes = { method: metodo, headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()) };
+            const opcoes = { method: metodo, headers: { 'Content-Type': 'application/json' } };
             if (corpo) opcoes.body = JSON.stringify(corpo);
-            const response = await fetch(`${API_BASE}${url}`, opcoes);
+            const response = await fetch(url, opcoes);
             if (response.status === 401) {
                 localStorage.removeItem('jg_operador');
                 window.location.href = '/login.html';
@@ -254,124 +97,11 @@
 
         bloquearCaixa();
 
-        async function carregarCategorias() {
-            categorias = await api('/api/categorias');
-            const select = document.getElementById('p-categoria');
-            select.innerHTML = '<option value="">Sem categoria</option>';
-            categorias.forEach(c => {
-                select.innerHTML += `<option value="${c.id}">${esc(c.nome)}</option>`;
-            });
-
-            const lista = document.getElementById('lista-categorias');
-            if (categorias.length === 0) {
-                lista.innerHTML = '<div class="sem-dados">Nenhuma categoria</div>';
-                return;
-            }
-            lista.innerHTML = categorias.map(c => `
-                <div class="cat-item">
-                    <div>
-                        <div class="cat-nome">${esc(c.nome)}</div>
-                        <div class="cat-info">${c.produtos} produto(s)</div>
-                    </div>
-                    <div>
-                        <button class="btn btn-mini btn-cinza" onclick="renomearCategoria('${c.id}', '${esc(c.nome)}')">Renomear</button>
-                        <button class="btn btn-mini btn-perigo" onclick="excluirCategoria('${c.id}', '${esc(c.nome)}')">Excluir</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        async function adicionarCategoria() {
-            const input = document.getElementById('nova-categoria');
-            const nome = input.value.trim();
-            if (!nome) { alert("Digite o nome da categoria!"); return; }
-            try {
-                await api('/api/categorias', 'POST', { nome });
-                input.value = '';
-                await carregarCategorias();
-            } catch (e) { alert(e.message); }
-        }
-
-        async function renomearCategoria(id, nomeAtual) {
-            const novo = prompt("Novo nome da categoria:", nomeAtual);
-            if (!novo) return;
-            try {
-                await api(`/api/categorias/${id}`, 'PUT', { nome: novo });
-                await carregarCategorias();
-            } catch (e) { alert(e.message); }
-        }
-
-        async function excluirCategoria(id, nome) {
-            if (!confirm(`Excluir a categoria "${nome}"?`)) return;
-            try {
-                await api(`/api/categorias/${id}`, 'DELETE');
-                await carregarCategorias();
-                await buscarProdutos();
-            } catch (e) { alert(e.message); }
-        }
-
-        async function carregarMarcas() {
-            try {
-                marcas = await api('/api/marcas');
-            } catch (e) { marcas = []; }
-            const select = document.getElementById('p-marca');
-            select.innerHTML = '<option value="">Sem marca</option>';
-            marcas.forEach(m => {
-                select.innerHTML += `<option value="${m.id}">${esc(m.nome)}</option>`;
-            });
-        }
-
-        async function carregarColecoes() {
-            try {
-                colecoes = await api('/api/colecoes');
-            } catch (e) { colecoes = []; }
-            const select = document.getElementById('p-colecao');
-            select.innerHTML = '<option value="">Sem coleção</option>';
-            colecoes.forEach(c => {
-                select.innerHTML += `<option value="${c.id}">${esc(c.nome)}</option>`;
-            });
-        }
-
-        function adicionarLinhaGrade(linha) {
-            const l = linha || { cor: '', tamanho: '', sku: '', codigo: '', preco: '', custo: '', estoque: 0 };
-            grade.push(l);
-            renderizarGrade();
-        }
-
-        function renderizarGrade() {
-            const tbody = document.getElementById('tabela-grade');
-            if (grade.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" class="sem-dados" style="padding:14px;">Nenhuma variação</td></tr>';
-                return;
-            }
-            tbody.innerHTML = grade.map((g, i) => `
-                <tr>
-                    <td><input type="text" value="${esc(g.cor || '')}" style="width:70px;" onchange="grade[${i}].cor = this.value"></td>
-                    <td><input type="text" value="${esc(g.tamanho || '')}" style="width:60px;" onchange="grade[${i}].tamanho = this.value"></td>
-                    <td><input type="text" value="${esc(g.sku || '')}" style="width:70px;" onchange="grade[${i}].sku = this.value"></td>
-                    <td><input type="text" value="${esc(g.codigo || '')}" style="width:80px;" onchange="grade[${i}].codigo = this.value"></td>
-                    <td><input type="text" value="${g.preco || ''}" style="width:70px;" inputmode="decimal" onchange="grade[${i}].preco = this.value"></td>
-                    <td><input type="text" value="${g.custo || ''}" style="width:70px;" inputmode="decimal" onchange="grade[${i}].custo = this.value"></td>
-                    <td><input type="number" value="${g.estoque || 0}" min="0" style="width:55px;" onchange="grade[${i}].estoque = Number(this.value)||0"></td>
-                    <td style="text-align:center;"><span class="btn btn-perigo btn-mini" onclick="removerLinhaGrade(${i})">&times;</span></td>
-                </tr>`).join('');
-        }
-
-        function removerLinhaGrade(idx) {
-            grade.splice(idx, 1);
-            renderizarGrade();
-        }
-
-        function montarGradeDoProduto(p) {
-            return (p.variantes || []).map(v => ({
-                cor: v.cor || '',
-                tamanho: v.tamanho || '',
-                sku: v.sku || '',
-                codigo: v.codigo || '',
-                preco: v.preco !== null && v.preco !== undefined ? String(v.preco).replace('.', ',') : '',
-                custo: v.custo !== null && v.custo !== undefined ? String(v.custo).replace('.', ',') : '',
-                estoque: v.estoque || 0
-            }));
+        async function carregarFiltros() {
+            try { categorias = await api('/api/categorias'); } catch (e) { categorias = []; }
+            try { marcas = await api('/api/marcas'); } catch (e) { marcas = []; }
+            document.getElementById('f-categoria').innerHTML = '<option value="">Todas as categorias</option>' + categorias.map(c => `<option value="${esc(c.id)}">${esc(c.nome)}</option>`).join('');
+            document.getElementById('f-marca').innerHTML = '<option value="">Todas as marcas</option>' + marcas.map(m => `<option value="${esc(m.id)}">${esc(m.nome)}</option>`).join('');
         }
 
         async function buscarProdutos() {
@@ -379,134 +109,95 @@
             const url = busca ? `/api/produtos?busca=${encodeURIComponent(busca)}` : '/api/produtos';
             try {
                 produtos = await api(url);
+                pagina = 0;
                 renderizarProdutos();
             } catch (e) { alert(e.message); }
         }
 
+        function estoqueBaixo(p) { return p.minimo > 0 && p.estoque <= p.minimo; }
+
+        function filtrados() {
+            const cat = document.getElementById('f-categoria').value;
+            const mar = document.getElementById('f-marca').value;
+            const sit = document.getElementById('f-situacao').value;
+            return produtos.filter(p =>
+                (!cat || p.categoriaId === cat) && (!mar || p.marcaId === mar) &&
+                (!sit || (sit === 'ativo' && p.ativo) || (sit === 'inativo' && !p.ativo) || (sit === 'baixo' && estoqueBaixo(p))));
+        }
+
         function renderizarProdutos() {
             const tbody = document.getElementById('tabela-produtos');
-            if (produtos.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" class="sem-dados">Nenhum produto encontrado</td></tr>';
+            const lista = filtrados();
+            const total = lista.length;
+            document.getElementById('contador').textContent = `${produtos.length.toLocaleString('pt-BR')} produto(s) cadastrado(s)`;
+            if (total === 0) {
+                tbody.innerHTML = `<tr><td colspan="10"><div class="estado-vazio"><span class="ms">inventory_2</span><p>${produtos.length ? 'Nenhum produto com esses filtros.' : 'Nenhum produto cadastrado ainda.'}</p><a class="btn btn-sucesso" href="/produto.html"><span class="ms">add</span>Novo produto</a></div></td></tr>`;
+                document.getElementById('pag-info').textContent = '';
                 return;
             }
-            tbody.innerHTML = produtos.map(p => `
-                <tr>
-                    <td>${esc(p.codigo || '-')}</td>
-                    <td><strong>${esc(p.nome)}</strong><br><small style="color:#8b95a1;">${esc([p.sku, p.marca, p.colecao].filter(Boolean).join(' · ') || '')}</small></td>
-                    <td>${esc(p.categoria || '-')}</td>
-                    <td style="text-align: right;">${formatarMoeda(p.preco)}</td>
-                    <td style="text-align: right;">${formatarMoeda(p.custo)}</td>
-                    <td style="text-align: right;"><strong>${p.estoque}</strong></td>
-                    <td><span class="situacao ${p.ativo ? 'ativo' : 'inativo'}">${p.ativo ? 'ATIVO' : 'INATIVO'}</span></td>
-                    <td style="text-align: center;">
-                        <button class="btn btn-mini btn-azul" onclick="abrirModalProduto('${p.id}')">Editar</button>
-                        <button class="btn btn-mini btn-perigo" onclick="excluirProduto('${p.id}', '${esc(p.nome)}')">Excluir</button>
+            const maxPag = Math.max(0, Math.ceil(total / POR_PAGINA) - 1);
+            pagina = Math.min(pagina, maxPag);
+            const ini = pagina * POR_PAGINA;
+            const pag = lista.slice(ini, ini + POR_PAGINA);
+            document.getElementById('pag-info').textContent = `${ini + 1}–${ini + pag.length} de ${total.toLocaleString('pt-BR')}`;
+            document.getElementById('pag-ant').disabled = pagina === 0;
+            document.getElementById('pag-prox').disabled = pagina >= maxPag;
+            tbody.innerHTML = pag.map(p => {
+                const margem = p.preco > 0 ? (p.preco - p.custo) / p.preco * 100 : 0;
+                const grade = (p.variantes || []).length;
+                const estoque = estoqueBaixo(p)
+                    ? `<span class="badge ${p.estoque <= 0 ? 'vencido' : 'baixo'}" title="Mínimo: ${p.minimo}">${p.estoque} un</span>`
+                    : `<b>${p.estoque}</b> <small>un</small>`;
+                const mini = p.foto
+                    ? `<img class="miniatura" src="${esc(p.foto)}" alt="">`
+                    : `<span class="miniatura"><span class="ms sm">image</span></span>`;
+                return `<tr>
+                    <td><div class="cel-prod">${mini}<div><b>${esc(p.nome)}</b><small>${esc([p.sku, p.colecao, grade ? grade + ' variações' : ''].filter(Boolean).join(' · '))}</small></div></div></td>
+                    <td class="num">${esc(p.codigo || '—')}</td>
+                    <td>${esc(p.categoria || '—')}</td>
+                    <td>${esc(p.marca || '—')}</td>
+                    <td class="right">${formatarMoeda(p.preco)}</td>
+                    <td class="right">${formatarMoeda(p.custo)}</td>
+                    <td class="right ${margem >= 0 ? 'txt-verde' : 'txt-vermelho'}">${margem.toFixed(1).replace('.', ',')}%</td>
+                    <td class="right">${estoque}</td>
+                    <td><span class="badge ${p.ativo ? 'ativo' : 'inativo'}">${p.ativo ? 'Ativo' : 'Inativo'}</span></td>
+                    <td class="acoes">
+                        <a class="btn-icone" title="Editar" href="/produto.html?id=${encodeURIComponent(p.id)}"><span class="ms">edit</span></a>
+                        <a class="btn-icone" title="Duplicar" href="/produto.html?duplicar=${encodeURIComponent(p.id)}"><span class="ms">content_copy</span></a>
+                        <button class="btn-icone perigo" title="Excluir" onclick="excluirProduto('${p.id}', '${esc(p.nome)}')"><span class="ms">delete</span></button>
                     </td>
-                </tr>
-            `).join('');
+                </tr>`;
+            }).join('');
         }
 
-        function abrirModalProduto(id = null) {
-            document.getElementById('modal-titulo').innerText = id ? 'Editar Produto' : 'Novo Produto';
-            document.getElementById('p-id').value = id || '';
-            document.getElementById('p-nome').value = '';
-            document.getElementById('p-codigo').value = '';
-            document.getElementById('p-sku').value = '';
-            document.getElementById('p-preco').value = '';
-            document.getElementById('p-custo').value = '';
-            document.getElementById('p-categoria').value = '';
-            document.getElementById('p-marca').value = '';
-            document.getElementById('p-colecao').value = '';
-            document.getElementById('p-estoque').value = '0';
-            document.getElementById('p-ativo').checked = true;
-            grade = [];
-
-            if (id) {
-                const p = produtos.find(x => x.id === id);
-                if (p) {
-                    document.getElementById('p-nome').value = p.nome;
-                    document.getElementById('p-codigo').value = p.codigo || '';
-                    document.getElementById('p-sku').value = p.sku || '';
-                    document.getElementById('p-preco').value = String(p.preco).replace('.', ',');
-                    document.getElementById('p-custo').value = String(p.custo).replace('.', ',');
-                    document.getElementById('p-categoria').value = p.categoriaId || '';
-                    document.getElementById('p-marca').value = p.marcaId || '';
-                    document.getElementById('p-colecao').value = p.colecaoId || '';
-                    document.getElementById('p-estoque').value = p.estoque;
-                    document.getElementById('p-ativo').checked = p.ativo;
-                    grade = montarGradeDoProduto(p);
-                }
-            }
-
-            renderizarGrade();
-            document.getElementById('modal-produto').classList.add('active');
-        }
-
-        function fecharModalProduto() {
-            document.getElementById('modal-produto').classList.remove('active');
-        }
-
-        function parseMoeda(valor) {
-            return parseFloat(String(valor).replace(',', '.')) || 0;
-        }
-
-        async function salvarProduto() {
-            const id = document.getElementById('p-id').value;
-            const gradeValida = grade.filter(g => g.cor || g.tamanho || g.sku || g.codigo);
-            const corpo = {
-                nome: document.getElementById('p-nome').value.trim(),
-                codigo: document.getElementById('p-codigo').value.trim(),
-                sku: document.getElementById('p-sku').value.trim(),
-                preco: parseMoeda(document.getElementById('p-preco').value),
-                custo: parseMoeda(document.getElementById('p-custo').value),
-                categoriaId: document.getElementById('p-categoria').value,
-                marcaId: document.getElementById('p-marca').value,
-                colecaoId: document.getElementById('p-colecao').value,
-                estoque: parseInt(document.getElementById('p-estoque').value) || 0,
-                ativo: document.getElementById('p-ativo').checked,
-                variantes: gradeValida.map(g => ({
-                    cor: g.cor,
-                    tamanho: g.tamanho,
-                    sku: g.sku,
-                    codigo: g.codigo,
-                    preco: parseMoeda(g.preco),
-                    custo: parseMoeda(g.custo),
-                    estoque: Number(g.estoque) || 0
-                }))
-            };
-
-            if (!corpo.nome) { alert("Informe o nome do produto!"); return; }
-            if (!corpo.preco) { alert("Informe o preço de venda!"); return; }
-
-            try {
-                if (id) {
-                    await api(`/api/produtos/${id}`, 'PUT', corpo);
-                } else {
-                    await api('/api/produtos', 'POST', corpo);
-                }
-                fecharModalProduto();
-                await buscarProdutos();
-            } catch (e) { alert(e.message); }
+        function limparFiltros() {
+            ['busca', 'f-categoria', 'f-marca', 'f-situacao'].forEach(id => document.getElementById(id).value = '');
+            buscarProdutos();
         }
 
         async function excluirProduto(id, nome) {
             if (!confirm(`Excluir o produto "${nome}"?`)) return;
             try {
                 await api(`/api/produtos/${id}`, 'DELETE');
+                JG.toast('Produto excluído.', 'sucesso');
                 await buscarProdutos();
             } catch (e) { alert(e.message); }
         }
 
-        document.getElementById('busca').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') buscarProdutos();
-        });
+        document.getElementById('busca').addEventListener('keydown', (e) => { if (e.key === 'Enter') buscarProdutos(); });
+        let atraso = null;
+        document.getElementById('busca').addEventListener('input', () => { clearTimeout(atraso); atraso = setTimeout(buscarProdutos, 350); });
+        ['f-categoria', 'f-marca', 'f-situacao'].forEach(id => document.getElementById(id).addEventListener('change', () => { pagina = 0; renderizarProdutos(); }));
+        document.getElementById('pag-ant').onclick = () => { pagina--; renderizarProdutos(); };
+        document.getElementById('pag-prox').onclick = () => { pagina++; renderizarProdutos(); };
 
-        // Inicialização
         (async () => {
+            const qs = new URLSearchParams(location.search);
+            if (qs.get('novo')) { location.href = '/produto.html'; return; }
+            if (qs.get('busca')) document.getElementById('busca').value = qs.get('busca');
+            if (qs.get('situacao')) document.getElementById('f-situacao').value = qs.get('situacao');
             try {
-                await carregarCategorias();
-                await carregarMarcas();
-                await carregarColecoes();
+                await carregarFiltros();
                 await buscarProdutos();
             } catch (e) {
                 alert("Falha ao carregar dados: " + e.message);

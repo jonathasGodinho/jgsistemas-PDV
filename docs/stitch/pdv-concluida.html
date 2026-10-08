@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PDV — Venda Concluída · JG Sistemas</title>
+<!-- Google Fonts: Inter & JetBrains Mono para bobina térmica -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "inverse-primary": "#a9c7ff",
+            "on-secondary-fixed": "#011b3b",
+            "surface-container-lowest": "#ffffff",
+            "secondary-fixed": "#d5e3ff",
+            "on-tertiary": "#ffffff",
+            "surface": "#f8f9ff",
+            "surface-tint": "#305ea1",
+            "inverse-on-surface": "#eaf1ff",
+            "on-tertiary-fixed": "#002109",
+            "primary": "#003873",
+            "tertiary-container": "#005d25",
+            "secondary-container": "#bfd5fe",
+            "background": "#f8f9ff",
+            "surface-bright": "#f8f9ff",
+            "secondary-fixed-dim": "#b2c7f0",
+            "on-tertiary-container": "#5dda7a",
+            "on-tertiary-fixed-variant": "#005320",
+            "on-primary": "#ffffff",
+            "tertiary-fixed-dim": "#62df7d",
+            "surface-container": "#e5eeff",
+            "primary-fixed-dim": "#a9c7ff",
+            "on-primary-fixed-variant": "#0e4688",
+            "on-secondary-fixed-variant": "#324769",
+            "surface-container-low": "#eff4ff",
+            "on-error": "#ffffff",
+            "tertiary": "#004319",
+            "inverse-surface": "#213145",
+            "on-secondary-container": "#475c7f",
+            "surface-container-high": "#dce9ff",
+            "on-surface-variant": "#434750",
+            "surface-variant": "#d3e4fe",
+            "surface-dim": "#cbdbf5",
+            "secondary": "#4a5f82",
+            "tertiary-fixed": "#7ffc97",
+            "surface-container-highest": "#d3e4fe",
+            "on-background": "#0b1c30",
+            "primary-fixed": "#d6e3ff",
+            "primary-container": "#1d4f91",
+            "error": "#ba1a1a",
+            "on-surface": "#0b1c30",
+            "on-secondary": "#ffffff",
+            "on-primary-fixed": "#001b3e",
+            "error-container": "#ffdad6",
+            "outline-variant": "#c3c6d2",
+            "on-primary-container": "#a2c3ff",
+            "on-error-container": "#93000a",
+            "outline": "#737782"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Inter", "sans-serif"],
+            "display": ["Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"],
+            "mono": ["'JetBrains Mono'", "monospace"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill-1 {
+      font-variation-settings: 'FILL' 1;
+    }
+
+    /* Estilo serrilhado de bobina térmica */
+    .receipt-edge-top {
+      background: radial-gradient(circle, transparent, transparent 4px, #ffffff 4px, #ffffff);
+      background-size: 10px 10px;
+      background-position: 0 -5px;
+    }
+    .receipt-edge-bottom {
+      background: radial-gradient(circle, transparent, transparent 4px, #ffffff 4px, #ffffff);
+      background-size: 10px 10px;
+      background-position: 0 5px;
+    }
+
+    /* Scrollbar personalizada discreta para cupom longo */
+    .receipt-scroll::-webkit-scrollbar {
+      width: 4px;
+    }
+    .receipt-scroll::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .receipt-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+
+    /* Números com largura tabular para precisão contábil */
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+  </style>
+</head>
+<body class="bg-[#F4F6FA] text-on-surface font-body antialiased min-h-screen flex flex-col select-none overflow-x-hidden">
+<!-- 1. FAIXA SUPERIOR: HEADER DO PDV (1440x900 dedicado ao operador) -->
+<header class="bg-on-primary-fixed text-white h-14 px-6 flex items-center justify-between shadow-md shrink-0 border-b border-outline-variant/20 z-20">
+<div class="flex items-center space-x-3">
+<!-- Logo JG Sistemas com quadrado verde -->
+<div class="flex items-center space-x-2.5">
+<div class="w-8 h-8 rounded-lg bg-tertiary-container flex items-center justify-center font-headline font-black text-white text-base tracking-tighter shadow-sm border border-tertiary-fixed/30">
+          JG
+        </div>
+<span class="font-headline font-bold text-base tracking-tight text-white">JG Sistemas</span>
+</div>
+<span class="text-outline-variant text-xs">|</span>
+<span class="text-xs font-medium text-surface-container-highest/80 flex items-center">
+        Loja Centro — Varejo Moda
+      </span>
+<div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+<span>Online</span>
+</div>
+</div>
+<!-- Informações de Terminal, Operador e Status Sefaz -->
+<div class="flex items-center gap-5 text-xs text-surface-container-highest">
+<div class="flex items-center gap-1.5 bg-on-primary-fixed-variant/40 px-2.5 py-1 rounded-lg border border-outline-variant/15">
+<span class="material-symbols-outlined text-[16px] text-tertiary-fixed">cloud_done</span>
+<span class="font-medium text-white">NFC-e Sefaz Ativa</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-surface-container-highest/70">desktop_windows</span>
+<span class="font-semibold text-white">Caixa 01</span>
+</div>
+<div class="flex items-center gap-1.5 border-l border-outline-variant/20 pl-4">
+<span class="material-symbols-outlined text-[16px] text-secondary-fixed">badge</span>
+<span>Operador:</span>
+<span class="font-semibold text-white">Ana Paula Souza</span>
+</div>
+<!-- Relógio dinâmico -->
+<div class="flex items-center gap-1.5 bg-black/25 px-2.5 py-1 rounded-md font-mono text-tertiary-fixed tabular-nums font-semibold tracking-wider text-xs border border-white/5" id="pdv-clock">
+        14:35:12
+      </div>
+</div>
+</header>
+<!-- 2. BANNER DE SUCESSO: STATUS PRINCIPAL -->
+<section class="bg-surface-container-lowest border-b border-outline-variant/40 px-6 py-3.5 shadow-sm shrink-0">
+<div class="max-w-[1400px] mx-auto flex items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-emerald-50 border-2 border-emerald-500 flex items-center justify-center text-emerald-600 shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-3xl fill-1" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div>
+<div class="flex items-center gap-3">
+<h1 class="font-headline text-xl font-bold text-on-surface tracking-tight">
+              Venda nº #004.512 Concluída com Sucesso!
+            </h1>
+<span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+              CUPOM FISCAL EMITIDO
+            </span>
+</div>
+<p class="text-xs text-on-surface-variant font-medium mt-0.5 flex items-center gap-2">
+<span>Total: <strong class="text-on-surface font-semibold text-emerald-700">R$ 500,00</strong></span>
+<span>·</span>
+<span>Troco: <strong class="text-on-surface font-semibold">R$ 0,00</strong></span>
+<span>·</span>
+<span>5 itens registrados (6 volumes)</span>
+</p>
+</div>
+</div>
+<!-- Destaque dos Atalhos Imediatos -->
+<div class="flex items-center gap-2 bg-surface-container-low px-3.5 py-2 rounded-lg border border-outline-variant/40 text-xs">
+<span class="material-symbols-outlined text-primary text-[18px]">keyboard</span>
+<span class="text-on-surface-variant">Pressione</span>
+<span class="bg-surface-container-lowest border border-outline-variant/60 font-bold px-1.5 py-0.5 rounded shadow-xs text-primary font-mono text-[11px]">ENTER</span>
+<span class="text-on-surface-variant">para Nova Venda ou</span>
+<span class="bg-surface-container-lowest border border-outline-variant/60 font-bold px-1.5 py-0.5 rounded shadow-xs text-primary font-mono text-[11px]">F9</span>
+<span class="text-on-surface-variant">para Imprimir</span>
+</div>
+</div>
+</section>
+<!-- 3. CONTEÚDO PRINCIPAL (GRID 12 COLUNAS / 2 COLUNAS EQUILIBRADAS) -->
+<main class="flex-1 max-w-[1400px] w-full mx-auto px-6 py-4 grid grid-cols-12 gap-6 overflow-hidden">
+<!-- COLUNA ESQUERDA (5 COLUNAS): PRÉ-VISUALIZAÇÃO DO CUPOM TÉRMICO 80mm -->
+<div class="col-span-5 flex flex-col h-full overflow-hidden">
+<div class="flex items-center justify-between pb-2">
+<div class="flex items-center gap-1.5 text-xs font-semibold text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-primary">receipt_long</span>
+<span>Pré-visualização do Cupom Térmico (Bobina 80mm)</span>
+</div>
+<span class="text-[11px] text-slate-500 font-mono">Impressora: Elgin i9 USB</span>
+</div>
+<!-- Container do Papel Térmico -->
+<div class="relative flex-1 bg-white rounded-lg shadow-md border border-slate-200 overflow-hidden flex flex-col">
+<!-- Detalhe decorativo serrilhado superior -->
+<div class="h-2 w-full bg-slate-100 border-b border-dashed border-slate-300"></div>
+<!-- Conteúdo Monospaçado do Cupom -->
+<div class="flex-1 overflow-y-auto receipt-scroll p-4 text-[11px] font-mono leading-relaxed text-slate-800 bg-[#FCFDFE]">
+<!-- Cabeçalho Fiscal do Estabelecimento -->
+<div class="text-center space-y-0.5 pb-2">
+<p class="font-bold text-xs tracking-tight text-slate-900">JG SISTEMAS - LOJA CENTRO</p>
+<p class="text-[10px] text-slate-600">JG COMERCIO VAREJISTA DE MODA LTDA</p>
+<p class="text-[10px]">CNPJ: 12.345.678/0001-90</p>
+<p class="text-[10px]">Rua das Flores, 450 - Centro - São Paulo/SP</p>
+<p class="font-semibold mt-1 text-[10px] text-slate-700">Documento Auxiliar da Nota Fiscal de Consumidor Eletrônica (NFC-e)</p>
+</div>
+<div class="text-slate-400 select-none text-[10px] my-1 text-center font-mono">------------------------------------------------</div>
+<!-- Itens do Cupom -->
+<div class="space-y-1.5 my-1">
+<div class="flex justify-between font-semibold text-[10px] text-slate-500 pb-0.5 border-b border-slate-100">
+<span># CÓDIGO DESCRIÇÃO</span>
+<span>QTD x VL.UN  TOTAL</span>
+</div>
+<!-- Item 1 -->
+<div class="text-[10.5px]">
+<div class="font-medium text-slate-900">001 7891029384710 Vestido Midi Floral Tam G</div>
+<div class="flex justify-between text-slate-600 pl-4 tabular-nums">
+<span>1 un x R$ 189,90</span>
+<span class="font-semibold text-slate-900">R$ 189,90</span>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="text-[10.5px]">
+<div class="font-medium text-slate-900">002 7891029384727 Calça Jeans Skinny Tam 38</div>
+<div class="flex justify-between text-slate-600 pl-4 tabular-nums">
+<span>1 un x R$ 149,90 (Desc R$ 10,00)</span>
+<span class="font-semibold text-slate-900">R$ 139,90</span>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="text-[10.5px]">
+<div class="font-medium text-slate-900">003 7891029384734 Camiseta Básica Algodão M</div>
+<div class="flex justify-between text-slate-600 pl-4 tabular-nums">
+<span>2 un x R$ 59,90</span>
+<span class="font-semibold text-slate-900">R$ 119,80</span>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="text-[10.5px]">
+<div class="font-medium text-slate-900">004 7891029384796 Cinto Couro Legítimo</div>
+<div class="flex justify-between text-slate-600 pl-4 tabular-nums">
+<span>1 un x R$ 39,90</span>
+<span class="font-semibold text-slate-900">R$ 39,90</span>
+</div>
+</div>
+<!-- Item 5 -->
+<div class="text-[10.5px]">
+<div class="font-medium text-slate-900">005 7891029384801 Kit Meia Soquete 3 Pares</div>
+<div class="flex justify-between text-slate-600 pl-4 tabular-nums">
+<span>1 un x R$ 22,80 (Desc R$ 2,30)</span>
+<span class="font-semibold text-slate-900">R$ 20,50</span>
+</div>
+</div>
+</div>
+<div class="text-slate-400 select-none text-[10px] my-1 text-center font-mono">------------------------------------------------</div>
+<!-- Totais e Descontos -->
+<div class="space-y-1 text-slate-700 text-[11px] tabular-nums">
+<div class="flex justify-between">
+<span>Qtd. Total de Itens:</span>
+<span class="font-semibold">6 unidades</span>
+</div>
+<div class="flex justify-between">
+<span>Subtotal Bruto:</span>
+<span>R$ 512,30</span>
+</div>
+<div class="flex justify-between text-emerald-700">
+<span>Desconto Total:</span>
+<span>-R$ 12,30</span>
+</div>
+<div class="flex justify-between text-sm font-bold text-slate-900 py-1 border-y border-dashed border-slate-300">
+<span>VALOR TOTAL:</span>
+<span class="text-base text-slate-900">R$ 500,00</span>
+</div>
+</div>
+<!-- Formas de Pagamento -->
+<div class="mt-2 pt-1 space-y-1 text-slate-700 text-[10.5px] tabular-nums">
+<div class="font-bold text-[10px] text-slate-500 uppercase tracking-wide">Formas de Pagamento Efetuadas:</div>
+<div class="flex justify-between pl-2">
+<span>PIX Instantâneo</span>
+<span class="font-medium text-slate-900">R$ 150,00</span>
+</div>
+<div class="flex justify-between pl-2">
+<span>Cartão de Crédito (3x s/ juros)</span>
+<span class="font-medium text-slate-900">R$ 250,00</span>
+</div>
+<div class="flex justify-between pl-2">
+<span>Dinheiro Espécie</span>
+<span class="font-medium text-slate-900">R$ 100,00</span>
+</div>
+<div class="flex justify-between pl-2 text-slate-500">
+<span>Troco:</span>
+<span>R$ 0,00</span>
+</div>
+</div>
+<div class="text-slate-400 select-none text-[10px] my-2 text-center font-mono">------------------------------------------------</div>
+<!-- QR Code e Informações de Consulta SEFAZ -->
+<div class="text-center space-y-2 pt-1 pb-1">
+<div class="flex justify-center">
+<!-- Gráfico de QR Code NFC-e Nítido em SVG -->
+<div class="p-1.5 bg-white border border-slate-300 rounded shadow-xs inline-block">
+<svg class="w-24 h-24" fill="currentColor" viewbox="0 0 100 100">
+<!-- Padrões de alinhamento e dados simulados de QR Code padrão NFC-e -->
+<path d="M0,0 h30 v30 h-30 z M6,6 v18 h18 v-18 z M10,10 h10 v10 h-10 z" fill="#0f172a"></path>
+<path d="M70,0 h30 v30 h-30 z M76,6 v18 h18 v-18 z M80,10 h10 v10 h-10 z" fill="#0f172a"></path>
+<path d="M0,70 h30 v30 h-30 z M6,76 v18 h18 v-18 z M10,80 h10 v10 h-10 z" fill="#0f172a"></path>
+<rect fill="#0f172a" height="6" width="6" x="36" y="6"></rect>
+<rect fill="#0f172a" height="6" width="12" x="48" y="6"></rect>
+<rect fill="#0f172a" height="6" width="8" x="36" y="18"></rect>
+<rect fill="#0f172a" height="6" width="10" x="52" y="18"></rect>
+<rect fill="#0f172a" height="12" width="6" x="6" y="36"></rect>
+<rect fill="#0f172a" height="6" width="12" x="18" y="36"></rect>
+<rect fill="#0f172a" height="6" width="28" x="36" y="36"></rect>
+<rect fill="#0f172a" height="12" width="6" x="70" y="36"></rect>
+<rect fill="#0f172a" height="6" width="10" x="84" y="36"></rect>
+<rect fill="#0f172a" height="12" width="6" x="42" y="48"></rect>
+<rect fill="#0f172a" height="6" width="18" x="54" y="48"></rect>
+<rect fill="#0f172a" height="6" width="16" x="78" y="48"></rect>
+<rect fill="#0f172a" height="6" width="24" x="6" y="54"></rect>
+<rect fill="#0f172a" height="6" width="12" x="36" y="66"></rect>
+<rect fill="#0f172a" height="18" width="6" x="54" y="66"></rect>
+<rect fill="#0f172a" height="6" width="12" x="66" y="66"></rect>
+<rect fill="#0f172a" height="12" width="10" x="84" y="66"></rect>
+<rect fill="#0f172a" height="16" width="8" x="36" y="78"></rect>
+<rect fill="#0f172a" height="6" width="16" x="48" y="88"></rect>
+<rect fill="#0f172a" height="10" width="8" x="70" y="84"></rect>
+<rect fill="#0f172a" height="10" width="10" x="84" y="84"></rect>
+</svg>
+</div>
+</div>
+<p class="text-[10px] text-slate-600">Consulte pela Chave de Acesso em:</p>
+<p class="text-[10px] font-semibold text-primary">www.fazenda.sp.gov.br/nfce/consulta</p>
+<div class="text-[9.5px] text-slate-500 space-y-0.5">
+<p>Protocolo de Autorização: 135260084920184 - 08/10/2026 14:35</p>
+<p>Consumidor: Consumidor Final (Não identificado)</p>
+</div>
+</div>
+<div class="text-slate-400 select-none text-[10px] my-1 text-center font-mono">------------------------------------------------</div>
+<p class="text-[9px] text-center text-slate-400">JG Sistemas PDV v2.4 · Homologado PAF-NFCe</p>
+</div>
+<!-- Detalhe decorativo serrilhado inferior -->
+<div class="h-2 w-full bg-slate-100 border-t border-dashed border-slate-300"></div>
+</div>
+</div>
+<!-- COLUNA DIREITA (7 COLUNAS): STATUS FISCAL, AÇÕES E FECHAMENTO -->
+<div class="col-span-7 flex flex-col justify-between space-y-4">
+<!-- CARD 1: STATUS DA EMISSÃO FISCAL NFC-E -->
+<div class="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant/40 shadow-sm">
+<div class="flex items-center justify-between pb-3.5 border-b border-outline-variant/20">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">verified_user</span>
+</div>
+<div>
+<h2 class="font-headline font-bold text-sm text-on-surface">NFC-e — Nota Fiscal de Consumidor Eletrônica</h2>
+<p class="text-xs text-on-surface-variant">Sefaz São Paulo · Transmissão em contingência não necessária</p>
+</div>
+</div>
+<!-- Badge Autorizada -->
+<div class="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 border border-emerald-500/40 rounded-full text-emerald-800 text-xs font-bold">
+<span class="material-symbols-outlined text-base text-emerald-600 fill-1" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>AUTORIZADA PELA SEFAZ</span>
+</div>
+</div>
+<!-- Grid de Metadados Fiscais -->
+<div class="grid grid-cols-3 gap-3.5 mt-3.5 text-xs">
+<div class="bg-surface-container-low p-2.5 rounded-lg border border-outline-variant/20">
+<span class="text-on-surface-variant block text-[11px]">Número da Nota</span>
+<span class="font-bold text-on-surface text-sm tabular-nums">12.845</span>
+</div>
+<div class="bg-surface-container-low p-2.5 rounded-lg border border-outline-variant/20">
+<span class="text-on-surface-variant block text-[11px]">Série</span>
+<span class="font-bold text-on-surface text-sm tabular-nums">1</span>
+</div>
+<div class="bg-surface-container-low p-2.5 rounded-lg border border-outline-variant/20">
+<span class="text-on-surface-variant block text-[11px]">Data / Hora de Emissão</span>
+<span class="font-bold text-on-surface tabular-nums">08/10/2026 14:35:08</span>
+</div>
+<div class="bg-surface-container-low p-2.5 rounded-lg border border-outline-variant/20 col-span-2">
+<span class="text-on-surface-variant block text-[11px]">Protocolo de Autorização</span>
+<span class="font-mono font-semibold text-on-surface tracking-wide tabular-nums">135260084920184</span>
+</div>
+<div class="bg-surface-container-low p-2.5 rounded-lg border border-outline-variant/20">
+<span class="text-on-surface-variant block text-[11px]">Ambiente</span>
+<span class="font-semibold text-emerald-700">Sefaz-SP v4.00 Prod.</span>
+</div>
+</div>
+<!-- Chave de Acesso Formatada -->
+<div class="mt-3.5 bg-surface-container-low/80 p-3 rounded-lg border border-outline-variant/30">
+<div class="flex items-center justify-between mb-1.5">
+<span class="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider">Chave de Acesso (44 Dígitos)</span>
+<button class="inline-flex items-center gap-1 text-[11px] font-semibold text-primary hover:text-primary-container transition-colors py-0.5 px-2 rounded hover:bg-surface-container" id="copy-btn" onclick="copyKey()">
+<span class="material-symbols-outlined text-[15px]" id="copy-icon">content_copy</span>
+<span id="copy-text">Copiar chave</span>
+</button>
+</div>
+<div class="font-mono text-xs text-slate-800 bg-white px-3 py-2 rounded border border-outline-variant/30 select-all tracking-wider tabular-nums font-medium" id="access-key">
+            3526 1012 3456 7800 0190 6500 1000 0128 4510 0012 3456
+          </div>
+</div>
+<!-- Ações Secundárias Fiscais -->
+<div class="flex items-center gap-2 mt-3.5 pt-3 border-t border-outline-variant/20">
+<button class="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg border border-outline-variant/60 text-xs font-semibold text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[17px] text-primary">mail</span>
+<span>Enviar por E-mail</span>
+</button>
+<button class="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg border border-emerald-300 text-xs font-semibold text-emerald-800 bg-emerald-50/50 hover:bg-emerald-100 transition-colors">
+<span class="material-symbols-outlined text-[17px] text-emerald-600">chat</span>
+<span>Enviar por WhatsApp</span>
+</button>
+<button class="inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg border border-outline-variant/60 text-xs font-semibold text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[17px]">code</span>
+<span>XML / DANFE</span>
+</button>
+</div>
+</div>
+<!-- CARD 2: RESUMO FINANCEIRO & SATISFAÇÃO DO CLIENTE -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant/40 shadow-sm">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs font-bold text-on-surface uppercase tracking-wider flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">payments</span>
+            Divisão do Pagamento
+          </span>
+<span class="text-xs font-bold text-slate-800">Total Liquidado: R$ 500,00</span>
+</div>
+<div class="grid grid-cols-3 gap-3">
+<div class="flex items-center gap-2.5 p-2 rounded-lg bg-surface-container-low border border-outline-variant/20">
+<div class="w-7 h-7 rounded bg-teal-100 text-teal-800 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-base">qr_code_2</span>
+</div>
+<div>
+<span class="text-[10px] text-on-surface-variant block">PIX</span>
+<span class="text-xs font-bold text-on-surface tabular-nums">R$ 150,00</span>
+</div>
+</div>
+<div class="flex items-center gap-2.5 p-2 rounded-lg bg-surface-container-low border border-outline-variant/20">
+<div class="w-7 h-7 rounded bg-blue-100 text-blue-800 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-base">credit_card</span>
+</div>
+<div>
+<span class="text-[10px] text-on-surface-variant block">Crédito 3x</span>
+<span class="text-xs font-bold text-on-surface tabular-nums">R$ 250,00</span>
+</div>
+</div>
+<div class="flex items-center gap-2.5 p-2 rounded-lg bg-surface-container-low border border-outline-variant/20">
+<div class="w-7 h-7 rounded bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-base">attach_money</span>
+</div>
+<div>
+<span class="text-[10px] text-on-surface-variant block">Dinheiro</span>
+<span class="text-xs font-bold text-on-surface tabular-nums">R$ 100,00</span>
+</div>
+</div>
+</div>
+<!-- Banner JG Club Fidelidade -->
+<div class="mt-3 flex items-center justify-between p-2.5 rounded-lg bg-amber-50/80 border border-amber-200 text-amber-900 text-xs">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-amber-600 text-lg">loyalty</span>
+<span>Programa Fidelidade: <strong>+50 pontos JG Club</strong> creditados para próxima compra</span>
+</div>
+<span class="font-bold text-amber-800 text-[11px] bg-amber-100 px-2 py-0.5 rounded">Saldo: 420 pts</span>
+</div>
+</div>
+<!-- CARD 3: BARRA DE AÇÕES PRINCIPAIS DE FECHAMENTO -->
+<div class="bg-surface-container-lowest rounded-xl p-4 border border-outline-variant/40 shadow-sm space-y-2.5">
+<div class="grid grid-cols-2 gap-2.5">
+<!-- Botão 1: Imprimir Cupom Fiscal [F9] -->
+<button class="h-11 rounded-lg border-2 border-primary-container text-primary font-bold text-xs flex items-center justify-center gap-2 hover:bg-primary hover:text-white transition-all shadow-xs active:scale-[0.99]" onclick="handlePrint()">
+<span class="material-symbols-outlined text-[19px]">print</span>
+<span>Imprimir cupom fiscal</span>
+<span class="bg-primary/10 text-primary group-hover:bg-white group-hover:text-primary px-1.5 py-0.5 rounded text-[10px] font-mono font-bold">F9</span>
+</button>
+<!-- Botão 2: Reimprimir comprovante TEF -->
+<button class="h-11 rounded-lg border border-outline-variant/60 text-on-surface-variant font-semibold text-xs flex items-center justify-center gap-2 hover:bg-surface-container-low hover:text-on-surface transition-all shadow-xs active:scale-[0.99]">
+<span class="material-symbols-outlined text-[19px]">receipt</span>
+<span>Reimprimir comprovante TEF</span>
+</button>
+</div>
+<!-- Botão 3: NOVA VENDA [ENTER] - DESTAQUE MÁXIMO -->
+<button class="w-full h-14 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-headline font-bold text-base flex items-center justify-between px-6 transition-all shadow-lg shadow-emerald-700/25 active:scale-[0.99] border-2 border-emerald-500" onclick="handleNewSale()">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-white/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">add_shopping_cart</span>
+</div>
+<div class="text-left">
+<span class="block text-base leading-tight">Iniciar Nova Venda</span>
+<span class="text-xs font-normal text-emerald-100">Pronto para ler código de barras ou buscar produto</span>
+</div>
+</div>
+<div class="flex items-center gap-2 bg-emerald-800/60 px-3 py-1.5 rounded-lg border border-white/20">
+<span class="text-xs tracking-wider uppercase font-mono">Pressione</span>
+<span class="bg-white text-emerald-800 font-mono font-bold px-2 py-0.5 rounded text-xs shadow-xs">ENTER</span>
+</div>
+</button>
+</div>
+</div>
+</main>
+<!-- 4. BARRA INFERIOR DE ATALHOS DE TECLADO (FOOTER DO PDV) -->
+<footer class="bg-on-primary-fixed text-surface-container-highest h-12 px-6 flex items-center justify-between shrink-0 border-t border-outline-variant/20 shadow-inner z-20 text-xs">
+<!-- Conjunto de Teclas de Atalho -->
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1.5">
+<kbd class="bg-on-primary-fixed-variant border border-outline-variant/30 text-white font-mono font-bold px-1.5 py-0.5 rounded text-[11px] shadow-xs">ENTER</kbd>
+<span class="text-white font-medium">Nova Venda</span>
+</div>
+<div class="h-3 w-px bg-outline-variant/20"></div>
+<div class="flex items-center gap-1.5">
+<kbd class="bg-on-primary-fixed-variant border border-outline-variant/30 text-white font-mono font-bold px-1.5 py-0.5 rounded text-[11px] shadow-xs">F9</kbd>
+<span>Imprimir Cupom</span>
+</div>
+<div class="h-3 w-px bg-outline-variant/20"></div>
+<div class="flex items-center gap-1.5">
+<kbd class="bg-on-primary-fixed-variant border border-outline-variant/30 text-white font-mono font-bold px-1.5 py-0.5 rounded text-[11px] shadow-xs">F10</kbd>
+<span>WhatsApp</span>
+</div>
+<div class="h-3 w-px bg-outline-variant/20"></div>
+<div class="flex items-center gap-1.5">
+<kbd class="bg-on-primary-fixed-variant border border-outline-variant/30 text-white font-mono font-bold px-1.5 py-0.5 rounded text-[11px] shadow-xs">F2</kbd>
+<span>Consultar Venda</span>
+</div>
+<div class="h-3 w-px bg-outline-variant/20"></div>
+<div class="flex items-center gap-1.5">
+<kbd class="bg-on-primary-fixed-variant border border-outline-variant/30 text-white font-mono font-bold px-1.5 py-0.5 rounded text-[11px] shadow-xs">ESC</kbd>
+<span>Voltar ao Menu</span>
+</div>
+</div>
+<!-- Informações do Sistema e Suporte -->
+<div class="flex items-center gap-4 text-surface-container-highest/80 text-[11px]">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">support_agent</span>
+        Suporte Técnico: <strong>0800 555-0192</strong>
+</span>
+<span>·</span>
+<span class="font-mono">v2.4.12 JG Sistemas</span>
+</div>
+</footer>
+<!-- Script para Interações de Teclado, Relógio e Feedback de Copiar -->
+<script>
+    // Relógio em tempo real do PDV
+    function updatePDVClock() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const clockElement = document.getElementById('pdv-clock');
+      if (clockElement) {
+        clockElement.textContent = `${hours}:${minutes}:${seconds}`;
+      }
+    }
+    setInterval(updatePDVClock, 1000);
+    updatePDVClock();
+
+    // Copiar Chave de Acesso
+    function copyKey() {
+      const keyText = "35261012345678000190650010000128451000123456";
+      navigator.clipboard.writeText(keyText).then(() => {
+        const copyIcon = document.getElementById('copy-icon');
+        const copyText = document.getElementById('copy-text');
+        
+        copyIcon.textContent = 'check';
+        copyText.textContent = 'Copiada!';
+        
+        setTimeout(() => {
+          copyIcon.textContent = 'content_copy';
+          copyText.textContent = 'Copiar chave';
+        }, 2200);
+      });
+    }
+
+    // Ação de Impressão simulada
+    function handlePrint() {
+      const btn = event.currentTarget;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = `<span class="material-symbols-outlined text-[19px] animate-spin">refresh</span><span>Imprimindo...</span>`;
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+        showToast("Comprovante fiscal enviado para Elgin i9!");
+      }, 1000);
+    }
+
+    // Ação Nova Venda
+    function handleNewSale() {
+      showToast("Iniciando novo cupom fiscal... [Caixa 01 Pronto]");
+    }
+
+    // Ouvinte de Atalhos de Teclado Operacionais do PDV
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleNewSale();
+      } else if (e.key === 'F9') {
+        e.preventDefault();
+        handlePrint();
+      } else if (e.key === 'F10') {
+        e.preventDefault();
+        showToast("Abrindo envio de comprovante via WhatsApp...");
+      } else if (e.key === 'F2') {
+        e.preventDefault();
+        showToast("Consulta de Vendas e Histórico aberto.");
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        showToast("Retornando ao Menu Principal do PDV...");
+      }
+    });
+
+    // Toast de notificação rápida
+    function showToast(message) {
+      let toast = document.getElementById('pdv-toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'pdv-toast';
+        toast.className = 'fixed bottom-14 right-6 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-lg shadow-xl border border-slate-700 flex items-center gap-2 z-50 transition-all duration-300 opacity-0 transform translate-y-2';
+        document.body.appendChild(toast);
+      }
+      toast.innerHTML = `<span class="material-symbols-outlined text-emerald-400 text-base">info</span><span>${message}</span>`;
+      toast.classList.remove('opacity-0', 'translate-y-2');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      
+      setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-2');
+      }, 2500);
+    }
+  </script>
+</body></html>

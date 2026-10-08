@@ -29,6 +29,29 @@ router.get('/', async (req: any, res: any) => {
         orderBy: { name: 'asc' }
     });
 
+    // Total comprado e parcelas em atraso (para a lista e os filtros)
+    const ids = clientes.map(c => c.id);
+    const [totais, atrasadas] = ids.length ? await Promise.all([
+        prisma.sale.groupBy({
+            by: ['customerId'],
+            where: { customerId: { in: ids }, status: 'COMPLETED' },
+            _sum: { total: true }
+        }),
+        prisma.saleInstallment.findMany({
+            where: {
+                Sale: { customerId: { in: ids } },
+                OR: [{ status: 'OVERDUE' }, { status: 'PENDING', dueDate: { lt: new Date() } }]
+            },
+            select: { amount: true, Sale: { select: { customerId: true } } }
+        })
+    ]) : [[], []];
+    const totalPor = new Map(totais.map((t: any) => [t.customerId, Number(t._sum.total ?? 0)]));
+    const atrasoPor = new Map<string, number>();
+    for (const a of atrasadas as any[]) {
+        const k = a.Sale.customerId;
+        atrasoPor.set(k, (atrasoPor.get(k) ?? 0) + Number(a.amount));
+    }
+
     return res.json(clientes.map(c => ({
         id: c.id,
         nome: c.name,
@@ -49,7 +72,11 @@ router.get('/', async (req: any, res: any) => {
         observacoes: c.notes,
         ativo: c.isActive,
         priceTableId: c.priceTableId,
-        vendas: c._count.Sale
+        vendas: c._count.Sale,
+        totalComprado: Number((totalPor.get(c.id) ?? 0).toFixed(2)),
+        emAtraso: Number((atrasoPor.get(c.id) ?? 0).toFixed(2)),
+        inadimplente: (atrasoPor.get(c.id) ?? 0) > 0,
+        criadoEm: c.createdAt
     })));
 });
 
@@ -185,6 +212,27 @@ router.get('/:id/situacao', async (req: any, res: any) => {
         emAberto: Number(emAberto._sum.amount ?? 0),
         cashback: Number(cliente.CashbackBalance?.balance ?? 0)
     });
+});
+
+// GET /api/clientes/:id/compras - Histórico de compras do cliente (ficha)
+router.get('/:id/compras', async (req: any, res: any) => {
+    const vendas = await prisma.sale.findMany({
+        where: { customerId: req.params.id },
+        orderBy: { createdAt: 'desc' },
+        take: 100,
+        include: { SaleItem: true, SalePayment: true, User: { select: { name: true } } }
+    });
+    return res.json(vendas.map(v => ({
+        id: v.id,
+        numero: v.nfceNumber,
+        data: v.createdAt,
+        status: v.status,
+        itens: v.SaleItem.reduce((s, i) => s + i.quantity, 0),
+        total: Number(v.total),
+        desconto: Number(v.discount),
+        operador: v.User?.name ?? null,
+        pagamentos: [...new Set(v.SalePayment.map(p => p.method))]
+    })));
 });
 
 // GET /api/clientes/:id/analise-credito - Score e limite sugerido de crédito

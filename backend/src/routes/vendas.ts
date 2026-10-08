@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { moduloAtivo } from '../utils/modulos';
 import { randomUUID } from 'crypto';
 import prisma from '../db';
 import { gerarPixQrCode } from '../utils/pix';
@@ -31,7 +32,7 @@ const CAMPOS_NFE = {
 async function emitirNfceSeHabilitado(saleId: string): Promise<void> {
     try {
         const cfg = await obterNfeConfig();
-        if (cfg.habilitado) {
+        if (cfg.habilitado && moduloAtivo('nfce')) {
             await emitirNfce(saleId);
         }
     } catch {
@@ -298,7 +299,7 @@ router.post('/', async (req: any, res: any) => {
 
             // Recebíveis de cartão: um por parcela (crédito) ou único (débito)
             let recebiveisLiquido = 0;
-            if (operadoraCartao) {
+            if (operadoraCartao && moduloAtivo('cartoes')) {
                 const rec = await criarRecebiveisCartao({
                     tx,
                     companyId: empresa.id,
@@ -341,7 +342,7 @@ router.post('/', async (req: any, res: any) => {
                     });
                 }
 
-                const cashbackPct = Number(await obterSetting<number>('cashback_percentual', 0)) || 0;
+                const cashbackPct = moduloAtivo('fidelidade') ? (Number(await obterSetting<number>('cashback_percentual', 0)) || 0) : 0;
                 if (cashbackPct > 0) {
                     const valorCashback = Number((total * cashbackPct / 100).toFixed(2));
                     if (valorCashback > 0) {
@@ -572,7 +573,7 @@ router.post('/:id/efetivar', async (req: any, res: any) => {
 
             // Recebíveis de cartão: um por parcela (crédito) ou único (débito)
             let recebiveisLiquido = 0;
-            if (operadoraCartao) {
+            if (operadoraCartao && moduloAtivo('cartoes')) {
                 const empresaEfetivar = await tx.company.findFirst();
                 if (!empresaEfetivar) {
                     throw new Error("Empresa não configurada!");
@@ -615,7 +616,7 @@ router.post('/:id/efetivar', async (req: any, res: any) => {
                     });
                 }
 
-                const cashbackPct = Number(await obterSetting<number>('cashback_percentual', 0)) || 0;
+                const cashbackPct = moduloAtivo('fidelidade') ? (Number(await obterSetting<number>('cashback_percentual', 0)) || 0) : 0;
                 if (cashbackPct > 0) {
                     const valorCashback = Number((totalFinal * cashbackPct / 100).toFixed(2));
                     if (valorCashback > 0) {
@@ -879,6 +880,7 @@ router.get('/consulta', async (req: any, res: any) => {
         include: {
             SalePayment: true,
             User: true,
+            Customer: { select: { name: true } },
             SaleItem: { include: { Product: true } }
         }
     });
@@ -904,6 +906,7 @@ router.get('/consulta', async (req: any, res: any) => {
             metodo: v.SalePayment[0]?.method ?? null,
             parcelas: v.SalePayment[0]?.installments ?? 1,
             operador: v.User.name,
+            cliente: v.Customer?.name ?? null,
             nfeStatus: v.nfeStatus ?? 'NONE',
             nfeNumero: v.nfeNumber ?? null,
             itensDetalhe: v.SaleItem.map(i => ({

@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Colaborador – Ficha Cadastral | JG Sistemas</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Inter Font -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-primary-container": "#a2c3ff",
+            "inverse-on-surface": "#eaf1ff",
+            "on-background": "#0b1c30",
+            "on-tertiary-fixed-variant": "#005320",
+            "surface-tint": "#305ea1",
+            "surface-variant": "#d3e4fe",
+            "secondary-fixed-dim": "#b2c7f0",
+            "on-error-container": "#93000a",
+            "primary-container": "#1d4f91",
+            "tertiary": "#004319",
+            "on-surface": "#0b1c30",
+            "surface-container-lowest": "#ffffff",
+            "error-container": "#ffdad6",
+            "on-error": "#ffffff",
+            "primary-fixed": "#d6e3ff",
+            "on-primary-fixed-variant": "#0e4688",
+            "surface-bright": "#f8f9ff",
+            "secondary-fixed": "#d5e3ff",
+            "secondary-container": "#bfd5fe",
+            "surface-container": "#e5eeff",
+            "background": "#f8f9ff",
+            "surface-container-high": "#dce9ff",
+            "on-surface-variant": "#434750",
+            "on-secondary-container": "#475c7f",
+            "surface-dim": "#cbdbf5",
+            "surface-container-low": "#eff4ff",
+            "on-secondary-fixed": "#011b3b",
+            "surface-container-highest": "#d3e4fe",
+            "on-primary-fixed": "#001b3e",
+            "secondary": "#4a5f82",
+            "primary": "#003873",
+            "outline-variant": "#c3c6d2",
+            "on-tertiary-fixed": "#002109",
+            "on-secondary-fixed-variant": "#324769",
+            "error": "#ba1a1a",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-container": "#5dda7a",
+            "outline": "#737782",
+            "surface": "#f8f9ff",
+            "inverse-primary": "#a9c7ff",
+            "tertiary-fixed": "#7ffc97",
+            "inverse-surface": "#213145",
+            "on-primary": "#ffffff",
+            "on-secondary": "#ffffff",
+            "tertiary-fixed-dim": "#62df7d",
+            "primary-fixed-dim": "#a9c7ff",
+            "tertiary-container": "#005d25"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Inter", "sans-serif"],
+            "display": ["Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Inter', sans-serif;
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 20px;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill-1 {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+  </style>
+</head>
+<body class="bg-[#F4F6FA] text-on-surface antialiased overflow-x-hidden min-h-screen">
+<!-- ========================================================================= -->
+<!-- SIDEBAR (Fixed Left 248px)                                                -->
+<!-- ========================================================================= -->
+<aside class="fixed top-0 left-0 h-screen w-[248px] bg-primary text-on-primary flex flex-col justify-between py-4 px-3 border-r border-outline-variant/20 z-40 select-none">
+<div class="flex flex-col gap-4">
+<!-- Brand Logo / Header -->
+<div class="flex items-center gap-3 px-2 py-1">
+<div class="w-9 h-9 rounded-lg bg-tertiary-container flex items-center justify-center font-headline font-bold text-base text-on-tertiary tracking-tight shadow-sm">
+          JG
+        </div>
+<div class="flex flex-col">
+<span class="font-headline text-base font-bold text-on-primary tracking-tight leading-tight">JG Sistemas</span>
+<span class="text-xs text-primary-fixed-dim leading-none">Varejo · Moda</span>
+</div>
+</div>
+<!-- Quick Action / CTA -->
+<div class="pt-1">
+<button class="w-full h-10 bg-tertiary-container hover:bg-tertiary text-on-primary font-semibold text-sm rounded-lg flex items-center justify-center gap-2 shadow-sm transition-all duration-150">
+<span class="material-symbols-outlined text-[18px]">point_of_sale</span>
+<span>Abrir PDV [F1]</span>
+</button>
+</div>
+<!-- Main Navigation Cluster -->
+<nav class="flex flex-col gap-1 mt-2 font-body text-sm overflow-y-auto max-h-[calc(100vh-250px)] pr-1">
+<!-- Início -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Início</span>
+</a>
+<!-- Vendas -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">point_of_sale</span>
+<span>Vendas</span>
+</a>
+<!-- Clientes -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">group</span>
+<span>Clientes</span>
+</a>
+<!-- Catálogo -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span>Catálogo</span>
+</a>
+<!-- Estoque -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">warehouse</span>
+<span>Estoque</span>
+</a>
+<!-- Financeiro -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">account_balance</span>
+<span>Financeiro</span>
+</a>
+<!-- Pessoas (ACTIVE ACCORDION CONTAINER) -->
+<div class="flex flex-col gap-1 bg-primary-container/30 rounded-lg p-1">
+<div class="flex items-center justify-between px-2.5 py-1.5 text-on-primary font-semibold rounded-md">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-tertiary-fixed">badge</span>
+<span>Pessoas</span>
+</div>
+<span class="material-symbols-outlined text-sm text-primary-fixed-dim">expand_less</span>
+</div>
+<!-- Submenu -->
+<div class="flex flex-col gap-0.5 pl-6 pr-1 pb-1">
+<a class="flex items-center justify-between px-2.5 py-1.5 rounded-md bg-primary-container text-on-primary font-semibold text-xs border-l-2 border-tertiary-fixed" href="#">
+<span>Colaboradores</span>
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed"></span>
+</a>
+<a class="flex items-center px-2.5 py-1.5 rounded-md text-primary-fixed-dim hover:text-on-primary hover:bg-primary-container/30 text-xs transition-colors" href="#">
+<span>Comissões</span>
+</a>
+<a class="flex items-center px-2.5 py-1.5 rounded-md text-primary-fixed-dim hover:text-on-primary hover:bg-primary-container/30 text-xs transition-colors" href="#">
+<span>Controle de Ponto</span>
+</a>
+</div>
+</div>
+<!-- Relatórios -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span>Relatórios</span>
+</a>
+<!-- Administração -->
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Administração</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Bottom / Footer Metadata -->
+<div class="pt-3 border-t border-outline-variant/20 flex flex-col gap-2 px-2">
+<div class="flex items-center justify-between text-xs text-primary-fixed-dim">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed inline-block animate-pulse"></span>
+<span>Online · Matriz 01</span>
+</div>
+<span class="text-[10px] opacity-75 font-mono">v3.4.1</span>
+</div>
+<div class="flex items-center justify-between text-xs text-primary-fixed-dim/80 pt-1">
+<span class="hover:text-on-primary cursor-pointer flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">storefront</span>
+          Varejo · Moda
+        </span>
+<button class="hover:text-on-primary transition-colors" title="Configurações">
+<span class="material-symbols-outlined text-base">tune</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- TOPBAR (Fixed Top 56px / h-14)                                            -->
+<!-- ========================================================================= -->
+<header class="fixed top-0 left-[248px] right-0 h-14 bg-surface-container-lowest border-b border-outline-variant/40 px-6 flex items-center justify-between z-30 shadow-sm">
+<!-- Breadcrumb & Search -->
+<div class="flex items-center gap-6">
+<nav class="flex items-center gap-1.5 text-xs text-on-surface-variant font-medium">
+<span class="hover:text-primary cursor-pointer">Pessoas</span>
+<span class="material-symbols-outlined text-[14px] text-outline">chevron_right</span>
+<span class="hover:text-primary cursor-pointer">Colaboradores</span>
+<span class="material-symbols-outlined text-[14px] text-outline">chevron_right</span>
+<span class="text-on-surface font-semibold">Ana Paula Souza</span>
+</nav>
+<!-- Global Search Field -->
+<div class="relative w-80">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-[18px]">search</span>
+</div>
+<input class="w-full h-8 pl-9 pr-14 text-xs bg-[#F4F6FA] text-on-surface placeholder:text-outline-variant rounded-lg border border-outline-variant/50 focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all" placeholder="Buscar módulo, colaborador... (Ctrl+K)" type="text"/>
+<span class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">
+<kbd class="text-[10px] font-mono bg-surface-container-lowest border border-outline-variant/60 rounded px-1.5 py-0.5 text-on-surface-variant">⌘K</kbd>
+</span>
+</div>
+</div>
+<!-- Trailing Actions & Operator Profile -->
+<div class="flex items-center gap-4">
+<!-- Status Chip Caixa -->
+<div class="flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs font-medium text-emerald-800">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span>Caixa 01 · Aberto</span>
+</div>
+<!-- Action Button PDV -->
+<button class="h-8 px-3 rounded-lg bg-tertiary-container hover:bg-tertiary text-on-primary text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-all duration-150">
+<span class="material-symbols-outlined text-[16px]">point_of_sale</span>
+<span>Abrir PDV [F1]</span>
+</button>
+<div class="h-4 w-[1px] bg-outline-variant/40 mx-1"></div>
+<!-- Icon Notifications -->
+<div class="relative cursor-pointer hover:bg-surface-container-low p-1.5 rounded-lg transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-error border border-white"></span>
+</div>
+<!-- Help Icon -->
+<div class="cursor-pointer hover:bg-surface-container-low p-1.5 rounded-lg transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+</div>
+<!-- User Avatar / Operator -->
+<div class="flex items-center gap-2.5 pl-2 border-l border-outline-variant/40 cursor-pointer">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-semibold text-xs shadow-inner">
+          JG
+        </div>
+<div class="flex flex-col text-left">
+<span class="text-xs font-semibold text-on-surface leading-tight">Juliana Gomes</span>
+<span class="text-[11px] text-on-surface-variant leading-none">Gerente Geral</span>
+</div>
+</div>
+</div>
+</header>
+<!-- ========================================================================= -->
+<!-- MAIN CONTENT CANVAS (Responsive 1440x900 viewport space)                 -->
+<!-- ========================================================================= -->
+<main class="ml-[248px] pt-14 pb-20 px-8 min-h-screen">
+<div class="max-w-7xl mx-auto py-6">
+<!-- ===================================================================== -->
+<!-- 1. CABEÇALHO DO COLABORADOR                                          -->
+<!-- ===================================================================== -->
+<div class="bg-surface-container-lowest rounded-xl border border-[#E2E8F0] shadow-sm p-6 mb-6">
+<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+<!-- Left side: Avatar + Dados Principais -->
+<div class="flex items-center gap-5">
+<div class="w-16 h-16 rounded-full bg-primary text-on-primary flex items-center justify-center font-headline font-bold text-2xl tracking-tight shadow-md border-2 border-surface-container-lowest">
+              AS
+            </div>
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-3">
+<h1 class="text-2xl font-bold font-headline text-on-surface tracking-tight">Ana Paula Souza</h1>
+<span class="text-xs font-mono font-semibold px-2 py-0.5 rounded bg-surface-container-low text-secondary border border-outline-variant/30">#COL-0007</span>
+<span class="text-xs font-medium px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">CLT</span>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                  Ativo
+                </span>
+</div>
+<div class="flex items-center gap-3 text-xs text-on-surface-variant font-medium">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">work</span>
+                  Vendedora Balcão
+                </span>
+<span>•</span>
+<span>Departamento de Vendas</span>
+<span>•</span>
+<span class="flex items-center gap-1 text-slate-500">
+<span class="material-symbols-outlined text-[15px]">schedule</span>
+                  Último login hoje às 08:02 no Terminal CX-01
+                </span>
+</div>
+</div>
+</div>
+<!-- Right side: Ações de topo -->
+<div class="flex items-center gap-2.5 self-start lg:self-center">
+<button class="h-9 px-3 text-xs font-medium text-on-surface-variant bg-surface-container-lowest hover:bg-surface-container-low border border-outline-variant/60 rounded-lg flex items-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-[16px]">history</span>
+<span>Histórico de Acessos</span>
+</button>
+<button class="h-9 px-3 text-xs font-medium text-on-surface-variant bg-surface-container-lowest hover:bg-surface-container-low border border-outline-variant/60 rounded-lg flex items-center gap-1.5 transition-colors">
+<span class="material-symbols-outlined text-[16px]">print</span>
+<span>Imprimir Ficha Cadastral</span>
+</button>
+</div>
+</div>
+<!-- ===================================================================== -->
+<!-- 2. NAVEGAÇÃO POR ABAS                                                -->
+<!-- ===================================================================== -->
+<div class="mt-6 pt-2 border-t border-outline-variant/30">
+<nav class="flex items-center gap-8 -mb-[1px]">
+<a class="pb-3 text-sm font-medium text-on-surface-variant hover:text-on-surface border-b-2 border-transparent transition-colors" href="#">
+              Dados pessoais
+            </a>
+<a class="pb-3 text-sm font-medium text-on-surface-variant hover:text-on-surface border-b-2 border-transparent transition-colors" href="#">
+              Contrato &amp; Benefícios
+            </a>
+<!-- ABA ATIVA -->
+<a class="pb-3 text-sm font-bold text-primary border-b-2 border-primary flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[18px]">lock_person</span>
+<span>Acesso ao Sistema</span>
+<span class="px-1.5 py-0.2 rounded-full text-[10px] font-semibold bg-primary/10 text-primary">Ativo</span>
+</a>
+<a class="pb-3 text-sm font-medium text-on-surface-variant hover:text-on-surface border-b-2 border-transparent transition-colors" href="#">
+              Comissão &amp; Metas
+            </a>
+<a class="pb-3 text-sm font-medium text-on-surface-variant hover:text-on-surface border-b-2 border-transparent transition-colors" href="#">
+              Pagamento &amp; Bancário
+            </a>
+</nav>
+</div>
+</div>
+<!-- ===================================================================== -->
+<!-- 3. CONTEÚDO DA ABA ATIVA ("Acesso ao Sistema")                       -->
+<!-- ===================================================================== -->
+<div class="bg-surface-container-lowest rounded-xl border border-[#E2E8F0] shadow-sm p-6 mb-6">
+<!-- Topo do Card de Permissões: Título + Switch Liga/Desliga -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-outline-variant/30 gap-4">
+<div>
+<h2 class="text-base font-bold font-headline text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">security</span>
+              Credenciais e Permissões de Acesso
+            </h2>
+<p class="text-xs text-on-surface-variant mt-0.5">Defina os privilégios operacionais, terminal de atuação e autenticação do colaborador.</p>
+</div>
+<!-- Switch/Toggle estilizado -->
+<div class="flex items-center gap-3 bg-surface-container-low/70 px-4 py-2 rounded-xl border border-outline-variant/30">
+<div class="flex flex-col text-right">
+<span class="text-xs font-semibold text-on-surface">Pode entrar no sistema</span>
+<span class="text-[11px] text-on-surface-variant">Permite login no ERP desktop e frente de caixa PDV</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+</label>
+</div>
+</div>
+<!-- Campos de Login & Autenticação -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-5 py-6 border-b border-outline-variant/30">
+<!-- Campo E-mail / Usuário -->
+<div class="md:col-span-7 flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-on-surface flex items-center justify-between">
+<span>E-mail de login / Usuário</span>
+<span class="text-emerald-700 flex items-center gap-1 text-[11px] font-medium">
+<span class="material-symbols-outlined text-[14px]">verified</span>
+                Verificado
+              </span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-[18px]">mail</span>
+</div>
+<input class="w-full h-10 pl-10 pr-24 text-sm font-medium bg-[#F4F6FA] text-on-surface border border-outline-variant/60 rounded-lg focus:outline-none" readonly="" type="email" value="ana.souza@jgsistemas.com.br"/>
+<div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+<span class="text-[11px] font-semibold text-slate-500 bg-white border border-slate-200 rounded px-2 py-0.5">Google Workspace</span>
+</div>
+</div>
+<span class="text-[11px] text-on-surface-variant">Usado para identificação pessoal nos cupons fiscais e relatórios de auditoria.</span>
+</div>
+<!-- Ações Rápidas de Segurança -->
+<div class="md:col-span-5 flex flex-col justify-end gap-2">
+<div class="flex items-center gap-2">
+<button class="h-10 px-3.5 flex-1 text-xs font-semibold text-primary bg-surface-container-low hover:bg-surface-container border border-outline-variant/60 rounded-lg flex items-center justify-center gap-2 transition-all">
+<span class="material-symbols-outlined text-[18px]">lock_reset</span>
+<span>Redefinir senha de acesso</span>
+</button>
+<button class="h-10 px-3 text-xs font-semibold text-error hover:bg-error-container/40 border border-error/30 rounded-lg flex items-center justify-center gap-1.5 transition-all">
+<span class="material-symbols-outlined text-[18px]">block</span>
+<span>Bloquear acesso temporariamente</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Seleção de Perfil de Acesso (Radio Cards 4 Colunas) -->
+<div class="py-6 border-b border-outline-variant/30">
+<label class="text-xs font-semibold text-on-surface block mb-3">
+            Perfil de Acesso ao Sistema <span class="text-error">*</span>
+</label>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5">
+<!-- Card 1: Administrador -->
+<label class="relative flex flex-col p-4 rounded-xl border border-outline-variant/60 hover:border-outline bg-surface-container-lowest cursor-pointer transition-all">
+<input class="sr-only peer" name="access_role" type="radio"/>
+<div class="flex items-center justify-between mb-2">
+<div class="w-8 h-8 rounded-lg bg-surface-container-low text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">admin_panel_settings</span>
+</div>
+<div class="w-4 h-4 rounded-full border border-outline-variant peer-checked:border-primary peer-checked:bg-primary flex items-center justify-center"></div>
+</div>
+<span class="text-sm font-bold text-on-surface">Administrador</span>
+<p class="text-xs text-on-surface-variant mt-1.5 leading-relaxed">Acesso total a relatórios, configurações fiscais e financeiro.</p>
+</label>
+<!-- Card 2: Gerente -->
+<label class="relative flex flex-col p-4 rounded-xl border border-outline-variant/60 hover:border-outline bg-surface-container-lowest cursor-pointer transition-all">
+<input class="sr-only peer" name="access_role" type="radio"/>
+<div class="flex items-center justify-between mb-2">
+<div class="w-8 h-8 rounded-lg bg-surface-container-low text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">supervisor_account</span>
+</div>
+<div class="w-4 h-4 rounded-full border border-outline-variant peer-checked:border-primary peer-checked:bg-primary flex items-center justify-center"></div>
+</div>
+<span class="text-sm font-bold text-on-surface">Gerente</span>
+<p class="text-xs text-on-surface-variant mt-1.5 leading-relaxed">Abertura/fechamento de caixa, descontos acima da alçada e estornos.</p>
+</label>
+<!-- Card 3: Supervisor -->
+<label class="relative flex flex-col p-4 rounded-xl border border-outline-variant/60 hover:border-outline bg-surface-container-lowest cursor-pointer transition-all">
+<input class="sr-only peer" name="access_role" type="radio"/>
+<div class="flex items-center justify-between mb-2">
+<div class="w-8 h-8 rounded-lg bg-surface-container-low text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">verified_user</span>
+</div>
+<div class="w-4 h-4 rounded-full border border-outline-variant peer-checked:border-primary peer-checked:bg-primary flex items-center justify-center"></div>
+</div>
+<span class="text-sm font-bold text-on-surface">Supervisor</span>
+<p class="text-xs text-on-surface-variant mt-1.5 leading-relaxed">Liberação de trocas, sangrias e supervisão de equipe.</p>
+</label>
+<!-- Card 4: Vendedor (ATIVO / SELECIONADO) -->
+<label class="relative flex flex-col p-4 rounded-xl border-2 border-primary-container bg-surface-container-low/40 shadow-sm cursor-pointer transition-all">
+<input checked="" class="sr-only" name="access_role" type="radio"/>
+<div class="flex items-center justify-between mb-2">
+<div class="w-8 h-8 rounded-lg bg-primary-container text-on-primary flex items-center justify-center shadow-xs">
+<span class="material-symbols-outlined text-[20px]">storefront</span>
+</div>
+<div class="w-5 h-5 rounded-full bg-primary-container text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-sm font-bold text-primary">Vendedor</span>
+<span class="text-[10px] uppercase font-bold px-1.5 py-0.2 rounded bg-tertiary-fixed text-on-tertiary-fixed">Atual</span>
+</div>
+<p class="text-xs text-on-surface mt-1.5 leading-relaxed font-medium">Operação do PDV, consulta de estoque, orçamentos e cadastro de clientes.</p>
+</label>
+</div>
+</div>
+<!-- Parâmetros Adicionais de Caixa & Alçada -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-6">
+<!-- Campo: Caixa padrão vinculado -->
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-on-surface flex items-center gap-1.5">
+<span>Caixa padrão vinculado</span>
+<span class="material-symbols-outlined text-[15px] text-outline" title="Terminal físico ou virtual no qual o colaborador atua prioritariamente">info</span>
+</label>
+<div class="relative">
+<select class="w-full h-10 pl-3 pr-10 text-xs font-medium bg-surface-container-lowest text-on-surface border border-outline-variant/70 rounded-lg focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container">
+<option selected="">Caixa 01 — Frente de Loja (Terminal Principal)</option>
+<option>Caixa 02 — Mezanino &amp; Roupas de Festa</option>
+<option>Caixa 03 — Balcão Trocas e Devoluções</option>
+<option>Caixa Móvel — Tablet Vendedor 04</option>
+</select>
+</div>
+<span class="text-[11px] text-on-surface-variant">O login inicial no PDV [F1] alocará automaticamente as vendas a este terminal.</span>
+</div>
+<!-- Campo: Alçada de desconto no PDV -->
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-semibold text-on-surface flex items-center justify-between">
+<span>Alçada de desconto no PDV</span>
+<span class="text-xs font-semibold text-primary">Sem senha de gerente</span>
+</label>
+<div class="flex items-center gap-2">
+<select class="w-full h-10 pl-3 pr-10 text-xs font-medium bg-surface-container-lowest text-on-surface border border-outline-variant/70 rounded-lg focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container">
+<option>Sem permissão para desconto (0%)</option>
+<option>Até 3,0% sem senha de gerente</option>
+<option selected="">Até 5,0% sem senha de gerente</option>
+<option>Até 10,0% sem senha de gerente</option>
+</select>
+<div class="h-10 px-3 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-lg flex items-center justify-center text-xs font-bold whitespace-nowrap">
+                Max: 5,0%
+              </div>
+</div>
+<span class="text-[11px] text-on-surface-variant">Descontos superiores a 5,0% exigirão biometria ou senha do gerente do turno.</span>
+</div>
+</div>
+</div>
+<!-- ===================================================================== -->
+<!-- 4. CARDS DE RESUMO INFORMATIVO ABAIXO (Grid Organizado Bento)         -->
+<!-- ===================================================================== -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
+<!-- Card Contrato -->
+<div class="bg-surface-container-lowest rounded-xl border border-[#E2E8F0] shadow-sm p-5 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/30">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">description</span>
+<h3 class="text-sm font-bold font-headline text-on-surface">Contrato</h3>
+</div>
+<span class="text-[11px] font-semibold text-secondary-container bg-surface-container px-2 py-0.5 rounded text-on-secondary-container">CLT Integral</span>
+</div>
+<div class="mt-4 space-y-3 text-xs">
+<div>
+<span class="text-on-surface-variant block text-[11px]">Cargo &amp; Departamento</span>
+<span class="font-semibold text-on-surface">Vendedora Pleno</span>
+<span class="text-on-surface-variant">· Vendas e Atendimento</span>
+</div>
+<div class="grid grid-cols-2 gap-2 pt-1">
+<div>
+<span class="text-on-surface-variant block text-[11px]">Data de Admissão</span>
+<span class="font-semibold text-on-surface tabular-nums">03/02/2024</span>
+<span class="text-[10px] text-slate-500 block">(Há 8 meses)</span>
+</div>
+<div>
+<span class="text-on-surface-variant block text-[11px]">Salário Base</span>
+<span class="font-bold text-on-surface tabular-nums text-sm">R$ 2.150,00</span>
+<span class="text-[10px] text-slate-500 block">44h semanais</span>
+</div>
+</div>
+<div class="pt-2 border-t border-outline-variant/20">
+<span class="text-on-surface-variant block text-[11px] mb-1.5 font-medium">Benefícios Ativos</span>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded-md bg-[#F4F6FA] border border-outline-variant/40 text-[11px] font-medium text-slate-700 tabular-nums">
+                    VT R$ 220,00
+                  </span>
+<span class="px-2 py-0.5 rounded-md bg-[#F4F6FA] border border-outline-variant/40 text-[11px] font-medium text-slate-700 tabular-nums">
+                    VA R$ 450,00
+                  </span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/20 flex items-center justify-between text-[11px] text-primary font-medium hover:underline cursor-pointer">
+<span>Ver histórico contratual</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</div>
+</div>
+<!-- Card Comissão & Performance -->
+<div class="bg-surface-container-lowest rounded-xl border border-[#E2E8F0] shadow-sm p-5 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/30">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary-container text-[20px]">trending_up</span>
+<h3 class="text-sm font-bold font-headline text-on-surface">Comissão &amp; Performance</h3>
+</div>
+<span class="text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded tabular-nums">3,0% fixo</span>
+</div>
+<div class="mt-4 space-y-3.5 text-xs">
+<div>
+<div class="flex justify-between items-center text-[11px] mb-1">
+<span class="text-on-surface-variant">Meta do Mês (Outubro)</span>
+<span class="font-bold text-on-surface tabular-nums">94,8% atingido</span>
+</div>
+<!-- Barra de Progresso da Meta -->
+<div class="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+<div class="h-full bg-emerald-600 rounded-full" style="width: 94.8%;"></div>
+</div>
+<div class="flex justify-between text-[11px] text-slate-500 mt-1 tabular-nums">
+<span>Fat: R$ 28.450,00</span>
+<span>Meta: R$ 30.000,00</span>
+</div>
+</div>
+<div class="p-3 rounded-lg bg-surface-container-low border border-outline-variant/30">
+<span class="text-[11px] text-on-surface-variant block font-medium">Comissão acumulada a pagar</span>
+<div class="flex items-baseline gap-2 mt-0.5">
+<span class="text-xl font-bold font-headline text-emerald-700 tabular-nums">R$ 853,50</span>
+<span class="text-[11px] text-slate-500">sobre vendas líquidas</span>
+</div>
+</div>
+<div class="text-[11px] text-on-surface-variant">
+                Regra padrão: 3,0% sobre produtos Moda / Varejo faturados e não cancelados.
+              </div>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/20 flex items-center justify-between text-[11px] text-primary font-medium hover:underline cursor-pointer">
+<span>Extrato detalhado de comissões</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</div>
+</div>
+<!-- Card Dados Bancários & Pagamento -->
+<div class="bg-surface-container-lowest rounded-xl border border-[#E2E8F0] shadow-sm p-5 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/30">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">account_balance_wallet</span>
+<h3 class="text-sm font-bold font-headline text-on-surface">Dados Bancários &amp; Pagamento</h3>
+</div>
+<span class="text-[11px] font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">PIX Preferencial</span>
+</div>
+<div class="mt-4 space-y-3 text-xs">
+<div>
+<span class="text-on-surface-variant block text-[11px]">Instituição Financeira</span>
+<span class="font-semibold text-on-surface">Banco Itaú Unibanco S.A. (341)</span>
+</div>
+<div class="grid grid-cols-2 gap-3 pt-1">
+<div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200/80">
+<span class="text-slate-500 block text-[10px] font-medium uppercase tracking-wider">Agência</span>
+<span class="font-bold text-on-surface text-sm tabular-nums">0422</span>
+</div>
+<div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200/80">
+<span class="text-slate-500 block text-[10px] font-medium uppercase tracking-wider">Conta Corrente</span>
+<span class="font-bold text-on-surface text-sm tabular-nums">29841-5</span>
+</div>
+</div>
+<div class="pt-1">
+<span class="text-on-surface-variant block text-[11px]">Chave PIX Cadastrada</span>
+<div class="flex items-center justify-between mt-1 p-2 rounded-lg bg-[#F4F6FA] border border-outline-variant/40">
+<div class="flex items-center gap-1.5 font-mono text-xs font-semibold text-slate-800">
+<span class="material-symbols-outlined text-[15px] text-emerald-600">badge</span>
+<span>CPF: ***.456.789-**</span>
+</div>
+<span class="text-[10px] font-semibold text-slate-500 hover:text-primary cursor-pointer">Copiar</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/20 flex items-center justify-between text-[11px] text-primary font-medium hover:underline cursor-pointer">
+<span>Alterar dados bancários</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- ========================================================================= -->
+<!-- BARRA FIXA INFERIOR (Docked Bottom Action Bar)                            -->
+<!-- ========================================================================= -->
+<footer class="fixed bottom-0 left-[248px] right-0 h-16 bg-surface-container-lowest border-t border-[#E2E8F0] px-8 flex items-center justify-between z-30 shadow-[0_-4px_12px_rgba(0,0,0,0.04)]">
+<!-- Status Informativo -->
+<div class="flex items-center gap-2 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-outline text-[18px]">history_edu</span>
+<span>Última alteração salva em <strong class="text-on-surface font-semibold tabular-nums">08/10/2026 às 14:15</strong> por <strong class="text-on-surface font-semibold">Juliana Gomes</strong>.</span>
+</div>
+<!-- Botões de Ação Final -->
+<div class="flex items-center gap-3">
+<button class="h-10 px-4 rounded-lg bg-surface-container-lowest hover:bg-slate-100 text-on-surface-variant hover:text-on-surface text-xs font-semibold border border-outline-variant transition-colors flex items-center gap-1.5">
+<span>Cancelar</span>
+<kbd class="text-[10px] font-mono bg-slate-100 text-slate-500 border border-slate-200 rounded px-1.5 py-0.5">Esc</kbd>
+</button>
+<button class="h-10 px-5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-600/20 transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">save</span>
+<span>Salvar alterações</span>
+<kbd class="text-[10px] font-mono bg-emerald-700/60 text-white rounded px-1.5 py-0.5 ml-1">F10</kbd>
+</button>
+</div>
+</footer>
+</body></html>

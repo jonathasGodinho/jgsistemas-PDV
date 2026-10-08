@@ -6,78 +6,35 @@
     <meta name="google" content="notranslate">
     <title>Consulta de Vendas - JG Sistemas</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
-        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
-        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
-        header a:hover { color: white; }
-        main { padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
-        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
-        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
-        .painel-titulo .resumo { font-size: 12px; color: #aab2bd; font-weight: normal; }
-        .painel-corpo { padding: 14px; }
-        .toolbar { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; align-items: flex-end; }
-        .toolbar .campo { display: flex; flex-direction: column; gap: 4px; }
-        .toolbar label { font-size: 11px; color: #656d78; font-weight: bold; text-transform: uppercase; }
-        .toolbar input, .toolbar select { padding: 9px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
-        .toolbar input[type="text"] { flex: 1; min-width: 180px; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { background-color: #134074; color: white; padding: 10px; text-align: left; text-transform: uppercase; font-size: 12px; }
-        td { padding: 10px; border-bottom: 1px solid #e6e9ed; color: #333; }
-        tr:nth-child(even) { background-color: #f8f9fa; }
-        tr:hover { background-color: #eef2f7; }
-        tr.cancelada td { color: #8b95a1; text-decoration: line-through; }
-        .btn { border: none; border-radius: 4px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; }
-        .btn-azul { background-color: #134074; color: white; }
-        .btn-azul:hover { background-color: #0b2545; }
-        .btn-perigo { background-color: #d9534f; color: white; }
-        .btn-perigo:hover { background-color: #b0433f; }
-        .btn-mini { padding: 4px 8px; font-size: 12px; }
-        .sem-dados { text-align: center; color: #8b95a1; padding: 30px; font-size: 14px; }
-        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
-        .card { background: white; border: 1px solid #ccd1d9; border-radius: 4px; padding: 16px; }
-        .card .rotulo { font-size: 11px; text-transform: uppercase; color: #8b95a1; font-weight: bold; }
-        .card .valor { font-size: 24px; font-weight: bold; color: #134074; margin-top: 6px; }
-        .card .detalhe { font-size: 12px; color: #656d78; margin-top: 6px; }
-        .verde { color: #00a651 !important; }
-
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 100; }
-        .modal-overlay.active { display: flex; }
-        .modal { background: white; border-radius: 6px; width: 620px; max-width: 94vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
-        .modal-head { background-color: #0b2545; color: white; padding: 14px 18px; font-weight: bold; font-size: 15px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
-        .modal-head .close { cursor: pointer; font-size: 20px; color: #aab2bd; }
-        .modal-head .close:hover { color: white; }
-        .modal-body { padding: 18px; }
-        .cupom-info { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 13px; margin-bottom: 14px; }
-        .cupom-info span { color: #333; }
-        .cupom-total { background: #f0f2f5; border-radius: 4px; padding: 12px; margin-top: 12px; display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; }
-        .cupom-total .verde { color: #00a651; }
-
-        footer { background-color: #134074; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
+        tr.cancelada td { color: var(--text-3); }
+        tr.cancelada td b { text-decoration: line-through; }
+        tbody tr.clicavel { cursor: pointer; }
+        .metodos-lista { display: flex; flex-direction: column; gap: 4px; font-size: 13px; margin-top: 6px; }
+        .metodos-lista div { display: flex; justify-content: space-between; }
+        .metodos-lista span { color: var(--text-2); }
+        .det-sec { margin-bottom: 18px; }
+        .det-sec h4 { font-size: 12px; font-weight: 600; color: var(--text-2); letter-spacing: .04em; margin: 0 0 8px; text-transform: uppercase; }
+        .det-itens .it { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; }
+        .det-itens .it:last-child { border-bottom: 0; }
+        .det-itens .it small { display: block; color: var(--text-2); }
+        .chave { font-family: var(--mono); font-size: 12px; word-break: break-all; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px; }
+        .det-acoes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     </style>
+    <link rel="stylesheet" href="/ui/jg.css">
 </head>
-<body>
-
-    <header>
-        <div>JG SISTEMAS - CONSULTA DE VENDAS</div>
-        <div><a href="/">← Menu Principal</a></div>
-    </header>
-
+<body class="jg" data-pagina="consultas">
     <main>
-        <div class="painel">
-            <div class="painel-titulo"><span>Filtros de Consulta</span></div>
-            <div class="painel-corpo">
-                <div class="toolbar">
-                    <div class="campo">
-                        <label>De</label>
-                        <input type="date" id="f-de">
-                    </div>
-                    <div class="campo">
-                        <label>Até</label>
-                        <input type="date" id="f-ate">
-                    </div>
-                    <div class="campo">
-                        <label>Forma de Pagamento</label>
+        <div class="page-head">
+            <div><h1>Consulta de vendas</h1><div class="sub">Histórico de vendas, cupons e NFC-e</div></div>
+            <div class="acoes"><a class="btn btn-sucesso" href="/pdv.html" target="_blank" rel="noopener"><span class="ms">point_of_sale</span>Nova venda</a></div>
+        </div>
+
+        <div class="card mb-16">
+            <div class="card-body">
+                <div class="filtros" style="margin:0">
+                    <div class="campo" style="width:160px"><label for="f-de">De</label><input type="date" id="f-de"></div>
+                    <div class="campo" style="width:160px"><label for="f-ate">Até</label><input type="date" id="f-ate"></div>
+                    <div class="campo" style="width:180px"><label for="f-metodo">Forma de pagamento</label>
                         <select id="f-metodo">
                             <option value="">Todas</option>
                             <option value="MONEY">Dinheiro</option>
@@ -89,83 +46,95 @@
                             <option value="TRANSFER">Transferência</option>
                         </select>
                     </div>
-                    <div class="campo">
-                        <label>Status</label>
+                    <div class="campo" style="width:160px"><label for="f-status">Status</label>
                         <select id="f-status">
                             <option value="COMPLETED">Concluídas</option>
                             <option value="">Todas</option>
                             <option value="CANCELLED">Canceladas</option>
                         </select>
                     </div>
-                    <div class="campo" style="flex:1; min-width:180px;">
-                        <label>Nº da venda ou produto</label>
-                        <input type="text" id="f-busca" placeholder="Ex.: 000123 ou CAFÉ...">
-                    </div>
-                    <button class="btn btn-azul" onclick="buscarVendas()">Buscar</button>
+                    <div class="campo" style="flex:1;min-width:200px"><label for="f-busca">Nº da venda ou produto</label>
+                        <div class="input-icone"><span class="ms">search</span><input type="text" id="f-busca" placeholder="Ex.: 000123 ou Vestido"></div></div>
+                    <button class="btn btn-primario" onclick="buscarVendas()"><span class="ms">filter_alt</span>Filtrar</button>
                 </div>
             </div>
         </div>
 
-        <div class="cards">
-            <div class="card">
-                <div class="rotulo">Vendas no Período</div>
-                <div class="valor" id="c-qtd">0</div>
-            </div>
-            <div class="card">
-                <div class="rotulo">Total Vendido</div>
-                <div class="valor verde" id="c-total">R$ 0,00</div>
-            </div>
-            <div class="card">
-                <div class="rotulo">Por Forma de Pagamento</div>
-                <div class="valor" id="c-metodos" style="font-size:14px;">-</div>
-            </div>
+        <div class="kpis">
+            <div class="kpi"><div class="kpi-top"><span>Vendas no período</span><span class="ms">receipt_long</span></div><div class="kpi-valor" id="c-qtd">0</div></div>
+            <div class="kpi verde"><div class="kpi-top"><span>Total vendido</span><span class="ms">payments</span></div><div class="kpi-valor" id="c-total">R$ 0,00</div></div>
+            <div class="kpi" style="grid-column: span 2"><div class="kpi-top"><span>Por forma de pagamento</span><span class="ms">donut_small</span></div><div class="metodos-lista" id="c-metodos">—</div></div>
         </div>
 
-        <div class="painel">
-            <div class="painel-titulo"><span>Vendas Encontradas</span><span class="resumo" id="resumo-lista"></span></div>
-            <div class="painel-corpo">
-                <div class="table-container" style="overflow-x: auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Número</th>
-                                <th>Data</th>
-                                <th>Operador</th>
-                                <th style="text-align: right;">Itens</th>
-                                <th>Pagamento</th>
-                                <th style="text-align: right;">Total</th>
-                                <th style="text-align: center;">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabela-vendas">
-                            <tr><td colspan="7" class="sem-dados">Carregando...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+        <div class="card">
+            <div class="card-head"><h3>Vendas encontradas</h3><span class="sub" id="resumo-lista"></span></div>
+            <div class="tabela-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Número</th>
+                            <th>Data</th>
+                            <th>Operador</th>
+                            <th>Cliente</th>
+                            <th class="right">Itens</th>
+                            <th>Pagamento</th>
+                            <th class="right">Total</th>
+                            <th>NFC-e</th>
+                            <th class="acoes">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-vendas">
+                        <tr><td colspan="9" class="sem-dados">Carregando...</td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </main>
-
-    <footer>© 2026 JG Sistemas</footer>
-
-    <!-- Modal cupom -->
-    <div class="modal-overlay" id="modal-cupom">
+    <!-- Drawer: detalhe da venda -->
+    <div class="modal-overlay drawer" id="modal-cupom">
         <div class="modal">
             <div class="modal-head">
-                <span>Cupom de Venda</span>
+                <span id="det-titulo">Venda</span>
                 <span class="close" onclick="fecharCupom()">&times;</span>
             </div>
             <div class="modal-body">
                 <div id="cupom-conteudo"></div>
-                <button class="btn btn-azul" style="width:100%; margin-top:16px; padding:13px; font-size:15px;" onclick="imprimirCupom()">Imprimir Cupom</button>
+            </div>
+            <div class="modal-foot" style="display:block">
+                <div class="det-acoes" id="det-acoes"></div>
             </div>
         </div>
     </div>
 
+    <!-- Modal: cancelar venda -->
+    <div class="modal-overlay" id="modal-cancelar">
+        <div class="modal sm">
+            <div class="modal-head"><span>Cancelar venda <span id="cv-numero"></span></span><span class="close" onclick="fecharModal('modal-cancelar')">&times;</span></div>
+            <div class="modal-body">
+                <div class="alerta vermelho mb-16"><span class="ms">warning</span><div>O cancelamento estorna o estoque, os pagamentos e os recebíveis desta venda. Não pode ser desfeito.</div></div>
+                <div class="campo"><label for="cv-motivo">Motivo *</label><input type="text" id="cv-motivo" placeholder="Ex.: desistência do cliente"></div>
+                <div class="campo" style="margin:0"><label for="cv-senha">Senha do administrador *</label><input type="password" id="cv-senha" autocomplete="off"></div>
+            </div>
+            <div class="modal-foot"><button class="btn" onclick="fecharModal('modal-cancelar')">Voltar</button><button class="btn btn-perigo" onclick="confirmarCancelarVenda()"><span class="ms">block</span>Cancelar venda</button></div>
+        </div>
+    </div>
+
+    <!-- Modal: cancelar NFC-e -->
+    <div class="modal-overlay" id="modal-cancelar-nfe">
+        <div class="modal sm">
+            <div class="modal-head"><span>Cancelar NFC-e <span id="cn-numero"></span></span><span class="close" onclick="fecharModal('modal-cancelar-nfe')">&times;</span></div>
+            <div class="modal-body">
+                <div class="campo" style="margin:0"><label for="cn-just">Justificativa * <small class="muted">(mínimo 15 caracteres)</small></label><textarea id="cn-just" rows="3" placeholder="Ex.: erro na digitação dos itens da venda"></textarea></div>
+            </div>
+            <div class="modal-foot"><button class="btn" onclick="fecharModal('modal-cancelar-nfe')">Voltar</button><button class="btn btn-perigo" onclick="confirmarCancelarNfe()">Cancelar NFC-e</button></div>
+        </div>
+    </div>
+
     <script src="/seguranca.js"></script>
+    <script src="/ui/shell.js"></script>
     <script>
         const API_BASE = '';
-        const formatarMoeda = v => `R$ ${Number(v).toFixed(2).replace('.', ',')}`;
+        const formatarMoeda = v => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
         const NOMES_METODOS = {
             MONEY: 'Dinheiro', PIX: 'PIX', CREDIT_CARD: 'Crédito',
@@ -213,17 +182,18 @@
         }
 
         function nfeBadge(st) {
-            if (!st || st === 'NONE') return '';
             const mapa = {
-                AUTORIZADA: ['NFC-e', '#00a651'],
-                CANCELADA: ['NFC-e CANC', '#c0392b'],
-                REJEITADA: ['NFC-e REJ', '#c0392b'],
-                PENDENTE: ['NFC-e', '#e67e22'],
-                DESATIVADO: ['NFC-e OFF', '#95a5a6']
+                NONE: ['Sem NFC-e', 'cinza'],
+                AUTORIZADA: ['Autorizada', 'autorizada'],
+                CANCELADA: ['Cancelada', 'cancelada'],
+                REJEITADA: ['Rejeitada', 'vencido'],
+                PENDENTE: ['Pendente', 'pendente'],
+                DESATIVADO: ['Desativada', 'cinza']
             };
-            const [txt, cor] = mapa[st] || ['NFC-e', '#7f8c8d'];
-            return ` <span style="font-size:10px;padding:1px 5px;border-radius:3px;color:#fff;background:${cor};">${txt}</span>`;
+            const [txt, cls] = mapa[st || 'NONE'] || [st, 'cinza'];
+            return `<span class="badge ${cls}">${txt}</span>`;
         }
+        function fecharModal(id) { document.getElementById(id).classList.remove('active'); }
 
         function montarUrlConsulta() {
             const params = [];
@@ -246,31 +216,31 @@
                 document.getElementById('c-qtd').innerText = r.resumo.quantidade;
                 document.getElementById('c-total').innerText = formatarMoeda(r.resumo.total);
                 const metodos = Object.entries(r.resumo.porMetodo)
-                    .map(([m, v]) => `${NOMES_METODOS[m] || m}: ${formatarMoeda(v)}`)
-                    .join('<br>') || '-';
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([m, v]) => `<div><span>${NOMES_METODOS[m] || esc(m)}</span><b class="num">${formatarMoeda(v)}</b></div>`)
+                    .join('') || '—';
                 document.getElementById('c-metodos').innerHTML = metodos;
 
                 const tbody = document.getElementById('tabela-vendas');
                 if (r.vendas.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7" class="sem-dados">Nenhuma venda encontrada</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="9"><div class="estado-vazio"><span class="ms">receipt_long</span><p>Nenhuma venda encontrada no período.</p></div></td></tr>';
                     document.getElementById('resumo-lista').innerText = '';
                     return;
                 }
                 document.getElementById('resumo-lista').innerText = `${r.vendas.length} venda(s) exibidas de ${r.resumo.quantidade}`;
                 tbody.innerHTML = r.vendas.map(v => `
-                    <tr class="${v.status === 'CANCELLED' ? 'cancelada' : ''}">
-                        <td><strong>${esc(v.numero)}</strong>${nfeBadge(v.nfeStatus)}</td>
+                    <tr class="clicavel ${v.status === 'CANCELLED' ? 'cancelada' : ''}" onclick="abrirCupom('${v.id}')">
+                        <td><b>${esc(v.numero || '—')}</b>${v.status === 'CANCELLED' ? ' <span class="badge cancelada">Cancelada</span>' : ''}</td>
                         <td>${formatarDataHora(v.data)}</td>
                         <td>${esc(v.operador)}</td>
-                        <td style="text-align:right;">${v.qtdItens}</td>
-                        <td>${NOMES_METODOS[v.metodo] || v.metodo}${v.parcelas > 1 ? ` ${v.parcelas}x` : ''}</td>
-                        <td style="text-align:right;"><strong>${formatarMoeda(v.total)}</strong></td>
-                        <td style="text-align:center;">
-                            <button class="btn btn-mini btn-azul" onclick="abrirCupom('${v.id}')">Cupom</button>
-                            ${v.status === 'COMPLETED' && v.nfeStatus !== 'AUTORIZADA' && v.nfeStatus !== 'CANCELADA' ? `<button class="btn btn-mini" onclick="emitirNfe('${v.id}', '${esc(v.numero)}')">Emitir NFC-e</button>` : ''}
-                            ${v.nfeStatus === 'AUTORIZADA' ? `<button class="btn btn-mini" onclick="cancelarNfe('${v.id}', '${esc(v.numero)}')">Canc. NFC-e</button>` : ''}
-                            ${v.status === 'COMPLETED' ? `<a class="btn btn-mini btn-verde" style="text-decoration:none; color:white; display:inline-block;" href="/trocas.html?numero=${esc(v.numero)}">Troca</a>` : ''}
-                            ${v.status === 'COMPLETED' || v.status === 'PENDING' ? `<button class="btn btn-mini btn-perigo" onclick="cancelarVenda('${v.id}', '${esc(v.numero)}')">Cancelar</button>` : ''}
+                        <td>${esc(v.cliente || 'Consumidor final')}</td>
+                        <td class="right">${v.qtdItens}</td>
+                        <td>${NOMES_METODOS[v.metodo] || esc(v.metodo || '—')}${v.parcelas > 1 ? ` ${v.parcelas}x` : ''}</td>
+                        <td class="right"><b>${formatarMoeda(v.total)}</b></td>
+                        <td>${nfeBadge(v.nfeStatus)}</td>
+                        <td class="acoes" onclick="event.stopPropagation()">
+                            <button class="btn-icone" title="Ver detalhes" onclick="abrirCupom('${v.id}')"><span class="ms">visibility</span></button>
+                            ${v.status === 'COMPLETED' ? `<a class="btn-icone" title="Troca / devolução" href="/trocas.html?numero=${encodeURIComponent(v.numero || '')}"><span class="ms">sync_alt</span></a>` : ''}
                         </td>
                     </tr>`).join('');
             } catch (e) { alert(e.message); }
@@ -278,20 +248,33 @@
 
         let cupomAtual = null;
 
-        async function cancelarVenda(id, numero) {
-            const senha = prompt(`Cancelar a venda ${numero}?\n\nDigite a senha do ADMINISTRADOR:`);
-            if (!senha) return;
-            const motivo = prompt('Motivo do cancelamento (opcional):') || '';
+        let alvoCancelamento = null;
+        function cancelarVenda(id, numero) {
+            alvoCancelamento = { id, numero };
+            document.getElementById('cv-numero').innerText = numero || '';
+            document.getElementById('cv-motivo').value = '';
+            document.getElementById('cv-senha').value = '';
+            document.getElementById('modal-cancelar').classList.add('active');
+            setTimeout(() => document.getElementById('cv-motivo').focus(), 50);
+        }
+        async function confirmarCancelarVenda() {
+            const motivo = document.getElementById('cv-motivo').value.trim();
+            const senha = document.getElementById('cv-senha').value;
+            if (!motivo) { JG.toast('Informe o motivo do cancelamento.', 'alerta'); return; }
+            if (!senha) { JG.toast('Informe a senha do administrador.', 'alerta'); return; }
             try {
-                await api(`/api/vendas/${id}/cancelar`, 'POST', { senhaAdmin: senha, motivo });
-                alert(`Venda ${numero} cancelada com sucesso!`);
+                await api(`/api/vendas/${alvoCancelamento.id}/cancelar`, 'POST', { senhaAdmin: senha, motivo });
+                fecharModal('modal-cancelar');
+                fecharCupom();
+                JG.toast(`Venda ${alvoCancelamento.numero} cancelada.`, 'sucesso');
                 await buscarVendas();
-            } catch (e) { alert(e.message); }
+            } catch (e) { JG.toast(e.message, 'erro'); }
         }
 
         async function abrirCupom(id) {
             try {
                 cupomAtual = await api(`/api/vendas/${id}`);
+                cupomAtual.id = cupomAtual.id || id;
                 renderizarCupom();
                 document.getElementById('modal-cupom').classList.add('active');
             } catch (e) { alert(e.message); }
@@ -312,9 +295,19 @@
             } catch (e) { alert(e.message); }
         }
 
-        async function cancelarNfe(id, numero) {
-            const justificativa = prompt(`Cancelar a NFC-e da venda ${numero}?\n\nInforme a justificativa (mínimo 15 caracteres):`);
-            if (!justificativa) return;
+        let alvoNfe = null;
+        function cancelarNfe(id, numero) {
+            alvoNfe = { id, numero };
+            document.getElementById('cn-numero').innerText = numero || '';
+            document.getElementById('cn-just').value = '';
+            document.getElementById('modal-cancelar-nfe').classList.add('active');
+            setTimeout(() => document.getElementById('cn-just').focus(), 50);
+        }
+        async function confirmarCancelarNfe() {
+            const justificativa = document.getElementById('cn-just').value.trim();
+            const { id, numero } = alvoNfe || {};
+            if (justificativa.length < 15) { JG.toast('A justificativa precisa ter pelo menos 15 caracteres.', 'alerta'); return; }
+            fecharModal('modal-cancelar-nfe');
             try {
                 const r = await api(`/api/nfe/cancelar/${id}`, 'POST', { justificativa });
                 if (r && r.ok) {
@@ -348,44 +341,52 @@
                 return `<div>${txt}: <strong>${formatarMoeda(p.valor)}</strong></div>`;
             }).join('');
 
+            const status = v.status || 'COMPLETED';
+            const nfeSt = (v.nfe && v.nfe.status) || 'NONE';
+            document.getElementById('det-titulo').innerHTML = `Venda nº ${esc(v.numero || '—')} ${status === 'CANCELLED' ? '<span class="badge cancelada">Cancelada</span>' : ''}`;
+            const itensHtml = v.itens.map(i => `<div class="it"><div><b>${esc(i.nome)}</b><small>${esc(i.codigo || '')} · ${i.quantidade} × ${formatarMoeda(i.unitario)}</small></div><b class="num">${formatarMoeda(i.subtotal)}</b></div>`).join('');
+            const pagHtml = v.pagamento.map(p => {
+                let txt = NOMES_METODOS[p.metodo] || esc(p.metodo);
+                if (p.parcelas > 1) txt += ` ${p.parcelas}x`;
+                if (p.bandeira) txt += ` (${esc(p.bandeira)})`;
+                return `<div class="l"><span>${txt}</span><b>${formatarMoeda(p.valor)}</b></div>`;
+            }).join('');
+            const nfe = v.nfe;
+            const nfeHtml = nfe
+                ? `<div class="resumo-linhas"><div class="l"><span>Status</span>${nfeBadge(nfe.status)}</div>
+                    ${nfe.numero ? `<div class="l"><span>Número / série</span><b>${esc(nfe.numero)}${nfe.serie ? ' / ' + esc(nfe.serie) : ''}</b></div>` : ''}
+                    ${nfe.protocolo ? `<div class="l"><span>Protocolo</span><b>${esc(nfe.protocolo)}</b></div>` : ''}
+                    ${nfe.emitidoEm ? `<div class="l"><span>Emitida em</span><b>${formatarDataHora(nfe.emitidoEm)}</b></div>` : ''}</div>
+                    ${nfe.chave ? `<div class="mt-8"><div class="muted" style="font-size:12px;margin-bottom:4px">Chave de acesso</div><div class="chave">${esc(String(nfe.chave).replace(/(\d{4})/g, '$1 ').trim())}</div></div>` : ''}`
+                : '<div class="muted" style="font-size:13px">Venda sem NFC-e emitida.</div>';
             document.getElementById('cupom-conteudo').innerHTML = `
-                <div class="cupom-info">
-                    <span><strong>Venda ${esc(v.numero)}</strong></span>
-                    <span>${formatarDataHora(v.data)}</span>
-                    <span>Operador: ${esc(v.operador)}</span>
-                    ${v.cliente ? `<span>Cliente: ${esc(v.cliente)}</span>` : ''}
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Código</th>
-                            <th>Produto</th>
-                            <th style="text-align:right;">Qtd</th>
-                            <th style="text-align:right;">Unit.</th>
-                            <th style="text-align:right;">Subtotal</th>
-                        </tr>
-                    </thead>
-                    <tbody>${itens}</tbody>
-                </table>
-                <div style="text-align:right; margin-top:10px; font-size:13px;">
-                    <div>Subtotal: ${formatarMoeda(v.subtotal)}</div>
-                    ${v.desconto > 0 ? `<div>Desconto: -${formatarMoeda(v.desconto)}</div>` : ''}
-                </div>
-                <div class="cupom-total">
-                    <span>Total</span>
-                    <span class="verde">${formatarMoeda(v.total)}</span>
-                </div>
-                <div style="margin-top:10px; font-size:13px; color:#333;">
-                    <strong>Pagamento:</strong> ${pagamentos}
-                </div>
-                ${nfceFooterHtml(v.nfe)}
-            `;
+                <div class="det-sec"><div class="resumo-linhas">
+                    <div class="l"><span>Data</span><b>${formatarDataHora(v.data)}</b></div>
+                    <div class="l"><span>Operador</span><b>${esc(v.operador)}</b></div>
+                    <div class="l"><span>Cliente</span><b>${esc(v.cliente || 'Consumidor final')}</b></div>
+                </div></div>
+                <div class="det-sec"><h4>Itens</h4><div class="det-itens">${itensHtml}</div></div>
+                <div class="det-sec"><div class="resumo-linhas">
+                    <div class="l"><span>Subtotal</span><b>${formatarMoeda(v.subtotal)}</b></div>
+                    ${v.desconto > 0 ? `<div class="l"><span>Desconto</span><b class="txt-vermelho">−${formatarMoeda(v.desconto)}</b></div>` : ''}
+                    <div class="l total"><span>Total</span><b class="txt-verde" style="font-size:20px">${formatarMoeda(v.total)}</b></div>
+                </div></div>
+                <div class="det-sec"><h4>Pagamentos</h4><div class="resumo-linhas">${pagHtml}</div></div>
+                <div class="det-sec"><h4>NFC-e</h4>${nfeHtml}</div>`;
+
+            const id = v.id, num = esc(v.numero || '');
+            const acoes = [`<button class="btn" onclick="imprimirCupom()"><span class="ms">print</span>Reimprimir cupom</button>`];
+            if (status === 'COMPLETED' && nfeSt !== 'AUTORIZADA' && nfeSt !== 'CANCELADA') acoes.push(`<button class="btn btn-primario" onclick="emitirNfe('${id}', '${num}')"><span class="ms">receipt</span>Emitir NFC-e</button>`);
+            if (nfeSt === 'AUTORIZADA') acoes.push(`<button class="btn" onclick="cancelarNfe('${id}', '${num}')"><span class="ms">cancel</span>Cancelar NFC-e</button>`);
+            if (status === 'COMPLETED') acoes.push(`<a class="btn" href="/trocas.html?numero=${encodeURIComponent(v.numero || '')}"><span class="ms">sync_alt</span>Troca / devolução</a>`);
+            if (status === 'COMPLETED' || status === 'PENDING') acoes.push(`<button class="btn btn-perigo" style="grid-column:1/-1" onclick="cancelarVenda('${id}', '${num}')"><span class="ms">block</span>Cancelar venda</button>`);
+            document.getElementById('det-acoes').innerHTML = acoes.join('');
         }
 
         let CONFIG = { name: 'JG SISTEMAS', tradeName: 'TESTE LTDA', document: '', logo: null };
         async function carregarConfig() {
             try {
-                const r = await fetch('/api/configuracoes', { headers: tokenAuth() });
+                const r = await fetch('/api/configuracoes');
                 if (r.ok) CONFIG = Object.assign(CONFIG, await r.json());
             } catch (e) { console.error('Falha ao carregar configurações:', e); }
         }

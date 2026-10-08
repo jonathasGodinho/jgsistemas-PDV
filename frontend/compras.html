@@ -6,175 +6,99 @@
     <meta name="google" content="notranslate">
     <title>Compras - JG Sistemas</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
-        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
-        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
-        header a:hover { color: white; }
-        main { padding: 20px; max-width: 1300px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
-        .grid { display: grid; grid-template-columns: 380px 1fr; gap: 20px; align-items: start; }
-        @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
-        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
-        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
-        .painel-corpo { padding: 14px; }
-        .campo { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
-        .campo label { font-size: 11px; color: #656d78; font-weight: bold; text-transform: uppercase; }
-        .campo input, .campo select { padding: 9px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; width: 100%; background: white; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { background-color: #134074; color: white; padding: 8px; text-align: left; text-transform: uppercase; font-size: 11px; }
-        td { padding: 8px; border-bottom: 1px solid #e6e9ed; color: #333; }
-        tr:nth-child(even) { background-color: #f8f9fa; }
-        .btn { border: none; border-radius: 4px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; }
-        .btn-azul { background-color: #134074; color: white; }
-        .btn-verde { background-color: #00a651; color: white; }
-        .btn-verde:hover { background-color: #008c45; }
-        .btn-cinza { background-color: #8b95a1; color: white; }
-        .btn-perigo { background-color: #d9534f; color: white; }
-        .btn-mini { padding: 4px 8px; font-size: 12px; }
-        .btn-block { width: 100%; padding: 12px; font-size: 15px; margin-top: 4px; }
-        .sem-dados { text-align: center; color: #8b95a1; padding: 24px; font-size: 14px; }
-        .total-painel { display: flex; justify-content: space-between; align-items: center; background: #f0f2f5; border-radius: 4px; padding: 12px; margin-top: 6px; font-weight: bold; font-size: 16px; }
-        .verde { color: #00a651; }
-        .badge { display: inline-block; padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
-        .b-verde { background: #d8f3e3; color: #008c45; }
-        .b-azul { background: #d6e6f7; color: #134074; }
-        .b-vermelho { background: #fbe3e3; color: #d9534f; }
-        .excluir { color: #d9534f; cursor: pointer; font-weight: bold; font-size: 15px; }
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-        input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
-
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 100; }
-        .modal-overlay.active { display: flex; }
-        .modal { background: white; border-radius: 6px; width: 700px; max-width: 94vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
-        .modal-head { background-color: #0b2545; color: white; padding: 14px 18px; font-weight: bold; font-size: 15px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
-        .modal-head .close { cursor: pointer; font-size: 20px; color: #aab2bd; }
-        .modal-head .close:hover { color: white; }
-        .modal-body { padding: 18px; }
-
-        footer { background-color: #134074; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
+        .cmp-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+        @media (max-width: 1200px) { .cmp-grid { grid-template-columns: 1fr; } }
+        .busca-res { max-height: 220px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 14px; }
+        .busca-res .it { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 13.5px; }
+        .busca-res .it:last-child { border-bottom: 0; }
+        .busca-res .it:hover { background: var(--surface-2); }
+        .busca-res .it small { display: block; color: var(--text-2); }
+        body.jg #tabela-itens input, body.jg #mr-itens input { height: 34px; text-align: right; }
+        tbody tr.clicavel { cursor: pointer; }
     </style>
+    <link rel="stylesheet" href="/ui/jg.css">
 </head>
-<body>
-
-    <header>
-        <div>JG SISTEMAS - COMPRAS</div>
-        <div><a href="/">← Menu Principal</a></div>
-    </header>
-
+<body class="jg" data-pagina="compras">
     <main>
-        <div class="grid">
-            <div class="painel">
-                <div class="painel-titulo"><span>Novo Pedido de Compra</span></div>
-                <div class="painel-corpo">
-                    <div class="campo">
-                        <label>Fornecedor *</label>
-                        <select id="f-fornecedor"><option value="">Selecione...</option></select>
-                    </div>
-
-                    <div class="campo">
-                        <label>Produto</label>
-                        <div style="display:flex; gap:8px;">
-                            <input type="text" id="f-busca" placeholder="Buscar produto..." style="flex:1;">
-                            <button class="btn btn-azul" onclick="buscarProdutos()">Buscar</button>
-                        </div>
-                    </div>
-                    <div id="lista-produtos" style="max-height:200px; overflow-y:auto; border:1px solid #ccd1d9; border-radius:4px; margin-bottom:12px;">
-                        <div class="sem-dados">Digite para buscar produtos</div>
-                    </div>
-
-                    <div style="margin-bottom:12px;">
+        <div class="page-head">
+            <div><h1>Compras</h1><div class="sub">Pedidos de compra a fornecedores e recebimento de mercadoria</div></div>
+            <div class="acoes"><a class="btn" href="/fornecedores.html"><span class="ms">local_shipping</span>Fornecedores</a></div>
+        </div>
+        <div class="cmp-grid">
+            <div class="card">
+                <div class="card-head"><h3>Novo pedido de compra</h3></div>
+                <div class="card-body">
+                    <div class="campo"><label for="f-fornecedor">Fornecedor *</label><select id="f-fornecedor"><option value="">Selecione...</option></select></div>
+                    <div class="campo"><label for="f-busca">Adicionar produto</label>
+                        <div class="input-grupo"><input type="text" id="f-busca" placeholder="Buscar por nome, código ou SKU e tecle Enter"><button class="btn" onclick="buscarProdutos()"><span class="ms">search</span></button></div></div>
+                    <div class="busca-res hidden" id="lista-produtos"></div>
+                    <div class="tabela-wrap" style="border:1px solid var(--border)">
                         <table>
-                            <thead>
-                                <tr>
-                                    <th>Produto</th>
-                                    <th style="width:52px;">Qtd</th>
-                                    <th style="width:70px;">Custo</th>
-                                    <th style="width:28px;"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabela-itens">
-                                <tr><td colspan="4" class="sem-dados">Nenhum item</td></tr>
-                            </tbody>
+                            <thead><tr><th>Produto</th><th class="right" style="width:90px">Qtd</th><th class="right" style="width:120px">Custo unit.</th><th class="right">Subtotal</th><th class="acoes"></th></tr></thead>
+                            <tbody id="tabela-itens"><tr><td colspan="5" class="sem-dados">Nenhum item</td></tr></tbody>
                         </table>
                     </div>
-
-                    <div class="total-painel">
-                        <span>Total do Pedido</span>
-                        <span class="verde" id="lbl-total">R$ 0,00</span>
-                    </div>
-
-                    <button class="btn btn-verde btn-block" onclick="criarCompra()">Registrar Pedido</button>
+                    <div class="destaque mt-16 row between"><span class="rotulo" style="font-size:14px">Total do pedido</span><span class="valor txt-verde" id="lbl-total">R$ 0,00</span></div>
                 </div>
+                <div class="card-foot"><button class="btn" onclick="limparPedido()">Limpar</button><button class="btn btn-sucesso" onclick="criarCompra()"><span class="ms">check</span>Registrar pedido</button></div>
             </div>
 
-            <div class="painel">
-                <div class="painel-titulo"><span>Pedidos de Compra</span></div>
-                <div class="painel-corpo">
-                    <div style="overflow-x:auto;">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Nº</th>
-                                    <th>Data</th>
-                                    <th>Fornecedor</th>
-                                    <th style="text-align:right;">Itens</th>
-                                    <th style="text-align:right;">Total</th>
-                                    <th>Status</th>
-                                    <th style="text-align:center;">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabela-compras">
-                                <tr><td colspan="7" class="sem-dados">Carregando...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
+            <div class="card">
+                <div class="card-head"><h3>Pedidos</h3>
+                    <select id="f-status" style="width:150px;height:32px"><option value="">Todos</option><option value="PENDING">Abertos</option><option value="RECEIVED">Recebidos</option><option value="CANCELLED">Cancelados</option></select></div>
+                <div class="tabela-wrap">
+                    <table>
+                        <thead><tr><th>Nº</th><th>Data</th><th>Fornecedor</th><th class="right">Total</th><th>Status</th><th class="acoes"></th></tr></thead>
+                        <tbody id="tabela-compras"><tr><td colspan="6" class="sem-dados">Carregando...</td></tr></tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </main>
-
-    <footer>© 2026 JG Sistemas</footer>
-
     <!-- Modal detalhe -->
     <div class="modal-overlay" id="modal-detalhe">
-        <div class="modal">
+        <div class="modal lg">
             <div class="modal-head">
-                <span>Pedido de Compra - Nº <span id="md-numero">-</span></span>
+                <span>Pedido de compra <span id="md-numero">-</span></span>
                 <span class="close" onclick="fecharModal('modal-detalhe')">&times;</span>
             </div>
             <div class="modal-body" id="detalhe-conteudo"></div>
         </div>
     </div>
 
-    <!-- Modal receber -->
+    <!-- Modal receber (conferência) -->
     <div class="modal-overlay" id="modal-receber">
-        <div class="modal">
+        <div class="modal lg">
             <div class="modal-head">
-                <span>Receber Pedido - Nº <span id="mr-numero">-</span></span>
+                <span>Recebimento do pedido <span id="mr-numero">-</span></span>
                 <span class="close" onclick="fecharModal('modal-receber')">&times;</span>
             </div>
             <div class="modal-body">
-                <div class="campo">
-                    <label>Vencimento da conta a pagar</label>
-                    <input type="date" id="mr-vencimento">
+                <div class="muted mb-16" id="mr-info" style="font-size:13px"></div>
+                <div class="tabela-wrap mb-16" style="border:1px solid var(--border)">
+                    <table>
+                        <thead><tr><th>Produto</th><th class="right">Pedido</th><th class="right" style="width:110px">Recebido</th><th class="right">Diferença</th><th class="right">Custo</th><th class="right">Subtotal</th></tr></thead>
+                        <tbody id="mr-itens"></tbody>
+                    </table>
                 </div>
-                <div class="campo">
-                    <label>Observações</label>
-                    <input type="text" id="mr-obs" placeholder="Opcional">
+                <div class="form-grid">
+                    <div class="campo"><label for="mr-vencimento">Vencimento da conta a pagar</label><input type="date" id="mr-vencimento"></div>
+                    <div class="campo"><label for="mr-obs">Observações / nº da nota fiscal</label><input type="text" id="mr-obs" placeholder="Opcional"></div>
                 </div>
-                <button class="btn btn-verde" style="width:100%; padding:12px; font-size:15px;" onclick="confirmarRecebimento()">Confirmar Recebimento</button>
+                <div class="alerta"><span class="ms">info</span><div>Ao confirmar, os itens recebidos entram no estoque e é gerada uma conta a pagar de <b id="mr-total">R$ 0,00</b>.</div></div>
             </div>
+            <div class="modal-foot"><button class="btn" onclick="fecharModal('modal-receber')">Cancelar</button><button class="btn btn-sucesso" onclick="confirmarRecebimento()"><span class="ms">inventory</span>Confirmar recebimento</button></div>
         </div>
     </div>
 
     <script src="/seguranca.js"></script>
+    <script src="/ui/shell.js"></script>
     <script>
         const API_BASE = '';
-        const formatarMoeda = v => `R$ ${Number(v).toFixed(2).replace('.', ',')}`;
+        const formatarMoeda = v => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         const formatarDataHora = d => new Date(d).toLocaleString('pt-BR');
-        const NOMES_STATUS = { PENDING: 'Pendente', RECEIVED: 'Recebido' };
-        const CORES_STATUS = { PENDING: 'b-azul', RECEIVED: 'b-verde' };
+        const NOMES_STATUS = { PENDING: 'Aberto', RECEIVED: 'Recebido', CANCELLED: 'Cancelado' };
+        const CORES_STATUS = { PENDING: 'azul', RECEIVED: 'ativo', CANCELLED: 'cancelado' };
 
         function obterOperador() {
             try {
@@ -227,17 +151,15 @@
             try {
                 produtosBusca = await api('/api/produtos' + (termo ? `?busca=${encodeURIComponent(termo)}` : ''));
                 const area = document.getElementById('lista-produtos');
+                area.classList.remove('hidden');
                 if (produtosBusca.length === 0) {
                     area.innerHTML = '<div class="sem-dados">Nenhum produto encontrado</div>';
                     return;
                 }
                 area.innerHTML = produtosBusca.slice(0, 20).map((p, idx) => `
-                    <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 10px; border-bottom:1px solid #e6e9ed;">
-                        <div>
-                            <strong>${esc(p.nome)}</strong><br>
-                            <small style="color:#8b95a1;">${esc(p.codigo || p.sku || '-')}</small>
-                        </div>
-                        <button class="btn btn-mini btn-verde" onclick="adicionarItem(${idx})">Adicionar</button>
+                    <div class="it">
+                        <div><b>${esc(p.nome)}</b><small>${esc(p.codigo || p.sku || '-')} · estoque ${p.estoque ?? 0} · custo ${formatarMoeda(p.custo)}</small></div>
+                        <button class="btn btn-sm btn-sucesso" onclick="adicionarItem(${idx})"><span class="ms">add</span>Adicionar</button>
                     </div>`).join('');
             } catch (e) { alert(e.message); }
         }
@@ -263,7 +185,7 @@
         function renderizarItens() {
             const tbody = document.getElementById('tabela-itens');
             if (itens.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="sem-dados">Nenhum item</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5"><div class="estado-vazio" style="padding:22px"><span class="ms">add_shopping_cart</span><p>Busque produtos acima para montar o pedido.</p></div></td></tr>';
                 document.getElementById('lbl-total').innerText = 'R$ 0,00';
                 return;
             }
@@ -271,10 +193,11 @@
             document.getElementById('lbl-total').innerText = formatarMoeda(total);
             tbody.innerHTML = itens.map((i, idx) => `
                 <tr>
-                    <td>${esc(i.nome)}</td>
-                    <td><input type="number" id="qtd-${idx}" min="1" value="${i.quantidade}" style="width:48px; padding:4px; border:1px solid #aab2bd; border-radius:3px;" onchange="editarQtd(${idx}, this.value)"></td>
-                    <td><input type="number" min="0" step="0.01" value="${i.custoUnitario}" style="width:64px; padding:4px; border:1px solid #aab2bd; border-radius:3px;" onchange="editarCusto(${idx}, this.value)"></td>
-                    <td style="text-align:center;"><span class="excluir" onclick="removerItem(${idx})">&times;</span></td>
+                    <td><b>${esc(i.nome)}</b><br><small>${esc(i.codigo)}</small></td>
+                    <td><input type="number" id="qtd-${idx}" min="1" value="${i.quantidade}" onchange="editarQtd(${idx}, this.value)"></td>
+                    <td><input type="number" min="0" step="0.01" value="${i.custoUnitario}" onchange="editarCusto(${idx}, this.value)"></td>
+                    <td class="right"><b>${formatarMoeda(i.quantidade * i.custoUnitario)}</b></td>
+                    <td class="acoes"><button class="btn-icone perigo" title="Remover" onclick="removerItem(${idx})"><span class="ms">delete</span></button></td>
                 </tr>`).join('');
         }
 
@@ -291,6 +214,13 @@
             renderizarItens();
         }
 
+        function limparPedido() {
+            itens = [];
+            document.getElementById('f-fornecedor').value = '';
+            document.getElementById('lista-produtos').classList.add('hidden');
+            renderizarItens();
+        }
+
         async function criarCompra() {
             const fornecedorId = document.getElementById('f-fornecedor').value;
             if (!fornecedorId) { alert('Selecione o fornecedor!'); return; }
@@ -300,34 +230,33 @@
                     fornecedorId,
                     itens: itens.map(i => ({ produtoId: i.produtoId, quantidade: i.quantidade, custoUnitario: i.custoUnitario }))
                 });
-                alert(`Pedido de compra Nº ${r.numero} registrado!`);
-                itens = [];
-                renderizarItens();
+                JG.toast(`Pedido de compra Nº ${r.numero} registrado.`, 'sucesso');
+                limparPedido();
                 carregarCompras();
             } catch (e) { alert(e.message); }
         }
 
         async function carregarCompras() {
             try {
-                const compras = await api('/api/compras');
+                const todas = await api('/api/compras');
+                const st = document.getElementById('f-status').value;
+                const compras = todas.filter(c => !st || c.status === st);
                 const tbody = document.getElementById('tabela-compras');
                 if (compras.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7" class="sem-dados">Nenhum pedido de compra</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="6"><div class="estado-vazio"><span class="ms">shopping_cart</span><p>Nenhum pedido de compra.</p></div></td></tr>';
                     return;
                 }
                 tbody.innerHTML = compras.map(c => `
-                    <tr>
-                        <td><strong>${esc(c.numero)}</strong></td>
-                        <td>${formatarDataHora(c.data)}</td>
-                        <td>${esc(c.fornecedor || '-')}</td>
-                        <td style="text-align:right;">${c.qtdItens}</td>
-                        <td style="text-align:right;"><strong>${formatarMoeda(c.total)}</strong></td>
-                        <td><span class="badge ${CORES_STATUS[c.status]}">${esc(NOMES_STATUS[c.status] || c.status)}</span></td>
-                        <td style="text-align:center;">
-                            <button class="btn btn-mini btn-azul" onclick="abrirDetalhe('${c.id}')">Ver</button>
+                    <tr class="clicavel" onclick="abrirDetalhe('${c.id}')">
+                        <td><b>${esc(c.numero)}</b></td>
+                        <td>${new Date(c.data).toLocaleDateString('pt-BR')}</td>
+                        <td>${esc(c.fornecedor || '-')}<br><small>${c.qtdItens} item(ns)</small></td>
+                        <td class="right"><b>${formatarMoeda(c.total)}</b></td>
+                        <td><span class="badge ${CORES_STATUS[c.status] || 'cinza'}">${esc(NOMES_STATUS[c.status] || c.status)}</span></td>
+                        <td class="acoes" onclick="event.stopPropagation()">
                             ${c.status === 'PENDING' ? `
-                                <button class="btn btn-mini btn-verde" onclick="abrirReceber('${c.id}', '${esc(c.numero)}')">Receber</button>
-                                <button class="btn btn-mini btn-perigo" onclick="cancelarCompra('${c.id}', '${esc(c.numero)}')">Cancelar</button>` : ''}
+                                <button class="btn-icone" style="color:var(--green)" title="Receber" onclick="abrirReceber('${c.id}', '${esc(c.numero)}')"><span class="ms">inventory</span></button>
+                                <button class="btn-icone perigo" title="Cancelar" onclick="cancelarCompra('${c.id}', '${esc(c.numero)}')"><span class="ms">close</span></button>` : ''}
                         </td>
                     </tr>`).join('');
             } catch (e) { alert(e.message); }
@@ -350,36 +279,68 @@
                         <td style="text-align:right;">${formatarMoeda(i.total)}</td>
                     </tr>`).join('');
                 document.getElementById('detalhe-conteudo').innerHTML = `
-                    <div style="margin-bottom:12px; font-size:13px;">
-                        Fornecedor: <strong>${esc(c.fornecedor?.nome || '-')}</strong> ·
-                        Status: <strong>${esc(NOMES_STATUS[c.status] || c.status)}</strong> ·
-                        Data: ${formatarDataHora(c.data)}
+                    <div class="row mb-16" style="font-size:13px">
+                        <span>Fornecedor: <b>${esc(c.fornecedor?.nome || '-')}</b></span>
+                        <span class="badge ${CORES_STATUS[c.status] || 'cinza'}">${esc(NOMES_STATUS[c.status] || c.status)}</span>
+                        <span class="muted">${formatarDataHora(c.data)}</span>
                     </div>
-                    <table>
-                        <thead><tr><th>Código</th><th>Produto</th><th style="text-align:right;">Qtd</th><th style="text-align:right;">Custo</th><th style="text-align:right;">Total</th></tr></thead>
+                    <div class="tabela-wrap" style="border:1px solid var(--border)"><table>
+                        <thead><tr><th>Código</th><th>Produto</th><th class="right">Qtd</th><th class="right">Custo</th><th class="right">Total</th></tr></thead>
                         <tbody>${itensHtml}</tbody>
-                    </table>
-                    <div style="text-align:right; margin-top:10px; font-weight:bold; font-size:16px;">Total: ${formatarMoeda(c.total)}</div>`;
+                    </table></div>
+                    <div class="row between mt-16"><span>${c.status === 'PENDING' ? `<button class="btn btn-sucesso" onclick="fecharModal('modal-detalhe');abrirReceber('${c.id}','${esc(c.numero)}')"><span class="ms">inventory</span>Receber pedido</button>` : ''}</span><b style="font-size:18px">Total: ${formatarMoeda(c.total)}</b></div>`;
                 document.getElementById('modal-detalhe').classList.add('active');
             } catch (e) { alert(e.message); }
         }
 
-        function abrirReceber(id, numero) {
+        let compraReceber = null;
+        async function abrirReceber(id, numero) {
             compraReceberId = id;
+            try { compraReceber = await api(`/api/compras/${id}`); } catch (e) { alert(e.message); return; }
             document.getElementById('mr-numero').innerText = numero;
-            document.getElementById('mr-vencimento').value = '';
+            document.getElementById('mr-info').innerHTML = `Fornecedor <b>${esc(compraReceber.fornecedor?.nome || '-')}</b> · pedido de ${formatarDataHora(compraReceber.data)} · confira as quantidades recebidas.`;
+            const v = new Date(Date.now() + 30 * 86400000);
+            document.getElementById('mr-vencimento').value = v.toISOString().slice(0, 10);
             document.getElementById('mr-obs').value = '';
+            document.getElementById('mr-itens').innerHTML = compraReceber.itens.map((i, idx) => `
+                <tr><td><b>${esc(i.nome)}</b><br><small>${esc(i.codigo || '')}</small></td>
+                <td class="right">${i.quantidade}</td>
+                <td><input type="number" min="0" max="${i.quantidade}" value="${i.quantidade}" data-idx="${idx}" class="mr-qtd"></td>
+                <td class="right" id="mr-dif-${idx}"><span class="muted">—</span></td>
+                <td class="right">${formatarMoeda(i.custoUnitario)}</td>
+                <td class="right" id="mr-sub-${idx}">${formatarMoeda(i.total)}</td></tr>`).join('');
+            atualizarRecebimento();
             document.getElementById('modal-receber').classList.add('active');
         }
+        function atualizarRecebimento() {
+            if (!compraReceber) return;
+            let total = 0;
+            document.querySelectorAll('.mr-qtd').forEach(inp => {
+                const i = compraReceber.itens[Number(inp.dataset.idx)];
+                const q = Math.max(0, Math.min(i.quantidade, Math.round(Number(inp.value) || 0)));
+                const dif = q - i.quantidade;
+                total += q * i.custoUnitario;
+                document.getElementById('mr-dif-' + inp.dataset.idx).innerHTML = dif === 0 ? '<span class="muted">—</span>' : `<span class="badge baixo">${dif}</span>`;
+                document.getElementById('mr-sub-' + inp.dataset.idx).innerText = formatarMoeda(q * i.custoUnitario);
+            });
+            document.getElementById('mr-total').innerText = formatarMoeda(total);
+        }
+        document.getElementById('mr-itens').addEventListener('input', atualizarRecebimento);
 
         async function confirmarRecebimento() {
             if (!compraReceberId) return;
             try {
-                await api(`/api/compras/${compraReceberId}/receber`, 'POST', {
-                    vencimento: document.getElementById('mr-vencimento').value || undefined,
-                    observacoes: document.getElementById('mr-obs').value.trim() || undefined
+                const recebidos = {};
+                document.querySelectorAll('.mr-qtd').forEach(inp => {
+                    const i = compraReceber.itens[Number(inp.dataset.idx)];
+                    if (i && i.id) recebidos[i.id] = Number(inp.value) || 0;
                 });
-                alert('Pedido recebido! Estoque atualizado e conta a pagar gerada.');
+                const r = await api(`/api/compras/${compraReceberId}/receber`, 'POST', {
+                    vencimento: document.getElementById('mr-vencimento').value || undefined,
+                    observacoes: document.getElementById('mr-obs').value.trim() || undefined,
+                    recebidos
+                });
+                JG.toast(`Pedido recebido. Estoque atualizado e conta a pagar de ${formatarMoeda(r.totalRecebido)} gerada.`, 'sucesso');
                 fecharModal('modal-receber');
                 compraReceberId = null;
                 carregarCompras();
@@ -394,6 +355,7 @@
             } catch (e) { alert(e.message); }
         }
 
+        document.getElementById('f-status').addEventListener('change', carregarCompras);
         document.getElementById('f-busca').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') buscarProdutos();
         });

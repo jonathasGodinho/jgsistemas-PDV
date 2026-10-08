@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>Cliente - JG Sistemas</title>
+    <link rel="stylesheet" href="/ui/jg.css">
+    <style>
+        .ficha-head { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+        .ficha-head .jg-avatar { width: 56px; height: 56px; font-size: 19px; }
+        .ficha-head h1 { font-size: 24px; font-weight: 600; }
+        .ficha-head .badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+        .ficha-totais { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--border); margin-top: 16px; }
+        .ficha-totais > div { padding: 12px 16px; border-right: 1px solid var(--border); }
+        .ficha-totais > div:last-child { border-right: 0; }
+        .ficha-totais .r { font-size: 12px; color: var(--text-2); }
+        .ficha-totais .v { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+        .painel-aba { display: none; }
+        .painel-aba.ativa { display: block; }
+        .gauge { position: relative; width: 240px; height: 130px; margin: 0 auto; }
+        .gauge svg { width: 240px; height: 130px; }
+        .gauge .valor { position: absolute; left: 0; right: 0; bottom: 6px; text-align: center; }
+        .gauge .valor b { font-size: 34px; font-weight: 700; display: block; line-height: 1; }
+        .gauge .valor span { font-size: 12px; color: var(--text-2); }
+        .faixas { display: flex; gap: 6px; justify-content: center; margin-top: 10px; }
+        .fator { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--border); font-size: 13.5px; }
+        .fator:last-child { border-bottom: 0; }
+        .fator span { color: var(--text-2); }
+        @media (max-width: 900px) { .ficha-totais { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    </style>
+</head>
+<body class="jg" data-pagina="clientes" data-titulo="Ficha do cliente">
+    <main>
+        <div class="card mb-16">
+            <div class="card-body" style="padding-bottom:0">
+                <div class="ficha-head">
+                    <a class="btn-icone" href="/clientes.html" title="Voltar"><span class="ms">arrow_back</span></a>
+                    <div class="jg-avatar" id="h-avatar">+</div>
+                    <div style="flex:1;min-width:200px">
+                        <h1 id="h-nome">Novo cliente</h1>
+                        <div class="badges" id="h-badges"><span class="muted" style="font-size:13px">Preencha os dados e salve para liberar crédito, compras e fidelidade.</span></div>
+                    </div>
+                    <div class="row" id="h-acoes"></div>
+                </div>
+            </div>
+            <div class="ficha-totais hidden" id="h-totais">
+                <div><div class="r">Total comprado</div><div class="v" id="t-total">—</div></div>
+                <div><div class="r">Compras</div><div class="v" id="t-compras">—</div></div>
+                <div><div class="r">Ticket médio</div><div class="v" id="t-ticket">—</div></div>
+                <div><div class="r">Em aberto</div><div class="v" id="t-aberto">—</div></div>
+            </div>
+        </div>
+
+        <div class="abas">
+            <button class="aba ativa" data-aba="dados"><span class="ms sm">person</span>Dados</button>
+            <button class="aba" data-aba="credito" disabled><span class="ms sm">credit_score</span>Crédito</button>
+            <button class="aba" data-aba="compras" disabled><span class="ms sm">shopping_bag</span>Compras</button>
+            <button class="aba" data-aba="fidelidade" disabled><span class="ms sm">loyalty</span>Fidelidade</button>
+        </div>
+
+        <!-- Dados -->
+        <div class="painel-aba ativa" id="aba-dados">
+            <div class="card">
+                <div class="card-body">
+                    <input type="hidden" id="c-id">
+                    <div class="form-grid c3">
+                        <div class="campo span-2"><label for="c-nome">Nome *</label><input type="text" id="c-nome" placeholder="Ex.: Maria da Silva"></div>
+                        <div class="campo"><label for="c-documento">CPF/CNPJ</label><input type="text" id="c-documento" placeholder="000.000.000-00"></div>
+                        <div class="campo"><label for="c-nascimento">Nascimento</label><input type="date" id="c-nascimento"></div>
+                        <div class="campo span-2"><label for="c-email">E-mail</label><input type="email" id="c-email" placeholder="cliente@email.com"></div>
+                        <div class="campo"><label for="c-telefone">Telefone</label><input type="text" id="c-telefone" placeholder="(00) 0000-0000"></div>
+                        <div class="campo"><label for="c-celular">Celular / WhatsApp</label><input type="text" id="c-celular" placeholder="(00) 00000-0000"></div>
+                        <div class="campo"><label for="c-limite">Limite de crédito (R$)</label><input type="text" id="c-limite" placeholder="0,00" inputmode="decimal"></div>
+                    </div>
+                    <div class="jg-section-title mt-8 mb-16" style="font-size:13px;color:var(--text-2)">ENDEREÇO</div>
+                    <div class="form-grid c4">
+                        <div class="campo"><label for="c-cep">CEP</label><div class="input-grupo"><input type="text" id="c-cep" placeholder="00000-000"><button class="btn" type="button" onclick="JG.buscarCep('c-')" title="Buscar CEP"><span class="ms">search</span></button></div></div>
+                        <div class="campo span-2"><label for="c-endereco">Endereço</label><input type="text" id="c-endereco" placeholder="Rua/Av."></div>
+                        <div class="campo"><label for="c-numero">Número</label><input type="text" id="c-numero" placeholder="123"></div>
+                        <div class="campo"><label for="c-complemento">Complemento</label><input type="text" id="c-complemento" placeholder="Apto, bloco..."></div>
+                        <div class="campo"><label for="c-bairro">Bairro</label><input type="text" id="c-bairro" placeholder="Centro"></div>
+                        <div class="campo"><label for="c-cidade">Cidade</label><input type="text" id="c-cidade" placeholder="São Paulo"></div>
+                        <div class="campo"><label for="c-estado">UF</label><input type="text" id="c-estado" placeholder="SP" maxlength="2"></div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="campo"><label for="c-price-table">Tabela de preço</label><select id="c-price-table"><option value="">Sem tabela (tabela padrão)</option></select></div>
+                        <div class="campo"><label for="c-observacoes">Observações</label><textarea id="c-observacoes" rows="2" placeholder="Anotações sobre o cliente..."></textarea></div>
+                    </div>
+                    <label class="toggle"><input type="checkbox" id="c-ativo" checked><span class="trilho"></span><span>Cliente ativo</span></label>
+                </div>
+            </div>
+            <div class="barra-fixa">
+                <a class="btn" href="/clientes.html">Cancelar</a>
+                <button class="btn btn-sucesso" id="btn-salvar" onclick="salvarCliente()"><span class="ms">check</span>Salvar <span class="kbd">Ctrl S</span></button>
+            </div>
+        </div>
+
+        <!-- Crédito -->
+        <div class="painel-aba" id="aba-credito">
+            <div class="grid g-3">
+                <div class="card">
+                    <div class="card-head"><h3>Score de crédito</h3><span class="sub" id="cr-ultima"></span></div>
+                    <div class="card-body">
+                        <div class="gauge">
+                            <svg viewBox="0 0 240 130" aria-hidden="true">
+                                <path d="M20 120 A100 100 0 0 1 220 120" fill="none" stroke="#E5EAF2" stroke-width="18" stroke-linecap="round"/>
+                                <path id="gauge-arco" d="M20 120 A100 100 0 0 1 220 120" fill="none" stroke="#16A34A" stroke-width="18" stroke-linecap="round" pathLength="100" stroke-dasharray="0 100"/>
+                            </svg>
+                            <div class="valor"><b id="cr-score">—</b><span>de 100</span></div>
+                        </div>
+                        <div class="faixas" id="cr-faixas"></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-head"><h3>Limite</h3></div>
+                    <div class="card-body">
+                        <div class="destaque mb-16"><div class="rotulo">Limite atual</div><div class="valor" id="cr-atual">—</div></div>
+                        <div class="destaque verde mb-16"><div class="rotulo">Limite sugerido</div><div class="valor" id="cr-sugerido">—</div></div>
+                        <button class="btn btn-primario btn-bloco" onclick="abrirAplicarLimite()"><span class="ms">done_all</span>Aplicar limite sugerido</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-head"><h3>Fatores da análise</h3></div>
+                    <div class="card-body" id="cr-fatores"><div class="sem-dados">Carregando...</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Compras -->
+        <div class="painel-aba" id="aba-compras">
+            <div class="card">
+                <div class="tabela-wrap">
+                    <table>
+                        <thead><tr><th>Venda</th><th>Data</th><th>Operador</th><th class="right">Itens</th><th>Pagamento</th><th class="right">Desconto</th><th class="right">Total</th><th>Status</th></tr></thead>
+                        <tbody id="tabela-compras"><tr><td colspan="8" class="sem-dados">Carregando...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fidelidade -->
+        <div class="painel-aba" id="aba-fidelidade">
+            <div class="grid g-side-main" style="grid-template-columns:300px minmax(0,1fr);align-items:start">
+                <div class="stack">
+                    <div class="destaque verde"><div class="rotulo">Saldo de cashback</div><div class="valor" id="fd-saldo">—</div></div>
+                    <a class="btn" href="/fidelidade.html"><span class="ms">tune</span>Ajuste manual de saldo</a>
+                </div>
+                <div class="card">
+                    <div class="card-head"><h3>Extrato</h3></div>
+                    <div class="tabela-wrap">
+                        <table><thead><tr><th>Data</th><th>Tipo</th><th class="right">Valor</th><th class="right">Pontos</th></tr></thead>
+                        <tbody id="tabela-extrato"><tr><td colspan="4" class="sem-dados">Carregando...</td></tr></tbody></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal: aplicar limite (senha admin) -->
+    <div class="modal-overlay" id="modal-limite">
+        <div class="modal sm">
+            <div class="modal-head"><span>Aplicar limite sugerido</span><span class="close" onclick="fecharModal('modal-limite')">&times;</span></div>
+            <div class="modal-body">
+                <p style="margin:0 0 14px">O limite de crédito passará para <b id="ml-valor">—</b>.</p>
+                <div class="campo" style="margin:0"><label for="ml-senha">Senha do administrador *</label><input type="password" id="ml-senha" autocomplete="off"></div>
+            </div>
+            <div class="modal-foot"><button class="btn" onclick="fecharModal('modal-limite')">Cancelar</button><button class="btn btn-primario" onclick="aplicarLimiteCredito()">Aplicar</button></div>
+        </div>
+    </div>
+
+    <script src="/seguranca.js"></script>
+    <script src="/ui/shell.js"></script>
+    <script>
+        const ID = new URLSearchParams(location.search).get('id');
+        const $ = (id) => document.getElementById(id);
+        const fmt = (v) => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const parseMoeda = (v) => parseFloat(String(v ?? '').replace(/\./g, '').replace(',', '.')) || 0;
+        const METODOS = { MONEY: 'Dinheiro', PIX: 'PIX', CREDIT_CARD: 'Crédito', DEBIT_CARD: 'Débito', CREDIARIO: 'Crediário' };
+        const STATUS_VENDA = { COMPLETED: ['Concluída', 'ativo'], CANCELLED: ['Cancelada', 'vencido'], REFUNDED: ['Devolvida', 'pendente'], PENDING: ['Pendente', 'pendente'], QUOTE: ['Orçamento', 'azul'] };
+        const TIPOS_FID = { CASHBACK_CREDITO: ['Crédito por compra', 'ativo'], CASHBACK_RESGATE: ['Resgate', 'vencido'], CASHBACK_AJUSTE_CREDITO: ['Ajuste (crédito)', 'azul'], CASHBACK_AJUSTE_DEBITO: ['Ajuste (débito)', 'pendente'], CASHBACK_EXPIRADO: ['Expirado', 'inativo'] };
+        let cliente = null;
+        let analise = null;
+
+        async function api(url, metodo = 'GET', corpo = null) {
+            const opcoes = { method: metodo, headers: { 'Content-Type': 'application/json' } };
+            if (corpo) opcoes.body = JSON.stringify(corpo);
+            const r = await fetch(url, opcoes);
+            if (r.status === 401) { localStorage.removeItem('jg_operador'); location.href = '/login.html'; throw new Error('Sessão expirada.'); }
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.erro || 'Erro na requisição');
+            return d;
+        }
+        (function () { const op = JG.operador(); if (op && op.papel === 'SELLER') location.href = '/'; })();
+        function fecharModal(id) { $(id).classList.remove('active'); }
+
+        // ---------- abas
+        const carregadas = {};
+        function abrirAba(nome) {
+            const b = document.querySelector(`[data-aba="${nome}"]`);
+            if (!b || b.disabled) return;
+            document.querySelectorAll('[data-aba]').forEach(x => x.classList.toggle('ativa', x === b));
+            document.querySelectorAll('.painel-aba').forEach(p => p.classList.toggle('ativa', p.id === 'aba-' + nome));
+            history.replaceState(null, '', location.search + '#' + nome);
+            if (!carregadas[nome] && cliente) {
+                carregadas[nome] = true;
+                if (nome === 'credito') carregarCredito();
+                if (nome === 'compras') carregarCompras();
+                if (nome === 'fidelidade') carregarFidelidade();
+            }
+        }
+        document.querySelectorAll('[data-aba]').forEach(b => b.addEventListener('click', () => abrirAba(b.dataset.aba)));
+
+        // ---------- dados
+        async function carregarTabelas() {
+            try {
+                const tabelas = await api('/api/tabelas-preco');
+                $('c-price-table').innerHTML = '<option value="">Sem tabela (tabela padrão)</option>' + tabelas.map(t => `<option value="${esc(t.id)}">${esc(t.nome)}${t.padrao ? ' (padrão)' : ''}</option>`).join('');
+            } catch (e) { /* módulo de preços pode estar desligado */ }
+        }
+
+        function preencher(c) {
+            $('c-id').value = c.id;
+            $('c-nome').value = c.nome || '';
+            $('c-documento').value = c.documento || '';
+            if (c.nascimento) $('c-nascimento').value = new Date(c.nascimento).toISOString().slice(0, 10);
+            $('c-email').value = c.email || '';
+            $('c-limite').value = Number(c.limite || 0).toFixed(2).replace('.', ',');
+            $('c-telefone').value = c.telefone || '';
+            $('c-celular').value = c.celular || '';
+            ['cep', 'endereco', 'numero', 'complemento', 'bairro', 'cidade', 'estado', 'observacoes'].forEach(k => $('c-' + k).value = c[k] || '');
+            $('c-price-table').value = c.priceTableId || '';
+            $('c-ativo').checked = !!c.ativo;
+
+            $('h-nome').textContent = c.nome;
+            document.title = c.nome + ' - JG Sistemas';
+            $('h-avatar').textContent = JG.iniciais(c.nome);
+            const badges = [`<span class="badge ${c.ativo ? 'ativo' : 'inativo'}">${c.ativo ? 'Ativo' : 'Inativo'}</span>`];
+            if (c.inadimplente) badges.push(`<span class="badge vencido">Inadimplente · ${fmt(c.emAtraso)}</span>`);
+            if (c.criadoEm) badges.push(`<span class="badge cinza sem-ponto">Cliente desde ${new Date(c.criadoEm).getFullYear()}</span>`);
+            if (c.cashback > 0) badges.push(`<span class="badge verde sem-ponto">Cashback ${fmt(c.cashback)}</span>`);
+            $('h-badges').innerHTML = badges.join('');
+            const zap = String(c.celular || '').replace(/\D/g, '');
+            $('h-acoes').innerHTML = (zap.length >= 10 ? `<a class="btn" target="_blank" rel="noopener" href="https://wa.me/55${zap}"><span class="ms">chat</span>WhatsApp</a>` : '') +
+                `<a class="btn btn-sucesso" href="/pdv.html" target="_blank" rel="noopener"><span class="ms">point_of_sale</span>Nova venda</a>`;
+            $('h-totais').classList.remove('hidden');
+            $('t-total').textContent = fmt(c.totalComprado);
+            $('t-compras').textContent = c.vendas;
+            $('t-ticket').textContent = fmt(c.vendas ? c.totalComprado / c.vendas : 0);
+            $('t-aberto').textContent = '—';
+            document.querySelectorAll('[data-aba]').forEach(b => b.disabled = false);
+            api(`/api/clientes/${encodeURIComponent(c.id)}/situacao`).then(s => {
+                $('t-aberto').textContent = fmt(s.emAberto);
+                $('t-aberto').className = 'v' + (s.emAberto > 0 ? ' txt-ambar' : '');
+            }).catch(() => {});
+        }
+
+        async function salvarCliente() {
+            const id = $('c-id').value;
+            const corpo = {
+                nome: $('c-nome').value.trim(),
+                documento: $('c-documento').value.trim(),
+                nascimento: $('c-nascimento').value || null,
+                email: $('c-email').value.trim(),
+                limite: parseMoeda($('c-limite').value),
+                telefone: $('c-telefone').value.trim(),
+                celular: $('c-celular').value.trim(),
+                cep: $('c-cep').value.trim(),
+                endereco: $('c-endereco').value.trim(),
+                numero: $('c-numero').value.trim(),
+                complemento: $('c-complemento').value.trim(),
+                bairro: $('c-bairro').value.trim(),
+                cidade: $('c-cidade').value.trim(),
+                estado: $('c-estado').value.trim().toUpperCase(),
+                observacoes: $('c-observacoes').value.trim(),
+                priceTableId: $('c-price-table').value || null,
+                ativo: $('c-ativo').checked
+            };
+            if (!corpo.nome) { JG.toast('Informe o nome do cliente.', 'alerta'); $('c-nome').focus(); return; }
+            $('btn-salvar').disabled = true;
+            try {
+                if (id) {
+                    await api(`/api/clientes/${encodeURIComponent(id)}`, 'PUT', corpo);
+                    JG.toast('Cliente atualizado.', 'sucesso');
+                    await carregarCliente(id);
+                } else {
+                    const r = await api('/api/clientes', 'POST', corpo);
+                    alert('Cliente cadastrado com sucesso.');
+                    location.href = r && r.id ? `/cliente.html?id=${encodeURIComponent(r.id)}` : '/clientes.html';
+                }
+            } catch (e) { JG.toast(e.message, 'erro'); }
+            finally { $('btn-salvar').disabled = false; }
+        }
+        document.addEventListener('keydown', (e) => { if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) { e.preventDefault(); salvarCliente(); } });
+        $('c-cep').addEventListener('blur', () => { if ($('c-cep').value.replace(/\D/g, '').length === 8 && !$('c-endereco').value) JG.buscarCep('c-'); });
+
+        async function carregarCliente(id) {
+            const lista = await api('/api/clientes');
+            cliente = lista.find(c => c.id === id);
+            if (!cliente) { JG.toast('Cliente não encontrado.', 'erro'); return; }
+            preencher(cliente);
+        }
+
+        // ---------- crédito
+        function corScore(s) { return s >= 70 ? '#16A34A' : s >= 40 ? '#D97706' : '#DC2626'; }
+        async function carregarCredito() {
+            try {
+                analise = await api(`/api/clientes/${encodeURIComponent(cliente.id)}/analise-credito`);
+                $('cr-score').textContent = analise.score;
+                $('cr-score').style.color = corScore(analise.score);
+                const arco = $('gauge-arco');
+                arco.setAttribute('stroke', corScore(analise.score));
+                arco.setAttribute('stroke-dasharray', `${Math.max(0, Math.min(100, analise.score))} 100`);
+                const faixa = String(analise.faixa || '').toUpperCase();
+                const faixas = [['BAIXO', 'Risco baixo', 'ativo'], ['MEDIO', 'Médio', 'pendente'], ['ALTO', 'Alto', 'vencido']];
+                const nivel = /ALTO|RUIM|CRIT/.test(faixa) ? 'ALTO' : /MED|REGULAR/.test(faixa) ? 'MEDIO' : 'BAIXO';
+                $('cr-faixas').innerHTML = `<span class="badge ${faixas.find(f => f[0] === nivel)[2]}">Faixa: ${esc(analise.faixa)}</span>`;
+                $('cr-atual').textContent = fmt(analise.limiteAtual);
+                $('cr-sugerido').textContent = fmt(analise.limiteSugerido);
+                $('cr-ultima').textContent = analise.ultimaAnalise ? 'Última análise: ' + new Date(analise.ultimaAnalise.data).toLocaleDateString('pt-BR') : 'Nenhuma análise aplicada';
+                const d = analise.detalhes || {};
+                $('cr-fatores').innerHTML = [
+                    ['Tempo de cadastro', (d.tempoCadastro ?? 0) + ' dia(s)'],
+                    ['Total em compras', fmt(d.totalCompras)],
+                    ['Ticket médio', fmt(d.ticketMedio)],
+                    ['Parcelas vencidas', d.parcelasVencidas ?? 0],
+                    ['Valor em aberto', fmt(d.valorEmAberto)],
+                    ['Saldo de cashback', fmt(d.cashback)]
+                ].map(([k, v]) => `<div class="fator"><span>${k}</span><b>${esc(v)}</b></div>`).join('');
+            } catch (e) { $('cr-fatores').innerHTML = `<div class="alerta vermelho"><span class="ms">error</span><div>${esc(e.message)}</div></div>`; }
+        }
+        function abrirAplicarLimite() {
+            if (!analise) return;
+            $('ml-valor').textContent = fmt(analise.limiteSugerido);
+            $('ml-senha').value = '';
+            $('modal-limite').classList.add('active');
+            setTimeout(() => $('ml-senha').focus(), 50);
+        }
+        async function aplicarLimiteCredito() {
+            const senhaAdmin = $('ml-senha').value;
+            if (!senhaAdmin) { JG.toast('Informe a senha do administrador.', 'alerta'); return; }
+            try {
+                const r = await api(`/api/clientes/${encodeURIComponent(cliente.id)}/analise-credito/aplicar`, 'POST', { senhaAdmin });
+                fecharModal('modal-limite');
+                JG.toast(`Limite atualizado para ${fmt(r.limite)} (score ${r.score}).`, 'sucesso');
+                await carregarCliente(cliente.id);
+                await carregarCredito();
+            } catch (e) { JG.toast(e.message, 'erro'); }
+        }
+        $('ml-senha').addEventListener('keydown', (e) => { if (e.key === 'Enter') aplicarLimiteCredito(); });
+
+        // ---------- compras
+        async function carregarCompras() {
+            const tbody = $('tabela-compras');
+            try {
+                const vendas = await api(`/api/clientes/${encodeURIComponent(cliente.id)}/compras`);
+                if (!vendas.length) { tbody.innerHTML = '<tr><td colspan="8"><div class="estado-vazio"><span class="ms">shopping_bag</span><p>Este cliente ainda não comprou.</p></div></td></tr>'; return; }
+                tbody.innerHTML = vendas.map(v => {
+                    const [st, cls] = STATUS_VENDA[v.status] || [v.status, 'cinza'];
+                    return `<tr><td><b>${esc(v.numero || '—')}</b></td><td>${new Date(v.data).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}</td><td>${esc(v.operador || '—')}</td>
+                        <td class="right">${v.itens}</td><td>${v.pagamentos.map(p => esc(METODOS[p] || p)).join(', ') || '—'}</td>
+                        <td class="right">${v.desconto ? fmt(v.desconto) : '—'}</td><td class="right"><b>${fmt(v.total)}</b></td><td><span class="badge ${cls}">${st}</span></td></tr>`;
+                }).join('');
+            } catch (e) { tbody.innerHTML = `<tr><td colspan="8" class="sem-dados">${esc(e.message)}</td></tr>`; }
+        }
+
+        // ---------- fidelidade
+        async function carregarFidelidade() {
+            const tbody = $('tabela-extrato');
+            try {
+                const f = await api(`/api/fidelidade/${encodeURIComponent(cliente.id)}`);
+                $('fd-saldo').textContent = fmt(f.saldo);
+                if (!f.movimentacoes.length) { tbody.innerHTML = '<tr><td colspan="4"><div class="estado-vazio"><span class="ms">loyalty</span><p>Sem movimentações de cashback.</p></div></td></tr>'; return; }
+                tbody.innerHTML = f.movimentacoes.map(m => {
+                    const [t, cls] = TIPOS_FID[m.tipo] || [m.tipo, 'cinza'];
+                    const neg = m.pontos < 0;
+                    return `<tr><td>${new Date(m.data).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}</td><td><span class="badge ${cls}">${esc(t)}</span></td>
+                        <td class="right ${neg ? 'txt-vermelho' : 'txt-verde'}">${neg ? '−' : '+'}${fmt(Math.abs(m.valor))}</td><td class="right">${m.pontos}</td></tr>`;
+                }).join('');
+            } catch (e) { tbody.innerHTML = `<tr><td colspan="4" class="sem-dados">${esc(e.message)}</td></tr>`; }
+        }
+
+        (async () => {
+            await carregarTabelas();
+            if (ID) {
+                try { await carregarCliente(ID); } catch (e) { JG.toast(e.message, 'erro'); }
+                const h = location.hash.slice(1);
+                if (h) abrirAba(h);
+            } else {
+                $('c-nome').focus();
+            }
+        })();
+    </script>
+</body>
+</html>

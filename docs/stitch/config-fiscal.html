@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Configurações Fiscais - JG Sistemas ERP</title>
+<!-- Inter Google Font -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "tertiary-fixed": "#7ffc97",
+            "surface-container": "#e5eeff",
+            "tertiary-container": "#005d25",
+            "on-tertiary-fixed": "#002109",
+            "surface-tint": "#305ea1",
+            "on-secondary-fixed-variant": "#324769",
+            "on-secondary-container": "#475c7f",
+            "error": "#ba1a1a",
+            "surface-container-high": "#dce9ff",
+            "surface-container-lowest": "#ffffff",
+            "surface-variant": "#d3e4fe",
+            "surface-container-highest": "#d3e4fe",
+            "secondary-fixed": "#d5e3ff",
+            "secondary-fixed-dim": "#b2c7f0",
+            "secondary-container": "#bfd5fe",
+            "primary": "#003873",
+            "on-primary-fixed-variant": "#0e4688",
+            "on-surface": "#0b1c30",
+            "on-tertiary": "#ffffff",
+            "error-container": "#ffdad6",
+            "on-tertiary-container": "#5dda7a",
+            "secondary": "#4a5f82",
+            "outline-variant": "#c3c6d2",
+            "outline": "#737782",
+            "surface-container-low": "#eff4ff",
+            "on-primary": "#ffffff",
+            "on-error": "#ffffff",
+            "surface-dim": "#cbdbf5",
+            "tertiary": "#004319",
+            "surface": "#f8f9ff",
+            "primary-fixed-dim": "#a9c7ff",
+            "primary-fixed": "#d6e3ff",
+            "on-tertiary-fixed-variant": "#005320",
+            "background": "#f8f9ff",
+            "surface-bright": "#f8f9ff",
+            "primary-container": "#1d4f91",
+            "on-background": "#0b1c30",
+            "on-secondary": "#ffffff",
+            "inverse-on-surface": "#eaf1ff",
+            "tertiary-fixed-dim": "#62df7d",
+            "inverse-primary": "#a9c7ff",
+            "on-primary-fixed": "#001b3e",
+            "inverse-surface": "#213145",
+            "on-error-container": "#93000a",
+            "on-surface-variant": "#434750",
+            "on-primary-container": "#a2c3ff",
+            "on-secondary-fixed": "#011b3b"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Inter", "sans-serif"],
+            "display": ["Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Inter', sans-serif;
+      font-variant-numeric: tabular-nums;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      line-height: 1;
+    }
+    .material-symbols-fill {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+    /* Custom scrollbar for dense view */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #eff4ff;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c3c6d2;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col antialiased selection:bg-tertiary selection:text-white">
+<!-- ========================================================================= -->
+<!-- SIDEBAR (Collapsible Drawer Anchor from Shared Components JSON)           -->
+<!-- ========================================================================= -->
+<aside class="fixed top-0 left-0 h-screen w-[248px] flex flex-col z-40 bg-primary border-r border-outline-variant/20 shadow-none font-body text-sm font-medium">
+<!-- Brand / Header -->
+<div class="h-14 flex items-center px-4 gap-3 border-b border-outline-variant/20 bg-primary">
+<div class="w-8 h-8 rounded-lg bg-tertiary-container flex items-center justify-center text-tertiary-fixed font-headline font-bold text-base shadow-sm">
+        JG
+      </div>
+<div class="flex flex-col">
+<span class="font-headline text-base font-bold text-on-primary tracking-tight leading-none">JG Sistemas</span>
+<span class="text-[11px] text-primary-fixed-dim leading-tight mt-0.5">Varejo · Moda</span>
+</div>
+</div>
+<!-- Quick Action F1 CTA in Sidebar -->
+<div class="px-3 pt-3 pb-2">
+<button class="w-full flex items-center justify-between px-3 py-2 bg-tertiary-container hover:bg-tertiary text-on-tertiary rounded-lg font-semibold text-xs tracking-wide transition-colors shadow-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-base">point_of_sale</span>
+<span>Abrir PDV [F1]</span>
+</div>
+<span class="px-1.5 py-0.5 text-[10px] bg-tertiary-fixed/20 text-tertiary-fixed rounded font-mono font-bold">F1</span>
+</button>
+</div>
+<!-- Navigation Tab List -->
+<nav class="flex-1 overflow-y-auto px-3 space-y-1 py-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-lg">dashboard</span>
+<span class="text-sm">Início</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-lg">point_of_sale</span>
+<span class="text-sm">Vendas</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-lg">group</span>
+<span class="text-sm">Clientes</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-lg">inventory_2</span>
+<span class="text-sm">Catálogo</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-lg">warehouse</span>
+<span class="text-sm">Estoque</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-lg">account_balance</span>
+<span class="text-sm">Financeiro</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-lg">badge</span>
+<span class="text-sm">Pessoas</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-primary-fixed-dim hover:bg-primary-container/40 hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-lg">bar_chart</span>
+<span class="text-sm">Relatórios</span>
+</a>
+<!-- Group Administração (Active Group) -->
+<div class="pt-1">
+<div class="flex items-center justify-between px-3 py-2 rounded-lg bg-primary-container text-on-primary font-semibold border-l-4 border-tertiary-fixed">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-lg">settings</span>
+<span class="text-sm">Administração</span>
+</div>
+<span class="material-symbols-outlined text-sm">expand_less</span>
+</div>
+<!-- Subitens expandidos -->
+<div class="ml-4 pl-3 border-l border-primary-container/80 space-y-1 mt-1">
+<a class="flex items-center gap-2 py-1.5 px-2 text-xs text-primary-fixed-dim hover:text-on-primary hover:bg-primary-container/30 rounded transition-colors" href="#">
+<span>Auditoria de Ações</span>
+</a>
+<a class="flex items-center justify-between py-1.5 px-2 text-xs font-semibold text-tertiary-fixed bg-primary-container/50 rounded transition-colors" href="#">
+<span class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed inline-block"></span>
+              Configurações
+            </span>
+<span class="text-[10px] bg-tertiary-fixed/20 text-tertiary-fixed px-1.5 py-0.2 rounded font-mono">Fiscal</span>
+</a>
+</div>
+</div>
+</nav>
+<!-- Rodapé da Sidebar -->
+<div class="p-3 border-t border-outline-variant/20 bg-primary text-xs space-y-2">
+<div class="flex items-center justify-between text-primary-fixed-dim">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed"></span>
+<span class="font-medium text-white">Online · Matriz 01</span>
+</div>
+<span class="font-mono text-[11px] opacity-80">v3.4.1</span>
+</div>
+<div class="flex items-center justify-between pt-1 border-t border-outline-variant/10 text-[11px] text-primary-fixed-dim">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">storefront</span>
+          Varejo · Moda
+        </span>
+<button class="hover:text-white transition-colors" title="Configurações">
+<span class="material-symbols-outlined text-xs">tune</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- TOPBAR (Desktop Header Anchor from Shared Components JSON)                -->
+<!-- ========================================================================= -->
+<header class="fixed top-0 left-[248px] right-0 h-14 z-30 bg-surface-container-lowest border-b border-outline-variant shadow-sm flex items-center justify-between px-6">
+<!-- Breadcrumb & Global Search -->
+<div class="flex items-center gap-6 flex-1 max-w-2xl">
+<div class="flex items-center gap-2 text-xs font-medium text-on-surface-variant whitespace-nowrap">
+<span>Administração</span>
+<span class="material-symbols-outlined text-xs text-outline">chevron_right</span>
+<span>Configurações</span>
+<span class="material-symbols-outlined text-xs text-outline">chevron_right</span>
+<span class="text-primary font-semibold">Fiscal</span>
+</div>
+<!-- Quick Search Bar Ctrl+K -->
+<div class="relative w-full max-w-md hidden lg:block">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-base">search</span>
+</div>
+<input class="block w-full pl-9 pr-12 py-1.5 text-xs bg-surface-container-low border border-outline-variant rounded-lg text-on-surface placeholder:text-secondary focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all" placeholder="Buscar módulo, produto ou cliente (Ctrl+K)" type="text"/>
+<div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">
+<kbd class="px-1.5 py-0.5 text-[10px] font-mono bg-surface-container border border-outline-variant rounded text-secondary font-medium">Ctrl+K</kbd>
+</div>
+</div>
+</div>
+<!-- Actions & User Profile -->
+<div class="flex items-center gap-3">
+<!-- Caixa Aberto Chip -->
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-low border border-tertiary-fixed-dim/40 text-tertiary font-semibold text-xs">
+<span class="w-2 h-2 rounded-full bg-tertiary-container animate-pulse"></span>
+<span>Caixa 01 · Aberto</span>
+</div>
+<!-- PDV Action Button -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-tertiary-container hover:bg-tertiary text-on-tertiary text-xs font-semibold tracking-wide transition-colors shadow-sm">
+<span class="material-symbols-outlined text-base">shopping_cart_checkout</span>
+<span>Abrir PDV [F1]</span>
+</button>
+<div class="h-5 w-px bg-outline-variant mx-1"></div>
+<!-- Notification & Help Icons -->
+<button class="relative p-1.5 text-secondary hover:text-on-surface hover:bg-surface-container-low rounded-lg transition-colors" title="Notificações">
+<span class="material-symbols-outlined text-xl">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full ring-2 ring-surface-container-lowest"></span>
+</button>
+<button class="p-1.5 text-secondary hover:text-on-surface hover:bg-surface-container-low rounded-lg transition-colors" title="Ajuda &amp; Atalhos">
+<span class="material-symbols-outlined text-xl">help_outline</span>
+</button>
+<!-- Profile Avatar -->
+<div class="flex items-center gap-2 pl-2 border-l border-outline-variant cursor-pointer group">
+<div class="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-xs ring-2 ring-primary/20">
+          JG
+        </div>
+<div class="text-left hidden xl:block">
+<p class="text-xs font-semibold text-on-surface leading-tight group-hover:text-primary transition-colors">Juliana Gomes</p>
+<p class="text-[10px] text-secondary leading-tight">Gerente Geral</p>
+</div>
+<span class="material-symbols-outlined text-xs text-outline group-hover:text-primary">expand_more</span>
+</div>
+</div>
+</header>
+<!-- ========================================================================= -->
+<!-- MAIN WORKSPACE CANVAS                                                     -->
+<!-- ========================================================================= -->
+<main class="ml-[248px] pt-14 pb-14 min-h-screen bg-background">
+<div class="p-8 max-w-[1360px] mx-auto space-y-6">
+<!-- Page Header: Title + Status Badge + Top Actions -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-outline-variant/60">
+<div>
+<div class="flex items-center gap-3">
+<h1 class="font-headline text-2xl font-semibold text-on-surface tracking-tight">Configurações Fiscais</h1>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-tertiary-fixed/30 text-tertiary border border-tertiary-fixed">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-ping opacity-75"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+              Ambiente SEFAZ Conectado
+            </span>
+</div>
+<p class="text-xs text-secondary mt-1 max-w-3xl leading-relaxed">
+            Gerencie a emissão de notas ao consumidor (NFC-e), notas de serviço (NFS-e), tributação e certificado digital A1 homologado pela SEFAZ.
+          </p>
+</div>
+<div class="flex items-center gap-3 self-start md:self-auto shrink-0">
+<button class="inline-flex items-center gap-2 px-3 py-2 bg-surface-container-lowest border border-outline-variant hover:border-outline text-secondary hover:text-on-surface text-xs font-semibold rounded-lg shadow-sm transition-all">
+<span class="material-symbols-outlined text-base text-primary">sync</span>
+<span>Testar Conexão SEFAZ</span>
+</button>
+<button class="inline-flex items-center gap-2 px-4 py-2 bg-tertiary-container hover:bg-tertiary text-on-tertiary text-xs font-semibold rounded-lg shadow-sm transition-all hover:shadow">
+<span class="material-symbols-outlined text-base">check_circle</span>
+<span>Salvar alterações [F10]</span>
+</button>
+</div>
+</div>
+<!-- Two-Column Architecture -->
+<div class="grid grid-cols-12 gap-6 items-start">
+<!-- Left Navigation Column (256px / col-span-3) -->
+<div class="col-span-12 lg:col-span-3 space-y-4">
+<!-- Card de Submódulos -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-2 shadow-sm">
+<div class="px-3 py-2 text-[11px] font-bold tracking-wider text-secondary uppercase">
+              Seções de Ajustes
+            </div>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined text-base">store</span>
+<span>Empresa &amp; Matriz</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined text-base">tune</span>
+<span>Segmento e módulos</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined text-base">payments</span>
+<span>Vendas e pagamentos</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined text-base">badge</span>
+<span>Usuários e permissões</span>
+</a>
+<!-- Seção Ativa: Fiscal & Tributação -->
+<a class="flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-semibold text-primary bg-surface-container border-l-4 border-primary shadow-xs transition-colors" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-base text-primary">receipt_long</span>
+<span>Fiscal &amp; Tributação</span>
+</div>
+<span class="text-[10px] bg-primary text-white font-semibold px-2 py-0.5 rounded-full">Ativo</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined text-base">cable</span>
+<span>Integrações e periféricos</span>
+</a>
+</nav>
+</div>
+<!-- Card de Status Técnico SEFAZ -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 shadow-sm space-y-3">
+<div class="flex items-center justify-between">
+<span class="text-xs font-semibold text-on-surface">Servidores SEFAZ</span>
+<span class="flex h-2 w-2 relative">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-tertiary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-tertiary"></span>
+</span>
+</div>
+<div class="space-y-2 text-xs">
+<div class="flex items-center justify-between p-2 rounded bg-surface-container-low border border-outline-variant/60">
+<span class="text-secondary font-medium">SEFAZ-SP Online</span>
+<span class="font-mono text-xs font-semibold text-tertiary">142ms</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded bg-surface-container-low border border-outline-variant/60">
+<span class="text-secondary font-medium">Contingência</span>
+<span class="text-xs font-semibold text-secondary">Desativada</span>
+</div>
+</div>
+<div class="pt-2 border-t border-outline-variant/40 text-[11px] text-secondary flex items-start gap-1.5">
+<span class="material-symbols-outlined text-sm text-outline mt-0.5">info</span>
+<span>Emissão automática de NFC-e sincronizada diretamente com o PDV em tempo real.</span>
+</div>
+</div>
+</div>
+<!-- Right Configuration Content Area (col-span-9) -->
+<div class="col-span-12 lg:col-span-9 space-y-6">
+<!-- CARD 1: Emissão de NFC-e -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm overflow-hidden">
+<!-- Header Card com Toggle -->
+<div class="p-5 border-b border-outline-variant/60 bg-surface-container-lowest flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-xl">description</span>
+</div>
+<div>
+<h2 class="text-sm font-semibold text-on-surface">NFC-e — Cupom Fiscal Eletrônico</h2>
+<p class="text-xs text-secondary">Modelo 65 para vendas presenciais no balcão e PDV de moda</p>
+</div>
+</div>
+<!-- Switch / Toggle -->
+<div class="flex items-center gap-3 bg-surface-container-low px-3 py-1.5 rounded-lg border border-outline-variant/50">
+<span class="text-xs font-medium text-on-surface">Ativar emissão no PDV</span>
+<button aria-checked="true" class="relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none bg-tertiary-container" role="switch" type="button">
+<span class="translate-x-5 pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out"></span>
+</button>
+</div>
+</div>
+<!-- Form Content -->
+<div class="p-6 space-y-5">
+<!-- Grid Operacional -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+<!-- UF SEFAZ -->
+<div>
+<label class="block text-xs font-semibold text-on-surface mb-1">UF da SEFAZ</label>
+<select class="w-full text-xs bg-surface-container-low border border-outline-variant rounded-lg px-3 py-2 text-on-surface focus:ring-1 focus:ring-primary focus:border-primary">
+<option selected="">São Paulo (SP)</option>
+<option>Rio de Janeiro (RJ)</option>
+<option>Minas Gerais (MG)</option>
+<option>Paraná (PR)</option>
+<option>Santa Catarina (SC)</option>
+<option>Rio Grande do Sul (RS)</option>
+</select>
+</div>
+<!-- Ambiente de Emissão Segmented Control -->
+<div>
+<label class="block text-xs font-semibold text-on-surface mb-1">Ambiente de Emissão</label>
+<div class="grid grid-cols-2 p-1 bg-surface-container-low border border-outline-variant rounded-lg">
+<button class="py-1 text-xs font-semibold rounded bg-tertiary text-white shadow-xs" type="button">
+                      Produção
+                    </button>
+<button class="py-1 text-xs font-medium rounded text-secondary hover:text-on-surface" type="button">
+                      Homologação
+                    </button>
+</div>
+</div>
+<!-- Série de Emissão -->
+<div>
+<label class="block text-xs font-semibold text-on-surface mb-1">Série de Emissão</label>
+<input class="w-full text-xs font-mono bg-surface-container-low border border-outline-variant rounded-lg px-3 py-2 text-on-surface focus:ring-1 focus:ring-primary" type="text" value="1"/>
+</div>
+<!-- Próximo Número a Emitir -->
+<div>
+<div class="flex items-center justify-between mb-1">
+<label class="text-xs font-semibold text-on-surface">Próximo Número a Emitir</label>
+<span class="text-[10px] text-tertiary font-medium">Sincronizado</span>
+</div>
+<input class="w-full text-xs font-mono bg-surface-container-low border border-outline-variant rounded-lg px-3 py-2 text-on-surface focus:ring-1 focus:ring-primary" type="text" value="12.846"/>
+<p class="text-[10px] text-secondary mt-1">Último cupom emitido: #12.845</p>
+</div>
+<!-- CFOP Padrão -->
+<div>
+<label class="block text-xs font-semibold text-on-surface mb-1">CFOP Padrão (Venda no Estado)</label>
+<input class="w-full text-xs bg-surface-container-low border border-outline-variant rounded-lg px-3 py-2 text-on-surface focus:ring-1 focus:ring-primary" type="text" value="5102 - Venda de mercadoria adquirida de terceiros"/>
+</div>
+<!-- CSOSN Padrão -->
+<div>
+<label class="block text-xs font-semibold text-on-surface mb-1">CSOSN Padrão (Simples Nacional)</label>
+<select class="w-full text-xs bg-surface-container-low border border-outline-variant rounded-lg px-3 py-2 text-on-surface focus:ring-1 focus:ring-primary">
+<option selected="">102 - Tributada pelo Simples sem permissão de crédito</option>
+<option>101 - Tributada pelo Simples com permissão de crédito</option>
+<option>500 - ICMS cobrado anteriormente por substituição</option>
+<option>900 - Outros</option>
+</select>
+</div>
+</div>
+<!-- Divisor / CSC Token Area -->
+<div class="pt-4 border-t border-outline-variant/50">
+<div class="flex items-center justify-between mb-3">
+<div>
+<h3 class="text-xs font-semibold text-on-surface">Código de Segurança do Contribuinte (CSC)</h3>
+<p class="text-[11px] text-secondary">Token fornecido pelo portal da SEFAZ para autenticar o QR-Code impresso na nota</p>
+</div>
+<button class="text-xs font-semibold text-primary hover:underline flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-sm">verified</span>
+<span>Validar na SEFAZ</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div>
+<label class="block text-[11px] font-medium text-secondary mb-1">ID do CSC (Token)</label>
+<input class="w-full text-xs font-mono bg-surface-container-low border border-outline-variant rounded-lg px-3 py-2 text-on-surface" type="text" value="000001"/>
+</div>
+<div class="md:col-span-2">
+<label class="block text-[11px] font-medium text-secondary mb-1">Código CSC (Chave Alfanumérica)</label>
+<div class="relative">
+<input class="w-full text-xs font-mono bg-surface-container-low border border-outline-variant rounded-lg pl-3 pr-10 py-2 text-on-surface" type="password" value="98A7F41C908123B7552A8090CDE11034"/>
+<button class="absolute inset-y-0 right-0 pr-3 flex items-center text-outline hover:text-on-surface" title="Revelar CSC" type="button">
+<span class="material-symbols-outlined text-base">visibility</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- CARD 2: Certificado Digital A1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm overflow-hidden">
+<div class="p-5 border-b border-outline-variant/60 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-xl">key</span>
+</div>
+<div>
+<h2 class="text-sm font-semibold text-on-surface">Certificado Digital A1 (Transmissão e Assinatura)</h2>
+<p class="text-xs text-secondary">Assinatura digital padrão ICP-Brasil para homologação instantânea de documentos fiscais</p>
+</div>
+</div>
+<!-- Badge Status Validade -->
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-tertiary-fixed/30 text-tertiary border border-tertiary-fixed">
+<span class="material-symbols-outlined text-sm">verified_user</span>
+<span>Válido · 157 dias restantes</span>
+</span>
+</div>
+<div class="p-6">
+<!-- Certificado Info Bento Card -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 rounded-lg bg-surface-container-low border border-outline-variant/70 mb-5">
+<div>
+<span class="text-[10px] uppercase font-bold text-secondary tracking-wider block">Razão Social &amp; CNPJ</span>
+<span class="text-xs font-semibold text-on-surface block mt-1 break-words">JG COMERCIO DE VESTUARIO LTDA</span>
+<span class="font-mono text-xs text-secondary">12.345.678/0001-90</span>
+</div>
+<div>
+<span class="text-[10px] uppercase font-bold text-secondary tracking-wider block">Formato &amp; Tipo</span>
+<span class="text-xs font-semibold text-on-surface block mt-1">Certificado A1 (.PFX / .P12)</span>
+<span class="text-[11px] text-tertiary flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-xs">lock</span>
+                    Armazenado em nuvem
+                  </span>
+</div>
+<div>
+<span class="text-[10px] uppercase font-bold text-secondary tracking-wider block">Período de Validade</span>
+<span class="text-xs font-medium text-on-surface block mt-1">Emissão: 15/03/2026</span>
+<span class="text-xs font-semibold text-error block">Expira: 14/03/2027</span>
+</div>
+<div>
+<span class="text-[10px] uppercase font-bold text-secondary tracking-wider block">Autoridade Certificadora</span>
+<span class="text-xs font-semibold text-on-surface block mt-1">AC Certisign RFB</span>
+<span class="text-[11px] text-secondary">Cadeia v5 ICP-Brasil</span>
+</div>
+</div>
+<!-- Ações do Certificado -->
+<div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-2">
+<div class="flex-1 max-w-sm">
+<label class="block text-[11px] font-medium text-secondary mb-1">Senha do Arquivo PFX</label>
+<div class="relative">
+<input class="w-full text-xs font-mono bg-surface-container border border-outline-variant rounded-lg pl-3 pr-9 py-2 text-on-surface" readonly="" type="password" value="••••••••••••"/>
+<span class="absolute inset-y-0 right-0 pr-3 flex items-center text-outline">
+<span class="material-symbols-outlined text-sm">lock_clock</span>
+</span>
+</div>
+</div>
+<div class="flex items-end">
+<button class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 bg-surface-container-lowest hover:bg-surface-container-low border border-outline text-primary text-xs font-semibold rounded-lg shadow-sm transition-colors" type="button">
+<span class="material-symbols-outlined text-base">upload_file</span>
+<span>Substituir / Enviar certificado (.pfx)</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- CARD 3: NFS-e (Serviços) -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm overflow-hidden">
+<div class="p-5 border-b border-outline-variant/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-xl">handyman</span>
+</div>
+<div>
+<h2 class="text-sm font-semibold text-on-surface">NFS-e (Nota Fiscal de Serviços Eletrônica)</h2>
+<p class="text-xs text-secondary">Para ajustes de alfaiataria, customização de peças, bordados ou consultoria</p>
+</div>
+</div>
+<!-- Switch -->
+<div class="flex items-center gap-3 bg-surface-container-low px-3 py-1.5 rounded-lg border border-outline-variant/50">
+<span class="text-xs font-medium text-on-surface">Habilitar NFS-e de Serviços</span>
+<button aria-checked="true" class="relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none bg-tertiary-container" role="switch" type="button">
+<span class="translate-x-5 pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out"></span>
+</button>
+</div>
+</div>
+<div class="p-6">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+<div>
+<label class="block text-xs font-semibold text-on-surface mb-1">Município Emissor</label>
+<input class="w-full text-xs bg-surface-container-low border border-outline-variant rounded-lg px-3 py-2 text-on-surface focus:ring-1 focus:ring-primary" type="text" value="São Paulo / SP"/>
+</div>
+<div>
+<label class="block text-xs font-semibold text-on-surface mb-1">Inscrição Municipal (IM)</label>
+<input class="w-full text-xs font-mono bg-surface-container-low border border-outline-variant rounded-lg px-3 py-2 text-on-surface focus:ring-1 focus:ring-primary" type="text" value="987.654-3"/>
+</div>
+<div>
+<label class="block text-xs font-semibold text-on-surface mb-1">Alíquota de ISS</label>
+<div class="relative">
+<input class="w-full text-xs font-mono bg-surface-container-low border border-outline-variant rounded-lg px-3 py-2 text-on-surface focus:ring-1 focus:ring-primary" type="text" value="2,00 %"/>
+<span class="absolute inset-y-0 right-0 pr-3 flex items-center text-xs text-secondary pointer-events-none">Fixo</span>
+</div>
+</div>
+<div class="md:col-span-2">
+<label class="block text-xs font-semibold text-on-surface mb-1">Código de Tributação do Serviço</label>
+<input class="w-full text-xs bg-surface-container-low border border-outline-variant rounded-lg px-3 py-2 text-on-surface focus:ring-1 focus:ring-primary" type="text" value="06.01 - Barbearia, cabeleireiros, manicuros, pedicuros e congêneres / Reparos"/>
+</div>
+<div>
+<label class="block text-xs font-semibold text-on-surface mb-1">Regime Especial de Tributação</label>
+<select class="w-full text-xs bg-surface-container-low border border-outline-variant rounded-lg px-3 py-2 text-on-surface focus:ring-1 focus:ring-primary">
+<option selected="">Microempresa Municipal (Simples Nacional)</option>
+<option>Estimativa</option>
+<option>Sociedade de Profissionais</option>
+<option>Cooperativa</option>
+</select>
+</div>
+</div>
+</div>
+</div>
+<!-- Card Barra de Confirmação & Status de Alteração -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-4 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-2 text-xs text-secondary">
+<span class="material-symbols-outlined text-base text-tertiary">check_circle</span>
+<span>Última alteração salva em <strong>08/10/2026 às 11:20</strong> por <strong>Juliana Gomes</strong></span>
+</div>
+<div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+<button class="px-4 py-2 text-xs font-semibold text-secondary hover:text-on-surface hover:bg-surface-container-low rounded-lg transition-colors" type="button">
+                Cancelar [Esc]
+              </button>
+<button class="px-5 py-2 text-xs font-semibold bg-tertiary-container hover:bg-tertiary text-on-tertiary rounded-lg shadow-sm transition-all flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-base">save</span>
+<span>Salvar alterações [F10]</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- ========================================================================= -->
+<!-- FOOTER (Institutional Status Bar Anchor from Shared Components JSON)      -->
+<!-- ========================================================================= -->
+<footer class="fixed bottom-0 left-[248px] right-0 h-8 z-20 bg-surface-container-lowest border-t border-outline-variant shadow-none flex items-center justify-between px-6 font-body text-xs text-on-surface-variant">
+<div class="flex items-center gap-2 font-label text-xs font-semibold text-secondary truncate max-w-2xl">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim"></span>
+<span>JG Sistemas ERP v4.2 · Licenciado para Moda &amp; Estilo Ltda. · Suporte 0800 123 4567</span>
+</div>
+<div class="flex items-center gap-4 text-xs">
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Status dos Serviços</a>
+<span class="text-outline-variant">·</span>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Atalhos do Teclado</a>
+<span class="text-outline-variant">·</span>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Ajuda</a>
+</div>
+</footer>
+<!-- Micro-interactions: Keyboard shortcuts listener -->
+<script>
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'F1') {
+        event.preventDefault();
+        alert('Comando [F1]: Abrindo Frente de Caixa (PDV)...');
+      } else if (event.key === 'F10') {
+        event.preventDefault();
+        alert('Comando [F10]: Configurações Fiscais salvas com sucesso na SEFAZ!');
+      } else if (event.key === 'Escape') {
+        // Safe ESC handler
+        console.log('Operação cancelada pelo usuário via [Esc].');
+      }
+    });
+  </script>
+</body></html>

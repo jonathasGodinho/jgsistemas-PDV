@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>Financeiro - Visão geral - JG Sistemas</title>
+    <link rel="stylesheet" href="/ui/jg.css">
+    <style>
+        .fluxo { position: relative; height: 240px; display: flex; align-items: stretch; gap: 3px; padding: 0 4px; }
+        .fluxo .dia { flex: 1; display: flex; flex-direction: column; position: relative; cursor: default; }
+        .fluxo .metade { flex: 1; display: flex; align-items: flex-end; justify-content: center; }
+        .fluxo .metade.baixo { align-items: flex-start; }
+        .fluxo .b { width: 100%; max-width: 18px; border-radius: 3px 3px 0 0; background: var(--green); min-height: 0; }
+        .fluxo .metade.baixo .b { background: var(--red); border-radius: 0 0 3px 3px; }
+        .fluxo .eixo { position: absolute; left: 0; right: 0; top: 50%; border-top: 1px solid var(--border-strong); }
+        .fluxo .dia:hover { background: var(--surface-2); border-radius: 4px; }
+        .fluxo-datas { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-2); margin-top: 6px; padding: 0 4px; }
+        .legenda-fluxo { display: flex; gap: 14px; font-size: 12px; color: var(--text-2); }
+        .legenda-fluxo i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+        .tip { position: fixed; z-index: 400; background: var(--text); color: #fff; font-size: 12px; padding: 8px 10px; border-radius: 6px; pointer-events: none; display: none; line-height: 1.5; }
+        .met-linha { margin-bottom: 12px; }
+        .met-linha .row { justify-content: space-between; font-size: 13px; margin-bottom: 5px; }
+    </style>
+</head>
+<body class="jg" data-pagina="financeiro-visao">
+    <main>
+        <div class="page-head">
+            <div><h1>Financeiro</h1><div class="sub" id="sub">Visão geral do caixa da empresa</div></div>
+            <div class="acoes">
+                <a class="btn" href="/financeiro.html"><span class="ms">list_alt</span>Contas a pagar e receber</a>
+                <a class="btn btn-sucesso" href="/financeiro.html?nova=1"><span class="ms">add</span>Lançar conta</a>
+            </div>
+        </div>
+
+        <div class="kpis" id="kpis"></div>
+
+        <div class="grid g-main-side mb-16" style="grid-template-columns:minmax(0,1fr) 380px;align-items:start">
+            <div class="card">
+                <div class="card-head"><div><h3>Fluxo de caixa — próximos 30 dias</h3><div class="sub">Contas em aberto por vencimento</div></div>
+                    <div class="legenda-fluxo"><span><i style="background:var(--green)"></i>Entradas</span><span><i style="background:var(--red)"></i>Saídas</span></div></div>
+                <div class="card-body">
+                    <div class="fluxo" id="fluxo"><div class="eixo"></div></div>
+                    <div class="fluxo-datas" id="fluxo-datas"></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-head"><h3>Vendas de hoje por forma de pagamento</h3></div>
+                <div class="card-body" id="area-metodos"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-head"><h3>Próximos vencimentos</h3><a href="/financeiro.html" style="font-size:13px">Ver todas</a></div>
+            <div class="tabela-wrap">
+                <table>
+                    <thead><tr><th>Vencimento</th><th>Descrição</th><th>Cliente / fornecedor</th><th>Tipo</th><th class="right">Valor</th><th>Status</th></tr></thead>
+                    <tbody id="tabela-proximos"><tr><td colspan="6" class="sem-dados">Carregando...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+    <div class="tip" id="tip"></div>
+
+    <script src="/seguranca.js"></script>
+    <script src="/ui/shell.js"></script>
+    <script>
+        const $ = (id) => document.getElementById(id);
+        const fmt = (v) => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const METODOS = { MONEY: 'Dinheiro', PIX: 'PIX', CREDIT_CARD: 'Crédito', DEBIT_CARD: 'Débito', CREDIARIO: 'Crediário', VOUCHER: 'Vale', TRANSFER: 'Transferência' };
+        async function api(url) {
+            const r = await fetch(url);
+            if (r.status === 401) { localStorage.removeItem('jg_operador'); location.href = '/login.html'; throw new Error('Sessão expirada.'); }
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.erro || 'Erro na requisição');
+            return d;
+        }
+        (function () { const op = JG.operador(); if (op && op.papel === 'SELLER') location.href = '/'; })();
+        const chave = (d) => { const x = new Date(d); return `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, '0')}-${String(x.getDate()).padStart(2, '0')}`; };
+
+        function kpis(r, receber, pagar) {
+            const h = new Date(); h.setHours(0, 0, 0, 0);
+            const lim = new Date(h.getTime() + 30 * 86400000);
+            const abertas = (l) => l.filter(c => c.status === 'PENDING' || c.status === 'OVERDUE');
+            const nos30 = (l) => abertas(l).filter(c => new Date(c.vencimento) < lim);
+            const soma = (l) => l.reduce((s, c) => s + c.valor, 0);
+            const vencidas = r.receber.vencidas + r.pagar.vencidas;
+            const saldo = soma(nos30(receber)) - soma(nos30(pagar));
+            $('kpis').innerHTML = [
+                ['Vendas hoje', fmt(r.vendasHoje.total), `${r.vendasHoje.quantidade} venda(s)`, 'payments', 'verde'],
+                ['A receber', fmt(r.receber.total), `${r.receber.quantidade} título(s)`, 'call_received', ''],
+                ['A pagar', fmt(r.pagar.total), `${r.pagar.quantidade} título(s)`, 'call_made', ''],
+                ['Vencidas', fmt(vencidas), `Receber ${fmt(r.receber.vencidas)} · Pagar ${fmt(r.pagar.vencidas)}`, 'event_busy', vencidas > 0 ? 'vermelho' : ''],
+                ['Saldo previsto (30 dias)', fmt(saldo), 'Entradas − saídas em aberto', 'account_balance', saldo >= 0 ? 'verde' : 'vermelho']
+            ].map(([rot, v, rod, ic, cor]) => `<div class="kpi ${cor}"><div class="kpi-top"><span>${rot}</span><span class="ms">${ic}</span></div><div class="kpi-valor">${v}</div><div class="kpi-rodape">${rod}</div></div>`).join('');
+        }
+
+        function fluxo(receber, pagar) {
+            const h = new Date(); h.setHours(0, 0, 0, 0);
+            const dias = Array.from({ length: 30 }, (_, i) => { const d = new Date(h.getTime() + i * 86400000); return { k: chave(d), d, ent: 0, sai: 0 }; });
+            const idx = Object.fromEntries(dias.map((d, i) => [d.k, i]));
+            const add = (l, campo) => l.filter(c => c.status === 'PENDING' || c.status === 'OVERDUE').forEach(c => {
+                let k = chave(c.vencimento);
+                if (new Date(c.vencimento) < h) k = dias[0].k; // vencidas entram hoje
+                if (k in idx) dias[idx[k]][campo] += c.valor;
+            });
+            add(receber, 'ent'); add(pagar, 'sai');
+            const max = Math.max(1, ...dias.map(d => Math.max(d.ent, d.sai)));
+            let acc = 0;
+            $('fluxo').innerHTML = '<div class="eixo"></div>' + dias.map(d => {
+                acc += d.ent - d.sai;
+                return `<div class="dia" data-tip="${d.d.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' })}|${fmt(d.ent)}|${fmt(d.sai)}|${fmt(acc)}">
+                    <div class="metade"><div class="b" style="height:${d.ent / max * 100}%"></div></div>
+                    <div class="metade baixo"><div class="b" style="height:${d.sai / max * 100}%"></div></div></div>`;
+            }).join('');
+            const f = (d) => d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+            $('fluxo-datas').innerHTML = `<span>Hoje</span><span>${f(dias[10].d)}</span><span>${f(dias[20].d)}</span><span>${f(dias[29].d)}</span>`;
+        }
+        $('fluxo').addEventListener('mousemove', (e) => {
+            const d = e.target.closest('.dia');
+            const tip = $('tip');
+            if (!d) { tip.style.display = 'none'; return; }
+            const [dia, ent, sai, acc] = d.dataset.tip.split('|');
+            tip.innerHTML = `<b>${dia}</b><br>Entradas: ${ent}<br>Saídas: ${sai}<br>Saldo acumulado: ${acc}`;
+            tip.style.display = 'block';
+            tip.style.left = Math.min(e.clientX + 12, innerWidth - 200) + 'px';
+            tip.style.top = (e.clientY + 12) + 'px';
+        });
+        $('fluxo').addEventListener('mouseleave', () => $('tip').style.display = 'none');
+
+        function metodos(obj) {
+            const ent = Object.entries(obj || {}).sort((a, b) => b[1] - a[1]);
+            if (!ent.length) { $('area-metodos').innerHTML = '<div class="estado-vazio"><span class="ms">point_of_sale</span><p>Nenhuma venda hoje.</p></div>'; return; }
+            const max = Math.max(...ent.map(e => e[1]));
+            $('area-metodos').innerHTML = ent.map(([m, v]) => `<div class="met-linha"><div class="row"><span>${esc(METODOS[m] || m)}</span><b class="num">${fmt(v)}</b></div><div class="barra-h"><div style="width:${v / max * 100}%"></div></div></div>`).join('');
+        }
+
+        function proximos(receber, pagar) {
+            const lista = [...receber.map(c => ({ ...c, tipo: 'RECEBER' })), ...pagar.map(c => ({ ...c, tipo: 'PAGAR' }))]
+                .filter(c => c.status === 'PENDING' || c.status === 'OVERDUE')
+                .sort((a, b) => new Date(a.vencimento) - new Date(b.vencimento)).slice(0, 12);
+            const h = new Date(); h.setHours(0, 0, 0, 0);
+            if (!lista.length) { $('tabela-proximos').innerHTML = '<tr><td colspan="6"><div class="estado-vazio"><span class="ms">event_available</span><p>Nenhuma conta em aberto.</p></div></td></tr>'; return; }
+            $('tabela-proximos').innerHTML = lista.map(c => {
+                const venc = new Date(c.vencimento) < h;
+                return `<tr><td class="${venc ? 'txt-vermelho' : ''}">${new Date(c.vencimento).toLocaleDateString('pt-BR')}</td><td><b>${esc(c.descricao)}</b></td>
+                    <td>${esc(c.tipo === 'RECEBER' ? (c.cliente || '—') : (c.fornecedor || '—'))}</td>
+                    <td><span class="badge ${c.tipo === 'RECEBER' ? 'azul' : 'cinza'} sem-ponto">${c.tipo === 'RECEBER' ? 'Receber' : 'Pagar'}</span></td>
+                    <td class="right"><b class="${c.tipo === 'RECEBER' ? 'txt-verde' : ''}">${fmt(c.valor)}</b></td>
+                    <td><span class="badge ${venc ? 'vencido' : 'pendente'}">${venc ? 'Vencido' : 'Pendente'}</span></td></tr>`;
+            }).join('');
+        }
+
+        (async () => {
+            try {
+                const [r, receber, pagar] = await Promise.all([api('/api/financeiro/resumo'), api('/api/financeiro/receber'), api('/api/financeiro/pagar')]);
+                $('sub').textContent = 'Visão geral · ' + new Date().toLocaleDateString('pt-BR');
+                kpis(r, receber, pagar);
+                fluxo(receber, pagar);
+                metodos(r.vendasHoje.porMetodo);
+                proximos(receber, pagar);
+            } catch (e) { JG.toast(e.message, 'erro'); fluxo([], []); }
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Configurações – Vendas e Pagamentos | JG Sistemas</title>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config based on Theme Configuration -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "primary": "#003873",
+            "secondary-container": "#bfd5fe",
+            "on-tertiary": "#ffffff",
+            "on-surface-variant": "#434750",
+            "surface-container-high": "#dce9ff",
+            "on-tertiary-fixed-variant": "#005320",
+            "on-primary": "#ffffff",
+            "outline": "#737782",
+            "tertiary": "#004319",
+            "error-container": "#ffdad6",
+            "on-error-container": "#93000a",
+            "on-tertiary-fixed": "#002109",
+            "on-primary-fixed": "#001b3e",
+            "on-error": "#ffffff",
+            "surface-container-low": "#eff4ff",
+            "error": "#ba1a1a",
+            "surface-bright": "#f8f9ff",
+            "on-primary-fixed-variant": "#0e4688",
+            "outline-variant": "#c3c6d2",
+            "surface-container": "#e5eeff",
+            "tertiary-fixed": "#7ffc97",
+            "surface-variant": "#d3e4fe",
+            "on-secondary-fixed-variant": "#324769",
+            "surface": "#f8f9ff",
+            "on-secondary": "#ffffff",
+            "on-secondary-container": "#475c7f",
+            "on-primary-container": "#a2c3ff",
+            "background": "#f8f9ff",
+            "surface-dim": "#cbdbf5",
+            "on-surface": "#0b1c30",
+            "primary-fixed-dim": "#a9c7ff",
+            "on-tertiary-container": "#5dda7a",
+            "primary-fixed": "#d6e3ff",
+            "surface-container-highest": "#d3e4fe",
+            "inverse-on-surface": "#eaf1ff",
+            "secondary-fixed": "#d5e3ff",
+            "primary-container": "#1d4f91",
+            "on-secondary-fixed": "#011b3b",
+            "tertiary-fixed-dim": "#62df7d",
+            "tertiary-container": "#005d25",
+            "secondary-fixed-dim": "#b2c7f0",
+            "secondary": "#4a5f82",
+            "inverse-primary": "#a9c7ff",
+            "surface-container-lowest": "#ffffff",
+            "on-background": "#0b1c30",
+            "surface-tint": "#305ea1",
+            "inverse-surface": "#213145"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Inter", "sans-serif"],
+            "display": ["Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Inter', sans-serif;
+      font-variant-numeric: tabular-nums;
+      -webkit-font-smoothing: antialiased;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .material-symbols-outlined.fill-icon {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+    /* Custom subtle scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #eff4ff;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c3c6d2;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #737782;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen overflow-x-hidden selection:bg-primary selection:text-on-primary">
+<!-- ================= SIDEBAR (Shared Component: SideNavBar) ================= -->
+<aside class="fixed top-0 left-0 h-screen w-64 z-40 bg-primary border-r border-outline-variant/20 shadow-sm flex flex-col justify-between py-4 px-3 text-sm font-medium font-headline">
+<!-- Top Group: Logo, Brand & PDV Action -->
+<div class="flex flex-col gap-3">
+<!-- Brand Anchor Header -->
+<div class="flex items-center gap-3 px-2 py-1">
+<div class="w-9 h-9 rounded-lg bg-tertiary-container text-tertiary-fixed flex items-center justify-center font-bold text-lg shadow-sm">
+          JG
+        </div>
+<div class="flex flex-col overflow-hidden">
+<span class="font-headline text-base font-bold text-on-primary tracking-tight leading-none">JG Sistemas</span>
+<span class="text-xs text-secondary-fixed opacity-80 mt-1">Gestão Empresarial</span>
+</div>
+</div>
+<!-- Quick Action: CTA PDV Button -->
+<button class="w-full flex items-center justify-between px-3 py-2 bg-tertiary-container hover:bg-tertiary text-tertiary-fixed rounded-lg text-xs font-semibold tracking-wide transition-colors duration-150 shadow-sm border border-tertiary-fixed/30 active:scale-[0.98]">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">point_of_sale</span>
+<span>Abrir PDV [F1]</span>
+</span>
+<span class="text-[10px] bg-tertiary/70 px-1.5 py-0.5 rounded text-tertiary-fixed font-mono">F1</span>
+</button>
+<!-- Main Navigation Menu -->
+<nav class="flex flex-col gap-0.5 mt-2 overflow-y-auto max-h-[calc(100vh-270px)] pr-1">
+<!-- 1. Início -->
+<a class="text-outline-variant hover:text-on-primary hover:bg-primary-container/40 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-lg">home</span>
+<span>Início</span>
+</a>
+<!-- 2. Vendas -->
+<a class="text-outline-variant hover:text-on-primary hover:bg-primary-container/40 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-lg">point_of_sale</span>
+<span>Vendas</span>
+</a>
+<!-- 3. Clientes -->
+<a class="text-outline-variant hover:text-on-primary hover:bg-primary-container/40 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-lg">group</span>
+<span>Clientes</span>
+</a>
+<!-- 4. Catálogo -->
+<a class="text-outline-variant hover:text-on-primary hover:bg-primary-container/40 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-lg">inventory_2</span>
+<span>Catálogo</span>
+</a>
+<!-- 5. Estoque -->
+<a class="text-outline-variant hover:text-on-primary hover:bg-primary-container/40 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-lg">warehouse</span>
+<span>Estoque</span>
+</a>
+<!-- 6. Financeiro -->
+<a class="text-outline-variant hover:text-on-primary hover:bg-primary-container/40 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-lg">account_balance</span>
+<span>Financeiro</span>
+</a>
+<!-- 7. Pessoas -->
+<a class="text-outline-variant hover:text-on-primary hover:bg-primary-container/40 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-lg">badge</span>
+<span>Pessoas</span>
+</a>
+<!-- 8. Relatórios -->
+<a class="text-outline-variant hover:text-on-primary hover:bg-primary-container/40 rounded-lg px-3 py-2 flex items-center gap-3 transition-colors active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-lg">bar_chart</span>
+<span>Relatórios</span>
+</a>
+<!-- 9. Administração (Expanded Context Container) -->
+<div class="mt-1 pt-1 border-t border-outline-variant/15 flex flex-col gap-0.5">
+<div class="bg-primary-container text-on-primary font-semibold rounded-lg px-3 py-2 flex items-center justify-between active:scale-[0.99] cursor-pointer">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-lg">settings</span>
+<span>Administração</span>
+</div>
+<span class="material-symbols-outlined text-sm text-outline-variant">expand_more</span>
+</div>
+<!-- Sub-items with Active Highlight for Configurações -->
+<div class="pl-8 pr-1 py-1 flex flex-col gap-1">
+<a class="flex items-center justify-between text-xs font-medium text-tertiary-fixed bg-primary-container/80 rounded px-2.5 py-1.5 border-l-2 border-tertiary-fixed" href="#">
+<span class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed"></span>
+<span>Configurações</span>
+</span>
+<span class="text-[10px] text-tertiary-fixed-dim">Ativo</span>
+</a>
+<a class="text-xs text-outline-variant hover:text-on-primary hover:bg-primary-container/30 rounded px-2.5 py-1.5 flex items-center gap-2 transition-colors" href="#">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant/40"></span>
+<span>Auditoria</span>
+</a>
+</div>
+</div>
+</nav>
+</div>
+<!-- Sidebar Footer -->
+<div class="pt-3 border-t border-outline-variant/20 flex flex-col gap-2">
+<div class="flex items-center justify-between px-2 text-xs text-outline-variant">
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed animate-pulse"></span>
+<span class="text-secondary-fixed">Online · Matriz 01</span>
+</span>
+<span class="font-mono text-[11px] opacity-70">v3.4.1</span>
+</div>
+<div class="px-2.5 py-1.5 rounded bg-primary-fixed-dim/15 border border-primary-fixed-dim/20 flex items-center justify-between">
+<span class="text-xs text-secondary-fixed font-medium">Varejo · Moda</span>
+<span class="material-symbols-outlined text-xs text-tertiary-fixed">storefront</span>
+</div>
+</div>
+</aside>
+<!-- ================= TOPBAR (Shared Component: TopNavBar) ================= -->
+<header class="fixed top-0 right-0 left-64 h-14 z-30 bg-surface-container-lowest border-b border-outline-variant/30 flex items-center justify-between px-6 shadow-sm">
+<!-- Left: Breadcrumb & Search Bar -->
+<div class="flex items-center gap-6">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center gap-2 text-xs font-medium text-on-surface-variant font-headline">
+<a class="hover:text-primary transition-colors" href="#">Administração</a>
+<span class="material-symbols-outlined text-xs text-outline">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Configurações</a>
+<span class="material-symbols-outlined text-xs text-outline">chevron_right</span>
+<span class="text-primary font-semibold">Vendas e pagamentos</span>
+</nav>
+<!-- Global Search Field (Ctrl + K) -->
+<div class="relative w-80">
+<span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined text-base">search</span>
+</span>
+<input class="w-full pl-8 pr-14 py-1.5 text-xs bg-surface-container-low border border-outline-variant/60 rounded-lg text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all" placeholder="Buscar módulo, produto ou cliente (Ctrl+K)" type="text"/>
+<div class="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none">
+<span class="text-[10px] bg-surface-container-high text-on-surface-variant font-mono px-1.5 py-0.5 rounded border border-outline-variant/40">Ctrl+K</span>
+</div>
+</div>
+</div>
+<!-- Right Controls: Status, Actions, Notifications & Avatar -->
+<div class="flex items-center gap-4">
+<!-- Caixa Status Badge -->
+<div class="flex items-center gap-2 px-2.5 py-1 rounded-full bg-tertiary-fixed/30 border border-tertiary-fixed text-tertiary font-medium text-xs">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-ping inline-block"></span>
+<span>Caixa 01 · Aberto</span>
+</div>
+<!-- Quick Action: Abrir PDV -->
+<button class="hidden lg:flex items-center gap-1.5 px-3 py-1.5 bg-primary-container text-on-primary hover:bg-primary transition-colors rounded-lg text-xs font-semibold shadow-xs">
+<span class="material-symbols-outlined text-sm">point_of_sale</span>
+<span>Abrir PDV [F1]</span>
+</button>
+<!-- Separator -->
+<div class="h-5 w-px bg-outline-variant/40"></div>
+<!-- Notifications & Help Icons -->
+<div class="flex items-center gap-1">
+<button class="relative p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-lg transition-colors" title="Notificações">
+<span class="material-symbols-outlined text-xl">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full ring-2 ring-surface-container-lowest"></span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-lg transition-colors" title="Ajuda">
+<span class="material-symbols-outlined text-xl">help</span>
+</button>
+</div>
+<!-- User Profile Avatar Pill -->
+<div class="flex items-center gap-2.5 pl-2">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-bold text-xs ring-1 ring-outline-variant/50">
+          JG
+        </div>
+<div class="flex flex-col text-left leading-tight hidden xl:block">
+<span class="text-xs font-semibold text-on-surface">Juliana Gomes</span>
+<span class="text-[11px] text-on-surface-variant">Gerente Geral</span>
+</div>
+<span class="material-symbols-outlined text-sm text-outline cursor-pointer hidden xl:inline">keyboard_arrow_down</span>
+</div>
+</div>
+</header>
+<!-- ================= MAIN CONTENT CANVAS ================= -->
+<main class="ml-64 pt-14 pb-20 px-8 min-h-screen bg-surface">
+<!-- Top Context Header Area -->
+<div class="py-6 border-b border-outline-variant/30 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+<div>
+<div class="flex items-center gap-2.5 mb-1">
+<h1 class="text-2xl font-semibold tracking-tight text-on-surface font-headline">Configurações de Vendas e Pagamentos</h1>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-container-high text-primary border border-secondary-container">
+<span class="material-symbols-outlined text-xs">store</span>
+            Módulo Comercial &amp; PDV
+          </span>
+</div>
+<p class="text-xs text-on-surface-variant">
+          Defina as formas de pagamento aceitas no PDV, regras de parcelamento, limites de desconto e concessão de crediário próprio.
+        </p>
+</div>
+<div class="flex items-center gap-2 self-start md:self-auto">
+<div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-lowest border border-outline-variant/40 text-xs text-on-surface-variant font-medium shadow-xs">
+<span class="material-symbols-outlined text-sm text-tertiary">sync</span>
+<span>Sincronizado com todos os terminais PDV</span>
+</div>
+</div>
+</div>
+<!-- 2-Column Grid Workspace -->
+<div class="mt-6 grid grid-cols-12 gap-6 items-start">
+<!-- LEFT COLUMN: Submenu Modules + Shortcut Tips (Width: 3 cols / approx 260px) -->
+<aside class="col-span-12 lg:col-span-3 flex flex-col gap-4">
+<!-- Modules Navigation Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/40 shadow-xs p-2">
+<div class="px-3 py-2 text-[11px] font-semibold tracking-wider text-outline uppercase">
+            Módulos de Configuração
+          </div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined text-lg text-outline">apartment</span>
+<span>Empresa</span>
+</a>
+<a class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined text-lg text-outline">storefront</span>
+<span>Segmento e módulos</span>
+</a>
+<!-- ACTIVE MODULE -->
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold bg-surface-container-high text-primary border-l-4 border-primary shadow-xs" href="#">
+<span class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-lg text-primary">credit_card</span>
+<span>Vendas e pagamentos</span>
+</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+</a>
+<a class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined text-lg text-outline">manage_accounts</span>
+<span>Usuários e permissões</span>
+</a>
+<a class="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors" href="#">
+<span class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-lg text-outline">receipt_long</span>
+<span>Fiscal e NF-e</span>
+</span>
+<span class="text-[10px] px-1.5 py-0.2 rounded bg-tertiary-fixed/30 text-tertiary font-mono font-semibold">A1</span>
+</a>
+<a class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined text-lg text-outline">hub</span>
+<span>Integrações</span>
+</a>
+</nav>
+</div>
+<!-- Shortcuts Quick Helper Card -->
+<div class="bg-surface-container-low rounded-xl border border-secondary-container/60 p-4 flex flex-col gap-2.5">
+<div class="flex items-center gap-2 text-xs font-semibold text-primary">
+<span class="material-symbols-outlined text-sm text-primary">keyboard</span>
+<span>Agilidade no Balcão</span>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed">
+            Os atalhos de tecla (<strong class="text-on-surface font-semibold">F1 a F6</strong>) agilizam o atendimento no balcão e são padrão em todos os caixas da loja.
+          </p>
+<div class="grid grid-cols-2 gap-1.5 pt-2 border-t border-outline-variant/30 text-[11px] font-mono">
+<span class="text-on-surface-variant">F1 : Dinheiro</span>
+<span class="text-on-surface-variant">F4 : Crédito</span>
+<span class="text-on-surface-variant">F5 : Débito</span>
+<span class="text-on-surface-variant">F6 : PIX</span>
+</div>
+</div>
+</aside>
+<!-- RIGHT COLUMN: Detailed Configuration Panels (Width: 9 cols) -->
+<section class="col-span-12 lg:col-span-9 flex flex-col gap-6">
+<!-- ================= CARD 1: Formas de Pagamento no PDV ================= -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/40 shadow-xs overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant/30 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 bg-surface-bright">
+<div>
+<h2 class="text-sm font-semibold text-on-surface font-headline">Formas de Pagamento no PDV</h2>
+<p class="text-xs text-on-surface-variant">Habilite ou desative métodos de cobrança e configure as teclas de atalho rápido no caixa.</p>
+</div>
+<span class="text-[11px] font-medium text-tertiary flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">verified</span>
+              6 métodos ativos
+            </span>
+</div>
+<!-- List of Payment Methods -->
+<div class="divide-y divide-outline-variant/30">
+<!-- 1. Dinheiro -->
+<div class="px-6 py-3.5 flex items-center justify-between hover:bg-surface-container-lowest transition-colors">
+<div class="flex items-center gap-3.5">
+<div class="w-10 h-10 rounded-lg bg-tertiary-fixed/30 text-tertiary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-xl">payments</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-xs font-semibold text-on-surface">Dinheiro em Espécie</span>
+<span class="text-[10px] font-mono font-semibold bg-surface-container-high text-primary px-1.5 py-0.5 rounded border border-outline-variant/30">[F1]</span>
+</div>
+<p class="text-[11px] text-on-surface-variant mt-0.5">Troco automático habilitado, conferência cega no fechamento de caixa.</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-tertiary"></div>
+</label>
+</div>
+</div>
+<!-- 2. Cartão de Crédito -->
+<div class="px-6 py-3.5 flex items-center justify-between hover:bg-surface-container-lowest transition-colors">
+<div class="flex items-center gap-3.5">
+<div class="w-10 h-10 rounded-lg bg-primary-container/20 text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-xl">credit_card</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-xs font-semibold text-on-surface">Cartão de Crédito (TEF / POS)</span>
+<span class="text-[10px] font-mono font-semibold bg-surface-container-high text-primary px-1.5 py-0.5 rounded border border-outline-variant/30">[F4]</span>
+</div>
+<p class="text-[11px] text-on-surface-variant mt-0.5">Transações via TEF homologado Stone/Cielo e conciliação bancária.</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-tertiary"></div>
+</label>
+</div>
+</div>
+<!-- 3. Cartão de Débito -->
+<div class="px-6 py-3.5 flex items-center justify-between hover:bg-surface-container-lowest transition-colors">
+<div class="flex items-center gap-3.5">
+<div class="w-10 h-10 rounded-lg bg-secondary-container/30 text-on-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-xl">contactless</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-xs font-semibold text-on-surface">Cartão de Débito</span>
+<span class="text-[10px] font-mono font-semibold bg-surface-container-high text-primary px-1.5 py-0.5 rounded border border-outline-variant/30">[F5]</span>
+</div>
+<p class="text-[11px] text-on-surface-variant mt-0.5">Liquidação D+1 na conta corrente configurada.</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-tertiary"></div>
+</label>
+</div>
+</div>
+<!-- 4. PIX Instantâneo -->
+<div class="px-6 py-3.5 flex items-center justify-between hover:bg-surface-container-lowest transition-colors">
+<div class="flex items-center gap-3.5">
+<div class="w-10 h-10 rounded-lg bg-tertiary-container text-tertiary-fixed flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-xl">qr_code_2</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-xs font-semibold text-on-surface">PIX Instantâneo (QR Code Dinâmico)</span>
+<span class="text-[10px] font-mono font-semibold bg-surface-container-high text-primary px-1.5 py-0.5 rounded border border-outline-variant/30">[F6]</span>
+</div>
+<p class="text-[11px] text-on-surface-variant mt-0.5">Confirmação automática via webhook do Banco Central em até 3 segundos.</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-tertiary"></div>
+</label>
+</div>
+</div>
+<!-- 5. Crediário Próprio -->
+<div class="px-6 py-3.5 flex items-center justify-between hover:bg-surface-container-lowest transition-colors">
+<div class="flex items-center gap-3.5">
+<div class="w-10 h-10 rounded-lg bg-primary-container text-on-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-xl">book</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-xs font-semibold text-on-surface">Crediário Próprio (Carnê da Loja)</span>
+<span class="text-[10px] font-mono font-semibold bg-surface-container-high text-primary px-1.5 py-0.5 rounded border border-outline-variant/30">[F7]</span>
+</div>
+<p class="text-[11px] text-on-surface-variant mt-0.5">Emissão de carnê em 4 vias com análise e consulta de score no PDV.</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-tertiary"></div>
+</label>
+</div>
+</div>
+<!-- 6. Vale-Troca / Crédito -->
+<div class="px-6 py-3.5 flex items-center justify-between hover:bg-surface-container-lowest transition-colors">
+<div class="flex items-center gap-3.5">
+<div class="w-10 h-10 rounded-lg bg-surface-variant text-on-surface-variant flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-xl">loyalty</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-xs font-semibold text-on-surface">Vale-Troca &amp; Crédito de Devolução</span>
+<span class="text-[10px] font-mono font-semibold bg-surface-container-high text-primary px-1.5 py-0.5 rounded border border-outline-variant/30">[F8]</span>
+</div>
+<p class="text-[11px] text-on-surface-variant mt-0.5">Consumo de saldo gerado em trocas e devoluções vinculadas ao CPF.</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-tertiary"></div>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- ================= CARD 2: Regras de Venda e Políticas Comerciais ================= -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/40 shadow-xs p-6 flex flex-col gap-5">
+<div>
+<h2 class="text-sm font-semibold text-on-surface font-headline">Regras de Venda e Políticas Comerciais</h2>
+<p class="text-xs text-on-surface-variant">Parâmetros operacionais para controle de margem, alçada e liberação no PDV.</p>
+</div>
+<!-- Form Fields Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+<!-- Campo 1: Parcelas Máximas -->
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-medium text-on-surface flex items-center justify-between">
+<span>Máximo de parcelas no cartão de crédito</span>
+<span class="text-[11px] text-outline">Padrão da loja</span>
+</label>
+<div class="relative">
+<input class="w-full px-3 py-2 text-xs font-medium bg-surface-container-low border border-outline-variant/60 rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary tabular-nums" max="24" min="1" type="number" value="12"/>
+<span class="absolute inset-y-0 right-0 pr-3 flex items-center text-xs text-outline pointer-events-none">
+                  parcelas
+                </span>
+</div>
+<span class="text-[11px] text-tertiary flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">info</span>
+                Sem juros até 6x nas maquininhas homologadas
+              </span>
+</div>
+<!-- Campo 2: Limite de Desconto sem Senha -->
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-medium text-on-surface flex items-center justify-between">
+<span>Limite de desconto no balcão sem senha gerencial</span>
+<span class="text-[11px] text-outline">Até 5,0%</span>
+</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-xs text-outline font-semibold pointer-events-none">
+                  R$
+                </span>
+<input class="w-full pl-9 pr-3 py-2 text-xs font-medium bg-surface-container-low border border-outline-variant/60 rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary tabular-nums" type="text" value="20,00"/>
+</div>
+<span class="text-[11px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">lock</span>
+                Descontos superiores exigem biometria ou senha do gerente
+              </span>
+</div>
+<!-- Campo 3: Cashback Fidelidade -->
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-medium text-on-surface flex items-center justify-between">
+<span>Cashback concedido nas vendas a prazo (%)</span>
+<span class="text-[11px] text-outline">Programa Fidelidade</span>
+</label>
+<div class="relative">
+<input class="w-full px-3 pr-8 py-2 text-xs font-medium bg-surface-container-low border border-outline-variant/60 rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary tabular-nums" type="text" value="2,0"/>
+<span class="absolute inset-y-0 right-0 pr-3 flex items-center text-xs text-outline font-semibold pointer-events-none">
+                  %
+                </span>
+</div>
+<span class="text-[11px] text-on-surface-variant">
+                Acumulado diretamente na carteira de fidelidade do cliente
+              </span>
+</div>
+<!-- Campo 4: Tolerância de Sangria -->
+<div class="flex flex-col gap-1.5">
+<label class="text-xs font-medium text-on-surface flex items-center justify-between">
+<span>Prazo de tolerância para sangria obrigatória</span>
+<span class="text-[11px] text-outline">Segurança</span>
+</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center text-xs text-outline font-semibold pointer-events-none">
+                  R$
+                </span>
+<input class="w-full pl-9 pr-3 py-2 text-xs font-medium bg-surface-container-low border border-outline-variant/60 rounded-lg text-on-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary tabular-nums" type="text" value="1.500,00"/>
+</div>
+<span class="text-[11px] text-error flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">warning</span>
+                Alerta no caixa quando o dinheiro físico ultrapassar este montante
+              </span>
+</div>
+</div>
+<!-- Highlight Box: Regra de Segurança Estrita de Crediário -->
+<div class="mt-2 p-4 rounded-xl bg-surface-container border border-secondary-container flex items-start gap-4">
+<div class="pt-0.5">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-tertiary"></div>
+</label>
+</div>
+<div class="flex flex-col">
+<span class="text-xs font-semibold text-primary">Bloqueio estrito de limite no crediário</span>
+<p class="text-xs text-on-surface-variant mt-1 leading-relaxed">
+                Quando ativado, o sistema impede a finalização de compras no crediário que ultrapassem o limite cadastrado do cliente, mesmo com autorização verbal, exigindo aumento formal do limite na ficha cadastral com assinatura.
+              </p>
+</div>
+</div>
+</div>
+<!-- ================= CARD 3: Comprovantes e Impressão de Venda ================= -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/40 shadow-xs p-6 flex flex-col gap-4">
+<div>
+<h2 class="text-sm font-semibold text-on-surface font-headline">Comprovantes e Impressão de Venda</h2>
+<p class="text-xs text-on-surface-variant">Configuração de impressão térmica de cupom fiscal e envio digital.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
+<!-- Opção 1 -->
+<div class="p-3.5 rounded-lg border border-outline-variant/40 bg-surface-bright flex flex-col justify-between gap-3">
+<div class="flex items-start justify-between">
+<span class="text-xs font-semibold text-on-surface">Impressão Automática</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-7 h-4 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-tertiary"></div>
+</label>
+</div>
+<p class="text-[11px] text-on-surface-variant leading-tight">
+                Imprimir comprovante fiscal automaticamente após fechar venda no PDV.
+              </p>
+</div>
+<!-- Opção 2 -->
+<div class="p-3.5 rounded-lg border border-outline-variant/40 bg-surface-bright flex flex-col justify-between gap-3">
+<div class="flex items-center justify-between">
+<span class="text-xs font-semibold text-on-surface">Modelo Térmico</span>
+<span class="material-symbols-outlined text-sm text-outline">print</span>
+</div>
+<div>
+<select class="w-full text-xs font-medium bg-surface-container-low border border-outline-variant/60 rounded px-2 py-1.5 text-on-surface focus:outline-none focus:ring-1 focus:ring-primary">
+<option selected="">Bobina térmica 80mm (ESC/POS)</option>
+<option>Bobina 58mm compacta</option>
+<option>Folha A4 padrão (laser/jato)</option>
+</select>
+</div>
+</div>
+<!-- Opção 3 -->
+<div class="p-3.5 rounded-lg border border-outline-variant/40 bg-surface-bright flex flex-col justify-between gap-3">
+<div class="flex items-start justify-between">
+<span class="text-xs font-semibold text-on-surface">Envio via WhatsApp</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-7 h-4 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-tertiary"></div>
+</label>
+</div>
+<p class="text-[11px] text-on-surface-variant leading-tight">
+                Enviar 2ª via automática com QR code por WhatsApp se cliente identificado.
+              </p>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- ================= FIXED BOTTOM ACTION BAR ================= -->
+<footer class="fixed bottom-0 right-0 left-64 h-16 bg-surface-container-lowest border-t border-outline-variant/30 px-8 flex items-center justify-between shadow-lg z-30">
+<!-- Left: Status Notification -->
+<div class="flex items-center gap-2 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-base text-tertiary fill-icon">check_circle</span>
+<span>
+        Última alteração salva em <strong class="text-on-surface font-semibold tabular-nums">08/10/2026</strong> às <strong class="text-on-surface font-semibold tabular-nums">15:30</strong> por <strong class="text-on-surface font-semibold">Juliana Gomes</strong>
+</span>
+</div>
+<!-- Right: Action Buttons with Keyboard Chips -->
+<div class="flex items-center gap-3">
+<!-- Cancel Button -->
+<button class="px-4 py-2 border border-outline-variant/60 hover:bg-surface-container rounded-lg text-xs font-semibold text-on-surface transition-colors flex items-center gap-2 active:scale-95">
+<span>Cancelar alterações</span>
+<span class="text-[10px] bg-surface-container-high px-1.5 py-0.5 rounded text-outline font-mono">Esc</span>
+</button>
+<!-- Save Button -->
+<button class="px-5 py-2 bg-tertiary-container hover:bg-tertiary text-on-primary rounded-lg text-xs font-semibold transition-colors flex items-center gap-2 shadow-sm border border-tertiary-fixed/30 active:scale-95">
+<span class="material-symbols-outlined text-sm">save</span>
+<span>Salvar alterações</span>
+<span class="text-[10px] bg-tertiary px-1.5 py-0.5 rounded text-tertiary-fixed font-mono ml-0.5">F10</span>
+</button>
+</div>
+</footer>
+<!-- Toast Notification Simulator (Bottom Right floating) -->
+<div class="fixed bottom-20 right-8 bg-inverse-surface text-inverse-on-surface px-4 py-3 rounded-lg shadow-xl text-xs flex items-center gap-3 border border-outline-variant/20 transition-all duration-300 opacity-95 pointer-events-none z-50" id="toast">
+<span class="material-symbols-outlined text-tertiary-fixed text-base">cloud_done</span>
+<div>
+<span class="font-semibold block">Configurações sincronizadas</span>
+<span class="text-[11px] text-surface-variant opacity-80">Parâmetros aplicados a 3 caixas ativos.</span>
+</div>
+</div>
+<!-- Keyboard Shortcuts & Interactive Micro-interactions -->
+<script>
+    document.addEventListener('keydown', function(event) {
+      // F10 for Save
+      if (event.key === 'F10') {
+        event.preventDefault();
+        triggerSaveToast('Alterações salvas com sucesso via tecla [F10]!');
+      }
+      // F1 for PDV
+      if (event.key === 'F1') {
+        event.preventDefault();
+        triggerSaveToast('Iniciando frente de caixa PDV [F1]...');
+      }
+      // Esc for Cancel
+      if (event.key === 'Escape') {
+        triggerSaveToast('Edição descartada.');
+      }
+    });
+
+    function triggerSaveToast(msg) {
+      const toast = document.getElementById('toast');
+      if (toast) {
+        toast.querySelector('.font-semibold').textContent = msg;
+        toast.classList.remove('opacity-0');
+        toast.classList.add('opacity-95');
+        setTimeout(() => {
+          toast.classList.add('opacity-0');
+        }, 3500);
+      }
+    }
+  </script>
+</body></html>

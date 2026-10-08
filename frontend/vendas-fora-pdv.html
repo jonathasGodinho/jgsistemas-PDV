@@ -6,208 +6,112 @@
     <meta name="google" content="notranslate">
     <title>Vendas Fora do PDV - JG Sistemas</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f0f2f5; height: 100vh; display: grid; grid-template-rows: 50px 1fr 40px; overflow: hidden; }
-        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
-        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
-        header a:hover { color: white; }
-        .btn-cabecalho { background-color: #134074; color: white; border: none; border-radius: 4px; padding: 7px 14px; font-size: 13px; font-weight: bold; cursor: pointer; }
-        .btn-cabecalho:hover { background-color: #00a651; }
-
-        .pdv-container { display: grid; grid-template-columns: 1fr 400px; gap: 15px; padding: 15px; height: 100%; overflow: hidden; }
-        .left-panel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; display: grid; grid-template-rows: 1fr 90px; overflow: hidden; }
-        .table-container { overflow-y: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { background-color: #134074; color: white; position: sticky; top: 0; padding: 10px; text-align: left; text-transform: uppercase; }
-        td { padding: 10px; border-bottom: 1px solid #e6e9ed; color: #333; }
-        tr:nth-child(even) { background-color: #f8f9fa; }
-        .input-bar { background-color: #e6e9ed; padding: 12px 15px; display: grid; grid-template-columns: 1fr 120px; gap: 12px; align-items: center; border-top: 2px solid #134074; }
-        .input-bar input { width: 100%; padding: 12px; font-size: 18px; font-weight: bold; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
-
-        .right-panel { display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
-        .box-info { background: white; border: 1px solid #ccd1d9; border-radius: 4px; padding: 12px 14px; }
-        .box-info label { font-size: 11px; color: #656d78; font-weight: bold; display: block; margin-bottom: 5px; text-transform: uppercase; }
-        .box-info .value { font-size: 24px; font-weight: 700; color: #134074; text-align: right; }
-        .box-info input { width: 100%; padding: 9px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
-        .linha2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .linha-cliente { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
-        .lupa-btn { border: 1px solid #aab2bd; border-radius: 4px; background: #134074; color: white; padding: 9px 12px; cursor: pointer; font-weight: bold; font-size: 13px; }
-        .lupa-btn:hover { background-color: #0b2545; }
-        .total-box { background-color: #0b2545; border: none; }
-        .total-box label { color: #aab2bd; }
-        .total-box .value { color: #00ff66; font-size: 36px; }
-        .btn-registrar { background-color: #00a651; color: white; border: none; border-radius: 4px; padding: 14px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; text-transform: uppercase; }
-        .btn-registrar:hover { background-color: #008c45; }
-        .info-cliente { font-size: 12px; color: #134074; background: #eef4fb; border: 1px solid #c8d8ec; border-radius: 4px; padding: 8px 10px; margin-top: 8px; display: none; }
-        .tabela-parcelas { margin-top: 8px; }
-        .tabela-parcelas table { font-size: 12px; }
-        .tabela-parcelas th, .tabela-parcelas td { padding: 6px 8px; }
-        tr.sel-remover { background-color: #fbe3e3 !important; }
-        tr.sel-remover td { color: #d9534f; font-weight: bold; }
-        .sem-dados { text-align: center; color: #8b95a1; padding: 26px; font-size: 13px; }
-
-        footer { background-color: #134074; color: white; display: flex; align-items: center; justify-content: space-around; font-size: 12px; font-weight: bold; padding: 0 10px; }
-        .key-hint { background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 3px; margin-right: 5px; }
-
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 100; }
-        .modal-overlay.active { display: flex; }
-        .modal { background: white; border-radius: 6px; width: 720px; max-width: 94vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
-        .modal-head { background-color: #0b2545; color: white; padding: 14px 18px; font-weight: bold; font-size: 15px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
-        .modal-head .close { cursor: pointer; font-size: 20px; color: #aab2bd; }
-        .modal-head .close:hover { color: white; }
-        .modal-body { padding: 18px; }
-        .busca-input { width: 100%; padding: 11px; font-size: 16px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; margin-bottom: 12px; }
-        .busca-tabela-container { max-height: 320px; overflow-y: auto; border: 1px solid #ccd1d9; border-radius: 4px; }
-        .busca-tabela { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .busca-tabela th { background-color: #134074; color: white; position: sticky; top: 0; padding: 8px; text-align: left; text-transform: uppercase; font-size: 12px; }
-        .busca-tabela td { padding: 9px; border-bottom: 1px solid #e6e9ed; color: #333; cursor: pointer; }
-        .busca-tabela tr:nth-child(even) { background-color: #f8f9fa; }
-        .busca-tabela tr.sel { background-color: #134074; }
-        .busca-tabela tr.sel td { color: white; }
-        .busca-hint { font-size: 12px; color: #656d78; margin-top: 10px; text-align: center; }
-        .badge { display: inline-block; padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
-        .b-verde { background: #d8f3e3; color: #008c45; }
-        .b-azul { background: #d6e6f7; color: #134074; }
-        .b-vermelho { background: #fbe3e3; color: #d9534f; }
+        .cred-grid { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 16px; align-items: start; }
+        @media (max-width: 1100px) { .cred-grid { grid-template-columns: 1fr; } }
+        .itens-card { display: flex; flex-direction: column; min-height: 520px; }
+        .itens-card .tabela-wrap { flex: 1; }
+        .input-bar { display: grid; grid-template-columns: 1fr 110px; gap: 10px; padding: 14px 16px; border-top: 1px solid var(--border); background: var(--surface-2); border-radius: 0 0 var(--radius) var(--radius); }
+        body.jg .input-bar input { height: 48px; font-size: 17px; font-weight: 600; }
+        .info-cliente { font-size: 13px; margin-top: 10px; display: none; }
+        .tabela-parcelas { margin-top: 10px; max-height: 220px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+        body.jg .tabela-parcelas td, body.jg .tabela-parcelas th { height: 34px; font-size: 13px; }
+        tr.sel-remover td { background: var(--red-soft) !important; color: var(--red); font-weight: 600; }
+        .busca-input { margin-bottom: 12px; }
+        .busca-tabela-container { max-height: 340px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+        .busca-tabela tr.sel td { background: var(--primary) !important; color: #fff !important; }
+        .busca-tabela td { cursor: pointer; }
+        .busca-hint { font-size: 12px; color: var(--text-2); margin-top: 10px; text-align: center; }
         .info-venda { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 13px; margin-bottom: 14px; }
-        .total-painel { display: flex; justify-content: space-between; align-items: center; background: #f0f2f5; border-radius: 4px; padding: 12px; margin-top: 6px; font-weight: bold; font-size: 16px; }
-        .verde { color: #00a651; }
-        .btn-mini { padding: 5px 10px; font-size: 12px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
-        .btn-azul { background-color: #134074; color: white; }
-        .btn-azul:hover { background-color: #0b2545; }
-        .btn-verde { background-color: #00a651; color: white; }
-        .btn-verde:hover { background-color: #008c45; }
-
-        @media (max-width: 1024px) {
-            .pdv-container { grid-template-columns: 1fr 330px; gap: 10px; padding: 10px; }
-            .total-box .value { font-size: 30px; }
-        }
-        @media (max-width: 768px) {
-            body { grid-template-rows: 46px 1fr 36px; }
-            .pdv-container { grid-template-columns: 1fr; grid-template-rows: 1fr auto; overflow-y: auto; }
-            .input-bar { grid-template-columns: 1fr 100px; padding: 10px; }
-            .input-bar input { font-size: 16px; padding: 10px; }
-            footer { font-size: 11px; flex-wrap: wrap; }
-        }
+        .total-painel { display: flex; justify-content: space-between; align-items: center; background: var(--surface-2); border-radius: var(--radius); padding: 12px; margin-top: 8px; font-weight: 700; font-size: 16px; }
+        .verde { color: var(--green); }
+        .total-cred { background: var(--navy); border-radius: var(--radius); padding: 16px; color: #9FB3D1; }
+        .total-cred .rotulo { font-size: 12.5px; font-weight: 500; }
+        .total-cred .value { font-size: 34px; font-weight: 800; color: #4ADE80; text-align: right; font-variant-numeric: tabular-nums; }
+        .atalhos-rodape { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 14px; font-size: 12.5px; color: var(--text-2); }
+        .atalhos-rodape span { display: inline-flex; align-items: center; gap: 6px; }
     </style>
+    <link rel="stylesheet" href="/ui/jg.css">
 </head>
-<body>
-
-    <header>
-        <div>JG SISTEMAS - VENDAS FORA DO PDV</div>
-        <div style="display:flex; align-items:center;">
-            <button class="btn-cabecalho" onclick="abrirModalVendas()">Vendas a Prazo</button>
-            <a href="/" style="margin-left:14px;">← Menu</a>
+<body class="jg" data-pagina="crediario">
+    <main>
+        <div class="page-head">
+            <div><h1>Crediário · Nova venda a prazo</h1><div class="sub">Itens, parcelas, contrato e carnê</div></div>
+            <div class="acoes"><button class="btn" onclick="abrirModalVendas()"><span class="ms">list_alt</span>Vendas a prazo</button></div>
         </div>
-    </header>
-
-    <div class="pdv-container">
-        <div class="left-panel">
-            <div class="table-container">
-                <table id="tabela-itens">
-                    <thead>
-                        <tr>
-                            <th style="width:5%;">Item</th>
-                            <th style="width:16%;">Código</th>
-                            <th style="width:38%;">Produto</th>
-                            <th style="width:9%;">Qtd</th>
-                            <th style="width:12%;">Unit.</th>
-                            <th style="width:15%;">Subtotal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td colspan="6" class="sem-dados">Nenhum item adicionado</td></tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="input-bar">
-                <input type="text" id="f-codigo" placeholder="Código de barras ou SKU — F3 busca produto" autofocus>
-                <input type="number" id="f-qtd" value="1" min="1" style="text-align:center;" placeholder="Qtd">
-            </div>
-        </div>
-
-        <div class="right-panel">
-            <div class="box-info">
-                <label>Cliente</label>
-                <div class="linha-cliente">
-                    <input type="text" id="f-cliente" placeholder="Nome do cliente" oninput="limparClienteSelecao()">
-                    <button class="lupa-btn" onclick="abrirModalClientes()" title="Buscar cliente (F2)">🔍</button>
-                </div>
-                <div style="margin-top:8px;">
-                    <label>Celular</label>
-                    <input type="text" id="f-celular" placeholder="(00) 00000-0000">
-                </div>
-                <div class="info-cliente" id="info-cliente"></div>
-            </div>
-
-            <div class="box-info">
-                <label>Parcelamento</label>
-                <div class="linha2">
-                    <div>
-                        <label>Nº de Parcelas</label>
-                        <input type="number" id="f-parcelas" min="1" max="24" value="1" oninput="renderizarParcelas()">
-                    </div>
-                    <div>
-                        <label>1ª Parcela</label>
-                        <input type="date" id="f-primeira" onchange="renderizarParcelas()">
-                    </div>
-                </div>
-                <div class="tabela-parcelas">
-                    <table>
+        <div class="cred-grid">
+            <div class="card itens-card">
+                <div class="card-head"><h3>Itens</h3><span class="sub">↑↓ + <span class="kbd">F7</span> remove o item selecionado</span></div>
+                <div class="tabela-wrap">
+                    <table id="tabela-itens">
                         <thead>
                             <tr>
-                                <th style="width:34px;">Nº</th>
-                                <th>Vencimento</th>
-                                <th style="text-align:right;">Valor</th>
+                                <th style="width:6%;">Item</th>
+                                <th style="width:16%;">Código</th>
+                                <th>Produto</th>
+                                <th class="right" style="width:9%;">Qtd</th>
+                                <th class="right" style="width:13%;">Unit.</th>
+                                <th class="right" style="width:15%;">Subtotal</th>
                             </tr>
                         </thead>
-                        <tbody id="tabela-parcelas">
-                            <tr><td colspan="3" class="sem-dados" style="padding:12px;">Informe a data da 1ª parcela</td></tr>
+                        <tbody>
+                            <tr><td colspan="6" class="sem-dados">Nenhum item adicionado</td></tr>
                         </tbody>
                     </table>
                 </div>
-            </div>
-
-            <div class="box-info">
-                <label>Desconto e Cashback</label>
-                <div class="linha2">
-                    <div>
-                        <label>Desconto (R$)</label>
-                        <input type="number" id="f-desconto" min="0" step="0.01" value="" placeholder="0,00" oninput="renderizarParcelas()">
-                    </div>
-                    <div>
-                        <label>Resgatar Cashback (R$)</label>
-                        <input type="number" id="f-cashback" min="0" step="0.01" value="" placeholder="0,00" oninput="renderizarParcelas()">
-                    </div>
-                </div>
-                <div style="margin-top:8px;">
-                    <label>Senha do administrador <span style="text-transform:none; font-weight:normal; color:#8b95a1;">(exigida p/ desconto)</span></label>
-                    <input type="password" id="f-senha-admin" autocomplete="off" placeholder="Senha do administrador">
+                <div class="input-bar">
+                    <input type="text" id="f-codigo" placeholder="Código de barras ou SKU — F3 busca produto" autofocus>
+                    <input type="number" id="f-qtd" value="1" min="1" style="text-align:center;" placeholder="Qtd">
                 </div>
             </div>
 
-            <div class="box-info">
-                <label>Observações</label>
-                <input type="text" id="f-obs" placeholder="Opcional">
-            </div>
+            <div class="stack" style="gap:12px">
+                <div class="card"><div class="card-body">
+                    <div class="row between" style="margin-bottom:6px"><label for="f-cliente" style="margin:0">Cliente *</label><span class="kbd">F2</span></div>
+                    <div class="input-grupo">
+                        <input type="text" id="f-cliente" placeholder="Nome do cliente" oninput="limparClienteSelecao()">
+                        <button class="btn" onclick="abrirModalClientes()" title="Buscar cliente (F2)"><span class="ms">person_search</span></button>
+                    </div>
+                    <div class="campo mt-8" style="margin-bottom:0"><label for="f-celular">Celular</label><input type="text" id="f-celular" placeholder="(00) 00000-0000"></div>
+                    <div class="alerta info-cliente" id="info-cliente"></div>
+                </div></div>
 
-            <div class="box-info total-box">
-                <label>Total da Venda</label>
-                <div class="value" id="lbl-total">R$ 0,00</div>
-            </div>
+                <div class="card"><div class="card-body">
+                    <div class="form-grid">
+                        <div class="campo" style="margin:0"><label for="f-parcelas">Nº de parcelas</label><input type="number" id="f-parcelas" min="1" max="24" value="1" oninput="renderizarParcelas()"></div>
+                        <div class="campo" style="margin:0"><label for="f-primeira">1ª parcela</label><input type="date" id="f-primeira" onchange="renderizarParcelas()"></div>
+                    </div>
+                    <div class="tabela-parcelas">
+                        <table>
+                            <thead><tr><th style="width:40px;">Nº</th><th>Vencimento</th><th class="right">Valor</th></tr></thead>
+                            <tbody id="tabela-parcelas"><tr><td colspan="3" class="sem-dados" style="padding:12px;">Informe a data da 1ª parcela</td></tr></tbody>
+                        </table>
+                    </div>
+                </div></div>
 
-            <button class="btn-registrar" onclick="registrarVenda()">Registrar Venda a Prazo</button>
+                <div class="card"><div class="card-body">
+                    <div class="form-grid">
+                        <div class="campo"><label for="f-desconto">Desconto (R$)</label><input type="number" id="f-desconto" min="0" step="0.01" value="" placeholder="0,00" oninput="renderizarParcelas()"></div>
+                        <div class="campo"><label for="f-cashback">Resgatar cashback (R$)</label><input type="number" id="f-cashback" min="0" step="0.01" value="" placeholder="0,00" oninput="renderizarParcelas()"></div>
+                    </div>
+                    <div class="campo"><label for="f-senha-admin">Senha do administrador <small class="muted">(exigida para desconto)</small></label><input type="password" id="f-senha-admin" autocomplete="off" placeholder="Senha do administrador"></div>
+                    <div class="campo" style="margin:0"><label for="f-obs">Observações</label><input type="text" id="f-obs" placeholder="Opcional"></div>
+                </div></div>
+
+                <div class="total-cred">
+                    <div class="rotulo">TOTAL DA VENDA</div>
+                    <div class="value" id="lbl-total">R$ 0,00</div>
+                </div>
+                <button class="btn btn-sucesso btn-lg btn-bloco" onclick="registrarVenda()"><span class="ms">check</span>Registrar venda <span class="kbd">F12</span></button>
+            </div>
         </div>
-    </div>
-
-    <footer>
-        <div><span class="key-hint">ENTER</span>Lançar Item</div>
-        <div><span class="key-hint">F2</span>Buscar Cliente</div>
-        <div><span class="key-hint">F3</span>Buscar Produto</div>
-        <div><span class="key-hint">F7</span>Remover Item (↑↓ + ENTER)</div>
-        <div><span class="key-hint">F12</span>Registrar Venda</div>
-    </footer>
-
+        <div class="atalhos-rodape">
+            <span><span class="kbd">ENTER</span>Lançar item</span>
+            <span><span class="kbd">F2</span>Buscar cliente</span>
+            <span><span class="kbd">F3</span>Buscar produto</span>
+            <span><span class="kbd">F7</span>Remover item</span>
+            <span><span class="kbd">F12</span>Registrar venda</span>
+        </div>
+    </main>
     <!-- Modal busca de produtos -->
     <div class="modal-overlay" id="modal-produtos">
         <div class="modal">
@@ -266,7 +170,7 @@
 
     <!-- Modal lista de vendas a prazo -->
     <div class="modal-overlay" id="modal-vendas">
-        <div class="modal" style="width:940px;">
+        <div class="modal lg" style="width:980px;">
             <div class="modal-head">
                 <span>Vendas a Prazo <span id="resumo-lista" style="font-size:12px; color:#aab2bd; font-weight:normal;"></span></span>
                 <span class="close" onclick="fecharModal('modal-vendas')">&times;</span>
@@ -304,16 +208,17 @@
             </div>
             <div class="modal-body">
                 <div id="detalhe-conteudo"></div>
-                <button class="btn-verde" style="width:100%; margin-top:16px; padding:13px; font-size:15px;" onclick="imprimirContrato()">Imprimir Venda a Prazo</button>
+                <button class="btn btn-primario btn-bloco mt-16" onclick="imprimirContrato()"><span class="ms">print</span>Imprimir contrato e carnê</button>
             </div>
         </div>
     </div>
 
     <script src="/seguranca.js"></script>
+    <script src="/ui/shell.js"></script>
     <script>
 
 const API_BASE = '';
-const formatarMoeda = v => `R$ ${Number(v).toFixed(2).replace('.', ',')}`;
+const formatarMoeda = v => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 const formatarData = d => new Date(d).toLocaleDateString('pt-BR');
 const formatarDataHora = d => new Date(d).toLocaleString('pt-BR');
 
@@ -715,8 +620,8 @@ async function carregarVendas() {
                 <td>${v.parcelasPagas}/${v.parcelas}</td>
                 <td><span class="badge ${statusClass(v)}">${esc(v.status)}</span></td>
                 <td style="text-align:center;">
-                    <button class="btn-mini btn-azul" onclick="abrirDetalhe('${v.id}')">Detalhes</button>
-                    <button class="btn-mini btn-verde" onclick="abrirDetalhe('${v.id}', true)">Imprimir</button>
+                    <button class="btn btn-sm" onclick="abrirDetalhe('${v.id}')">Detalhes</button>
+                    <button class="btn btn-sm btn-sucesso" onclick="abrirDetalhe('${v.id}', true)">Imprimir</button>
                 </td>
             </tr>`).join('');
     } catch (e) { alert(e.message); }
@@ -760,7 +665,7 @@ function renderizarDetalhe() {
             <td style="text-align:center;">
                 ${p.status === 'PAID'
                     ? `<span class="verde" style="font-weight:bold;">✓ ${formatarData(p.dataPagamento)}</span>`
-                    : `<button class="btn-mini btn-verde" onclick="baixarParcela('${v.id}', '${p.id}')">Baixar</button>`}
+                    : `<button class="btn btn-sm btn-sucesso" onclick="baixarParcela('${v.id}', '${p.id}')">Baixar</button>`}
             </td>
         </tr>`).join('');
 

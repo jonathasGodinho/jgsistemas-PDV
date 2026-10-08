@@ -1,4 +1,5 @@
 import prisma from '../db';
+import { moduloAtivo } from './modulos';
 
 export interface ItemCarrinho {
     produtoId: string;
@@ -21,6 +22,7 @@ export interface DescontoAplicado {
 export const calcularPromocoes = async (
     itens: ItemCarrinho[]
 ): Promise<{ descontos: DescontoAplicado[]; totalDesconto: number }> => {
+    if (!moduloAtivo('precos')) return { descontos: [], totalDesconto: 0 };
     const agora = new Date();
     const promos = await prisma.promotion.findMany({
         where: {

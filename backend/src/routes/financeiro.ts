@@ -86,7 +86,14 @@ const listarContas = async (tipo: string, status?: string) => {
         orderBy: [{ status: 'asc' }, { dueDate: 'asc' }],
         include: { Supplier: true }
     });
-    return contas.map(c => ({
+    // Cliente das contas a receber vem da venda de origem (crediário, cartão)
+    const saleIds = [...new Set(contas.map((c: any) => c.saleId).filter(Boolean))] as string[];
+    const vendas = saleIds.length ? await prisma.sale.findMany({
+        where: { id: { in: saleIds } },
+        select: { id: true, nfceNumber: true, Customer: { select: { name: true } } }
+    }) : [];
+    const porVenda = new Map(vendas.map(v => [v.id, v]));
+    return contas.map((c: any) => ({
         id: c.id,
         descricao: c.description,
         valor: Number(c.amount),
@@ -98,6 +105,9 @@ const listarContas = async (tipo: string, status?: string) => {
         valorPago: Number(c.paidAmount ?? 0),
         dataPagamento: c.paidDate,
         fornecedor: c.Supplier?.name ?? null,
+        fornecedorId: c.supplierId ?? null,
+        cliente: c.saleId ? porVenda.get(c.saleId)?.Customer?.name ?? null : null,
+        venda: c.saleId ? porVenda.get(c.saleId)?.nfceNumber ?? null : null,
         atrasada: c.status !== 'PAID' && c.status !== 'CANCELLED' && c.dueDate < new Date()
     }));
 };
@@ -114,7 +124,7 @@ router.get('/pagar', async (req: any, res: any) => {
 
 // POST /api/financeiro/transacao - Lança nova conta (RECEIVE ou PAY)
 router.post('/transacao', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR', 'FINANCIAL'), async (req: any, res: any) => {
-    const { tipo, descricao, valor, vencimento, categoria, documento, notas } = req.body;
+    const { tipo, descricao, valor, vencimento, categoria, documento, notas, fornecedorId } = req.body;
 
     if (!['RECEIVE', 'PAY'].includes(tipo)) {
         return res.status(400).json({ erro: "Tipo inválido! Use RECEIVE ou PAY." });
@@ -145,9 +155,10 @@ router.post('/transacao', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR', 'FIN
             description: descricao.trim().toUpperCase(),
             amount: valorNum,
             dueDate: venc,
-            category: categoria || null,
+            category: categoria ? String(categoria).trim().toUpperCase() : null,
             document: documento || null,
             notes: notas || null,
+            supplierId: fornecedorId || null,
             createdAt: new Date(),
             updatedAt: new Date()
         }

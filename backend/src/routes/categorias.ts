@@ -56,11 +56,17 @@ router.post('/', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: 
 // PUT /api/categorias/:id - Renomeia categoria
 router.put('/:id', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     const { id } = req.params;
-    const { nome } = req.body;
+    const { nome, ativo } = req.body;
 
     const categoria = await prisma.category.findUnique({ where: { id } });
     if (!categoria) {
         return res.status(404).json({ erro: "Categoria não encontrada!" });
+    }
+
+    // Só ativar/desativar
+    if (nome === undefined && ativo !== undefined) {
+        await prisma.category.update({ where: { id }, data: { isActive: Boolean(ativo), updatedAt: new Date() } });
+        return res.json({ id, nome: categoria.name });
     }
 
     if (!nome || nome.trim() === '') {
@@ -77,7 +83,7 @@ router.put('/:id', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req
 
     const atualizada = await prisma.category.update({
         where: { id },
-        data: { name: nomeLimpo, updatedAt: new Date() }
+        data: { name: nomeLimpo, ...(ativo !== undefined ? { isActive: Boolean(ativo) } : {}), updatedAt: new Date() }
     });
 
     return res.json({ id: atualizada.id, nome: atualizada.name });

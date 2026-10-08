@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PDV — JG Sistemas v2.4.12</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-tint": "#305ea1",
+            "primary-fixed-dim": "#a9c7ff",
+            "on-tertiary": "#ffffff",
+            "surface-container": "#e5eeff",
+            "outline-variant": "#c3c6d2",
+            "on-error-container": "#93000a",
+            "on-tertiary-fixed": "#002109",
+            "on-surface": "#0b1c30",
+            "surface-variant": "#d3e4fe",
+            "tertiary-container": "#005d25",
+            "on-primary-fixed-variant": "#0e4688",
+            "background": "#f8f9ff",
+            "tertiary-fixed": "#7ffc97",
+            "inverse-primary": "#a9c7ff",
+            "on-surface-variant": "#434750",
+            "on-primary-fixed": "#001b3e",
+            "primary-fixed": "#d6e3ff",
+            "surface-container-low": "#eff4ff",
+            "on-secondary-fixed-variant": "#324769",
+            "secondary-fixed-dim": "#b2c7f0",
+            "on-secondary": "#ffffff",
+            "on-tertiary-fixed-variant": "#005320",
+            "inverse-on-surface": "#eaf1ff",
+            "surface": "#f8f9ff",
+            "primary": "#003873",
+            "tertiary": "#004319",
+            "surface-container-highest": "#d3e4fe",
+            "secondary-container": "#bfd5fe",
+            "on-secondary-container": "#475c7f",
+            "on-background": "#0b1c30",
+            "surface-dim": "#cbdbf5",
+            "on-error": "#ffffff",
+            "outline": "#737782",
+            "on-tertiary-container": "#5dda7a",
+            "primary-container": "#1d4f91",
+            "on-primary": "#ffffff",
+            "surface-container-lowest": "#ffffff",
+            "tertiary-fixed-dim": "#62df7d",
+            "error-container": "#ffdad6",
+            "secondary": "#4a5f82",
+            "on-primary-container": "#a2c3ff",
+            "error": "#ba1a1a",
+            "secondary-fixed": "#d5e3ff",
+            "inverse-surface": "#213145",
+            "surface-bright": "#f8f9ff",
+            "on-secondary-fixed": "#011b3b",
+            "surface-container-high": "#dce9ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "fontFamily": {
+            "headline": ["Inter", "sans-serif"],
+            "display": ["Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"],
+            "mono": ["'JetBrains Mono'", "monospace"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 19px;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface font-body h-screen flex flex-col overflow-hidden select-none antialiased">
+<!-- 1. FAIXA SUPERIOR OPERACIONAL (Marinho #0F2747, 40px) -->
+<header class="h-10 bg-[#0F2747] text-white px-4 flex items-center justify-between text-xs font-medium border-b border-primary-container/40 shrink-0 z-30 shadow-sm">
+<!-- Esquerda: Identificação do Terminal e Loja -->
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2">
+<span class="w-5 h-5 bg-[#16A34A] text-white font-black rounded flex items-center justify-center text-[11px] tracking-tight shadow-inner">JG</span>
+<span class="font-bold tracking-tight text-white text-sm">JG Sistemas</span>
+<span class="text-white/40">·</span>
+<span class="text-slate-200 font-normal">Loja Centro — Varejo Moda</span>
+</div>
+<div class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-950/70 border border-emerald-500/40 text-[#7ffc97] text-[11px]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#16A34A] animate-pulse"></span>
+<span>Online</span>
+</div>
+</div>
+<!-- Centro/Direita: Operador, Caixa, Sefaz e Relógio em tempo real -->
+<div class="flex items-center gap-5 text-slate-200">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-slate-300 text-sm">badge</span>
+<span class="text-slate-400">Operador:</span>
+<span class="font-semibold text-white">Ana Paula Souza</span>
+</div>
+<div class="h-3 w-px bg-white/20"></div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-slate-300 text-sm">point_of_sale</span>
+<span class="text-slate-400">Terminal:</span>
+<span class="font-semibold text-white">Caixa 01</span>
+</div>
+<div class="h-3 w-px bg-white/20"></div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[#7ffc97] text-sm fill">cloud_done</span>
+<span class="text-slate-300 font-normal">NFC-e Sefaz Ativa</span>
+</div>
+<div class="h-3 w-px bg-white/20"></div>
+<div class="flex items-center gap-2 font-mono text-xs tabular-nums text-primary-fixed-dim bg-[#001b3e]/60 px-2 py-1 rounded border border-white/10">
+<span class="material-symbols-outlined text-xs">schedule</span>
+<span class="font-bold" id="live-clock">14:32:08</span>
+</div>
+</div>
+</header>
+<!-- 2. FAIXA DE ALERTA ÂMBAR FINA (Abaixo do cabeçalho) -->
+<div class="bg-amber-50 border-b border-amber-200 px-4 py-1.5 flex items-center justify-between text-xs text-amber-900 shrink-0">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-amber-600 text-base fill">warning</span>
+<p class="font-medium">
+<strong class="font-bold text-amber-950">Atenção ao estoque:</strong> 
+        O item <span class="underline decoration-amber-400 font-semibold">Camiseta Básica Algodão Branca M</span> possui apenas <span class="font-bold text-red-700">2 unidades</span> em saldo no depósito.
+      </p>
+</div>
+<div class="flex items-center gap-3 text-amber-800 text-[11px]">
+<span class="bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-mono font-semibold border border-amber-300">Grade: M</span>
+<span class="text-amber-700">Última atualização: Hoje 14:15</span>
+</div>
+</div>
+<!-- 3. ÁREA PRINCIPAL DIVIDIDA EM DUAS COLUNAS (65% / 35%) -->
+<main class="flex-1 flex overflow-hidden p-3 gap-3 bg-background">
+<!-- COLUNA ESQUERDA (~65%): Tabela de Itens e Leitura de Código -->
+<section class="flex-[65] flex flex-col bg-surface-container-lowest rounded-lg border border-[#E2E8F0] shadow-sm overflow-hidden">
+<!-- Cabeçalho da Tabela de Itens -->
+<div class="px-4 py-2.5 border-b border-[#E2E8F0] bg-surface-container-low flex items-center justify-between shrink-0">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container">shopping_cart</span>
+<h1 class="text-sm font-bold text-on-surface tracking-tight">Itens da Venda Atual</h1>
+<span class="bg-secondary-fixed text-on-secondary-fixed-variant text-xs font-semibold px-2 py-0.5 rounded-full ml-1 tabular-nums">
+            5 produtos adicionados
+          </span>
+</div>
+<div class="flex items-center gap-2 text-xs text-secondary font-medium">
+<span class="material-symbols-outlined text-sm">receipt_long</span>
+<span>Venda Nº <strong class="text-on-surface tabular-nums">#08942</strong></span>
+</div>
+</div>
+<!-- Tabela Operacional de Itens com Rolagem Interna -->
+<div class="flex-1 overflow-y-auto">
+<table class="w-full text-left text-xs border-collapse">
+<thead class="sticky top-0 bg-[#F4F6FA] text-secondary font-semibold border-b border-[#E2E8F0] z-10 select-none text-[11px] tracking-wide uppercase">
+<tr>
+<th class="py-2.5 px-3 w-10 text-center">Nº</th>
+<th class="py-2.5 px-3 w-32">Código/EAN</th>
+<th class="py-2.5 px-3">Descrição do Produto</th>
+<th class="py-2.5 px-3 w-16 text-center">Qtd</th>
+<th class="py-2.5 px-3 w-24 text-right">Unitário</th>
+<th class="py-2.5 px-3 w-24 text-right">Desconto</th>
+<th class="py-2.5 px-3 w-24 text-right font-bold text-on-surface">Subtotal</th>
+<th class="py-2.5 px-2 w-12 text-center">Ações</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#E2E8F0] tabular-nums font-normal text-on-surface text-sm">
+<!-- Item 1 -->
+<tr class="hover:bg-slate-50 transition-colors h-11">
+<td class="px-3 text-center text-secondary font-mono text-xs">001</td>
+<td class="px-3 font-mono text-xs text-secondary font-medium">7891029384710</td>
+<td class="px-3">
+<span class="font-semibold text-on-surface">Vestido Midi Floral Estampado</span>
+<span class="text-[11px] text-secondary ml-1.5 px-1 py-0.5 rounded bg-slate-100 font-mono">Tam G</span>
+</td>
+<td class="px-3 text-center font-semibold">1 un</td>
+<td class="px-3 text-right text-secondary">R$ 189,90</td>
+<td class="px-3 text-right text-slate-400">R$ 0,00</td>
+<td class="px-3 text-right font-bold text-on-surface">R$ 189,90</td>
+<td class="px-2 text-center">
+<button class="text-slate-400 hover:text-error transition-colors p-1 rounded hover:bg-red-50" title="Excluir item [F7]">
+<span class="material-symbols-outlined text-base">delete</span>
+</button>
+</td>
+</tr>
+<!-- Item 2 -->
+<tr class="hover:bg-slate-50 transition-colors h-11">
+<td class="px-3 text-center text-secondary font-mono text-xs">002</td>
+<td class="px-3 font-mono text-xs text-secondary font-medium">7891029384727</td>
+<td class="px-3">
+<span class="font-semibold text-on-surface">Calça Jeans Skinny Lavagem Clara</span>
+<span class="text-[11px] text-secondary ml-1.5 px-1 py-0.5 rounded bg-slate-100 font-mono">Tam 38</span>
+</td>
+<td class="px-3 text-center font-semibold">1 un</td>
+<td class="px-3 text-right text-secondary">R$ 149,90</td>
+<td class="px-3 text-right text-red-600 font-medium">-R$ 10,00</td>
+<td class="px-3 text-right font-bold text-on-surface">R$ 139,90</td>
+<td class="px-2 text-center">
+<button class="text-slate-400 hover:text-error transition-colors p-1 rounded hover:bg-red-50" title="Excluir item [F7]">
+<span class="material-symbols-outlined text-base">delete</span>
+</button>
+</td>
+</tr>
+<!-- Item 3 -->
+<tr class="hover:bg-slate-50 transition-colors h-11">
+<td class="px-3 text-center text-secondary font-mono text-xs">003</td>
+<td class="px-3 font-mono text-xs text-secondary font-medium">7891029384734</td>
+<td class="px-3">
+<span class="font-semibold text-on-surface">Camiseta Básica Algodão Branca M</span>
+<span class="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 ml-1.5 px-1 py-0.5 rounded font-medium">Estoque Baixo</span>
+</td>
+<td class="px-3 text-center font-semibold">2 un</td>
+<td class="px-3 text-right text-secondary">R$ 59,90</td>
+<td class="px-3 text-right text-slate-400">R$ 0,00</td>
+<td class="px-3 text-right font-bold text-on-surface">R$ 119,80</td>
+<td class="px-2 text-center">
+<button class="text-slate-400 hover:text-error transition-colors p-1 rounded hover:bg-red-50" title="Excluir item [F7]">
+<span class="material-symbols-outlined text-base">delete</span>
+</button>
+</td>
+</tr>
+<!-- Item 4 -->
+<tr class="hover:bg-slate-50 transition-colors h-11">
+<td class="px-3 text-center text-secondary font-mono text-xs">004</td>
+<td class="px-3 font-mono text-xs text-secondary font-medium">7891029384796</td>
+<td class="px-3">
+<span class="font-semibold text-on-surface">Cinto de Couro Legítimo Marrom</span>
+<span class="text-[11px] text-secondary ml-1.5 px-1 py-0.5 rounded bg-slate-100 font-mono">Tam Único</span>
+</td>
+<td class="px-3 text-center font-semibold">1 un</td>
+<td class="px-3 text-right text-secondary">R$ 39,90</td>
+<td class="px-3 text-right text-slate-400">R$ 0,00</td>
+<td class="px-3 text-right font-bold text-on-surface">R$ 39,90</td>
+<td class="px-2 text-center">
+<button class="text-slate-400 hover:text-error transition-colors p-1 rounded hover:bg-red-50" title="Excluir item [F7]">
+<span class="material-symbols-outlined text-base">delete</span>
+</button>
+</td>
+</tr>
+<!-- Item 5 (Recém-bipado / Selecionado com destaque ativo) -->
+<tr class="bg-blue-50/80 border-l-4 border-l-primary-container border-y border-[#bfd5fe] h-11 text-on-surface">
+<td class="px-3 text-center text-primary-container font-mono text-xs font-bold">005</td>
+<td class="px-3 font-mono text-xs text-primary-container font-bold">7891029384801</td>
+<td class="px-3">
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+<span class="font-bold text-on-surface">Kit Meia Soquete Invisível 3 Pares</span>
+<span class="text-[10px] bg-primary text-white font-bold px-1.5 py-0.2 rounded uppercase tracking-wider">Último Item</span>
+</div>
+</td>
+<td class="px-3 text-center font-bold text-on-surface">1 un</td>
+<td class="px-3 text-right text-secondary">R$ 22,80</td>
+<td class="px-3 text-right text-red-600 font-semibold">-R$ 2,30</td>
+<td class="px-3 text-right font-bold text-primary text-base">R$ 20,50</td>
+<td class="px-2 text-center">
+<button class="text-error hover:bg-red-100 transition-colors p-1 rounded" title="Excluir item [F7]">
+<span class="material-symbols-outlined text-base">delete</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Barra de Entrada Rápida Inferior (Código de Barras + Qtd) -->
+<div class="p-3 bg-surface-container-low border-t border-[#E2E8F0] shrink-0">
+<div class="flex items-center gap-2">
+<!-- Campo Quantidade Rápida -->
+<div class="w-28 relative">
+<label class="block text-[10px] font-bold uppercase tracking-wider text-secondary mb-1">
+              Multiplicador
+            </label>
+<div class="relative flex items-center">
+<input aria-label="Quantidade" class="w-full h-11 bg-white border border-[#c3c6d2] focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 rounded-lg text-center font-bold text-on-surface font-mono text-base tabular-nums" type="text" value="1"/>
+<span class="absolute right-2 text-[10px] text-secondary font-mono">un</span>
+</div>
+</div>
+<!-- Campo Principal: Código de Barras / Busca F3 -->
+<div class="flex-1">
+<div class="flex items-center justify-between mb-1">
+<label class="text-[10px] font-bold uppercase tracking-wider text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">barcode_scanner</span>
+<span>Código de Barras / Referência (ou F3 para pesquisar)</span>
+</label>
+<span class="text-[11px] text-secondary font-mono flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                Leitor óptico pronto · Pressione <kbd class="px-1 py-0.5 bg-slate-200 border border-slate-300 rounded font-semibold text-slate-800">[ENTER]</kbd>
+</span>
+</div>
+<div class="relative flex items-center shadow-sm">
+<input autofocus="" class="w-full h-11 pl-11 pr-24 bg-white border-2 border-primary-container rounded-lg font-mono text-sm font-semibold text-on-surface placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:ring-4 focus:ring-primary-container/15" placeholder="Bipe o código de barras ou digite a referência..." type="text"/>
+<span class="absolute left-3.5 material-symbols-outlined text-primary-container">qr_code_scanner</span>
+<button class="absolute right-2 h-8 px-2.5 bg-surface-container text-primary font-semibold text-xs rounded border border-[#bfd5fe] hover:bg-secondary-container flex items-center gap-1 transition-colors" type="button">
+<span class="material-symbols-outlined text-sm">search</span>
+<span>F3 Busca</span>
+</button>
+</div>
+</div>
+<!-- Botão Lançar / Enter -->
+<div class="pt-5">
+<button class="h-11 px-5 bg-primary-container hover:bg-[#163f75] text-white font-bold rounded-lg text-xs flex items-center gap-1.5 transition-colors shadow" type="button">
+<span class="material-symbols-outlined text-sm">add_shopping_cart</span>
+<span>Lançar</span>
+<kbd class="text-[10px] bg-white/20 px-1 py-0.5 rounded font-mono ml-0.5">ENTER</kbd>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- COLUNA DIREITA (~35%): Cliente, Resumo de Totais e Painel Gigante de Pagamento -->
+<section class="flex-[35] flex flex-col gap-3 shrink-0">
+<!-- Card Cliente Identificado -->
+<div class="bg-surface-container-lowest rounded-lg border border-[#E2E8F0] p-3.5 shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-1.5 text-xs text-secondary font-bold uppercase tracking-wider">
+<span class="material-symbols-outlined text-base">person</span>
+<span>Cliente da Venda</span>
+</div>
+<button class="px-2 py-0.5 bg-surface-container-high hover:bg-surface-variant text-primary text-xs font-semibold rounded border border-outline-variant/40 flex items-center gap-1 transition-all" type="button">
+<kbd class="font-mono text-[10px] bg-white px-1 py-0.2 rounded border border-slate-300">F2</kbd>
+<span>Alterar / CPF na Nota</span>
+</button>
+</div>
+<div class="flex items-center justify-between bg-surface-container-low p-2.5 rounded-lg border border-[#E2E8F0]">
+<div>
+<p class="font-bold text-on-surface text-sm">Consumidor Final (Não identificado)</p>
+<p class="text-xs text-secondary font-mono">CPF/CNPJ: Não informado</p>
+</div>
+<span class="px-2 py-1 bg-slate-200/80 text-secondary text-[11px] font-semibold rounded">Sem Fidelidade</span>
+</div>
+</div>
+<!-- Card de Resumo de Valores -->
+<div class="bg-surface-container-lowest rounded-lg border border-[#E2E8F0] p-4 shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between pb-2 border-b border-[#E2E8F0] mb-3">
+<h2 class="text-xs font-bold uppercase tracking-wider text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-base">calculate</span>
+<span>Resumo Financeiro</span>
+</h2>
+<span class="text-xs font-semibold text-secondary tabular-nums">Volume: <strong>6 unidades</strong></span>
+</div>
+<div class="space-y-2 text-sm tabular-nums">
+<div class="flex justify-between items-center text-secondary">
+<span class="text-xs">Subtotal Bruto (5 itens):</span>
+<span class="font-semibold text-on-surface">R$ 512,30</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-slate-600 flex items-center gap-1">
+              Descontos Comerciais
+              <span class="text-[10px] bg-emerald-50 text-emerald-700 px-1 py-0.2 rounded border border-emerald-200 font-mono">-2.4%</span>
+</span>
+<span class="font-bold text-emerald-700">- R$ 12,30</span>
+</div>
+<div class="flex justify-between items-center text-xs text-secondary">
+<span>Acréscimos / Frete:</span>
+<span>R$ 0,00</span>
+</div>
+<div class="flex justify-between items-center text-xs text-secondary">
+<span class="flex items-center gap-1">
+              Cashback JG Club:
+              <span class="material-symbols-outlined text-xs text-amber-600">stars</span>
+</span>
+<span class="font-mono text-slate-500">R$ 0,00 (0 pts)</span>
+</div>
+</div>
+<div class="border-t border-dashed border-[#c3c6d2] my-3"></div>
+<div class="flex justify-between items-baseline">
+<span class="text-xs font-bold uppercase tracking-wide text-secondary">Total Líquido</span>
+<span class="text-lg font-bold text-on-surface tabular-nums font-mono">R$ 500,00</span>
+</div>
+</div>
+<!-- Bloco de Destaque "TOTAL A PAGAR" (Marinho #0F2747 com Valor Verde Gigante) -->
+<div class="flex-1 bg-[#0F2747] text-white rounded-lg p-5 shadow-lg flex flex-col justify-between border-2 border-primary-container relative overflow-hidden">
+<!-- Fundo sutil com gradiente geométrico -->
+<div class="absolute -right-8 -bottom-8 w-44 h-44 rounded-full bg-primary-container/20 pointer-events-none blur-2xl"></div>
+<div>
+<div class="flex items-center justify-between mb-1">
+<span class="text-xs font-bold uppercase tracking-widest text-primary-fixed-dim flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">payments</span>
+              TOTAL A PAGAR
+            </span>
+<span class="px-2 py-0.5 bg-[#16A34A]/20 border border-[#16A34A]/40 text-[#7ffc97] text-[11px] font-bold rounded-full">
+              Caixa Pronto
+            </span>
+</div>
+<p class="text-xs text-slate-300">Moeda Corrente Brasileira (BRL)</p>
+</div>
+<!-- Valor Gigante com Tabular Nums e Cor Verde Marca #16A34A -->
+<div class="py-2">
+<div class="text-[52px] leading-tight font-extrabold text-[#16A34A] tracking-tight font-mono tabular-nums text-right drop-shadow-md">
+            R$ 500,00
+          </div>
+<p class="text-[11px] text-right text-slate-400 font-mono">
+            Quinhentos reais
+          </p>
+</div>
+<!-- Ação Principal de Fechamento -->
+<div class="pt-3 border-t border-white/10 flex flex-col gap-2">
+<button class="w-full h-12 bg-[#16A34A] hover:bg-emerald-600 active:scale-[0.99] text-white font-bold rounded-lg text-sm flex items-center justify-center gap-2 shadow-lg transition-all focus:ring-4 focus:ring-emerald-400/30" type="button">
+<span class="material-symbols-outlined text-lg">check_circle</span>
+<span>FECHAR VENDA</span>
+<kbd class="bg-black/20 text-white px-2 py-0.5 rounded font-mono text-xs font-extrabold tracking-wider border border-white/20">[F12]</kbd>
+</button>
+<div class="flex items-center justify-between text-[11px] text-slate-300 px-1">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">credit_card</span>
+              Múltiplas formas aceitas
+            </span>
+<span class="text-primary-fixed-dim font-medium">Troco calculado automaticamente</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- 4. RODAPÉ FIXO OPERACIONAL COM CHIPS DE ATALHOS DE TECLADO -->
+<footer class="h-11 bg-[#0b1c30] text-slate-200 border-t border-[#1d4f91]/40 px-4 flex items-center justify-between text-xs shrink-0 select-none">
+<!-- Cluster de Teclas de Atalho de Alta Frequência -->
+<div class="flex items-center gap-2 overflow-x-auto">
+<!-- ENTER -->
+<div class="flex items-center gap-1 bg-[#152a45] hover:bg-[#1d3d63] px-2.5 py-1 rounded border border-white/10 text-white cursor-pointer transition-colors shadow-xs">
+<kbd class="font-mono font-bold text-[11px] text-primary-fixed-dim bg-[#0F2747] px-1.5 py-0.5 rounded border border-white/10">ENTER</kbd>
+<span class="text-[11px] font-medium">Lançar Item</span>
+</div>
+<!-- F2 -->
+<div class="flex items-center gap-1 bg-[#152a45] hover:bg-[#1d3d63] px-2.5 py-1 rounded border border-white/10 text-white cursor-pointer transition-colors shadow-xs">
+<kbd class="font-mono font-bold text-[11px] text-primary-fixed-dim bg-[#0F2747] px-1.5 py-0.5 rounded border border-white/10">F2</kbd>
+<span class="text-[11px] font-medium">Identificar Cliente</span>
+</div>
+<!-- F3 -->
+<div class="flex items-center gap-1 bg-[#152a45] hover:bg-[#1d3d63] px-2.5 py-1 rounded border border-white/10 text-white cursor-pointer transition-colors shadow-xs">
+<kbd class="font-mono font-bold text-[11px] text-primary-fixed-dim bg-[#0F2747] px-1.5 py-0.5 rounded border border-white/10">F3</kbd>
+<span class="text-[11px] font-medium">Buscar Produto</span>
+</div>
+<!-- F7 -->
+<div class="flex items-center gap-1 bg-[#152a45] hover:bg-[#1d3d63] px-2.5 py-1 rounded border border-white/10 text-white cursor-pointer transition-colors shadow-xs">
+<kbd class="font-mono font-bold text-[11px] text-red-300 bg-[#0F2747] px-1.5 py-0.5 rounded border border-red-500/30">F7</kbd>
+<span class="text-[11px] font-medium">Cancelar Item</span>
+</div>
+<!-- F8 -->
+<div class="flex items-center gap-1 bg-[#152a45] hover:bg-[#1d3d63] px-2.5 py-1 rounded border border-white/10 text-white cursor-pointer transition-colors shadow-xs">
+<kbd class="font-mono font-bold text-[11px] text-amber-300 bg-[#0F2747] px-1.5 py-0.5 rounded border border-amber-500/30">F8</kbd>
+<span class="text-[11px] font-medium">Venda sem NFC-e</span>
+</div>
+<!-- F12 Destacado -->
+<div class="flex items-center gap-1.5 bg-[#16A34A] text-white px-3 py-1 rounded font-semibold cursor-pointer hover:bg-emerald-600 transition-colors shadow">
+<kbd class="font-mono font-black text-[11px] bg-black/30 text-white px-1.5 py-0.5 rounded border border-white/30">F12</kbd>
+<span class="text-[11px]">Fechar Venda</span>
+</div>
+<!-- ESC -->
+<div class="flex items-center gap-1 bg-red-950/60 hover:bg-red-900/80 px-2.5 py-1 rounded border border-red-500/30 text-red-200 cursor-pointer transition-colors ml-1">
+<kbd class="font-mono font-bold text-[11px] bg-black/30 px-1.5 py-0.5 rounded text-white border border-red-500/30">ESC</kbd>
+<span class="text-[11px] font-medium">Cancelar / Menu</span>
+</div>
+</div>
+<!-- Metadados de Sistema e Suporte do Footer -->
+<div class="flex items-center gap-4 text-[11px] text-slate-400">
+<span class="hidden md:inline font-mono">Suporte: 0800 555-0192</span>
+<span class="text-white/20">|</span>
+<span>© 2025 JG Sistemas v2.4.12</span>
+</div>
+</footer>
+<!-- Script Leve de Relógio em Tempo Real e Interação por Teclado -->
+<script>
+    // Atualização em tempo real do relógio
+    function updatePDVClock() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const clockElement = document.getElementById('live-clock');
+      if (clockElement) {
+        clockElement.textContent = `${hours}:${minutes}:${seconds}`;
+      }
+    }
+    setInterval(updatePDVClock, 1000);
+    updatePDVClock();
+
+    // Feedback visual para atalhos de teclado de exemplo
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'F12') {
+        e.preventDefault();
+        alert('Comando [F12]: Abrindo tela de fechamento de pagamento e emissão NFC-e...');
+      } else if (e.key === 'F2') {
+        e.preventDefault();
+        alert('Comando [F2]: Localizar ou cadastrar cliente / Inserir CPF na Nota');
+      } else if (e.key === 'F3') {
+        e.preventDefault();
+        alert('Comando [F3]: Abrindo modal de busca avançada de catálogo de produtos');
+      }
+    });
+  </script>
+</body></html>

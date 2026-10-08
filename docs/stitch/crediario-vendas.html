@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vendas a Prazo (Crediário) — JG Sistemas</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Inter Font -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Theme Configuration -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "inverse-surface": "#213145",
+            "secondary-container": "#bfd5fe",
+            "on-tertiary-fixed": "#002109",
+            "inverse-on-surface": "#eaf1ff",
+            "tertiary-container": "#005d25",
+            "secondary": "#4a5f82",
+            "on-error": "#ffffff",
+            "tertiary-fixed": "#7ffc97",
+            "outline-variant": "#c3c6d2",
+            "on-primary-container": "#a2c3ff",
+            "on-surface-variant": "#434750",
+            "surface-container-high": "#dce9ff",
+            "surface-bright": "#f8f9ff",
+            "secondary-fixed-dim": "#b2c7f0",
+            "surface-variant": "#d3e4fe",
+            "primary": "#003873",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary": "#ffffff",
+            "surface-container-low": "#eff4ff",
+            "on-error-container": "#93000a",
+            "error-container": "#ffdad6",
+            "surface-dim": "#cbdbf5",
+            "on-tertiary-fixed-variant": "#005320",
+            "on-secondary-container": "#475c7f",
+            "on-primary-fixed-variant": "#0e4688",
+            "on-surface": "#0b1c30",
+            "surface": "#f8f9ff",
+            "error": "#ba1a1a",
+            "tertiary": "#004319",
+            "outline": "#737782",
+            "surface-container": "#e5eeff",
+            "primary-fixed": "#d6e3ff",
+            "on-secondary-fixed": "#011b3b",
+            "secondary-fixed": "#d5e3ff",
+            "on-primary": "#ffffff",
+            "on-primary-fixed": "#001b3e",
+            "primary-container": "#1d4f91",
+            "on-secondary-fixed-variant": "#324769",
+            "on-background": "#0b1c30",
+            "primary-fixed-dim": "#a9c7ff",
+            "background": "#f8f9ff",
+            "on-tertiary-container": "#5dda7a",
+            "on-secondary": "#ffffff",
+            "tertiary-fixed-dim": "#62df7d",
+            "surface-container-highest": "#d3e4fe",
+            "surface-tint": "#305ea1",
+            "inverse-primary": "#a9c7ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {},
+          "fontFamily": {
+            "headline": ["Inter", "sans-serif"],
+            "display": ["Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "label": ["Inter", "sans-serif"]
+          },
+          "fontSize": {}
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .material-symbols-outlined.fill-icon {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+    /* Custom scrollbar for ERP density */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #eff4ff;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c3c6d2;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #737782;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex selection:bg-secondary-container selection:text-primary">
+<!-- SIDEBAR (Fixed 248px Marinho) -->
+<aside class="fixed top-0 left-0 h-screen w-[248px] bg-on-surface dark:bg-on-surface border-r border-outline-variant/30 dark:border-outline/20 shadow-sm dark:shadow-none z-30 flex flex-col justify-between p-4 select-none font-body text-body">
+<!-- Top Part: Logo & Navigation Items -->
+<div class="flex flex-col gap-4 overflow-y-auto pr-1">
+<!-- Logo Container -->
+<div class="flex items-center gap-2.5 px-2 py-1.5">
+<div class="w-8 h-8 rounded-lg bg-tertiary-container flex items-center justify-center text-tertiary-fixed font-bold font-headline text-sm tracking-tight shadow-sm">
+          JG
+        </div>
+<div class="flex flex-col">
+<span class="font-headline font-bold text-surface text-sm tracking-wide">JG Sistemas</span>
+<span class="text-[10px] text-outline-variant font-medium tracking-tight">ERP Gestão Comercial</span>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="flex flex-col gap-1 mt-2 text-xs">
+<!-- Início -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="home">home</span>
+<span class="font-medium">Início</span>
+</a>
+<!-- Vendas (Active Group) -->
+<div class="flex flex-col gap-0.5 mt-1">
+<div class="flex items-center justify-between px-3 py-1.5 text-[10px] uppercase font-semibold text-outline tracking-wider">
+<span>Vendas</span>
+<span class="material-symbols-outlined text-xs">expand_more</span>
+</div>
+<a class="flex items-center justify-between px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors pl-5" href="#">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-[17px]" data-icon="point_of_sale">point_of_sale</span>
+<span>PDV Caixa</span>
+</div>
+<span class="text-[10px] bg-primary/40 text-on-primary-container px-1.5 py-0.5 rounded font-mono">F12</span>
+</a>
+<a class="flex items-center gap-2.5 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors pl-5" href="#">
+<span class="material-symbols-outlined text-[17px]">receipt_long</span>
+<span>Consultar Vendas</span>
+</a>
+<a class="flex items-center gap-2.5 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors pl-5" href="#">
+<span class="material-symbols-outlined text-[17px]">swap_horizontal_circle</span>
+<span>Trocas &amp; Devoluções</span>
+</a>
+<!-- ACTIVE ITEM: Crediário da loja -->
+<a class="flex items-center gap-3 px-3 py-2 text-surface dark:text-surface bg-primary-container dark:bg-primary-container rounded-lg font-medium shadow-xs pl-5 transition-all duration-150 ease-in-out cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[18px] text-tertiary-fixed" data-icon="credit_card">credit_card</span>
+<span class="text-surface font-semibold">Crediário da Loja</span>
+</a>
+</div>
+<!-- Clientes -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors cursor-pointer mt-1" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="group">group</span>
+<span class="font-medium">Clientes</span>
+</a>
+<!-- Catálogo -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="inventory_2">inventory_2</span>
+<span class="font-medium">Catálogo</span>
+</a>
+<!-- Estoque -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="warehouse">warehouse</span>
+<span class="font-medium">Estoque</span>
+</a>
+<!-- Financeiro -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="account_balance">account_balance</span>
+<span class="font-medium">Financeiro</span>
+</a>
+<!-- Pessoas -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="badge">badge</span>
+<span class="font-medium">Pessoas</span>
+</a>
+<!-- Relatórios -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="bar_chart">bar_chart</span>
+<span class="font-medium">Relatórios</span>
+</a>
+<!-- Administração -->
+<a class="flex items-center gap-3 px-3 py-2 text-outline-variant hover:text-surface hover:bg-primary/50 rounded-lg transition-colors cursor-pointer" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="settings">settings</span>
+<span class="font-medium">Administração</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Footer Details -->
+<div class="pt-3 border-t border-outline-variant/20 flex flex-col gap-2">
+<div class="flex items-center justify-between px-2 text-xs">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-tertiary-container/40 text-tertiary-fixed text-[11px] font-medium border border-tertiary-fixed/20">
+<span class="material-symbols-outlined text-[14px]" data-icon="storefront">storefront</span>
+          Varejo · Moda
+        </span>
+<span class="flex items-center gap-1 text-[11px] text-tertiary-fixed font-medium">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed animate-pulse"></span>
+          Online
+        </span>
+</div>
+<div class="px-2 text-[10px] text-outline-variant/80 flex items-center justify-between">
+<span>v3.4.1 · Loja Matriz 01</span>
+<span class="material-symbols-outlined text-xs hover:text-surface cursor-pointer">help</span>
+</div>
+</div>
+</aside>
+<!-- MAIN WRAPPER: Shifted right by 248px for sidebar -->
+<div class="flex-1 ml-[248px] flex flex-col min-w-0 bg-surface">
+<!-- TOPBAR (Fixed h-14 / 56px, white, elevated) -->
+<header class="fixed top-0 left-[248px] right-0 h-14 bg-surface-container-lowest border-b border-outline-variant/30 shadow-xs z-20 flex items-center justify-between px-6 select-none font-headline">
+<!-- Left: Breadcrumb and Search Bar -->
+<div class="flex items-center gap-6">
+<!-- Breadcrumb -->
+<nav class="flex items-center gap-2 text-xs font-medium text-secondary">
+<span class="hover:text-primary cursor-pointer transition-colors">Vendas</span>
+<span class="material-symbols-outlined text-xs text-outline-variant">chevron_right</span>
+<span class="text-on-surface font-semibold">Crediário da Loja / Vendas a prazo</span>
+</nav>
+<!-- Global Search Input -->
+<div class="relative w-80">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-outline">
+<span class="material-symbols-outlined text-lg" data-icon="search">search</span>
+</span>
+<input class="w-full h-8 pl-9 pr-14 text-xs bg-surface-container-low border border-outline-variant/60 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-on-surface placeholder:text-outline" placeholder="Buscar módulo, produto ou cliente (Ctrl+K)" type="text"/>
+<div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+<span class="text-[10px] bg-surface-container text-secondary font-mono px-1 py-0.5 rounded border border-outline-variant/50">Ctrl+K</span>
+</div>
+</div>
+</div>
+<!-- Right: Actions, Status & User Profile -->
+<div class="flex items-center gap-4">
+<!-- Caixa Status Chip -->
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-low border border-tertiary-fixed/40 text-on-surface text-xs font-medium">
+<span class="w-2 h-2 rounded-full bg-tertiary-container animate-ping relative">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim absolute top-0 left-0"></span>
+</span>
+<span class="text-xs font-semibold text-tertiary">Caixa 01 · Aberto</span>
+</div>
+<!-- Primary Action: Abrir PDV -->
+<button class="flex items-center gap-1.5 h-8 px-3.5 bg-primary hover:bg-primary-container text-surface-container-lowest text-xs font-semibold rounded-lg shadow-sm transition-all duration-150 active:scale-95 cursor-pointer">
+<span class="material-symbols-outlined text-sm" data-icon="point_of_sale">point_of_sale</span>
+<span>Abrir PDV</span>
+<span class="ml-1 text-[10px] bg-primary-container/80 text-primary-fixed px-1 py-0.5 rounded font-mono">F1</span>
+</button>
+<div class="h-5 w-px bg-outline-variant/40"></div>
+<!-- Notification & Help Icons -->
+<div class="flex items-center gap-1 text-secondary">
+<button class="relative p-1.5 rounded-lg hover:bg-surface-container-high transition-colors" title="Notificações">
+<span class="material-symbols-outlined text-xl" data-icon="notifications">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full ring-2 ring-surface-container-lowest"></span>
+</button>
+<button class="p-1.5 rounded-lg hover:bg-surface-container-high transition-colors" title="Ajuda">
+<span class="material-symbols-outlined text-xl" data-icon="help">help</span>
+</button>
+</div>
+<!-- Operator User Avatar Cluster -->
+<div class="flex items-center gap-2.5 pl-2">
+<div class="w-8 h-8 rounded-full bg-primary-container text-surface-container-lowest flex items-center justify-center font-bold text-xs shadow-xs border border-primary-fixed">
+            JG
+          </div>
+<div class="flex flex-col text-left">
+<span class="text-xs font-semibold text-on-surface leading-tight">Juliana Gomes</span>
+<span class="text-[10px] text-secondary leading-tight">Gerente Geral</span>
+</div>
+<span class="material-symbols-outlined text-base text-outline cursor-pointer">expand_more</span>
+</div>
+</div>
+</header>
+<!-- MAIN CONTENT CANVAS -->
+<main class="mt-14 p-6 flex flex-col gap-6">
+<!-- Header Section: Title + Actions -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<div class="flex items-center gap-2.5">
+<h1 class="text-2xl font-bold font-headline text-on-surface tracking-tight">Vendas a prazo (Crediário)</h1>
+<span class="px-2 py-0.5 bg-primary-fixed text-primary text-xs font-semibold rounded-md">Módulo de Crédito</span>
+</div>
+<p class="text-xs text-secondary mt-1">
+            Controle de carnês, contas a receber por cliente, renegociações e histórico de parcelas em tempo real.
+          </p>
+</div>
+<div class="flex items-center gap-2.5 flex-wrap">
+<button class="h-9 px-3 bg-surface-container-lowest border border-outline-variant/60 hover:bg-surface-container-low text-on-surface text-xs font-medium rounded-lg flex items-center gap-1.5 shadow-xs transition-colors">
+<span class="material-symbols-outlined text-base text-secondary" data-icon="file_download">file_download</span>
+            Exportar Relatório
+          </button>
+<button class="h-9 px-3 bg-surface-container-lowest border border-outline-variant/60 hover:bg-surface-container-low text-on-surface text-xs font-medium rounded-lg flex items-center gap-1.5 shadow-xs transition-colors">
+<span class="material-symbols-outlined text-base text-tertiary" data-icon="chat">chat</span>
+            Cobrança WhatsApp
+          </button>
+<button class="h-9 px-4 bg-tertiary-container hover:bg-tertiary text-surface-container-lowest text-xs font-semibold rounded-lg flex items-center gap-2 shadow-xs transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-base">add_circle</span>
+            + Nova venda a prazo
+          </button>
+</div>
+</div>
+<!-- Quick KPI Cards Grid (Bento Metrics) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Card 1: Total em Aberto -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/40 shadow-xs flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="text-xs font-medium text-secondary">Total em Aberto</span>
+<div class="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-base">account_balance_wallet</span>
+</div>
+</div>
+<div class="mt-2">
+<span class="text-xl font-bold font-headline text-on-surface tabular-nums">R$ 42.850,00</span>
+<div class="flex items-center gap-1.5 mt-1 text-[11px] text-secondary">
+<span class="font-medium text-primary">148 clientes ativos</span>
+<span>· carteira total</span>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"></div>
+</div>
+<!-- Card 2: A Vencer no Mês -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/40 shadow-xs flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="text-xs font-medium text-secondary">Parcelas a Vencer no Mês</span>
+<div class="w-7 h-7 rounded-lg bg-secondary-container/40 flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined text-base">calendar_month</span>
+</div>
+</div>
+<div class="mt-2">
+<span class="text-xl font-bold font-headline text-on-surface tabular-nums">R$ 18.240,00</span>
+<div class="flex items-center gap-1 mt-1 text-[11px] text-secondary">
+<span class="text-on-secondary-container font-medium">64 parcelas</span>
+<span>agendadas</span>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 right-0 h-0.5 bg-secondary"></div>
+</div>
+<!-- Card 3: Inadimplência / Atraso -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-error-container/80 shadow-xs flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="text-xs font-medium text-error">Em Atraso / Inadimplência</span>
+<div class="w-7 h-7 rounded-lg bg-error-container flex items-center justify-center text-error">
+<span class="material-symbols-outlined text-base">warning</span>
+</div>
+</div>
+<div class="mt-2">
+<span class="text-xl font-bold font-headline text-error tabular-nums">R$ 4.310,00</span>
+<div class="flex items-center gap-1.5 mt-1 text-[11px] text-error">
+<span class="font-semibold bg-error-container/60 px-1 py-0.2 rounded">8,2% da carteira</span>
+<span class="text-on-surface-variant">· 19 carnês</span>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 right-0 h-0.5 bg-error"></div>
+</div>
+<!-- Card 4: Recebido Hoje -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/40 shadow-xs flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="text-xs font-medium text-tertiary">Recebido Hoje</span>
+<div class="w-7 h-7 rounded-lg bg-tertiary-container/20 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-base">check_circle</span>
+</div>
+</div>
+<div class="mt-2">
+<span class="text-xl font-bold font-headline text-tertiary tabular-nums">R$ 2.450,00</span>
+<div class="flex items-center gap-1.5 mt-1 text-[11px] text-secondary">
+<span class="font-semibold text-tertiary">12 baixas</span>
+<span>· 8 PIX / 4 Dinheiro</span>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 right-0 h-0.5 bg-tertiary-fixed-dim"></div>
+</div>
+</div>
+<!-- Filters Bar Card -->
+<div class="bg-surface-container-lowest p-3.5 rounded-xl border border-outline-variant/40 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+<div class="flex items-center gap-3 flex-1 flex-wrap">
+<!-- Text Search Filter -->
+<div class="relative min-w-[260px] flex-1">
+<span class="absolute inset-y-0 left-0 flex items-center pl-2.5 pointer-events-none text-outline">
+<span class="material-symbols-outlined text-base">search</span>
+</span>
+<input class="w-full h-8 pl-8 pr-3 text-xs bg-surface-container-low border border-outline-variant/50 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary text-on-surface placeholder:text-outline" placeholder="Buscar por cliente, CPF ou nº da venda..." type="text" value="Patrícia Lima"/>
+</div>
+<!-- Status Dropdown -->
+<div class="flex items-center gap-1.5">
+<span class="text-secondary font-medium whitespace-nowrap">Status:</span>
+<select class="h-8 pl-2 pr-7 text-xs bg-surface-container-low border border-outline-variant/50 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary text-on-surface">
+<option>Todos os status</option>
+<option selected="">Em atraso</option>
+<option>Em dia</option>
+<option>Quitada</option>
+</select>
+</div>
+<!-- Period Datepicker -->
+<div class="flex items-center gap-1.5">
+<span class="text-secondary font-medium whitespace-nowrap">Período Venc.:</span>
+<div class="flex items-center gap-1 bg-surface-container-low border border-outline-variant/50 rounded-lg px-2 h-8">
+<span class="material-symbols-outlined text-sm text-outline">calendar_today</span>
+<input class="bg-transparent border-0 text-xs text-on-surface p-0 focus:ring-0 w-36" type="text" value="01/10/2026 a 31/10/2026"/>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="h-8 px-3.5 bg-primary hover:bg-primary-container text-surface-container-lowest font-medium rounded-lg text-xs flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-sm">filter_alt</span>
+            Filtrar
+          </button>
+<button class="h-8 px-3 bg-surface-container-low hover:bg-surface-container text-secondary font-medium rounded-lg text-xs transition-colors">
+            Limpar
+          </button>
+</div>
+</div>
+<!-- MASTER-DETAIL MAIN SECTION -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- LEFT COLUMN: Sales Table (~62% / 7.5 of 12 cols) -->
+<div class="lg:col-span-7 xl:col-span-7 bg-surface-container-lowest rounded-xl border border-outline-variant/40 shadow-xs overflow-hidden flex flex-col">
+<!-- Table Header bar -->
+<div class="px-4 py-3 bg-surface-container-low border-b border-outline-variant/30 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-base">receipt_long</span>
+<h2 class="font-semibold text-xs text-on-surface font-headline uppercase tracking-wider">Carnês e Vendas a Prazo</h2>
+</div>
+<span class="text-[11px] text-secondary font-medium">148 registros encontrados</span>
+</div>
+<!-- Table Container -->
+<div class="overflow-x-auto">
+<table class="w-full text-left text-xs border-collapse">
+<thead>
+<tr class="bg-surface-container-low/60 text-secondary border-b border-outline-variant/30 font-medium">
+<th class="py-2.5 px-3 whitespace-nowrap">Data</th>
+<th class="py-2.5 px-3 whitespace-nowrap">Venda / Carnê</th>
+<th class="py-2.5 px-3">Cliente</th>
+<th class="py-2.5 px-3 text-right whitespace-nowrap">Total</th>
+<th class="py-2.5 px-3 text-center whitespace-nowrap">Parcelas</th>
+<th class="py-2.5 px-3 whitespace-nowrap">Próx. Venc.</th>
+<th class="py-2.5 px-3 text-center whitespace-nowrap">Status</th>
+<th class="py-2.5 px-2 text-center w-8"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20">
+<!-- ROW 1: SELECTED ROW (Patrícia Lima) -->
+<tr class="bg-surface-container-high/60 border-l-4 border-l-primary hover:bg-surface-container-high transition-colors cursor-pointer">
+<td class="py-3 px-3 text-secondary whitespace-nowrap tabular-nums">12/08/2026</td>
+<td class="py-3 px-3 font-semibold text-primary whitespace-nowrap">#004.489</td>
+<td class="py-3 px-3">
+<div class="font-semibold text-on-surface">Patrícia Lima</div>
+<div class="text-[10px] text-secondary tabular-nums">CPF 382.491.808-12</div>
+<div class="text-[10px] text-outline truncate max-w-[150px]">3 itens (Vestido Midi Floral...)</div>
+</td>
+<td class="py-3 px-3 text-right font-semibold text-on-surface tabular-nums whitespace-nowrap">R$ 650,00</td>
+<td class="py-3 px-3 text-center">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-semibold bg-surface-container text-on-surface tabular-nums">2/4 pagas</span>
+</td>
+<td class="py-3 px-3 text-error font-semibold tabular-nums whitespace-nowrap">12/10/2026</td>
+<td class="py-3 px-3 text-center whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-error-container text-error border border-error/20">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                      Em atraso
+                    </span>
+</td>
+<td class="py-3 px-2 text-center">
+<span class="material-symbols-outlined text-primary text-base">chevron_right</span>
+</td>
+</tr>
+<!-- ROW 2: Rodrigo Alves -->
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer">
+<td class="py-3 px-3 text-secondary whitespace-nowrap tabular-nums">05/10/2026</td>
+<td class="py-3 px-3 font-medium text-on-surface whitespace-nowrap">#004.510</td>
+<td class="py-3 px-3">
+<div class="font-medium text-on-surface">Rodrigo Alves</div>
+<div class="text-[10px] text-secondary tabular-nums">CPF 412.390.118-09</div>
+<div class="text-[10px] text-outline">2 itens (Camisa Slim, Cinto)</div>
+</td>
+<td class="py-3 px-3 text-right font-medium text-on-surface tabular-nums whitespace-nowrap">R$ 380,00</td>
+<td class="py-3 px-3 text-center">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium bg-surface-container-low text-secondary tabular-nums">1/3 pagas</span>
+</td>
+<td class="py-3 px-3 text-secondary tabular-nums whitespace-nowrap">05/11/2026</td>
+<td class="py-3 px-3 text-center whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-tertiary-container/20 text-tertiary border border-tertiary/20">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                      Em dia
+                    </span>
+</td>
+<td class="py-3 px-2 text-center text-outline">
+<span class="material-symbols-outlined text-base">chevron_right</span>
+</td>
+</tr>
+<!-- ROW 3: Mariana Silva (Quitada) -->
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer bg-surface-container-low/30">
+<td class="py-3 px-3 text-secondary whitespace-nowrap tabular-nums">28/09/2026</td>
+<td class="py-3 px-3 font-medium text-on-surface whitespace-nowrap">#004.472</td>
+<td class="py-3 px-3">
+<div class="font-medium text-on-surface">Mariana Silva</div>
+<div class="text-[10px] text-secondary tabular-nums">CPF 123.456.789-00</div>
+<div class="text-[10px] text-outline">4 itens (Conjunto Linho, Regata...)</div>
+</td>
+<td class="py-3 px-3 text-right font-medium text-on-surface tabular-nums whitespace-nowrap">R$ 500,00</td>
+<td class="py-3 px-3 text-center">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium bg-secondary-fixed/50 text-secondary tabular-nums">4/4 pagas</span>
+</td>
+<td class="py-3 px-3 text-secondary tabular-nums whitespace-nowrap">—</td>
+<td class="py-3 px-3 text-center whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-surface-container text-secondary border border-outline-variant/40">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                      Quitada
+                    </span>
+</td>
+<td class="py-3 px-2 text-center text-outline">
+<span class="material-symbols-outlined text-base">chevron_right</span>
+</td>
+</tr>
+<!-- ROW 4: Camila Ferreira -->
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer">
+<td class="py-3 px-3 text-secondary tabular-nums whitespace-nowrap">15/09/2026</td>
+<td class="py-3 px-3 font-medium text-on-surface whitespace-nowrap">#004.430</td>
+<td class="py-3 px-3">
+<div class="font-medium text-on-surface">Camila Ferreira</div>
+<div class="text-[10px] text-secondary tabular-nums">CPF 219.048.712-44</div>
+<div class="text-[10px] text-outline">1 item (Bolsa Estruturada Couro)</div>
+</td>
+<td class="py-3 px-3 text-right font-medium text-on-surface tabular-nums whitespace-nowrap">R$ 240,00</td>
+<td class="py-3 px-3 text-center">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium bg-surface-container-low text-secondary tabular-nums">1/2 pagas</span>
+</td>
+<td class="py-3 px-3 text-secondary tabular-nums whitespace-nowrap">15/11/2026</td>
+<td class="py-3 px-3 text-center whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-tertiary-container/20 text-tertiary border border-tertiary/20">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                      Em dia
+                    </span>
+</td>
+<td class="py-3 px-2 text-center text-outline">
+<span class="material-symbols-outlined text-base">chevron_right</span>
+</td>
+</tr>
+<!-- ROW 5: Marcos Vinicius -->
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer">
+<td class="py-3 px-3 text-secondary tabular-nums whitespace-nowrap">02/09/2026</td>
+<td class="py-3 px-3 font-medium text-on-surface whitespace-nowrap">#004.415</td>
+<td class="py-3 px-3">
+<div class="font-medium text-on-surface">Marcos Vinicius</div>
+<div class="text-[10px] text-secondary tabular-nums">CPF 301.992.812-70</div>
+<div class="text-[10px] text-outline">3 itens (Blazer Alfaiataria, Calça)</div>
+</td>
+<td class="py-3 px-3 text-right font-medium text-on-surface tabular-nums whitespace-nowrap">R$ 890,00</td>
+<td class="py-3 px-3 text-center">
+<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium bg-surface-container-low text-secondary tabular-nums">3/6 pagas</span>
+</td>
+<td class="py-3 px-3 text-error font-semibold tabular-nums whitespace-nowrap">02/10/2026</td>
+<td class="py-3 px-3 text-center whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-error-container text-error border border-error/20">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                      Em atraso
+                    </span>
+</td>
+<td class="py-3 px-2 text-center text-outline">
+<span class="material-symbols-outlined text-base">chevron_right</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="p-3 bg-surface-container-low border-t border-outline-variant/30 flex items-center justify-between text-xs text-secondary">
+<span>Exibindo <strong>1-5</strong> de <strong>148</strong> registros</span>
+<div class="flex items-center gap-1">
+<button class="w-7 h-7 flex items-center justify-center rounded border border-outline-variant/60 bg-surface-container-lowest text-outline hover:text-on-surface disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<button class="w-7 h-7 flex items-center justify-center rounded bg-primary text-surface-container-lowest font-medium text-xs">1</button>
+<button class="w-7 h-7 flex items-center justify-center rounded border border-outline-variant/60 bg-surface-container-lowest hover:bg-surface-container-high text-xs font-medium">2</button>
+<button class="w-7 h-7 flex items-center justify-center rounded border border-outline-variant/60 bg-surface-container-lowest hover:bg-surface-container-high text-xs font-medium">3</button>
+<span class="px-1 text-outline">...</span>
+<button class="w-7 h-7 flex items-center justify-center rounded border border-outline-variant/60 bg-surface-container-lowest hover:bg-surface-container-high text-xs font-medium">15</button>
+<button class="w-7 h-7 flex items-center justify-center rounded border border-outline-variant/60 bg-surface-container-lowest text-secondary hover:text-on-surface">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: Detail Panel for Selected Sale (~38% / 5 of 12 cols) -->
+<div class="lg:col-span-5 xl:col-span-5 bg-surface-container-lowest rounded-xl border border-outline-variant/40 shadow-sm flex flex-col overflow-hidden">
+<!-- Detail Panel Header -->
+<div class="p-4 bg-surface-container-low/80 border-b border-outline-variant/30">
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center gap-2">
+<h3 class="text-base font-bold font-headline text-on-surface">Patrícia Lima</h3>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-tertiary-container/30 text-tertiary border border-tertiary-fixed/40">
+<span class="material-symbols-outlined text-xs fill-icon">star</span>
+                    Cliente Fidelidade
+                  </span>
+</div>
+<div class="flex items-center gap-3 mt-1 text-xs text-secondary">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-tertiary">call</span>
+                    (11) 98765-4321
+                  </span>
+<a class="text-primary font-medium hover:underline flex items-center gap-0.5" href="#">
+<span class="material-symbols-outlined text-xs">chat</span> WhatsApp
+                  </a>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs font-mono font-semibold text-primary bg-primary-fixed/50 px-2 py-1 rounded">Venda #004.489</span>
+</div>
+</div>
+<!-- Sale Meta Details -->
+<div class="mt-3 grid grid-cols-2 gap-2 text-xs pt-2.5 border-t border-outline-variant/30">
+<div>
+<span class="text-outline text-[11px] block">Data da compra:</span>
+<span class="text-on-surface font-medium tabular-nums">12/08/2026 às 16:40</span>
+</div>
+<div>
+<span class="text-outline text-[11px] block">Vendedora:</span>
+<span class="text-on-surface font-medium">Ana Paula Souza</span>
+</div>
+</div>
+</div>
+<!-- Selected Sale Summary Numbers -->
+<div class="p-4 bg-surface-container-high/30 border-b border-outline-variant/30">
+<div class="flex items-center justify-between">
+<span class="text-xs text-secondary font-medium">Valor Total da Venda</span>
+<span class="text-base font-bold font-headline text-on-surface tabular-nums">R$ 650,00</span>
+</div>
+<div class="text-[11px] text-secondary mt-0.5">Condição: Carnê em 4x de R$ 162,50 sem juros</div>
+<div class="grid grid-cols-2 gap-3 mt-3">
+<div class="bg-surface-container-lowest p-2.5 rounded-lg border border-outline-variant/30">
+<span class="text-[10px] uppercase font-semibold text-tertiary tracking-wider block">Total Pago</span>
+<span class="text-sm font-bold text-tertiary tabular-nums">R$ 325,00</span>
+<span class="text-[10px] text-secondary block mt-0.5">2 parcelas liquidadas</span>
+</div>
+<div class="bg-surface-container-lowest p-2.5 rounded-lg border border-error-container">
+<span class="text-[10px] uppercase font-semibold text-error tracking-wider block">Saldo em Aberto</span>
+<span class="text-sm font-bold text-error tabular-nums">R$ 325,00</span>
+<span class="text-[10px] text-secondary block mt-0.5">2 parcelas pendentes</span>
+</div>
+</div>
+</div>
+<!-- Installment Schedule (Carnê list) -->
+<div class="p-4 flex-1 flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<h4 class="text-xs font-bold font-headline uppercase tracking-wider text-secondary flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm">schedule</span>
+                Demonstrativo de Parcelas (Carnê)
+              </h4>
+<span class="text-[10px] bg-secondary-container/50 text-on-secondary-container px-2 py-0.5 rounded font-mono">2 de 4 pendentes</span>
+</div>
+<!-- Installment Cards List -->
+<div class="flex flex-col gap-2.5 mt-1">
+<!-- Parcela 1 (Paga) -->
+<div class="p-2.5 rounded-lg border border-outline-variant/30 bg-surface-container-low/40 flex items-center justify-between text-xs">
+<div class="flex items-center gap-2.5">
+<span class="w-6 h-6 rounded-full bg-tertiary-container/20 text-tertiary flex items-center justify-center font-bold text-xs">
+                    ✓
+                  </span>
+<div>
+<div class="font-semibold text-on-surface flex items-center gap-1.5">
+<span>Parcela 1/4</span>
+<span class="text-[10px] text-secondary font-normal">· Venc: 12/09/2026</span>
+</div>
+<div class="text-[11px] text-tertiary font-medium">
+                      Pago em 12/09/2026 via PIX
+                    </div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-bold text-on-surface tabular-nums">R$ 162,50</div>
+<button class="text-[10px] text-primary hover:underline flex items-center gap-0.5 justify-end mt-0.5" title="Ver Comprovante">
+<span class="material-symbols-outlined text-[12px]">receipt</span> Comprovante
+                  </button>
+</div>
+</div>
+<!-- Parcela 2 (Paga) -->
+<div class="p-2.5 rounded-lg border border-outline-variant/30 bg-surface-container-low/40 flex items-center justify-between text-xs">
+<div class="flex items-center gap-2.5">
+<span class="w-6 h-6 rounded-full bg-tertiary-container/20 text-tertiary flex items-center justify-center font-bold text-xs">
+                    ✓
+                  </span>
+<div>
+<div class="font-semibold text-on-surface flex items-center gap-1.5">
+<span>Parcela 2/4</span>
+<span class="text-[10px] text-secondary font-normal">· Venc: 12/10/2026</span>
+</div>
+<div class="text-[11px] text-tertiary font-medium">
+                      Pago em 10/10/2026 · Dinheiro Caixa 01
+                    </div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-bold text-on-surface tabular-nums">R$ 162,50</div>
+<button class="text-[10px] text-primary hover:underline flex items-center gap-0.5 justify-end mt-0.5">
+<span class="material-symbols-outlined text-[12px]">receipt</span> Comprovante
+                  </button>
+</div>
+</div>
+<!-- Parcela 3 (Vencida com Juros) - Highlighted Urgent -->
+<div class="p-3 rounded-lg border-2 border-error/50 bg-error-container/20 flex flex-col gap-2 text-xs">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-error text-on-error flex items-center justify-center font-bold text-[11px]">
+                      !
+                    </span>
+<div>
+<div class="font-bold text-error flex items-center gap-1">
+<span>Parcela 3/4</span>
+<span class="text-[10px] bg-error text-on-error px-1.5 py-0.2 rounded font-semibold">18 dias de atraso</span>
+</div>
+<div class="text-[11px] text-secondary tabular-nums">
+                        Vencimento original: 12/11/2026
+                      </div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-bold text-error text-sm tabular-nums">R$ 167,30</div>
+<div class="text-[10px] text-error font-medium">(R$ 162,50 + R$ 4,80 mora)</div>
+</div>
+</div>
+<!-- Quick Action Buttons for Late Installment -->
+<div class="flex items-center gap-2 pt-1 border-t border-error/20">
+<button class="flex-1 h-7 bg-tertiary-container hover:bg-tertiary text-surface-container-lowest font-semibold rounded text-xs flex items-center justify-center gap-1 shadow-xs transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-sm">payments</span>
+                    Dar baixa agora
+                  </button>
+<button class="h-7 px-2.5 bg-surface-container-lowest border border-outline-variant/60 hover:bg-surface-container-high text-on-surface font-medium rounded text-xs flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-sm text-primary">qr_code_2</span>
+                    Copiar PIX
+                  </button>
+</div>
+</div>
+<!-- Parcela 4 (Pendente / A Vencer) -->
+<div class="p-2.5 rounded-lg border border-outline-variant/40 bg-surface-container-lowest flex items-center justify-between text-xs">
+<div class="flex items-center gap-2.5">
+<span class="w-6 h-6 rounded-full bg-surface-container text-secondary flex items-center justify-center font-bold text-xs">
+                    4
+                  </span>
+<div>
+<div class="font-semibold text-on-surface flex items-center gap-1.5">
+<span>Parcela 4/4</span>
+<span class="text-[10px] text-secondary font-medium">· Venc: 12/12/2026</span>
+</div>
+<div class="text-[10px] text-secondary">
+                      Status: A vencer em 30 dias
+                    </div>
+</div>
+</div>
+<div class="text-right">
+<div class="font-bold text-on-surface tabular-nums">R$ 162,50</div>
+<button class="text-[10px] text-secondary hover:text-primary font-medium flex items-center gap-0.5 justify-end mt-0.5">
+                    Antecipar parcela
+                  </button>
+</div>
+</div>
+</div>
+<!-- Client Note / History Box -->
+<div class="mt-2 p-2.5 bg-surface-container-low rounded-lg border border-outline-variant/30 text-[11px] text-secondary flex items-start gap-2">
+<span class="material-symbols-outlined text-sm text-outline mt-0.5">edit_note</span>
+<div>
+<strong class="text-on-surface font-semibold">Observações internas:</strong>
+<p class="italic text-on-surface-variant">"Cliente solicitou envio do código Pix todo dia 10 via WhatsApp antes do vencimento."</p>
+</div>
+</div>
+<!-- Actions Cluster for this Sale -->
+<div class="pt-2 border-t border-outline-variant/30 flex flex-col gap-2">
+<button class="w-full h-8 bg-surface-container-low hover:bg-surface-container text-on-surface font-medium rounded-lg text-xs flex items-center justify-center gap-2 border border-outline-variant/40 transition-colors">
+<span class="material-symbols-outlined text-base text-secondary">print</span>
+                Imprimir Carnê / Promissória
+              </button>
+<div class="grid grid-cols-2 gap-2">
+<button class="h-8 bg-surface-container-lowest hover:bg-surface-container text-tertiary font-semibold rounded-lg text-xs flex items-center justify-center gap-1 border border-tertiary-fixed/40 transition-colors">
+<span class="material-symbols-outlined text-sm">send</span>
+                  Cobrança WhatsApp
+                </button>
+<button class="h-8 bg-surface-container-lowest hover:bg-surface-container text-secondary font-medium rounded-lg text-xs flex items-center justify-center gap-1 border border-outline-variant/40 transition-colors">
+<span class="material-symbols-outlined text-sm">rebase_edit</span>
+                  Renegociar Parcelas
+                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- FOOTER CORPORATIVO -->
+<footer class="mt-auto px-6 py-4 bg-surface-container-lowest border-t border-outline-variant/30 flex flex-col sm:flex-row items-center justify-between text-[11px] text-secondary select-none">
+<div class="flex items-center gap-2">
+<span class="font-semibold text-on-surface">JG Sistemas v2.4.12</span>
+<span>— Gestão Inteligente para Varejo</span>
+<span class="text-outline-variant">·</span>
+<span>Todos os direitos reservados © 2025</span>
+</div>
+<div class="flex items-center gap-4 mt-2 sm:mt-0">
+<span class="flex items-center gap-1 text-on-surface-variant font-medium">
+<span class="material-symbols-outlined text-xs text-primary">support_agent</span>
+          Suporte Técnico: 0800 555-0192
+        </span>
+<a class="hover:text-primary transition-colors" href="#">Central de Ajuda</a>
+<a class="hover:text-primary transition-colors" href="#">Termos</a>
+<a class="hover:text-primary transition-colors" href="#">Privacidade</a>
+</div>
+</footer>
+</div>
+</body></html>

@@ -5,306 +5,273 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google" content="notranslate">
     <meta name="robots" content="noindex, nofollow">
-    <title>JG Sistemas - Painel de Controle</title>
+    <title>Início - JG Sistemas</title>
+    <link rel="stylesheet" href="/ui/jg.css">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
-        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
-        header .brand { display: flex; align-items: center; gap: 10px; }
-        header .brand span.logo { background-color: #2ecc71; color: #0b2545; padding: 4px 10px; border-radius: 4px; font-weight: 800; }
-        main { padding: 25px; max-width: 1100px; margin: 0 auto; width: 100%; }
-        .boas-vindas { background: linear-gradient(135deg, #0b2545, #134074); color: white; border-radius: 6px; padding: 22px 26px; margin-bottom: 24px; }
-        .boas-vindas h1 { font-size: 22px; margin-bottom: 6px; }
-        .boas-vindas p { font-size: 13px; color: #aab2bd; }
-        .modulos { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
-        .modulo { background: white; border: 1px solid #ccd1d9; border-radius: 6px; padding: 18px; cursor: pointer; transition: all 0.15s ease; display: flex; flex-direction: column; gap: 10px; text-decoration: none; color: inherit; }
-        .modulo:hover { border-color: #134074; transform: translateY(-2px); box-shadow: 0 4px 14px rgba(11, 37, 69, 0.15); }
-        .modulo .icone { width: 46px; height: 46px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: white; }
-        .modulo .nome { font-size: 15px; font-weight: bold; color: #0b2545; text-transform: uppercase; }
-        .modulo .desc { font-size: 12px; color: #8b95a1; line-height: 1.4; }
-        .modulo.bloqueado { cursor: not-allowed; opacity: 0.6; }
-        .modulo.bloqueado:hover { transform: none; box-shadow: none; border-color: #ccd1d9; }
-        .modulo .em-breve { font-size: 11px; font-weight: bold; color: #d9534f; text-transform: uppercase; }
-        .aviso-mensalidade { background: #fde8c8; color: #b26b00; border: 1px solid #e6c47a; border-radius: 6px; padding: 12px 16px; font-size: 14px; font-weight: bold; margin-bottom: 24px; display: none; justify-content: space-between; align-items: center; gap: 12px; }
-        .aviso-mensalidade .fechar-aviso { background: none; border: 1px solid #b26b00; color: #b26b00; border-radius: 4px; padding: 4px 10px; font-size: 12px; font-weight: bold; cursor: pointer; flex: 0 0 auto; }
-        .aviso-mensalidade .fechar-aviso:hover { background: #b26b00; color: white; }
-        .ic-cor { background-color: #134074; }
-        .ic-verde { background-color: #00a651; }
-        .ic-roxo { background-color: #7d5ba6; }
-        .ic-laranja { background-color: #e67e22; }
-        .ic-vermelho { background-color: #d9534f; }
-        .ic-azul { background-color: #2980b9; }
-        .ic-cinza { background-color: #8b95a1; }
-        .ic-ciano { background-color: #17a2b8; }
-        footer { background-color: #134074; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
-
-        @media (max-width: 768px) {
-            .boas-vindas h1 { font-size: 18px; }
-            main { padding: 15px; }
-            .modulos { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
-        }
+        .grafico-horas { display: flex; align-items: flex-end; gap: 6px; height: 200px; padding: 8px 4px 0; }
+        .grafico-horas .col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+        .grafico-horas .bar { width: 100%; max-width: 34px; background: var(--primary); border-radius: 4px 4px 0 0; min-height: 2px; position: relative; transition: height .3s; }
+        .grafico-horas .bar.zero { background: #E5EAF2; }
+        .grafico-horas .bar:hover { background: var(--primary-hover); }
+        .grafico-horas .bar[data-v]:hover::after { content: attr(data-v); position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%); background: var(--text); color: #fff; font-size: 11px; padding: 3px 6px; border-radius: 4px; white-space: nowrap; }
+        .grafico-horas .h { font-size: 11px; color: var(--text-2); font-variant-numeric: tabular-nums; }
+        .donut-wrap { display: flex; align-items: center; gap: 20px; }
+        .donut { width: 140px; height: 140px; border-radius: 50%; flex-shrink: 0; position: relative; background: #E5EAF2; }
+        .donut::after { content: ''; position: absolute; inset: 22px; background: #fff; border-radius: 50%; }
+        .donut-centro { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1; font-size: 12px; color: var(--text-2); }
+        .donut-centro b { font-size: 15px; color: var(--text); }
+        .legenda { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 0; }
+        .legenda .it { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+        .legenda .it i { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+        .legenda .it span { color: var(--text-2); }
+        .legenda .it b { margin-left: auto; font-variant-numeric: tabular-nums; }
+        .op-linha { margin-bottom: 12px; }
+        .op-linha .row { justify-content: space-between; font-size: 13px; margin-bottom: 5px; }
+        .atalhos { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+        .atalho { display: flex; align-items: center; gap: 12px; padding: 14px; border: 1px solid var(--border); border-radius: var(--radius); background: #fff; color: var(--text); text-decoration: none; transition: border-color .12s, box-shadow .12s; }
+        .atalho:hover { border-color: var(--primary); box-shadow: var(--shadow); }
+        .atalho .ic { width: 40px; height: 40px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; background: var(--primary-soft); color: var(--primary); }
+        .atalho .ic.verde { background: var(--green-soft); color: var(--green); }
+        .atalho .ic.ambar { background: var(--amber-soft); color: var(--amber); }
+        .atalho b { font-size: 14px; display: block; }
+        .atalho small { color: var(--text-2); font-size: 12px; }
+        .atalho .kbd { margin-left: auto; }
+        .lista-estoque .it { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; }
+        .lista-estoque .it:last-child { border-bottom: 0; }
+        .lista-estoque .it .nome { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .lista-estoque .it small { color: var(--text-2); white-space: nowrap; }
     </style>
 </head>
-<body>
-
-    <header>
-        <div class="brand">
-            <span class="logo">JG</span>
-            <span>JG SISTEMAS - PAINEL DE CONTROLE</span>
-        </div>
-        <div style="display:flex; gap:14px; align-items:center;">
-            <span id="operador-lbl">OPERADOR: DEV_MASTER</span>
-            <a href="#" onclick="sair(); return false;" style="color:#2ecc71; text-decoration:none; font-weight:normal;">Trocar Operador</a>
-        </div>
-    </header>
-
+<body class="jg" data-pagina="inicio">
     <main>
-        <div class="aviso-mensalidade" id="aviso-mensalidade"></div>
-        <div class="boas-vindas">
-            <h1>Bem-vindo ao JG Sistemas</h1>
-            <p>Selecione um dos módulos abaixo para acessar as funções do sistema.</p>
+        <div class="alerta vermelho mb-16 hidden" id="aviso-bloqueado"><span class="ms">lock</span><div id="aviso-bloqueado-txt"></div></div>
+        <div class="alerta ambar mb-16 hidden" id="aviso-mensalidade"><span class="ms">payments</span><div id="aviso-mensalidade-txt" style="flex:1"></div><button class="btn btn-sm" id="fechar-aviso">Entendi</button></div>
+
+        <div class="page-head">
+            <div>
+                <h1 id="saudacao">Início</h1>
+                <div class="sub" id="data-hoje"></div>
+            </div>
+            <div class="acoes" id="acoes-topo">
+                <button class="btn" id="btn-atualizar"><span class="ms">refresh</span>Atualizar</button>
+            </div>
         </div>
 
-        <div class="modulos">
-            <a class="modulo" href="/dashboard.html">
-                <div class="icone ic-verde">DASH</div>
-                <div class="nome">Dashboard</div>
-                <div class="desc">Resumo do dia: vendas, caixas, contas e estoque.</div>
-            </a>
+        <!-- Gestão (todos menos operador de caixa) -->
+        <div id="area-gestao" class="hidden">
+            <div class="kpis" id="kpis"></div>
 
-            <a class="modulo" href="/caixa.html">
-                <div class="icone ic-cinza">CAIX</div>
-                <div class="nome">Abertura de Caixa</div>
-                <div class="desc">Abrir e fechar registradora antes das vendas.</div>
-            </a>
+            <div class="grid g-main-side mb-16" style="grid-template-columns:minmax(0,1fr) 400px">
+                <div class="card">
+                    <div class="card-head"><div><h3>Vendas por hora</h3><div class="sub">Hoje, vendas concluídas</div></div><span class="badge azul sem-ponto" id="pico-hora">—</span></div>
+                    <div class="card-body"><div class="grafico-horas" id="grafico-horas"></div></div>
+                </div>
+                <div class="card">
+                    <div class="card-head"><h3>Vendas por forma de pagamento</h3></div>
+                    <div class="card-body" id="area-metodos"></div>
+                </div>
+            </div>
 
-            <a class="modulo" href="/pdv.html">
-                <div class="icone ic-verde">PDV</div>
-                <div class="nome">Frente de Caixa</div>
-                <div class="desc">Vendas no PDV, pagamentos e emissão de cupom.</div>
-            </a>
+            <div class="grid g-3 mb-16">
+                <div class="card">
+                    <div class="card-head"><h3>Vendas por operador</h3></div>
+                    <div class="card-body" id="area-operadores"></div>
+                </div>
+                <div class="card">
+                    <div class="card-head"><h3>Top produtos do dia</h3><a href="/relatorios.html" style="font-size:13px">Ver ranking</a></div>
+                    <div class="tabela-wrap" id="area-top"></div>
+                </div>
+                <div class="card">
+                    <div class="card-head"><h3>Estoque baixo</h3><a href="/estoque.html" style="font-size:13px">Ver estoque</a></div>
+                    <div class="card-body lista-estoque" id="area-estoque"></div>
+                </div>
+            </div>
 
-            <a class="modulo" href="/vendas-fora-pdv.html">
-                <div class="icone ic-laranja">VAP</div>
-                <div class="nome">Vendas Fora do PDV</div>
-                <div class="desc">Venda a prazo para clientes com parcelas e datas de pagamento.</div>
-            </a>
+            <div class="grid g-2 mb-16">
+                <div class="card">
+                    <div class="card-head"><h3>Caixas abertos</h3><a href="/caixa.html" style="font-size:13px">Ir para o caixa</a></div>
+                    <div class="tabela-wrap" id="area-caixas"></div>
+                </div>
+                <div class="card">
+                    <div class="card-head"><h3>Atalhos</h3></div>
+                    <div class="card-body"><div class="atalhos" id="atalhos-gestao"></div></div>
+                </div>
+            </div>
+        </div>
 
-            <a class="modulo" href="/produtos.html">
-                <div class="icone ic-cor">PROD</div>
-                <div class="nome">Cadastro de Produtos</div>
-                <div class="desc">Criar, editar e excluir produtos e categorias.</div>
-            </a>
-
-            <a class="modulo" href="/clientes.html">
-                <div class="icone ic-azul">CLI</div>
-                <div class="nome">Clientes</div>
-                <div class="desc">Cadastro, tabela de preço e análise de crédito.</div>
-            </a>
-
-            <a class="modulo" href="/tabelas-preco.html">
-                <div class="icone ic-azul">TBP</div>
-                <div class="nome">Tabelas de Preço</div>
-                <div class="desc">Tabelas com preço fixo ou percentual de desconto por produto.</div>
-            </a>
-
-            <a class="modulo" href="/promocoes.html">
-                <div class="icone ic-laranja">PRO</div>
-                <div class="nome">Promoções</div>
-                <div class="desc">Promoções por produto, marca ou categoria (ex.: Leve 3 Pague 2).</div>
-            </a>
-
-            <a class="modulo" href="/trocas.html">
-                <div class="icone ic-roxo">TRO</div>
-                <div class="nome">Troca / Devolução</div>
-                <div class="desc">Devolução de itens de vendas e troca por novos produtos.</div>
-            </a>
-
-            <a class="modulo" href="/inventario.html">
-                <div class="icone ic-ciano">INV</div>
-                <div class="nome">Inventário</div>
-                <div class="desc">Contagem de estoque e ajustes por divergência.</div>
-            </a>
-
-            <a class="modulo" href="/cobranca.html">
-                <div class="icone ic-vermelho">COB</div>
-                <div class="nome">Cobrança / Inadimplência</div>
-                <div class="desc">Crédito dos clientes e renegociação de crediário.</div>
-            </a>
-
-            <a class="modulo" href="/recebiveis.html">
-                <div class="icone ic-laranja">RCB</div>
-                <div class="nome">Recebíveis de Cartão</div>
-                <div class="desc">Antecipação, baixa e acompanhamento dos recebíveis.</div>
-            </a>
-
-            <a class="modulo" href="/projecao-repasses.html">
-                <div class="icone ic-ciano">PRJ</div>
-                <div class="nome">Projeção de Repasses</div>
-                <div class="desc">Projeção D+ por operadora e por data de repasse.</div>
-            </a>
-
-            <a class="modulo" href="/operadoras.html">
-                <div class="icone ic-cinza">OPC</div>
-                <div class="nome">Operadoras de Cartão</div>
-                <div class="desc">Cadastro de operadoras, bandeiras e taxas (MDR).</div>
-            </a>
-
-            <a class="modulo" href="/fornecedores.html">
-                <div class="icone ic-laranja">FOR</div>
-                <div class="nome">Fornecedores</div>
-                <div class="desc">Cadastro e gestão de fornecedores.</div>
-            </a>
-
-            <a class="modulo" href="/estoque.html">
-                <div class="icone ic-roxo">EST</div>
-                <div class="nome">Estoque</div>
-                <div class="desc">Controle de estoque e movimentações.</div>
-            </a>
-
-            <a class="modulo" href="/financeiro.html">
-                <div class="icone ic-vermelho">FIN</div>
-                <div class="nome">Financeiro</div>
-                <div class="desc">Contas a receber e a pagar.</div>
-            </a>
-
-            <a class="modulo" href="/funcionarios.html">
-                <div class="icone ic-ciano">FUN</div>
-                <div class="nome">Funcionários</div>
-                <div class="desc">Cadastro de funcionários com salário e benefícios.</div>
-            </a>
-
-            <a class="modulo" href="/consultas.html">
-                <div class="icone ic-cinza">VEN</div>
-                <div class="nome">Consulta de Vendas</div>
-                <div class="desc">Histórico e relatórios de vendas.</div>
-            </a>
-
-            <a class="modulo" href="/relatorio-caixas.html">
-                <div class="icone ic-cinza">REL</div>
-                <div class="nome">Relatórios</div>
-                <div class="desc">Fechamento do dia e desempenho das registradoras.</div>
-            </a>
-
-            <a class="modulo" href="/relatorios.html">
-                <div class="icone ic-roxo">GRL</div>
-                <div class="nome">Relatórios Gerenciais</div>
-                <div class="desc">Vendas por operador, ranking de produtos e comissões.</div>
-            </a>
-
-            <a class="modulo" href="/orcamentos.html">
-                <div class="icone ic-laranja">ORC</div>
-                <div class="nome">Orçamentos</div>
-                <div class="desc">Orçamentos pendentes aguardando efetivação.</div>
-            </a>
-
-            <a class="modulo" href="/compras.html">
-                <div class="icone ic-cor">CMP</div>
-                <div class="nome">Compras</div>
-                <div class="desc">Pedidos de compra de fornecedores e entrada de estoque.</div>
-            </a>
-
-            <a class="modulo" href="/fidelidade.html">
-                <div class="icone ic-ciano">FID</div>
-                <div class="nome">Fidelidade / Cashback</div>
-                <div class="desc">Saldos de cashback e extrato de pontos dos clientes.</div>
-            </a>
-
-            <a class="modulo" href="/marcas.html">
-                <div class="icone ic-azul">MAR</div>
-                <div class="nome">Marcas</div>
-                <div class="desc">Cadastro de marcas usadas nos produtos.</div>
-            </a>
-
-            <a class="modulo" href="/colecoes.html">
-                <div class="icone ic-vermelho">COL</div>
-                <div class="nome">Coleções</div>
-                <div class="desc">Coleções e temporadas dos produtos.</div>
-            </a>
-
-            <a class="modulo" href="/auditoria.html">
-                <div class="icone ic-cinza">AUD</div>
-                <div class="nome">Auditoria</div>
-                <div class="desc">Registro de ações sensíveis do sistema.</div>
-            </a>
-
-            <a class="modulo" href="/config-pagamento.html">
-                <div class="icone ic-laranja">PGT</div>
-                <div class="nome">Configuração de Pagamento</div>
-                <div class="desc">Formas de pagamento do PDV e parcelamento no crédito.</div>
-            </a>
-
-            <a class="modulo" href="/configuracoes.html">
-                <div class="icone ic-cinza">CONF</div>
-                <div class="nome">Configurações</div>
-                <div class="desc">Logo e dados da empresa usados nos comprovantes.</div>
-            </a>
+        <!-- Operador de caixa -->
+        <div id="area-caixa" class="hidden">
+            <div class="card">
+                <div class="card-head"><h3>O que você quer fazer?</h3></div>
+                <div class="card-body"><div class="atalhos" id="atalhos-caixa"></div></div>
+            </div>
         </div>
     </main>
 
-    <footer>© 2026 JG Sistemas</footer>
-
+    <script src="/seguranca.js"></script>
+    <script src="/ui/shell.js"></script>
     <script>
-        function obterOperador() {
-            try {
-                const raw = localStorage.getItem('jg_operador');
-                return raw ? JSON.parse(raw) : null;
-            } catch (e) { return null; }
+        const METODOS = { MONEY: 'Dinheiro', PIX: 'PIX', CREDIT_CARD: 'Crédito', DEBIT_CARD: 'Débito', CREDIARIO: 'Crediário' };
+        const CORES_METODO = { PIX: '#1D4F91', CREDIT_CARD: '#16A34A', DEBIT_CARD: '#60A5FA', MONEY: '#D97706', CREDIARIO: '#7C3AED' };
+        const fmt = (v) => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const op = JG.operador();
+
+        function obterOperador() { return JG.operador(); }
+
+        async function api(url) {
+            const r = await fetch(url, { credentials: 'same-origin' });
+            if (r.status === 401) { localStorage.removeItem('jg_operador'); location.href = '/login.html'; throw new Error('Sessão expirada.'); }
+            const d = await r.json();
+            if (!r.ok) throw new Error(d.erro || 'Erro na requisição');
+            return d;
         }
 
-        function tokenAuth() {
-            const op = obterOperador();
-            return op && op.token ? { 'Authorization': 'Bearer ' + op.token } : {};
-        }
+        // ---------- cabeçalho
+        (function cabecalho() {
+            const agora = new Date();
+            const h = agora.getHours();
+            const primeiro = String((op && op.nome) || '').split(' ')[0];
+            document.getElementById('saudacao').textContent = (h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite') + (primeiro ? ', ' + primeiro : '');
+            const dia = agora.toLocaleDateString('pt-BR', { weekday: 'long' });
+            document.getElementById('data-hoje').textContent = dia.charAt(0).toUpperCase() + dia.slice(1) + ', ' + agora.toLocaleDateString('pt-BR');
 
-        function sair() {
-            fetch('/api/auth/logout', { method: 'POST', headers: tokenAuth() }).catch(() => {});
-            localStorage.removeItem('jg_operador');
-            window.location.href = '/login.html';
-        }
+            const bloq = new URLSearchParams(location.search).get('bloqueado');
+            if (bloq) {
+                document.getElementById('aviso-bloqueado').classList.remove('hidden');
+                document.getElementById('aviso-bloqueado-txt').textContent = 'O módulo solicitado não está liberado no seu plano. Fale com o suporte da JG Sistemas para liberar.';
+            }
 
-        function exibirAvisoMensalidade() {
+            // Aviso de mensalidade: no máximo uma vez por hora
             let aviso = null;
             try { aviso = JSON.parse(localStorage.getItem('jg_aviso_mensalidade')); } catch (e) { aviso = null; }
-            const el = document.getElementById('aviso-mensalidade');
-            if (!aviso || !aviso.mensagem) { el.style.display = 'none'; return; }
-            // Exibe o banner no máximo uma vez por hora.
-            const HORA_MS = 3600000;
             const ultima = Number(localStorage.getItem('jg_aviso_mensalidade_ultima') || 0);
-            if (Date.now() - ultima < HORA_MS) { el.style.display = 'none'; return; }
-            localStorage.setItem('jg_aviso_mensalidade_ultima', String(Date.now()));
-            el.innerHTML = '';
-            const texto = document.createElement('div');
-            texto.innerText = `⚠ ${aviso.mensagem}`;
-            el.appendChild(texto);
-            const btn = document.createElement('button');
-            btn.className = 'fechar-aviso';
-            btn.innerText = 'Entendi';
-            btn.onclick = () => { el.style.display = 'none'; };
-            el.appendChild(btn);
-            el.style.display = 'flex';
+            if (aviso && aviso.mensagem && Date.now() - ultima >= 3600000) {
+                localStorage.setItem('jg_aviso_mensalidade_ultima', String(Date.now()));
+                document.getElementById('aviso-mensalidade-txt').textContent = aviso.mensagem;
+                document.getElementById('aviso-mensalidade').classList.remove('hidden');
+            }
+            document.getElementById('fechar-aviso').onclick = () => document.getElementById('aviso-mensalidade').classList.add('hidden');
+        })();
+
+        // ---------- atalhos
+        function atalho(href, icone, titulo, desc, cor, kbd, novaAba) {
+            return `<a class="atalho" href="${href}"${novaAba ? ' target="_blank" rel="noopener"' : ''}><div class="ic ${cor || ''}"><span class="ms">${icone}</span></div><div><b>${titulo}</b><small>${desc}</small></div>${kbd ? `<span class="kbd">${kbd}</span>` : ''}</a>`;
+        }
+        function montarAtalhos() {
+            const mod = (k) => JG.moduloOk(k);
+            document.getElementById('atalhos-gestao').innerHTML = [
+                atalho('/pdv.html', 'point_of_sale', 'Nova venda', 'Abrir o PDV', 'verde', 'F12', true),
+                atalho('/clientes.html?novo=1', 'person_add', 'Novo cliente', 'Cadastro rápido'),
+                mod('financeiro') ? atalho('/financeiro.html?nova=1', 'post_add', 'Lançar conta', 'Pagar ou receber', 'ambar') : '',
+                atalho('/produtos.html?novo=1', 'add_box', 'Novo produto', 'Cadastrar no catálogo'),
+                mod('estoque') ? atalho('/estoque.html', 'move_to_inbox', 'Entrada de estoque', 'Movimentar estoque') : '',
+                atalho('/consultas.html', 'receipt_long', 'Consultar vendas', 'Histórico e NFC-e')
+            ].join('');
+            document.getElementById('atalhos-caixa').innerHTML = [
+                atalho('/caixa.html', 'account_balance_wallet', 'Caixa', 'Abrir, sangria e fechamento'),
+                atalho('/pdv.html', 'point_of_sale', 'PDV', 'Registrar vendas', 'verde', 'F12', true),
+                mod('crediario') ? atalho('/vendas-fora-pdv.html', 'credit_score', 'Crediário', 'Venda a prazo', 'ambar') : '',
+                mod('orcamentos') ? atalho('/orcamentos.html', 'request_quote', 'Orçamentos', 'Pendentes de efetivação') : ''
+            ].join('');
+        }
+        document.addEventListener('jg:modulos', montarAtalhos);
+
+        // ---------- blocos do dashboard
+        function kpi(rotulo, valor, icone, cor, rodape) {
+            return `<div class="kpi ${cor || ''}"><div class="kpi-top"><span>${rotulo}</span><span class="ms">${icone}</span></div><div class="kpi-valor">${valor}</div>${rodape ? `<div class="kpi-rodape">${rodape}</div>` : ''}</div>`;
+        }
+        function montarKpis(d) {
+            const v = d.vendasHoje;
+            let comp = '';
+            if (d.ontem && d.ontem.total > 0) {
+                const p = (v.total - d.ontem.total) / d.ontem.total * 100;
+                comp = `<span class="${p >= 0 ? 'txt-verde' : 'txt-vermelho'}">${p >= 0 ? '+' : ''}${p.toFixed(1).replace('.', ',')}%</span> vs. ontem`;
+            } else comp = 'Ontem: ' + fmt(d.ontem ? d.ontem.total : 0);
+            document.getElementById('kpis').innerHTML = [
+                kpi('Vendas hoje', fmt(v.total), 'payments', 'verde', comp),
+                kpi('Nº de vendas', v.quantidade, 'receipt', '', d.ontem ? `Ontem: ${d.ontem.quantidade}` : ''),
+                kpi('Ticket médio', fmt(v.ticketMedio), 'shopping_bag', '', ''),
+                kpi('Caixas abertos', d.caixasAbertos.length, 'account_balance_wallet', d.caixasAbertos.length ? '' : 'ambar', d.caixasAbertos.length ? d.caixasAbertos.map(c => 'Nº ' + c.numero).join(', ') : 'Nenhum aberto'),
+                kpi('A receber vencidas', fmt(d.contas.receberVencidas), 'event_busy', d.contas.receberVencidas > 0 ? 'vermelho' : '', `${d.contas.receberVencidasQtd || 0} título(s)`),
+                kpi('A pagar vencidas', fmt(d.contas.pagarVencidas), 'warning', d.contas.pagarVencidas > 0 ? 'ambar' : '', `${d.contas.pagarVencidasQtd || 0} título(s)`)
+            ].join('');
+        }
+        function montarHoras(porHora) {
+            const ini = 8, fim = 21;
+            const faixa = (porHora || []).slice(ini, fim + 1);
+            const max = Math.max(...faixa, 0);
+            let pico = -1;
+            faixa.forEach((v, i) => { if (v > 0 && (pico < 0 || v > faixa[pico])) pico = i; });
+            document.getElementById('pico-hora').textContent = pico >= 0 ? `Pico às ${String(ini + pico).padStart(2, '0')}h` : 'Sem vendas hoje';
+            document.getElementById('grafico-horas').innerHTML = faixa.map((v, i) => {
+                const h = max ? Math.max(v / max * 100, 1.5) : 1.5;
+                return `<div class="col"><div class="bar ${v ? '' : 'zero'}" style="height:${h}%" ${v ? `data-v="${fmt(v)}"` : ''}></div><span class="h">${String(ini + i).padStart(2, '0')}h</span></div>`;
+            }).join('');
+        }
+        function montarMetodos(obj) {
+            const entradas = Object.entries(obj || {}).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
+            const el = document.getElementById('area-metodos');
+            if (!entradas.length) { el.innerHTML = '<div class="estado-vazio"><span class="ms">donut_large</span><p>Nenhuma venda hoje.</p></div>'; return; }
+            const total = entradas.reduce((s, [, v]) => s + v, 0);
+            let acc = 0;
+            const fatias = entradas.map(([m, v]) => {
+                const a = acc / total * 360; acc += v; const b = acc / total * 360;
+                return `${CORES_METODO[m] || '#94A3B8'} ${a}deg ${b}deg`;
+            }).join(', ');
+            el.innerHTML = `<div class="donut-wrap"><div class="donut" style="background:conic-gradient(${fatias})"><div class="donut-centro"><span>Total</span><b>${fmt(total)}</b></div></div>
+                <div class="legenda">${entradas.map(([m, v]) => `<div class="it"><i style="background:${CORES_METODO[m] || '#94A3B8'}"></i><span>${METODOS[m] || esc(m)} · ${(v / total * 100).toFixed(0)}%</span><b>${fmt(v)}</b></div>`).join('')}</div></div>`;
+        }
+        function montarOperadores(obj) {
+            const entradas = Object.entries(obj || {}).sort((a, b) => b[1] - a[1]);
+            const el = document.getElementById('area-operadores');
+            if (!entradas.length) { el.innerHTML = '<div class="estado-vazio"><span class="ms">person</span><p>Nenhuma venda hoje.</p></div>'; return; }
+            const max = Math.max(...entradas.map(([, v]) => v));
+            el.innerHTML = entradas.map(([nome, valor]) => `
+                <div class="op-linha"><div class="row"><span><b>${esc(nome)}</b></span><span class="num">${fmt(valor)}</span></div>
+                <div class="barra-h"><div style="width:${max ? valor / max * 100 : 0}%"></div></div></div>`).join('');
+        }
+        function montarTop(lista) {
+            const el = document.getElementById('area-top');
+            if (!lista.length) { el.innerHTML = '<div class="estado-vazio"><span class="ms">leaderboard</span><p>Nenhuma venda hoje.</p></div>'; return; }
+            el.innerHTML = '<table><thead><tr><th>Produto</th><th class="right">Qtd</th><th class="right">Total</th></tr></thead><tbody>' +
+                lista.slice(0, 6).map(p => `<tr><td>${esc(p.nome)}</td><td class="right">${p.qtd}</td><td class="right">${fmt(p.valor)}</td></tr>`).join('') + '</tbody></table>';
+        }
+        function montarEstoque(lista) {
+            const el = document.getElementById('area-estoque');
+            if (!lista.length) { el.innerHTML = '<div class="estado-vazio"><span class="ms" style="color:var(--green)">check_circle</span><p>Nenhum produto com estoque baixo.</p></div>'; return; }
+            el.innerHTML = lista.slice(0, 7).map(p => `<div class="it"><span class="nome">${esc(p.nome)}</span><span class="badge ${p.quantidade <= 0 ? 'vencido' : 'baixo'}">${p.quantidade} un</span><small>mín. ${p.minimo}</small></div>`).join('');
+        }
+        function montarCaixas(lista) {
+            const el = document.getElementById('area-caixas');
+            if (!lista.length) { el.innerHTML = '<div class="estado-vazio"><span class="ms">lock_clock</span><p>Nenhuma registradora aberta no momento.</p><a class="btn btn-primario" href="/caixa.html">Abrir caixa</a></div>'; return; }
+            el.innerHTML = '<table><thead><tr><th>Registradora</th><th>Operador</th><th>Aberto em</th><th>Status</th></tr></thead><tbody>' +
+                lista.map(c => `<tr><td><b>Caixa ${String(c.numero).padStart(2, '0')}</b></td><td>${esc(c.operador)}</td><td>${new Date(c.abertoEm).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}</td><td><span class="badge aberto">Aberto</span></td></tr>`).join('') + '</tbody></table>';
         }
 
-        // Operador de caixa (SELLER) vê somente os módulos de operação
-        const MODULOS_PERMITIDOS_SELLER = ['/caixa.html', '/pdv.html', '/vendas-fora-pdv.html', '/orcamentos.html'];
+        async function carregar() {
+            try {
+                const d = await api('/api/dashboard');
+                montarKpis(d);
+                montarHoras(d.vendasHoje.porHora);
+                montarMetodos(d.vendasHoje.porMetodo);
+                montarOperadores(d.vendasPorOperador);
+                montarTop(d.topProdutos);
+                montarEstoque(d.estoqueBaixo);
+                montarCaixas(d.caixasAbertos);
+            } catch (e) { JG.toast(e.message, 'erro'); }
+        }
 
-        (() => {
-            const operador = obterOperador();
-            if (!operador) {
-                window.location.href = '/login.html';
-                return;
+        if (op) {
+            montarAtalhos();
+            if (op.papel === 'SELLER') {
+                document.getElementById('area-caixa').classList.remove('hidden');
+                document.getElementById('btn-atualizar').classList.add('hidden');
+            } else {
+                document.getElementById('area-gestao').classList.remove('hidden');
+                document.getElementById('btn-atualizar').onclick = carregar;
+                carregar();
             }
-            document.getElementById('operador-lbl').innerText = `OPERADOR: ${operador.nome || operador.email}`;
-            exibirAvisoMensalidade();
-
-            if (operador.papel === 'SELLER') {
-                document.querySelectorAll('.modulo').forEach(modulo => {
-                    if (!MODULOS_PERMITIDOS_SELLER.includes(modulo.getAttribute('href'))) {
-                        modulo.remove();
-                    }
-                });
-            }
-        })();
+        }
     </script>
 </body>
 </html>

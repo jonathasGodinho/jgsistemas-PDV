@@ -6,33 +6,13 @@
     <meta name="google" content="notranslate">
     <title>Tabelas de Preço - JG Sistemas</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
-        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
-        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
-        header a:hover { color: white; }
-        main { padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
         .grid { display: grid; grid-template-columns: 360px 1fr; gap: 20px; align-items: start; }
         @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
-        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
-        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
-        .painel-corpo { padding: 14px; }
         .campo { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
         .campo label { font-size: 11px; color: #656d78; font-weight: bold; text-transform: uppercase; }
         .campo input, .campo select { padding: 9px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; width: 100%; }
         .linha { display: flex; gap: 10px; }
         .linha .campo { flex: 1; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { background-color: #134074; color: white; padding: 8px; text-align: left; text-transform: uppercase; font-size: 11px; }
-        td { padding: 8px; border-bottom: 1px solid #e6e9ed; color: #333; }
-        tr:nth-child(even) { background-color: #f8f9fa; }
-        .btn { border: none; border-radius: 4px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; }
-        .btn-azul { background-color: #134074; color: white; }
-        .btn-verde { background-color: #00a651; color: white; }
-        .btn-perigo { background-color: #d9534f; color: white; }
-        .btn-mini { padding: 4px 8px; font-size: 12px; }
-        .btn-block { width: 100%; padding: 12px; font-size: 15px; }
-        .sem-dados { text-align: center; color: #8b95a1; padding: 24px; font-size: 14px; }
         .badge { display: inline-block; padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
         .b-verde { background: #d8f3e3; color: #008c45; }
         .b-cinza { background: #e6e9ed; color: #656d78; }
@@ -43,15 +23,13 @@
         .selecionada { background-color: #dbeafe !important; }
         .divisor { margin: 14px 0; border-top: 1px dashed #ccd1d9; }
     </style>
+    <link rel="stylesheet" href="/ui/jg.css">
 </head>
-<body>
-
-    <header>
-        <div>JG SISTEMAS - TABELAS DE PREÇO</div>
-        <div><a href="/">← Menu Principal</a></div>
-    </header>
-
+<body class="jg" data-pagina="tabelas-preco">
     <main>
+        <div class="page-head">
+            <div><h1>Tabelas de preço</h1><div class="sub">Preços especiais por cliente e por quantidade</div></div>
+        </div>
         <div class="grid">
             <div>
                 <div class="painel" style="margin-bottom:20px;">
@@ -98,7 +76,7 @@
                     <div id="detalhe" style="display:none;">
                         <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:14px;">
                             <button class="btn btn-azul" onclick="alternarPadrao()">Definir como padrão</button>
-                            <button class="btn btn-mini btn-perigo" onclick="excluirTabela()">Excluir tabela</button>
+                            <button class="btn-icone perigo" title="Excluir tabela" onclick="excluirTabela()"><span class="ms">delete</span></button>
                             <span id="badge-detalhe"></span>
                         </div>
 
@@ -160,10 +138,8 @@
             </div>
         </div>
     </main>
-
-    <footer>© 2026 JG Sistemas</footer>
-
     <script src="/seguranca.js"></script>
+    <script src="/ui/shell.js"></script>
     <script>
         const API_BASE = '';
 
@@ -220,7 +196,7 @@
                         <td style="text-align:right;">${t.itens}</td>
                         <td style="text-align:right;">${t.clientes}</td>
                         <td style="text-align:center;">
-                            <button class="btn btn-mini btn-verde" onclick="abrirDetalhe('${t.id}')">Itens</button>
+                            <button class="btn-icone" title="Itens" onclick="abrirDetalhe('${t.id}')"><span class="ms">list_alt</span></button>
                             <button class="btn btn-mini btn-azul" onclick="editarTabela('${t.id}', '${esc(t.nome.replace(/'/g, "\\'"))}', ${t.padrao}, ${t.ativa})">Editar</button>
                         </td>
                     </tr>`).join('');
@@ -292,7 +268,7 @@
                                 ${i.percentual !== null ? `<strong>${i.percentual > 0 ? '+' : ''}${i.percentual}%</strong>` : ''}
                             </td>
                             <td style="text-align:center;">
-                                <button class="btn btn-mini btn-perigo" onclick="excluirItem('${i.id}')">Remover</button>
+                                <button class="btn-icone perigo" title="Remover" onclick="excluirItem('${i.id}')"><span class="ms">delete</span></button>
                             </td>
                         </tr>`).join('');
                 }

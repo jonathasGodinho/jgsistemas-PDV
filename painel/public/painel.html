@@ -5,441 +5,743 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google" content="notranslate">
     <meta name="robots" content="noindex, nofollow">
-    <title>Painel de Gestão - JG Sistemas</title>
+    <title>Painel Admin - JG Sistemas</title>
+    <link rel="stylesheet" href="/ui/jg.css">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
-        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
-        main { padding: 20px; max-width: 1100px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
-        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
-        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
-        .painel-corpo { padding: 14px; }
-        .campo { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
-        .campo label { font-size: 11px; color: #656d78; font-weight: bold; text-transform: uppercase; }
-        .campo input, .campo select { padding: 9px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; width: 100%; }
-        .linha { display: flex; gap: 10px; align-items: flex-end; }
-        .linha .campo { flex: 1; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { background-color: #134074; color: white; padding: 8px; text-align: left; text-transform: uppercase; font-size: 11px; }
-        td { padding: 8px; border-bottom: 1px solid #e6e9ed; color: #333; vertical-align: middle; }
-        tr:nth-child(even) { background-color: #f8f9fa; }
-        .btn { border: none; border-radius: 4px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; }
-        a.btn { display: inline-block; text-decoration: none; }
-        .btn-azul { background-color: #134074; color: white; }
-        .btn-verde { background-color: #00a651; color: white; }
-        .btn-vermelho { background-color: #d9534f; color: white; }
-        .btn-mini { padding: 4px 8px; font-size: 12px; }
-        .sem-dados { text-align: center; color: #8b95a1; padding: 24px; font-size: 14px; }
-        .badge { display: inline-block; padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
-        .b-verde { background: #d4edda; color: #155724; }
-        .b-vermelho { background: #f8d7da; color: #b02a37; }
-        .b-amarelo { background: #fde8c8; color: #b26b00; }
-        .b-cinza { background: #e2e3e5; color: #383d41; }
-        .venc-ok { color: #1d9d55; font-weight: bold; }
-        .venc-em-breve { color: #b26b00; font-weight: bold; }
-        .venc-vencido { color: #b02a37; font-weight: bold; }
-        .modal-fundo { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: none; align-items: center; justify-content: center; z-index: 50; }
-        .modal-fundo.aberto { display: flex; }
-        .modal { background: white; border-radius: 6px; width: 480px; max-width: 94vw; padding: 18px; }
-        .modal h3 { color: #134074; margin-bottom: 12px; }
-        .credenciais { background: #f8f9fa; border: 1px dashed #aab2bd; border-radius: 4px; padding: 10px; font-size: 13px; margin-bottom: 10px; }
-        .msg { padding: 10px 14px; border-radius: 4px; font-size: 13px; font-weight: bold; display: none; }
-        .msg-erro { background: #f8d7da; color: #b02a37; }
-        .msg-ok { background: #d4edda; color: #155724; }
-        .link { color: #134074; text-decoration: none; font-weight: bold; }
-        .link:hover { text-decoration: underline; }
-        footer { text-align: center; color: #8b95a1; font-size: 12px; display: flex; align-items: center; justify-content: center; }
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-        input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+        .tag-painel { display: inline-block; margin-top: 2px; padding: 1px 6px; border-radius: 4px; background: #1F3A60; color: #CBD5E1; font-size: 10px; font-weight: 700; letter-spacing: .06em; }
+        .login-fundo { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--navy); padding: 20px; }
+        .login-card { width: 400px; max-width: 100%; background: #fff; border-radius: 12px; box-shadow: var(--shadow-lg); padding: 28px; }
+        .mod-grupo { margin-bottom: 16px; }
+        .mod-grupo .card-head .ms { color: var(--primary); }
+        .mod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; padding: 14px 16px 16px; }
+        .mod-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; background: #fff; transition: border-color .12s, background .12s; }
+        .mod-card.on { border-color: #BBE5C8; }
+        .mod-card.extra { border-color: #F5D9A8; background: #FFFBF3; }
+        .mod-card.futuro { background: var(--surface-2); opacity: .75; }
+        .mod-card .topo { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+        .mod-card .nome { font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+        .mod-card .nome .ms { font-size: 18px; color: var(--text-2); }
+        .mod-card .desc { font-size: 12.5px; color: var(--text-2); line-height: 1.4; }
+        .mod-card .badge { align-self: flex-start; }
+        .resumo-lateral { position: sticky; top: calc(var(--topbar-h) + 20px); }
+        .plano-card { padding: 18px; display: flex; flex-direction: column; gap: 6px; }
+        .plano-card.destaque { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary), var(--shadow); }
+        .plano-card .preco { font-size: 26px; font-weight: 700; color: var(--text); }
+        .plano-card .preco small { font-size: 13px; color: var(--text-2); font-weight: 500; }
+        .matriz td.c, .matriz th.c { text-align: center; }
+        .matriz input[type=number] { width: 96px; height: 32px; text-align: right; }
+        .cred { background: var(--surface-2); border: 1px dashed var(--border-strong); border-radius: var(--radius); padding: 12px 14px; font-size: 14px; line-height: 1.7; }
+        .alteracoes { display: none; align-items: center; gap: 8px; color: var(--text-2); font-size: 13px; margin-right: auto; }
+        .alteracoes.on { display: flex; }
+        .alteracoes i { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); }
+        .mini-barra { width: 70px; height: 6px; border-radius: 999px; background: #EEF2F7; overflow: hidden; display: inline-block; vertical-align: middle; margin-left: 6px; }
+        .mini-barra > div { height: 100%; background: var(--green); }
     </style>
 </head>
-<body>
+<body class="jg sem-shell">
 
-    <header>
-        <div>JG SISTEMAS - PAINEL DE GESTÃO</div>
-        <div><a href="javascript:sair()" style="color:#aab2bd; text-decoration:none;">Sair</a></div>
-    </header>
-
-    <main id="view-login">
-        <div class="painel" style="max-width:380px; margin:60px auto;">
-            <div class="painel-titulo"><span>Acesso ao Painel</span></div>
-            <div class="painel-corpo">
-                <div class="msg" id="msg-login"></div>
-                <div class="campo">
-                    <label>Senha do painel</label>
-                    <input type="password" id="inp-senha" placeholder="Digite sua senha" onkeydown="if(event.key==='Enter')logar()">
-                </div>
-                <button class="btn btn-azul btn-mini" style="width:100%; padding:12px; font-size:15px;" onclick="logar()">Entrar</button>
-            </div>
-        </div>
-    </main>
-
-    <main id="view-clientes" style="display:none;">
-        <div class="msg" id="msg"></div>
-        <div class="painel">
-            <div class="painel-titulo">
-                <span>Clientes</span>
-                <div style="display:flex; gap:8px;">
-                    <button class="btn btn-mini btn-azul" onclick="carregar()">Atualizar</button>
-                    <button class="btn btn-mini btn-verde" onclick="abrirModal()">+ Novo Cliente</button>
+    <!-- ===================== LOGIN ===================== -->
+    <div class="login-fundo" id="view-login">
+        <div class="login-card">
+            <div class="row" style="gap:12px;margin-bottom:20px">
+                <div class="jg-brand-logo" style="width:42px;height:42px;font-size:16px">JG</div>
+                <div>
+                    <div style="font-weight:700;font-size:18px">JG Sistemas</div>
+                    <div class="muted" style="font-size:13px">Painel do Administrador</div>
                 </div>
             </div>
-            <div class="painel-corpo" style="padding:0;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Cliente</th>
-                            <th>Banco</th>
-                            <th>Porta</th>
-                            <th>Status</th>
-                            <th>Vencimento</th>
-                            <th style="text-align:right;">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabela-clientes">
-                        <tr><td colspan="6" class="sem-dados">Carregando...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </main>
-
-    <div class="modal-fundo" id="modal-novo">
-        <div class="modal">
-            <h3>Novo Cliente</h3>
+            <div class="alerta vermelho hidden mb-16" id="msg-login"><span class="ms">error</span><div></div></div>
             <div class="campo">
-                <label>Nome da empresa *</label>
-                <input type="text" id="n-nome" placeholder="Ex.: Mercadinho Silva">
+                <label for="inp-senha">Senha do painel</label>
+                <input type="password" id="inp-senha" placeholder="Digite sua senha" autocomplete="current-password">
             </div>
-            <div class="campo">
-                <label>Nome fantasia</label>
-                <input type="text" id="n-fantasia" placeholder="Ex.: Silva Supermercados">
-            </div>
-            <div class="linha">
-                <div class="campo">
-                    <label>CNPJ</label>
-                    <input type="text" id="n-cnpj" placeholder="Somente números">
-                </div>
-                <div class="campo">
-                    <label>Valor mensal (R$)</label>
-                    <input type="number" id="n-valor" step="0.01" placeholder="0,00">
-                </div>
-            </div>
-            <div class="campo">
-                <label>Vencimento da mensalidade</label>
-                <input type="date" id="n-vencimento">
-                <small style="color:#8b95a1; font-size:12px;">Após o vencimento o cliente tem 3 dias de tolerância; depois o acesso é bloqueado automaticamente.</small>
-            </div>
-            <div style="display:flex; gap:10px; margin-top:6px;">
-                <button class="btn btn-azul" style="flex:1;" onclick="fecharModal()">Cancelar</button>
-                <button class="btn btn-verde" style="flex:1;" onclick="criarCliente()">Cadastrar</button>
-            </div>
+            <button class="btn btn-primario btn-bloco" id="btn-entrar">Entrar</button>
         </div>
     </div>
 
-    <div class="modal-fundo" id="modal-editar">
+    <!-- ===================== APP ===================== -->
+    <div id="view-app" class="hidden">
+        <aside class="jg-sidebar">
+            <a class="jg-brand" href="#clientes"><div class="jg-brand-logo">JG</div><div class="jg-brand-txt"><div class="jg-brand-nome">JG Sistemas</div><span class="tag-painel">PAINEL ADMIN</span></div></a>
+            <nav class="jg-nav" id="nav">
+                <div class="jg-nav-grupo"><div class="jg-nav-itens">
+                    <a href="#clientes" data-view="clientes"><span class="ms">storefront</span><span>Clientes</span></a>
+                    <a href="#planos" data-view="planos"><span class="ms">view_module</span><span>Planos e módulos</span></a>
+                </div></div>
+            </nav>
+            <div class="jg-sidebar-rodape"><div class="jg-segmento"><span class="ms sm">dns</span><span>Produção SaaS</span><i class="ponto"></i></div></div>
+        </aside>
+        <header class="jg-topbar">
+            <div class="jg-breadcrumb" id="breadcrumb"><span>Painel</span><span class="sep">/</span><b>Clientes</b></div>
+            <div class="jg-topbar-dir">
+                <button class="jg-icon-btn" id="btn-atualizar" title="Atualizar"><span class="ms">refresh</span></button>
+                <div class="jg-user" style="cursor:default"><div class="jg-avatar">AD</div><div class="jg-user-txt"><div class="jg-user-nome">Administrador</div><div class="jg-user-papel">Super admin</div></div></div>
+                <button class="btn btn-sm" id="btn-sair"><span class="ms">logout</span>Sair</button>
+            </div>
+        </header>
+
+        <main class="jg-main">
+            <!-- ---------- Clientes ---------- -->
+            <section id="view-clientes">
+                <div class="page-head">
+                    <div><h1>Clientes</h1><div class="sub">Empresas que usam o ERP, instâncias e mensalidades.</div></div>
+                    <div class="acoes"><button class="btn btn-sucesso" id="btn-novo"><span class="ms">add</span>Novo cliente</button></div>
+                </div>
+                <div class="kpis" id="kpis"></div>
+                <div class="card">
+                    <div class="card-body" style="padding-bottom:0">
+                        <div class="filtros">
+                            <div class="input-icone" style="flex:1;min-width:240px"><span class="ms">search</span><input type="text" id="f-busca" placeholder="Buscar por empresa, CNPJ ou instância"></div>
+                            <select id="f-status" style="width:180px"><option value="">Todos os status</option><option value="ATIVO">Ativo</option><option value="SUSPENSO">Suspenso</option><option value="CADASTRADO">Não provisionado</option></select>
+                            <select id="f-plano" style="width:180px"><option value="">Todos os planos</option></select>
+                        </div>
+                    </div>
+                    <div class="tabela-wrap">
+                        <table>
+                            <thead><tr><th>Empresa</th><th>CNPJ</th><th>Plano</th><th>Módulos</th><th>Instância</th><th>Vencimento</th><th>Status</th><th class="acoes">Ações</th></tr></thead>
+                            <tbody id="tabela-clientes"><tr><td colspan="8" class="sem-dados">Carregando...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ---------- Cliente: detalhe ---------- -->
+            <section id="view-cliente" class="hidden">
+                <div class="page-head">
+                    <div>
+                        <div class="row" style="gap:10px"><h1 id="c-nome">Cliente</h1><span id="c-status"></span></div>
+                        <div class="sub" id="c-info"></div>
+                    </div>
+                    <div class="acoes" id="c-acoes"></div>
+                </div>
+                <div class="abas">
+                    <button class="aba" data-aba="dados">Dados</button>
+                    <button class="aba ativa" data-aba="modulos">Módulos <span class="contador" id="c-cont">0</span></button>
+                </div>
+
+                <div id="aba-modulos">
+                    <div class="grid g-main-side" style="align-items:start">
+                        <div>
+                            <div class="card mb-16">
+                                <div class="card-body">
+                                    <div class="form-grid c3" style="align-items:end">
+                                        <div class="campo"><label for="m-plano">Plano base</label><select id="m-plano"></select></div>
+                                        <div class="campo"><label for="m-segmento">Segmento</label>
+                                            <select id="m-segmento"><option value="MODA">Varejo · Moda</option><option value="VAREJO">Varejo</option><option value="SALAO">Salão de beleza</option></select></div>
+                                        <div class="campo"><button class="btn w-100" id="btn-aplicar-plano"><span class="ms">sync</span>Aplicar módulos do plano</button></div>
+                                    </div>
+                                    <div class="row between" style="font-size:13px">
+                                        <span class="muted">Módulos liberados: <b id="m-cont" style="color:var(--text)">0 de 0</b></span>
+                                        <span id="m-personalizado"></span>
+                                    </div>
+                                    <div class="progresso mt-8"><div id="m-barra" style="width:0"></div></div>
+                                </div>
+                            </div>
+                            <div class="input-icone mb-16"><span class="ms">filter_list</span><input type="text" id="m-filtro" placeholder="Filtrar módulos por nome ou descrição..."></div>
+                            <div id="m-grupos"></div>
+                        </div>
+                        <div class="stack resumo-lateral">
+                            <div class="card">
+                                <div class="card-head"><h3>Valor mensal</h3><span class="ms muted">receipt_long</span></div>
+                                <div class="card-body">
+                                    <div class="resumo-linhas">
+                                        <div class="l"><span id="r-plano-nome">Plano</span><b id="r-plano">R$ 0,00</b></div>
+                                        <div class="l"><span>Módulos adicionais (<span id="r-qtd-extra">0</span>)</span><b class="txt-ambar" id="r-extras">R$ 0,00</b></div>
+                                        <div class="l total"><span>Total mensal</span><b id="r-total" style="font-size:20px">R$ 0,00</b></div>
+                                    </div>
+                                    <div class="muted mt-8" style="font-size:12px" id="r-lista-extra"></div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-head"><h3>Limites</h3><span class="ms muted">tune</span></div>
+                                <div class="card-body">
+                                    <div class="campo"><label for="m-usuarios">Usuários (0 = ilimitado)</label><input type="number" id="m-usuarios" min="0" placeholder="Do plano"></div>
+                                    <div class="campo" style="margin:0"><label for="m-caixas">Caixas / PDVs (0 = ilimitado)</label><input type="number" id="m-caixas" min="0" placeholder="Do plano"></div>
+                                </div>
+                            </div>
+                            <div class="alerta"><span class="ms">info</span><div><b>Vale na hora.</b> Módulos bloqueados somem do menu do cliente e as telas e APIs deles ficam indisponíveis. Os dados não são apagados.</div></div>
+                        </div>
+                    </div>
+                    <div class="barra-fixa">
+                        <div class="alteracoes" id="m-alteracoes"><i></i><span>Alterações não salvas</span></div>
+                        <button class="btn" id="btn-descartar">Descartar</button>
+                        <button class="btn btn-sucesso" id="btn-salvar-modulos"><span class="ms">check</span>Salvar permissões</button>
+                    </div>
+                </div>
+
+                <div id="aba-dados" class="hidden">
+                    <div class="card" style="max-width:760px">
+                        <div class="card-head"><h3>Dados do cliente</h3></div>
+                        <div class="card-body">
+                            <div class="form-grid">
+                                <div class="campo span-2"><label for="e-nome">Razão social *</label><input type="text" id="e-nome"></div>
+                                <div class="campo"><label for="e-fantasia">Nome fantasia</label><input type="text" id="e-fantasia"></div>
+                                <div class="campo"><label for="e-cnpj">CNPJ</label><input type="text" id="e-cnpj"></div>
+                                <div class="campo"><label for="e-valor">Valor mensal (R$)</label><input type="number" id="e-valor" step="0.01"></div>
+                                <div class="campo"><label for="e-vencimento">Vencimento da mensalidade</label><input type="date" id="e-vencimento"><div class="dica">Vazio = sem controle de vencimento. Após o vencimento há tolerância de 3 dias.</div></div>
+                            </div>
+                        </div>
+                        <div class="card-foot"><button class="btn btn-sucesso" id="btn-salvar-dados"><span class="ms">check</span>Salvar dados</button></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ---------- Planos ---------- -->
+            <section id="view-planos" class="hidden">
+                <div class="page-head">
+                    <div><h1>Planos e módulos</h1><div class="sub">Defina o que cada plano inclui e o preço dos módulos vendidos como adicional.</div></div>
+                    <div class="acoes"><button class="btn" id="btn-novo-plano"><span class="ms">add</span>Novo plano</button></div>
+                </div>
+                <div class="grid g-3 mb-16" id="planos-cards"></div>
+                <div class="card">
+                    <div class="card-head"><div><h3>Módulos por plano</h3><div class="sub">Clientes que seguem o plano (sem ajuste manual) recebem as mudanças ao salvar.</div></div></div>
+                    <div class="tabela-wrap"><table class="matriz"><thead id="matriz-head"></thead><tbody id="matriz-body"></tbody></table></div>
+                </div>
+                <div class="barra-fixa">
+                    <div class="alteracoes" id="p-alteracoes"><i></i><span>Alterações não salvas</span></div>
+                    <button class="btn btn-sucesso" id="btn-salvar-planos"><span class="ms">check</span>Salvar planos</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal: novo cliente -->
+    <div class="modal-overlay drawer" id="modal-novo">
         <div class="modal">
-            <h3 id="editar-titulo">Editar Cliente</h3>
-            <div class="campo">
-                <label>Nome da empresa *</label>
-                <input type="text" id="e-nome">
-            </div>
-            <div class="campo">
-                <label>Nome fantasia</label>
-                <input type="text" id="e-fantasia">
-            </div>
-            <div class="linha">
-                <div class="campo">
-                    <label>CNPJ</label>
-                    <input type="text" id="e-cnpj">
+            <div class="modal-head"><span>Novo cliente</span><button class="close" data-fechar>&times;</button></div>
+            <div class="modal-body">
+                <div class="campo"><label for="n-nome">Razão social *</label><input type="text" id="n-nome" placeholder="Ex.: Boutique Flor de Lis Ltda"></div>
+                <div class="campo"><label for="n-fantasia">Nome fantasia</label><input type="text" id="n-fantasia" placeholder="Ex.: Flor de Lis"></div>
+                <div class="campo"><label for="n-cnpj">CNPJ</label><input type="text" id="n-cnpj" placeholder="Somente números"></div>
+                <div class="form-grid">
+                    <div class="campo"><label for="n-plano">Plano</label><select id="n-plano"></select></div>
+                    <div class="campo"><label for="n-segmento">Segmento</label><select id="n-segmento"><option value="MODA">Varejo · Moda</option><option value="VAREJO">Varejo</option><option value="SALAO">Salão de beleza</option></select></div>
+                    <div class="campo"><label for="n-valor">Valor mensal (R$)</label><input type="number" id="n-valor" step="0.01" placeholder="Do plano"></div>
+                    <div class="campo"><label for="n-vencimento">Vencimento</label><input type="date" id="n-vencimento"></div>
                 </div>
-                <div class="campo">
-                    <label>Valor mensal (R$)</label>
-                    <input type="number" id="e-valor" step="0.01">
-                </div>
+                <div class="dica muted" style="font-size:12px">Após o vencimento o cliente tem 3 dias de tolerância; depois o acesso é bloqueado automaticamente.</div>
             </div>
-            <div class="campo">
-                <label>Vencimento da mensalidade</label>
-                <input type="date" id="e-vencimento">
-                <small style="color:#8b95a1; font-size:12px;">Vazio = sem controle de vencimento. Deixe a data em branco para remover.</small>
-            </div>
-            <div style="display:flex; gap:10px; margin-top:6px;">
-                <button class="btn btn-azul" style="flex:1;" onclick="fecharModalEditar()">Cancelar</button>
-                <button class="btn btn-verde" style="flex:1;" onclick="salvarEdicao()">Salvar</button>
-            </div>
+            <div class="modal-foot"><button class="btn" data-fechar>Cancelar</button><button class="btn btn-sucesso" id="btn-criar"><span class="ms">check</span>Cadastrar</button></div>
         </div>
     </div>
 
-    <div class="modal-fundo" id="modal-credenciais">
-        <div class="modal">
-            <h3>Cliente provisionado!</h3>
-            <div class="credenciais" id="cred-info"></div>
-            <button class="btn btn-azul btn-mini" style="width:100%;" onclick="fecharModalCred()">Ok</button>
+    <!-- Modal: credenciais -->
+    <div class="modal-overlay" id="modal-credenciais">
+        <div class="modal sm">
+            <div class="modal-head"><span>Cliente provisionado</span><button class="close" data-fechar>&times;</button></div>
+            <div class="modal-body"><div class="cred" id="cred-info"></div><div class="alerta ambar mt-16"><span class="ms">warning</span><div>Guarde a senha: ela é mostrada apenas uma vez.</div></div></div>
+            <div class="modal-foot"><button class="btn btn-primario" data-fechar>Ok</button></div>
         </div>
     </div>
 
-    <footer>© 2026 JG Sistemas - Painel de Gestão</footer>
+    <!-- Modal: confirmação -->
+    <div class="modal-overlay" id="modal-confirmar">
+        <div class="modal sm">
+            <div class="modal-head"><span id="conf-titulo">Confirmar</span><button class="close" data-fechar>&times;</button></div>
+            <div class="modal-body"><p id="conf-texto" style="margin:0"></p></div>
+            <div class="modal-foot"><button class="btn" data-fechar>Cancelar</button><button class="btn btn-perigo" id="conf-ok">Confirmar</button></div>
+        </div>
+    </div>
 
     <script>
-        const API_BASE = '';
-
-        // Sessão em cookie httpOnly — nenhum token fica no navegador.
-        // A flag abaixo só controla a interface (mostrar login ou lista).
-        function token() {
-            return {};
+        // ------------------------------------------------------------ utilidades
+        const $ = (id) => document.getElementById(id);
+        const fmt = (v) => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const fmtData = (d) => d ? String(d).slice(0, 10).split('-').reverse().join('/') : '—';
+        const SEGMENTOS = { MODA: 'Varejo · Moda', VAREJO: 'Varejo', SALAO: 'Salão de beleza' };
+        const ICONES_GRUPO = { 'Vendas': 'point_of_sale', 'Clientes': 'group', 'Catálogo': 'sell', 'Estoque': 'warehouse', 'Financeiro': 'account_balance', 'Fiscal': 'receipt', 'Serviços': 'content_cut', 'Pessoas': 'badge', 'Relatórios': 'analytics' };
+        function esc(v) {
+            if (v === null || v === undefined) return '';
+            return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         }
-
-        function mostrarMsg(id, texto, tipo) {
-            const el = document.getElementById(id);
-            el.textContent = texto;
-            el.className = 'msg ' + (tipo === 'erro' ? 'msg-erro' : 'msg-ok');
-            el.style.display = 'block';
+        function toast(msg, tipo) {
+            let box = document.querySelector('.jg-toasts');
+            if (!box) { box = document.createElement('div'); box.className = 'jg-toasts'; document.body.appendChild(box); }
+            const el = document.createElement('div');
+            el.className = 'jg-toast ' + (tipo || 'sucesso');
+            el.innerHTML = '<span class="ms">' + (tipo === 'erro' ? 'error' : 'check_circle') + '</span><div></div>';
+            el.lastChild.textContent = msg;
+            box.appendChild(el);
+            setTimeout(() => el.remove(), 4200);
         }
-
         async function api(url, metodo = 'GET', corpo = null) {
-            const opcoes = { method: metodo, headers: Object.assign({ 'Content-Type': 'application/json' }, token()) };
+            const opcoes = { method: metodo, headers: { 'Content-Type': 'application/json' } };
             if (corpo) opcoes.body = JSON.stringify(corpo);
-            const response = await fetch(`${API_BASE}${url}`, opcoes);
-            if (response.status === 401) {
+            const r = await fetch(url, opcoes);
+            if (r.status === 401 && url !== '/api/login') {
                 localStorage.removeItem('jg_painel_logado');
-                window.location.reload();
+                location.reload();
                 throw new Error('Sessão expirada.');
             }
-            const dados = await response.json().catch(() => ({}));
-            if (!response.ok) throw new Error(dados.erro || 'Erro na requisição');
+            const dados = await r.json().catch(() => ({}));
+            if (!r.ok) throw new Error(dados.erro || 'Erro na requisição');
             return dados;
         }
+        function abrir(id) { $(id).classList.add('active'); }
+        function fechar(id) { $(id).classList.remove('active'); }
+        document.querySelectorAll('.modal-overlay').forEach((m) => {
+            m.addEventListener('click', (e) => { if (e.target === m || e.target.closest('[data-fechar]')) m.classList.remove('active'); });
+        });
+        function confirmar(titulo, texto, rotulo = 'Confirmar', perigo = true) {
+            return new Promise((resolve) => {
+                $('conf-titulo').textContent = titulo;
+                $('conf-texto').textContent = texto;
+                const ok = $('conf-ok');
+                ok.textContent = rotulo;
+                ok.className = 'btn ' + (perigo ? 'btn-perigo' : 'btn-primario');
+                const modal = $('modal-confirmar');
+                const limpar = (v) => { ok.onclick = null; modal.removeEventListener('click', fora); fechar('modal-confirmar'); resolve(v); };
+                const fora = (e) => { if (e.target === modal || e.target.closest('[data-fechar]')) limpar(false); };
+                ok.onclick = () => limpar(true);
+                modal.addEventListener('click', fora);
+                abrir('modal-confirmar');
+            });
+        }
 
+        // ------------------------------------------------------------ estado
+        let clientes = [];
+        let catalogo = { modulos: [], planos: [], adicionais: {} };
+        let atual = null;          // cliente aberto
+        let modSel = new Set();    // módulos marcados no editor
+        let modOrig = '';          // assinatura salva (para detectar alterações)
+        let planosEdit = [];       // cópia editável dos planos
+        let adicionaisEdit = {};
+
+        // ------------------------------------------------------------ login
         async function logar() {
-            const senha = document.getElementById('inp-senha').value;
+            const senha = $('inp-senha').value;
             try {
-                const r = await fetch(`${API_BASE}/api/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ senha })
-                });
-                const dados = await r.json();
-                if (!r.ok) throw new Error(dados.erro || 'Falha no login');
+                await api('/api/login', 'POST', { senha });
                 localStorage.setItem('jg_painel_logado', '1');
-                document.getElementById('view-login').style.display = 'none';
-                document.getElementById('view-clientes').style.display = 'flex';
-                carregar();
+                entrar();
             } catch (e) {
-                mostrarMsg('msg-login', e.message, 'erro');
+                $('msg-login').classList.remove('hidden');
+                $('msg-login').querySelector('div').textContent = e.message;
             }
         }
-
-        async function sair() {
-            try { await fetch(`${API_BASE}/api/logout`, { method: 'POST' }); } catch (e) {}
+        $('btn-entrar').onclick = logar;
+        $('inp-senha').addEventListener('keydown', (e) => { if (e.key === 'Enter') logar(); });
+        $('btn-sair').onclick = async () => {
+            try { await fetch('/api/logout', { method: 'POST' }); } catch (e) { /* ignora */ }
             localStorage.removeItem('jg_painel_logado');
-            window.location.reload();
+            location.hash = '';
+            location.reload();
+        };
+
+        async function entrar() {
+            $('view-login').classList.add('hidden');
+            $('view-app').classList.remove('hidden');
+            document.body.classList.remove('sem-shell');
+            await carregarTudo();
+            rotear();
         }
 
-        function statusBadge(c) {
-            if (c.tipo === 'escola') {
-                return c.rodando
-                    ? '<span class="badge b-verde">RODANDO</span>'
-                    : '<span class="badge b-cinza">PARADO</span>';
+        async function carregarTudo() {
+            try {
+                [clientes, catalogo] = await Promise.all([api('/api/clientes'), api('/api/catalogo')]);
+            } catch (e) { toast(e.message, 'erro'); }
+            preencherSelectsPlano();
+        }
+
+        function preencherSelectsPlano() {
+            const opts = catalogo.planos.map((p) => `<option value="${esc(p.id)}">${esc(p.nome)} (${fmt(p.valor)}/mês)</option>`).join('');
+            $('n-plano').innerHTML = opts + '<option value="">Sem plano (personalizado)</option>';
+            $('m-plano').innerHTML = '<option value="">Sem plano (personalizado)</option>' + opts;
+            $('f-plano').innerHTML = '<option value="">Todos os planos</option>' + catalogo.planos.map((p) => `<option value="${esc(p.id)}">${esc(p.nome)}</option>`).join('');
+        }
+
+        // ------------------------------------------------------------ rotas (#clientes, #cliente/<id>, #planos)
+        window.addEventListener('hashchange', rotear);
+        function rotear() {
+            if ($('view-app').classList.contains('hidden')) return;
+            const h = location.hash.replace(/^#/, '') || 'clientes';
+            ['clientes', 'cliente', 'planos'].forEach((v) => $('view-' + v).classList.add('hidden'));
+            document.querySelectorAll('#nav a').forEach((a) => a.classList.toggle('ativo', h.startsWith(a.dataset.view)));
+            if (h.startsWith('cliente/')) {
+                document.querySelector('#nav a[data-view="clientes"]').classList.add('ativo');
+                abrirCliente(h.split('/')[1]);
+            } else if (h === 'planos') {
+                $('view-planos').classList.remove('hidden');
+                $('breadcrumb').innerHTML = '<span>Painel</span><span class="sep">/</span><b>Planos e módulos</b>';
+                renderPlanos();
+            } else {
+                $('view-clientes').classList.remove('hidden');
+                $('breadcrumb').innerHTML = '<span>Painel</span><span class="sep">/</span><b>Clientes</b>';
+                renderClientes();
             }
-            const map = { 'ATIVO': 'b-verde', 'SUSPENSO': 'b-vermelho', 'CADASTRADO': 'b-amarelo' };
-            const classe = map[c.status] || 'b-cinza';
-            let texto = c.status;
-            if (c.status === 'ATIVO' && !c.rodando) texto = 'ATIVO (parado)';
-            return `<span class="badge ${classe}">${texto}</span>`;
         }
+        $('btn-atualizar').onclick = async () => { await carregarTudo(); rotear(); toast('Dados atualizados.'); };
 
-        // Dias até o fim da janela de tolerância (3 dias após o vencimento).
+        // ------------------------------------------------------------ lista de clientes
         function diasTolerancia(c) {
             if (!c.vencimento) return null;
             const fim = new Date(`${c.vencimento.slice(0, 10)}T00:00:00`);
             fim.setDate(fim.getDate() + 3);
             return Math.ceil((fim.getTime() - Date.now()) / 86400000);
         }
-
-        function vencBadge(c) {
-            if (!c.vencimento) return '<span style="color:#8b95a1;">—</span>';
+        function vencHtml(c) {
+            if (!c.vencimento) return '<span class="muted">—</span>';
+            const d = fmtData(c.vencimento);
             const dias = diasTolerancia(c);
-            const d = c.vencimento.slice(0, 10).split('-').reverse().join('/');
-            if (dias < 0) return `<span class="venc-vencido">${d} (vencido)</span>`;
-            if (dias === 0) return `<span class="venc-vencido">${d} (bloqueia hoje)</span>`;
-            if (dias <= 3) return `<span class="venc-em-breve">${d} (últimos ${dias} dia${dias > 1 ? 's' : ''})</span>`;
-            return `<span class="venc-ok">${d}</span>`;
+            if (dias < 0) return `<span class="txt-vermelho"><b>${d}</b> · vencido</span>`;
+            if (dias === 0) return `<span class="txt-vermelho"><b>${d}</b> · bloqueia hoje</span>`;
+            if (dias <= 3) return `<span class="txt-ambar"><b>${d}</b> · ${dias} dia${dias > 1 ? 's' : ''}</span>`;
+            return d;
         }
+        function statusHtml(c) {
+            if (c.tipo === 'escola') return c.rodando ? '<span class="badge ativo">Rodando</span>' : '<span class="badge inativo">Parado</span>';
+            if (c.status === 'ATIVO') return c.rodando ? '<span class="badge ativo">Ativo</span>' : '<span class="badge pendente">Ativo (parado)</span>';
+            if (c.status === 'SUSPENSO') return '<span class="badge vencido">Suspenso</span>';
+            if (c.status === 'CADASTRADO') return '<span class="badge azul">Não provisionado</span>';
+            return `<span class="badge inativo">${esc(c.status)}</span>`;
+        }
+        function nomePlano(id) { const p = catalogo.planos.find((x) => x.id === id); return p ? p.nome : null; }
 
-        function acoes(c) {
-            let b = '';
+        function renderClientes() {
+            const erp = clientes.filter((c) => c.tipo !== 'escola');
+            const ativos = erp.filter((c) => c.status === 'ATIVO').length;
+            const susp = erp.filter((c) => c.status === 'SUSPENSO').length;
+            const mrr = erp.filter((c) => c.status === 'ATIVO').reduce((s, c) => s + Number(c.valor || 0), 0);
+            const vencendo = erp.filter((c) => { const d = diasTolerancia(c); return d !== null && d >= 0 && d <= 10; }).length;
+            $('kpis').innerHTML = [
+                { r: 'Clientes ativos', v: ativos, i: 'storefront', c: '' },
+                { r: 'Suspensos', v: susp, i: 'block', c: susp ? 'vermelho' : '' },
+                { r: 'Receita mensal (MRR)', v: fmt(mrr), i: 'trending_up', c: 'verde' },
+                { r: 'Vencendo em 7 dias', v: vencendo, i: 'event', c: vencendo ? 'ambar' : '' }
+            ].map((k) => `<div class="kpi ${k.c}"><div class="kpi-top"><span>${k.r}</span><span class="ms">${k.i}</span></div><div class="kpi-valor">${k.v}</div></div>`).join('');
+
+            const q = $('f-busca').value.trim().toLowerCase();
+            const st = $('f-status').value;
+            const pl = $('f-plano').value;
+            const lista = clientes.filter((c) =>
+                (!q || [c.nome, c.fantasia, c.cnpj, c.slug].join(' ').toLowerCase().includes(q)) &&
+                (!st || c.status === st) && (!pl || c.planoId === pl));
+            const tbody = $('tabela-clientes');
+            if (!lista.length) {
+                tbody.innerHTML = `<tr><td colspan="8"><div class="estado-vazio"><span class="ms">storefront</span><p>${clientes.length ? 'Nenhum cliente encontrado com esses filtros.' : 'Nenhum cliente cadastrado ainda.'}</p>${clientes.length ? '' : '<button class="btn btn-sucesso" onclick="abrirNovo()"><span class="ms">add</span>Novo cliente</button>'}</div></td></tr>`;
+                return;
+            }
+            tbody.innerHTML = lista.map((c) => {
+                const escola = c.tipo === 'escola';
+                const pct = c.modulosTotal ? Math.round(c.modulosAtivos / c.modulosTotal * 100) : 0;
+                return `<tr>
+                    <td><b>${esc(c.fantasia || c.nome)}</b><br><small>${esc(c.nome)}</small></td>
+                    <td class="num">${esc(c.cnpj || '—')}</td>
+                    <td>${escola ? '<span class="muted">Serviço interno</span>' : (nomePlano(c.planoId) ? `<span class="badge azul sem-ponto">${esc(nomePlano(c.planoId))}</span>` : '<span class="muted">Personalizado</span>')}<br><small>${fmt(c.valor)}/mês</small></td>
+                    <td>${escola ? '—' : `${c.modulosAtivos} de ${c.modulosTotal}<span class="mini-barra"><div style="width:${pct}%"></div></span>`}</td>
+                    <td><span class="kbd" style="font-size:11px">${esc(c.slug)}</span> <small>· ${c.porta}</small></td>
+                    <td>${vencHtml(c)}</td>
+                    <td>${statusHtml(c)}</td>
+                    <td class="acoes">${acoesHtml(c)}</td>
+                </tr>`;
+            }).join('');
+        }
+        ['f-busca', 'f-status', 'f-plano'].forEach((id) => $(id).addEventListener('input', renderClientes));
+
+        function acoesHtml(c) {
             const url = `http://localhost:${c.porta}`;
+            const b = [];
             if (c.tipo === 'escola') {
-                b += `<a class="btn btn-mini btn-verde" href="${url}" target="_blank">Abrir</a> `;
-                if (c.rodando) {
-                    b += `<button class="btn btn-mini btn-vermelho" onclick="pararServico('${c.id}')">Parar</button> `;
-                } else {
-                    b += `<button class="btn btn-mini btn-verde" onclick="iniciarServico('${c.id}')">Iniciar</button> `;
-                }
-                return b;
+                b.push(`<a class="btn-icone" href="${url}" target="_blank" rel="noopener" title="Abrir"><span class="ms">open_in_new</span></a>`);
+                b.push(c.rodando
+                    ? `<button class="btn-icone perigo" title="Parar" onclick="pararServico('${c.id}')"><span class="ms">stop_circle</span></button>`
+                    : `<button class="btn-icone" title="Iniciar" onclick="iniciarServico('${c.id}')"><span class="ms">play_circle</span></button>`);
+                return b.join('');
             }
+            b.push(`<button class="btn btn-sm" onclick="location.hash='cliente/${c.id}'"><span class="ms">view_module</span>Módulos</button>`);
             if (c.status === 'CADASTRADO') {
-                b += `<button class="btn btn-mini btn-azul" onclick="editarCliente('${c.id}')">Editar</button> `;
-                b += `<button class="btn btn-mini btn-verde" onclick="provisionar('${c.id}')">Provisionar</button> `;
+                b.push(`<button class="btn btn-sm btn-sucesso" onclick="provisionar('${c.id}')"><span class="ms">rocket_launch</span>Provisionar</button>`);
             } else {
-                b += `<a class="btn btn-mini btn-verde" href="${url}" target="_blank">Abrir</a> `;
-                b += `<button class="btn btn-mini btn-azul" onclick="editarCliente('${c.id}')">Editar</button> `;
-                if (c.status === 'SUSPENSO') {
-                    b += `<button class="btn btn-mini btn-verde" onclick="reativar('${c.id}')">Reativar</button> `;
-                } else {
-                    b += `<button class="btn btn-mini btn-vermelho" onclick="suspender('${c.id}')">Suspender</button> `;
-                }
-                b += `<button class="btn btn-mini btn-azul" onclick="provisionar('${c.id}')">Re-provisionar</button> `;
+                b.push(`<a class="btn-icone" href="${url}" target="_blank" rel="noopener" title="Abrir instância"><span class="ms">open_in_new</span></a>`);
+                b.push(c.status === 'SUSPENSO'
+                    ? `<button class="btn-icone" title="Reativar" onclick="reativar('${c.id}')"><span class="ms">play_circle</span></button>`
+                    : `<button class="btn-icone perigo" title="Suspender" onclick="suspender('${c.id}')"><span class="ms">block</span></button>`);
+                b.push(`<button class="btn-icone" title="Re-provisionar" onclick="provisionar('${c.id}')"><span class="ms">restart_alt</span></button>`);
             }
-            return b;
+            return b.join('');
         }
 
-        let clientesCache = [];
-
-        async function carregar() {
-            try {
-                clientesCache = await api('/api/clientes');
-                const lista = clientesCache;
-                const tbody = document.getElementById('tabela-clientes');
-                if (!lista.length) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="sem-dados">Nenhum cliente cadastrado.</td></tr>';
-                    return;
-                }
-                tbody.innerHTML = lista.map((c) => `
-                    <tr>
-                        <td><strong>${c.nome}</strong><br><small>${c.slug} · ${c.plano} · R$ ${Number(c.valor).toFixed(2)}</small></td>
-                        <td>${c.banco}</td>
-                        <td>${c.porta}</td>
-                        <td>${statusBadge(c)}</td>
-                        <td>${vencBadge(c)}</td>
-                        <td style="text-align:right;">${acoes(c)}</td>
-                    </tr>`).join('');
-            } catch (e) {
-                mostrarMsg('msg', e.message, 'erro');
-            }
+        // ------------------------------------------------------------ ações de instância
+        function mostrarCredenciais(c) {
+            $('cred-info').innerHTML = `<b>${esc(c.nome)}</b><br>URL: <a href="http://localhost:${c.porta}" target="_blank" rel="noopener">http://localhost:${c.porta}</a><br>Admin: <b>${esc(c.adminEmail)}</b><br>Senha: <b>${esc(c.adminSenha)}</b>`;
+            abrir('modal-credenciais');
         }
-
-        function abrirModal() { document.getElementById('modal-novo').classList.add('aberto'); }
-        function fecharModal() { document.getElementById('modal-novo').classList.remove('aberto'); }
-
-        async function criarCliente() {
-            const corpo = {
-                nome: document.getElementById('n-nome').value,
-                fantasia: document.getElementById('n-fantasia').value,
-                cnpj: document.getElementById('n-cnpj').value,
-                valor: document.getElementById('n-valor').value,
-                vencimento: document.getElementById('n-vencimento').value || null
-            };
-            try {
-                await api('/api/clientes', 'POST', corpo);
-                fecharModal();
-                ['n-nome', 'n-fantasia', 'n-cnpj', 'n-vencimento'].forEach((i) => document.getElementById(i).value = '');
-                carregar();
-            } catch (e) {
-                mostrarMsg('msg', e.message, 'erro');
-            }
-        }
-
-        function editarCliente(id) {
-            const c = clientesCache.find((x) => x.id === id);
-            if (!c) return;
-            document.getElementById('e-nome').value = c.nome || '';
-            document.getElementById('e-fantasia').value = c.fantasia || '';
-            document.getElementById('e-cnpj').value = c.cnpj || '';
-            document.getElementById('e-valor').value = c.valor ?? '';
-            document.getElementById('e-vencimento').value = c.vencimento ? c.vencimento.slice(0, 10) : '';
-            document.getElementById('modal-editar').dataset.id = id;
-            document.getElementById('modal-editar').classList.add('aberto');
-        }
-
-        function fecharModalEditar() {
-            document.getElementById('modal-editar').classList.remove('aberto');
-        }
-
-        async function salvarEdicao() {
-            const id = document.getElementById('modal-editar').dataset.id;
-            const corpo = {
-                nome: document.getElementById('e-nome').value,
-                fantasia: document.getElementById('e-fantasia').value,
-                cnpj: document.getElementById('e-cnpj').value,
-                valor: document.getElementById('e-valor').value,
-                vencimento: document.getElementById('e-vencimento').value || null
-            };
-            try {
-                await api(`/api/clientes/${id}`, 'PUT', corpo);
-                fecharModalEditar();
-                carregar();
-            } catch (e) {
-                mostrarMsg('msg', e.message, 'erro');
-            }
-        }
-
         async function provisionar(id) {
-            if (!confirm('Provisionar este cliente? Isso cria o banco, aplica o schema e inicia a instância.')) return;
+            if (!await confirmar('Provisionar cliente', 'Isso cria o banco, aplica o schema, gera um novo administrador e inicia a instância.', 'Provisionar', false)) return;
             try {
+                toast('Provisionando... isso pode levar alguns segundos.');
                 const c = await api(`/api/clientes/${id}/provisionar`, 'POST');
-                document.getElementById('cred-info').innerHTML =
-                    `<strong>${c.nome}</strong><br>
-                     URL: <a href="http://localhost:${c.porta}" target="_blank">http://localhost:${c.porta}</a><br>
-                     Admin: <b>${c.adminEmail}</b><br>
-                     Senha: <b>${c.adminSenha}</b><br>
-                     <small>Guarde a senha — mostrada apenas uma vez.</small>`;
-                document.getElementById('modal-credenciais').classList.add('aberto');
-                carregar();
-            } catch (e) {
-                mostrarMsg('msg', e.message, 'erro');
-            }
+                mostrarCredenciais(c);
+                await carregarTudo(); rotear();
+            } catch (e) { toast(e.message, 'erro'); }
         }
-
-        function fecharModalCred() { document.getElementById('modal-credenciais').classList.remove('aberto'); }
-
         async function suspender(id) {
-            if (!confirm('Suspender este cliente? O acesso dele será bloqueado imediatamente.')) return;
-            try { await api(`/api/clientes/${id}/suspender`, 'POST'); carregar(); }
-            catch (e) { mostrarMsg('msg', e.message, 'erro'); }
+            if (!await confirmar('Suspender cliente', 'O acesso do cliente será bloqueado imediatamente.', 'Suspender')) return;
+            try { await api(`/api/clientes/${id}/suspender`, 'POST'); toast('Cliente suspenso.'); await carregarTudo(); rotear(); }
+            catch (e) { toast(e.message, 'erro'); }
         }
-
         async function reativar(id) {
-            try { await api(`/api/clientes/${id}/reativar`, 'POST'); carregar(); }
-            catch (e) { mostrarMsg('msg', e.message, 'erro'); }
+            try { await api(`/api/clientes/${id}/reativar`, 'POST'); toast('Cliente reativado.'); await carregarTudo(); rotear(); }
+            catch (e) { toast(e.message, 'erro'); }
         }
-
         async function iniciarServico(id) {
             try {
                 const c = await api(`/api/clientes/${id}/iniciar`, 'POST');
-                if (c.adminSenha) {
-                    document.getElementById('cred-info').innerHTML =
-                        `<strong>${c.nome}</strong><br>
-                         URL: <a href="http://localhost:${c.porta}" target="_blank">http://localhost:${c.porta}</a><br>
-                         Admin: <b>${c.adminEmail}</b><br>
-                         Senha: <b>${c.adminSenha}</b><br>
-                         <small>Guarde a senha — mostrada apenas uma vez.</small>`;
-                    document.getElementById('modal-credenciais').classList.add('aberto');
-                }
-                carregar();
-            } catch (e) {
-                mostrarMsg('msg', e.message, 'erro');
-            }
+                if (c.adminSenha) mostrarCredenciais(c);
+                await carregarTudo(); rotear();
+            } catch (e) { toast(e.message, 'erro'); }
         }
-
         async function pararServico(id) {
-            try { await api(`/api/clientes/${id}/parar`, 'POST'); carregar(); }
-            catch (e) { mostrarMsg('msg', e.message, 'erro'); }
+            try { await api(`/api/clientes/${id}/parar`, 'POST'); await carregarTudo(); rotear(); }
+            catch (e) { toast(e.message, 'erro'); }
         }
 
-        if (localStorage.getItem('jg_painel_logado')) {
-            document.getElementById('view-login').style.display = 'none';
-            document.getElementById('view-clientes').style.display = 'flex';
-            carregar();
+        // ------------------------------------------------------------ novo cliente
+        function abrirNovo() {
+            ['n-nome', 'n-fantasia', 'n-cnpj', 'n-valor', 'n-vencimento'].forEach((i) => $(i).value = '');
+            const destaque = catalogo.planos.find((p) => p.destaque) || catalogo.planos[0];
+            if (destaque) $('n-plano').value = destaque.id;
+            abrir('modal-novo');
+            setTimeout(() => $('n-nome').focus(), 50);
         }
+        $('btn-novo').onclick = abrirNovo;
+        $('btn-criar').onclick = async () => {
+            const corpo = {
+                nome: $('n-nome').value, fantasia: $('n-fantasia').value, cnpj: $('n-cnpj').value,
+                valor: $('n-valor').value, vencimento: $('n-vencimento').value || null,
+                planoId: $('n-plano').value || null, segmento: $('n-segmento').value
+            };
+            try {
+                const c = await api('/api/clientes', 'POST', corpo);
+                fechar('modal-novo');
+                toast('Cliente cadastrado. Revise os módulos e provisione.');
+                await carregarTudo();
+                location.hash = 'cliente/' + c.id;
+            } catch (e) { toast(e.message, 'erro'); }
+        };
 
-        document.addEventListener('focusin', (e) => {
-            const input = e.target;
-            if (input && input.tagName === 'INPUT' && !input.readOnly && !input.disabled && input.type === 'number') {
-                setTimeout(() => { try { input.select(); } catch (_) {} }, 0);
-            }
+        // ------------------------------------------------------------ cliente: módulos
+        async function abrirCliente(id) {
+            atual = clientes.find((c) => c.id === id);
+            if (!atual) { location.hash = 'clientes'; return; }
+            $('view-cliente').classList.remove('hidden');
+            $('breadcrumb').innerHTML = `<a href="#clientes" style="color:inherit;text-decoration:none">Clientes</a><span class="sep">/</span><b>${esc(atual.fantasia || atual.nome)}</b>`;
+            $('c-nome').textContent = atual.fantasia || atual.nome;
+            $('c-status').innerHTML = statusHtml(atual);
+            $('c-info').innerHTML = `CNPJ: <b>${esc(atual.cnpj || '—')}</b> · Instância <span class="kbd">${esc(atual.slug)}</span> · porta ${atual.porta} · Vencimento ${vencHtml(atual)}`;
+            const url = `http://localhost:${atual.porta}`;
+            $('c-acoes').innerHTML = atual.status === 'CADASTRADO'
+                ? `<button class="btn btn-sucesso" onclick="provisionar('${atual.id}')"><span class="ms">rocket_launch</span>Provisionar</button>`
+                : (atual.status === 'SUSPENSO'
+                    ? `<button class="btn btn-sucesso" onclick="reativar('${atual.id}')"><span class="ms">play_circle</span>Reativar</button>`
+                    : `<button class="btn btn-contorno-perigo" onclick="suspender('${atual.id}')"><span class="ms">block</span>Suspender</button>`) +
+                  ` <a class="btn btn-primario" href="${url}" target="_blank" rel="noopener"><span class="ms">open_in_new</span>Abrir instância</a>`;
+            // dados
+            $('e-nome').value = atual.nome || '';
+            $('e-fantasia').value = atual.fantasia || '';
+            $('e-cnpj').value = atual.cnpj || '';
+            $('e-valor').value = atual.valor ?? '';
+            $('e-vencimento').value = atual.vencimento ? atual.vencimento.slice(0, 10) : '';
+            try {
+                const m = await api(`/api/clientes/${id}/modulos`);
+                modSel = new Set(m.modulos);
+                $('m-plano').value = m.planoId || '';
+                $('m-segmento').value = m.segmento || 'MODA';
+                $('m-usuarios').value = m.limiteUsuarios ?? '';
+                $('m-caixas').value = m.limiteCaixas ?? '';
+                modOrig = assinatura();
+                renderModulos();
+            } catch (e) { toast(e.message, 'erro'); }
+        }
+        document.querySelectorAll('[data-aba]').forEach((b) => b.addEventListener('click', () => {
+            document.querySelectorAll('[data-aba]').forEach((x) => x.classList.toggle('ativa', x === b));
+            $('aba-modulos').classList.toggle('hidden', b.dataset.aba !== 'modulos');
+            $('aba-dados').classList.toggle('hidden', b.dataset.aba !== 'dados');
+        }));
+
+        function assinatura() {
+            return JSON.stringify([[...modSel].sort(), $('m-plano').value, $('m-segmento').value, $('m-usuarios').value, $('m-caixas').value]);
+        }
+        function planoAtual() { return catalogo.planos.find((p) => p.id === $('m-plano').value) || null; }
+
+        function renderModulos() {
+            const plano = planoAtual();
+            const incluidos = new Set(plano ? plano.modulos : []);
+            const filtro = $('m-filtro').value.trim().toLowerCase();
+            const disponiveis = catalogo.modulos.filter((m) => !m.futuro);
+            const grupos = {};
+            catalogo.modulos.forEach((m) => {
+                if (filtro && !(m.nome + ' ' + m.descricao).toLowerCase().includes(filtro)) return;
+                (grupos[m.grupo] = grupos[m.grupo] || []).push(m);
+            });
+            $('m-grupos').innerHTML = Object.entries(grupos).map(([g, mods]) => {
+                const ativos = mods.filter((m) => modSel.has(m.chave)).length;
+                return `<div class="card mod-grupo">
+                    <div class="card-head"><div class="row" style="gap:8px"><span class="ms">${ICONES_GRUPO[g] || 'apps'}</span><h3>${esc(g)}</h3></div><span class="badge ${ativos ? 'ativo' : 'inativo'} sem-ponto">${ativos} ativo${ativos === 1 ? '' : 's'}</span></div>
+                    <div class="mod-grid">${mods.map((m) => {
+                        const on = modSel.has(m.chave);
+                        const extra = on && !incluidos.has(m.chave);
+                        let selo;
+                        if (m.futuro) selo = '<span class="badge inativo sem-ponto">Em breve</span>';
+                        else if (!on) selo = '<span class="badge inativo sem-ponto">Bloqueado</span>';
+                        else if (extra) selo = `<span class="badge pendente sem-ponto">Adicional ${fmt(m.precoAdicional)}/mês</span>`;
+                        else selo = '<span class="badge ativo sem-ponto">Incluso no plano</span>';
+                        return `<div class="mod-card ${m.futuro ? 'futuro' : (on ? (extra ? 'extra' : 'on') : '')}">
+                            <div class="topo"><div class="nome"><span class="ms">${esc(m.icone || 'apps')}</span>${esc(m.nome)}</div>
+                            <label class="toggle" title="${on ? 'Bloquear' : 'Liberar'}"><input type="checkbox" data-mod="${esc(m.chave)}" ${on ? 'checked' : ''} ${m.futuro ? 'disabled' : ''}><span class="trilho"></span></label></div>
+                            <div class="desc">${esc(m.descricao)}</div>${selo}</div>`;
+                    }).join('')}</div></div>`;
+            }).join('') || '<div class="card"><div class="estado-vazio"><span class="ms">search_off</span><p>Nenhum módulo encontrado.</p></div></div>';
+
+            const qtd = disponiveis.filter((m) => modSel.has(m.chave)).length;
+            $('m-cont').textContent = `${qtd} de ${disponiveis.length}`;
+            $('c-cont').textContent = qtd;
+            $('m-barra').style.width = (disponiveis.length ? qtd / disponiveis.length * 100 : 0) + '%';
+            const personalizado = !plano || [...incluidos].filter((k) => disponiveis.some((m) => m.chave === k)).sort().join() !== [...modSel].sort().join();
+            $('m-personalizado').innerHTML = personalizado ? '<span class="badge pendente sem-ponto">Ajustado manualmente</span>' : '<span class="badge ativo sem-ponto">Igual ao plano</span>';
+
+            // resumo de valor
+            const extras = [...modSel].filter((k) => !incluidos.has(k));
+            const valorExtras = extras.reduce((s, k) => s + Number((catalogo.modulos.find((m) => m.chave === k) || {}).precoAdicional || 0), 0);
+            $('r-plano-nome').textContent = plano ? `Plano ${plano.nome}` : 'Sem plano';
+            $('r-plano').textContent = fmt(plano ? plano.valor : 0);
+            $('r-qtd-extra').textContent = extras.length;
+            $('r-extras').textContent = '+ ' + fmt(valorExtras);
+            $('r-total').textContent = fmt((plano ? plano.valor : 0) + valorExtras);
+            $('r-lista-extra').textContent = extras.length ? 'Adicionais: ' + extras.map((k) => (catalogo.modulos.find((m) => m.chave === k) || {}).nome || k).join(', ') : '';
+            $('m-usuarios').placeholder = plano ? `Do plano: ${plano.usuarios || 'ilimitado'}` : 'Ilimitado';
+            $('m-caixas').placeholder = plano ? `Do plano: ${plano.caixas || 'ilimitado'}` : 'Ilimitado';
+            $('m-alteracoes').classList.toggle('on', assinatura() !== modOrig);
+        }
+        $('m-grupos').addEventListener('change', (e) => {
+            const chk = e.target.closest('[data-mod]');
+            if (!chk) return;
+            if (chk.checked) modSel.add(chk.dataset.mod); else modSel.delete(chk.dataset.mod);
+            renderModulos();
         });
+        $('m-filtro').addEventListener('input', renderModulos);
+        ['m-plano', 'm-segmento', 'm-usuarios', 'm-caixas'].forEach((id) => $(id).addEventListener('input', renderModulos));
+        $('btn-aplicar-plano').onclick = () => {
+            const plano = planoAtual();
+            if (!plano) { toast('Escolha um plano primeiro.', 'erro'); return; }
+            modSel = new Set(plano.modulos);
+            renderModulos();
+        };
+        $('btn-descartar').onclick = () => { if (atual) abrirCliente(atual.id); };
+        $('btn-salvar-modulos').onclick = async () => {
+            if (!atual) return;
+            try {
+                const r = await api(`/api/clientes/${atual.id}/modulos`, 'PUT', {
+                    planoId: $('m-plano').value || null,
+                    segmento: $('m-segmento').value,
+                    modulos: [...modSel],
+                    limiteUsuarios: $('m-usuarios').value,
+                    limiteCaixas: $('m-caixas').value
+                });
+                modOrig = assinatura();
+                renderModulos();
+                toast(`Permissões salvas. Novo valor mensal: ${fmt(r.cobranca.total)}.`);
+                clientes = await api('/api/clientes');
+            } catch (e) { toast(e.message, 'erro'); }
+        };
+        $('btn-salvar-dados').onclick = async () => {
+            if (!atual) return;
+            try {
+                await api(`/api/clientes/${atual.id}`, 'PUT', {
+                    nome: $('e-nome').value, fantasia: $('e-fantasia').value, cnpj: $('e-cnpj').value,
+                    valor: $('e-valor').value, vencimento: $('e-vencimento').value || null
+                });
+                toast('Dados salvos.');
+                await carregarTudo();
+                abrirCliente(atual.id);
+            } catch (e) { toast(e.message, 'erro'); }
+        };
+        window.addEventListener('beforeunload', (e) => {
+            if (!$('view-cliente').classList.contains('hidden') && assinatura() !== modOrig) { e.preventDefault(); e.returnValue = ''; }
+        });
+
+        // ------------------------------------------------------------ planos
+        function renderPlanos() {
+            if (!planosEdit.length) {
+                planosEdit = JSON.parse(JSON.stringify(catalogo.planos));
+                adicionaisEdit = JSON.parse(JSON.stringify(catalogo.adicionais || {}));
+            }
+            const contagem = (id) => clientes.filter((c) => c.planoId === id && c.tipo !== 'escola').length;
+            $('planos-cards').innerHTML = planosEdit.map((p, i) => `
+                <div class="card plano-card ${p.destaque ? 'destaque' : ''}">
+                    <div class="row between"><input type="text" value="${esc(p.nome)}" data-p="${i}" data-campo="nome" style="font-weight:600;max-width:60%">
+                    ${p.destaque ? '<span class="badge azul sem-ponto">Destaque</span>' : ''}</div>
+                    <div class="form-grid c3 mt-8">
+                        <div class="campo"><label>Valor (R$/mês)</label><input type="number" step="0.01" value="${p.valor}" data-p="${i}" data-campo="valor"></div>
+                        <div class="campo"><label>Usuários</label><input type="number" value="${p.usuarios}" data-p="${i}" data-campo="usuarios" title="0 = ilimitado"></div>
+                        <div class="campo"><label>Caixas</label><input type="number" value="${p.caixas}" data-p="${i}" data-campo="caixas" title="0 = ilimitado"></div>
+                    </div>
+                    <input type="text" value="${esc(p.descricao || '')}" data-p="${i}" data-campo="descricao" placeholder="Descrição curta">
+                    <div class="row between mt-8" style="font-size:13px"><span class="muted">${p.modulos.length} módulos · ${contagem(p.id)} cliente(s)</span>
+                    <span class="row" style="gap:4px"><label class="check" style="font-size:12.5px!important"><input type="radio" name="destaque" ${p.destaque ? 'checked' : ''} data-destaque="${i}">Destaque</label>
+                    ${contagem(p.id) ? '' : `<button class="btn-icone perigo" title="Excluir plano" data-excluir="${i}"><span class="ms">delete</span></button>`}</span></div>
+                </div>`).join('');
+
+            $('matriz-head').innerHTML = '<tr><th>Módulo</th>' + planosEdit.map((p) => `<th class="c">${esc(p.nome)}</th>`).join('') + '<th class="right">Preço como adicional</th></tr>';
+            let grupoAnt = null;
+            $('matriz-body').innerHTML = catalogo.modulos.map((m) => {
+                let linha = '';
+                if (m.grupo !== grupoAnt) {
+                    grupoAnt = m.grupo;
+                    linha += `<tr><td colspan="${planosEdit.length + 2}" style="background:var(--surface-2);height:32px;font-size:12px;font-weight:600;color:var(--text-2)">${esc(m.grupo).toUpperCase()}</td></tr>`;
+                }
+                linha += `<tr><td><span class="ms sm muted">${esc(m.icone || 'apps')}</span> ${esc(m.nome)} ${m.futuro ? '<span class="badge inativo sem-ponto">Em breve</span>' : ''}</td>` +
+                    planosEdit.map((p, i) => `<td class="c"><input type="checkbox" data-matriz="${i}" data-mod="${esc(m.chave)}" ${p.modulos.includes(m.chave) ? 'checked' : ''} ${m.futuro ? 'disabled' : ''}></td>`).join('') +
+                    `<td class="right"><input type="number" step="0.01" value="${adicionaisEdit[m.chave] ?? m.precoAdicional}" data-adicional="${esc(m.chave)}"></td></tr>`;
+                return linha;
+            }).join('');
+        }
+        function marcarPlanosAlterados() { $('p-alteracoes').classList.add('on'); }
+        $('view-planos').addEventListener('input', (e) => {
+            const t = e.target;
+            if (t.dataset.campo) {
+                const p = planosEdit[Number(t.dataset.p)];
+                p[t.dataset.campo] = ['valor', 'usuarios', 'caixas'].includes(t.dataset.campo) ? Number(t.value) || 0 : t.value;
+            } else if (t.dataset.matriz !== undefined) {
+                const p = planosEdit[Number(t.dataset.matriz)];
+                const set = new Set(p.modulos);
+                if (t.checked) set.add(t.dataset.mod); else set.delete(t.dataset.mod);
+                p.modulos = [...set];
+            } else if (t.dataset.adicional) {
+                adicionaisEdit[t.dataset.adicional] = Number(t.value) || 0;
+            } else if (t.dataset.destaque !== undefined) {
+                planosEdit.forEach((p, i) => { p.destaque = i === Number(t.dataset.destaque); });
+                renderPlanos();
+            } else return;
+            marcarPlanosAlterados();
+        });
+        $('view-planos').addEventListener('click', async (e) => {
+            const b = e.target.closest('[data-excluir]');
+            if (!b) return;
+            const p = planosEdit[Number(b.dataset.excluir)];
+            if (!await confirmar('Excluir plano', `Excluir o plano "${p.nome}"? Clientes não são afetados.`, 'Excluir')) return;
+            planosEdit.splice(Number(b.dataset.excluir), 1);
+            renderPlanos(); marcarPlanosAlterados();
+        });
+        $('btn-novo-plano').onclick = () => {
+            planosEdit.push({ id: 'plano-' + Date.now().toString(36), nome: 'Novo plano', valor: 0, usuarios: 0, caixas: 0, descricao: '', modulos: [] });
+            renderPlanos(); marcarPlanosAlterados();
+        };
+        $('btn-salvar-planos').onclick = async () => {
+            try {
+                const r = await api('/api/planos', 'PUT', { planos: planosEdit, adicionais: adicionaisEdit });
+                catalogo = await api('/api/catalogo');
+                planosEdit = [];
+                preencherSelectsPlano();
+                renderPlanos();
+                $('p-alteracoes').classList.remove('on');
+                toast(`Planos salvos.${r.clientesAtualizados ? ` ${r.clientesAtualizados} cliente(s) atualizados.` : ''}`);
+            } catch (e) { toast(e.message, 'erro'); }
+        };
+
+        // ------------------------------------------------------------ início
+        if (localStorage.getItem('jg_painel_logado')) entrar();
+        else $('inp-senha').focus();
     </script>
 </body>
 </html>

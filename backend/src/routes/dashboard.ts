@@ -12,8 +12,10 @@ router.get('/', async (_req: any, res: any) => {
     inicioHoje.setHours(0, 0, 0, 0);
     const fimHoje = new Date(inicioHoje);
     fimHoje.setDate(fimHoje.getDate() + 1);
+    const inicioOntem = new Date(inicioHoje);
+    inicioOntem.setDate(inicioOntem.getDate() - 1);
 
-    const [vendasHoje, caixasAbertos, contas, estoqueBaixo, topItens, vendasPorOperador] = await Promise.all([
+    const [vendasHoje, caixasAbertos, contas, estoqueBaixo, topItens, vendasPorOperador, ontem] = await Promise.all([
         prisma.sale.findMany({
             where: { status: 'COMPLETED', createdAt: { gte: inicioHoje, lt: fimHoje } },
             include: { SalePayment: true }
@@ -36,8 +38,17 @@ router.get('/', async (_req: any, res: any) => {
         prisma.sale.findMany({
             where: { status: 'COMPLETED', createdAt: { gte: inicioHoje, lt: fimHoje } },
             include: { User: true }
+        }),
+        prisma.sale.aggregate({
+            where: { status: 'COMPLETED', createdAt: { gte: inicioOntem, lt: inicioHoje } },
+            _sum: { total: true },
+            _count: true
         })
     ]);
+
+    // Vendas por hora do dia (0h-23h)
+    const porHora = Array.from({ length: 24 }, () => 0);
+    for (const v of vendasHoje) porHora[new Date(v.createdAt).getHours()] += Number(v.total);
 
     let totalVendas = 0;
     const porMetodo: Record<string, number> = {};
@@ -48,6 +59,7 @@ router.get('/', async (_req: any, res: any) => {
         }
     }
 
+    const vencidas = (tipo: string) => contas.filter(c => c.type === tipo && c.dueDate < inicioHoje);
     const receberVencidas = contas
         .filter(c => c.type === 'RECEIVE' && c.dueDate < inicioHoje)
         .reduce((s, c) => s + Number(c.amount), 0);
@@ -85,6 +97,8 @@ router.get('/', async (_req: any, res: any) => {
         vendasHoje: {
             total: Number(totalVendas.toFixed(2)),
             quantidade: vendasHoje.length,
+            ticketMedio: vendasHoje.length ? Number((totalVendas / vendasHoje.length).toFixed(2)) : 0,
+            porHora: porHora.map(v => Number(v.toFixed(2))),
             porMetodo: Object.fromEntries(
                 Object.entries(porMetodo).map(([k, v]) => [k, Number(v.toFixed(2))])
             )
@@ -96,7 +110,13 @@ router.get('/', async (_req: any, res: any) => {
         })),
         contas: {
             receberVencidas: Number(receberVencidas.toFixed(2)),
-            pagarVencidas: Number(pagarVencidas.toFixed(2))
+            pagarVencidas: Number(pagarVencidas.toFixed(2)),
+            receberVencidasQtd: vencidas('RECEIVE').length,
+            pagarVencidasQtd: vencidas('PAY').length
+        },
+        ontem: {
+            total: Number(Number(ontem._sum.total ?? 0).toFixed(2)),
+            quantidade: ontem._count
         },
         estoqueBaixo: baixos,
         topProdutos,

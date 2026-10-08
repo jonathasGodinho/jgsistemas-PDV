@@ -32,6 +32,8 @@ import crediarioRouter from './routes/crediario';
 import cartoesRouter from './routes/cartoes';
 import conciliacaoRouter from './routes/conciliacao';
 import nfeRouter from './routes/nfe';
+import sistemaRouter from './routes/sistema';
+import { exigirModulos } from './utils/modulos';
 
 const app = express();
 // CORS desativado de propósito: o frontend é servido pela própria API (mesma
@@ -68,6 +70,9 @@ app.use('/api/auth/login', criarLimiter({
     max: 10,
     mensagem: "Muitas tentativas de login. Aguarde um minuto e tente novamente."
 }));
+
+// Módulos liberados pelo Painel do Administrador: barra páginas e APIs dos bloqueados.
+app.use(exigirModulos);
 
 // Serve o front-end (PDV) pela própria API, na mesma origem
 // Sem cache: garante que alterações de HTML/CSS/JS apareçam imediatamente no navegador
@@ -107,8 +112,14 @@ app.use('/api/crediario', crediarioRouter);
 app.use('/api/cartoes', autenticar, cartoesRouter);
 app.use('/api/conciliacao', autenticar, conciliacaoRouter);
 app.use('/api/nfe', autenticar, nfeRouter);
+app.use('/api/sistema', sistemaRouter);
 
-const PORT = Number(process.env.PORT) || 3000;
-app.listen(PORT, () => {
-    console.log(`🚀 Servidor do ERP rodando na porta ${PORT}`);
-});
+// Na Vercel o app roda como função (api/index.ts): sem abrir porta.
+if (!process.env.VERCEL) {
+    const PORT = Number(process.env.PORT) || 3000;
+    app.listen(PORT, () => {
+        console.log(`🚀 Servidor do ERP rodando na porta ${PORT}`);
+    });
+}
+
+export default app;

@@ -6,239 +6,201 @@
     <meta name="google" content="notranslate">
     <title>Configurações - JG Sistemas</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
-        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
-        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
-        header a:hover { color: white; }
-        main { padding: 20px; max-width: 1000px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
-        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
-        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; }
-        .painel-corpo { padding: 20px; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-        .form-grid .campo { display: flex; flex-direction: column; gap: 5px; }
-        .form-grid .campo.full { grid-column: 1 / -1; }
-        .form-grid label { font-size: 12px; color: #656d78; font-weight: bold; text-transform: uppercase; }
-        .form-grid input { padding: 11px; font-size: 15px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { background-color: #134074; color: white; padding: 8px 10px; text-align: left; text-transform: uppercase; font-size: 11px; }
-        td { padding: 8px 10px; border-bottom: 1px solid #e6e9ed; color: #333; }
-        tr:nth-child(even) { background-color: #f8f9fa; }
-        .sem-dados { text-align: center; color: #8b95a1; padding: 16px; }
-        .btn-mini { padding: 5px 10px; font-size: 12px; }
+        .cfg-grid { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 16px; align-items: start; }
+        .cfg-menu { position: sticky; top: calc(var(--topbar-h) + 20px); }
+        .secao-cfg { display: none; }
+        .secao-cfg.ativa { display: block; }
         .logo-area { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
-        .logo-preview { width: 130px; height: 130px; border: 2px dashed #aab2bd; border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #f8f9fa; color: #8b95a1; font-size: 12px; text-align: center; }
+        .logo-preview { width: 130px; height: 130px; border: 1px dashed var(--border-strong); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--surface-2); color: var(--text-3); font-size: 12px; text-align: center; }
         .logo-preview img { max-width: 100%; max-height: 100%; }
-        .logo-controles { display: flex; flex-direction: column; gap: 8px; }
-        .btn { border: none; border-radius: 4px; padding: 11px 18px; font-size: 14px; font-weight: bold; cursor: pointer; }
-        .btn-verde { background-color: #00a651; color: white; }
-        .btn-verde:hover { background-color: #007a3d; }
-        .btn-cinza { background-color: #8b95a1; color: white; }
-        .btn-cinza:hover { background-color: #6f7885; }
-        .acoes { display: flex; gap: 10px; margin-top: 20px; }
-        .aviso { background: #fdf3d7; border: 1px solid #f0ad4e; color: #8a6d3b; padding: 12px 14px; border-radius: 4px; font-size: 13px; }
-        .aviso-ok { background: #e3f7ec; border-color: #00a651; color: #007a3d; }
-        footer { background-color: #134074; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
-        @media (max-width: 768px) {
-            .form-grid { grid-template-columns: 1fr; }
-            .form-grid .campo.full { grid-column: auto; }
-        }
+        .logo-controles { display: flex; flex-direction: column; gap: 8px; max-width: 320px; }
+        .acoes { display: flex; gap: 10px; margin-top: 4px; }
+        .aviso { margin-top: 14px; }
+        body.jg .aviso-ok { background: var(--green-soft); border-color: #BBE5C8; color: #14532D; }
+        .dica-campo { font-size: 12px; color: var(--text-2); margin-top: 4px; display: block; }
+        .mod-lista .it { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .mod-lista .it:last-child { border-bottom: 0; }
+        .mod-lista .it .ms { color: var(--text-2); }
+        .mod-lista .it b { display: block; font-size: 14px; }
+        .mod-lista .it small { color: var(--text-2); }
+        .mod-lista .it .badge { margin-left: auto; }
+        .grupo-mod { font-size: 12px; font-weight: 600; color: var(--text-2); letter-spacing: .04em; text-transform: uppercase; margin: 16px 0 2px; }
+        .segmentos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .segmento { border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; display: flex; gap: 10px; align-items: center; }
+        .segmento.ativo { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary); background: var(--primary-soft); }
+        .segmento .ms { font-size: 26px; color: var(--primary); }
+        @media (max-width: 1000px) { .cfg-grid { grid-template-columns: 1fr; } .cfg-menu { position: static; } .segmentos { grid-template-columns: 1fr; } }
     </style>
+    <link rel="stylesheet" href="/ui/jg.css">
 </head>
-<body>
-
-    <header>
-        <div>JG SISTEMAS - CONFIGURAÇÕES</div>
-        <div><a href="/">← Menu Principal</a></div>
-    </header>
-
+<body class="jg" data-pagina="configuracoes">
     <main>
-        <div class="painel">
-            <div class="painel-titulo">Identidade Visual</div>
-            <div class="painel-corpo">
-                <div class="logo-area">
-                    <div class="logo-preview" id="logo-preview">Sem logo</div>
-                    <div class="logo-controles">
-                        <label class="btn btn-cinza" style="text-align:center; cursor:pointer;">Escolher Arquivo
-                            <input type="file" id="logo-input" accept="image/*" style="display:none;">
-                        </label>
-                        <button class="btn btn-cinza" onclick="removerLogo()">Remover Logo</button>
-                        <span style="font-size:12px; color:#8b95a1;">JPG, PNG ou GIF. Aparece no comprovante do PDV e nos recibos de sangria/suprimento.</span>
-                    </div>
-                </div>
-            </div>
+        <div class="page-head">
+            <div><h1>Configurações</h1><div class="sub">Dados da empresa, regras de venda, usuários e fiscal</div></div>
         </div>
-
-        <div class="painel">
-            <div class="painel-titulo">Dados da Empresa</div>
-            <div class="painel-corpo">
-                <div class="form-grid">
-                    <div class="campo"><label>Razão Social *</label><input type="text" id="c-name"></div>
-                    <div class="campo"><label>Nome Fantasia</label><input type="text" id="c-tradeName"></div>
-                    <div class="campo"><label>CNPJ</label><input type="text" id="c-document" placeholder="00.000.000/0000-00"></div>
-                    <div class="campo"><label>Inscrição Estadual</label><input type="text" id="c-stateReg"></div>
-                    <div class="campo full"><label>Inscrição Municipal</label><input type="text" id="c-cityReg"></div>
-                    <div class="campo">
-                        <label>Regime Tributário</label>
-                        <select id="c-crt" style="padding:11px; font-size:15px; border:1px solid #aab2bd; border-radius:4px; color:#134074; background:white;">
-                            <option value="1">Simples Nacional</option>
-                            <option value="2">Simples Nacional - Excesso de sublimite</option>
-                            <option value="3">Regime Normal (Lucro)</option>
-                        </select>
-                    </div>
-                    <div class="campo"><label>CNAE Principal</label><input type="text" id="c-cnae" placeholder="0000000" maxlength="7"></div>
-                    <div class="campo full"><label>Endereço</label><input type="text" id="c-address"></div>
-                    <div class="campo"><label>Número</label><input type="text" id="c-number"></div>
-                    <div class="campo"><label>Complemento</label><input type="text" id="c-complement"></div>
-                    <div class="campo"><label>Bairro</label><input type="text" id="c-neighborhood"></div>
-                    <div class="campo"><label>Cidade</label><input type="text" id="c-city"></div>
-                    <div class="campo"><label>Estado (UF)</label><input type="text" id="c-state" maxlength="2"></div>
-                    <div class="campo"><label>CEP</label><input type="text" id="c-zipCode"></div>
-                    <div class="campo"><label>Telefone</label><input type="text" id="c-phone"></div>
-                    <div class="campo"><label>E-mail</label><input type="text" id="c-email"></div>
-                </div>
-                <div class="acoes">
-                    <button class="btn btn-verde" onclick="salvar()">Salvar Configurações</button>
-                    <button class="btn btn-cinza" onclick="carregar()">Descartar Alterações</button>
-                </div>
-                <div class="aviso" id="aviso" style="display:none; margin-top:16px;"></div>
+        <div class="cfg-grid">
+            <div class="card cfg-menu">
+                <nav class="menu-secoes" id="menu-secoes">
+                    <button data-secao="empresa" class="ativa"><span class="ms">apartment</span>Empresa</button>
+                    <button data-secao="modulos"><span class="ms">view_module</span>Segmento e módulos</button>
+                    <button data-secao="vendas"><span class="ms">point_of_sale</span>Vendas e pagamentos</button>
+                    <button data-secao="usuarios"><span class="ms">manage_accounts</span>Usuários e permissões</button>
+                    <button data-secao="fiscal"><span class="ms">receipt</span>Fiscal</button>
+                </nav>
             </div>
-        </div>
 
-        <div class="painel">
-            <div class="painel-titulo">Regras de Venda</div>
-            <div class="painel-corpo">
-                <div class="form-grid">
-                    <div class="campo">
-                        <label>Limite de desconto sem senha (R$)</label>
-                        <input type="number" id="s-descontoLimite" min="0" step="0.01" value="0">
-                        <span style="font-size:11px; color:#8b95a1;">Descontos acima deste valor exigem a senha do administrador. 0 = sempre exigir.</span>
+            <div>
+                <!-- EMPRESA -->
+                <div class="secao-cfg ativa" id="secao-empresa">
+                    <div class="card mb-16">
+                        <div class="card-head"><h3>Logo</h3><span class="sub">Aparece nos comprovantes e cupons</span></div>
+                        <div class="card-body">
+                            <div class="logo-area">
+                                <div class="logo-preview" id="logo-preview">Sem logo</div>
+                                <div class="logo-controles">
+                                    <label class="btn" style="margin:0"><span class="ms">upload</span>Enviar logo
+                                        <input type="file" id="logo-input" accept="image/*" style="display:none;">
+                                    </label>
+                                    <button class="btn btn-fantasma" onclick="removerLogo()"><span class="ms">delete</span>Remover</button>
+                                    <span class="dica-campo">JPG, PNG ou GIF. Aparece no comprovante do PDV e nos recibos de sangria/suprimento.</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="campo">
-                        <label>Cashback nas vendas a prazo (%)</label>
-                        <input type="number" id="s-cashback" min="0" max="100" step="0.5" value="0">
-                        <span style="font-size:11px; color:#8b95a1;">Percentual creditado ao cliente nas vendas a prazo.</span>
-                    </div>
-                    <div class="campo full" style="display:flex; flex-direction:row; align-items:center; gap:8px;">
-                        <input type="checkbox" id="s-bloquearLimite" style="width:auto;">
-                        <label style="margin:0;">Bloquear venda quando o cliente exceder o limite de crédito</label>
+                    <div class="card">
+                        <div class="card-head"><h3>Dados da empresa</h3></div>
+                        <div class="card-body">
+                            <div class="form-grid c3">
+                                <div class="campo span-2"><label for="c-name">Razão social *</label><input type="text" id="c-name"></div>
+                                <div class="campo"><label for="c-tradeName">Nome fantasia</label><input type="text" id="c-tradeName"></div>
+                                <div class="campo"><label for="c-document">CNPJ</label><input type="text" id="c-document" placeholder="00.000.000/0000-00"></div>
+                                <div class="campo"><label for="c-stateReg">Inscrição estadual</label><input type="text" id="c-stateReg"></div>
+                                <div class="campo"><label for="c-cityReg">Inscrição municipal</label><input type="text" id="c-cityReg"></div>
+                                <div class="campo"><label for="c-crt">Regime tributário</label>
+                                    <select id="c-crt"><option value="1">Simples Nacional</option><option value="2">Simples Nacional - Excesso de sublimite</option><option value="3">Regime Normal (Lucro)</option></select></div>
+                                <div class="campo"><label for="c-cnae">CNAE principal</label><input type="text" id="c-cnae" placeholder="0000000" maxlength="7"></div>
+                                <div class="campo"><label for="c-zipCode">CEP</label><div class="input-grupo"><input type="text" id="c-zipCode"><button class="btn" type="button" onclick="buscarCepEmpresa()" title="Buscar CEP"><span class="ms">search</span></button></div></div>
+                                <div class="campo span-2"><label for="c-address">Endereço</label><input type="text" id="c-address"></div>
+                                <div class="campo"><label for="c-number">Número</label><input type="text" id="c-number"></div>
+                                <div class="campo"><label for="c-complement">Complemento</label><input type="text" id="c-complement"></div>
+                                <div class="campo"><label for="c-neighborhood">Bairro</label><input type="text" id="c-neighborhood"></div>
+                                <div class="campo"><label for="c-city">Cidade</label><input type="text" id="c-city"></div>
+                                <div class="campo"><label for="c-state">UF</label><input type="text" id="c-state" maxlength="2"></div>
+                                <div class="campo"><label for="c-phone">Telefone</label><input type="text" id="c-phone"></div>
+                                <div class="campo"><label for="c-email">E-mail</label><input type="text" id="c-email"></div>
+                            </div>
+                            <div class="aviso" id="aviso" style="display:none;"></div>
+                        </div>
+                        <div class="card-foot">
+                            <button class="btn" onclick="carregar()">Descartar alterações</button>
+                            <button class="btn btn-sucesso" onclick="salvar()"><span class="ms">check</span>Salvar alterações</button>
+                        </div>
                     </div>
                 </div>
-                <div class="acoes">
-                    <button class="btn btn-verde" onclick="salvarRegras()">Salvar Regras</button>
-                </div>
-                <div class="aviso" id="aviso-regras" style="display:none; margin-top:16px;"></div>
-            </div>
-        </div>
 
-        <div class="painel">
-            <div class="painel-titulo">Segurança</div>
-            <div class="painel-corpo">
-                <div class="aviso" style="margin-bottom:14px;">Proteção contra força bruta (tentativas de senha), validade da sessão e política de senha dos operadores.</div>
-                <div class="form-grid">
-                    <div class="campo">
-                        <label>Máximo de tentativas de login</label>
-                        <input type="number" id="g-loginMax" min="1" max="20" value="5">
-                        <span style="font-size:11px; color:#8b95a1;">Após este nº de senhas erradas, a conta é bloqueada.</span>
+                <!-- SEGMENTO E MÓDULOS -->
+                <div class="secao-cfg" id="secao-modulos">
+                    <div class="card mb-16">
+                        <div class="card-head"><h3>Segmento</h3><span class="badge azul sem-ponto" id="cfg-plano">—</span></div>
+                        <div class="card-body">
+                            <div class="segmentos" id="cfg-segmentos"></div>
+                        </div>
                     </div>
-                    <div class="campo">
-                        <label>Tempo de bloqueio (min)</label>
-                        <input type="number" id="g-travamento" min="1" max="1440" value="15">
-                        <span style="font-size:11px; color:#8b95a1;">Tempo que a conta fica bloqueada após as tentativas.</span>
-                    </div>
-                    <div class="campo">
-                        <label>Sessão por inatividade (horas)</label>
-                        <input type="number" id="g-sessaoHoras" min="1" max="168" value="12">
-                        <span style="font-size:11px; color:#8b95a1;">Loga o operador automaticamente após esse tempo sem uso.</span>
-                    </div>
-                    <div class="campo">
-                        <label>Mínimo de caracteres na senha</label>
-                        <input type="number" id="g-senhaMin" min="4" max="32" value="8">
-                    </div>
-                    <div class="campo full" style="display:flex; flex-direction:row; align-items:center; gap:8px;">
-                        <input type="checkbox" id="g-senhaNumero" style="width:auto;">
-                        <label style="margin:0;">Exigir pelo menos um número na senha</label>
-                    </div>
-                    <div class="campo full" style="display:flex; flex-direction:row; align-items:center; gap:8px;">
-                        <input type="checkbox" id="g-senhaMaiuscula" style="width:auto;">
-                        <label style="margin:0;">Exigir pelo menos uma letra maiúscula</label>
-                    </div>
-                    <div class="campo full" style="display:flex; flex-direction:row; align-items:center; gap:8px;">
-                        <input type="checkbox" id="g-senhaSimbolo" style="width:auto;">
-                        <label style="margin:0;">Exigir pelo menos um símbolo (!@#...)</label>
+                    <div class="card">
+                        <div class="card-head"><h3>Módulos do seu plano</h3><span class="sub" id="cfg-cont"></span></div>
+                        <div class="card-body">
+                            <div class="alerta ambar mb-16"><span class="ms">info</span><div>Módulos desligados somem do menu e dos relatórios. Para liberar um módulo, fale com o suporte da JG Sistemas: a liberação é feita pelo Painel do Administrador.</div></div>
+                            <div class="mod-lista" id="cfg-modulos"><div class="sem-dados">Carregando...</div></div>
+                        </div>
                     </div>
                 </div>
-                <div class="acoes">
-                    <button class="btn btn-verde" onclick="salvarSeguranca()">Salvar Segurança</button>
-                </div>
-                <div class="aviso" id="aviso-seguranca" style="display:none; margin-top:16px;"></div>
-            </div>
-        </div>
 
-        <div class="painel">
-            <div class="painel-titulo">Cupom Fiscal (NFC-e)</div>
-            <div class="painel-corpo">
-                <div class="aviso" style="margin-bottom:14px;">Emissão de NFC-e (modelo 65) junto à SEFAZ-AM. Antes de ativar, preencha os dados da empresa, os campos fiscais dos produtos (NCM, CFOP, CSOSN) e configure o certificado digital no arquivo <b>.env</b> do servidor.</div>
-                <div class="form-grid">
-                    <div class="campo full" style="display:flex; flex-direction:row; align-items:center; gap:8px;">
-                        <input type="checkbox" id="n-habilitado" style="width:auto;">
-                        <label style="margin:0;">Emitir cupom fiscal (NFC-e) nas vendas do PDV</label>
+                <!-- VENDAS E PAGAMENTOS -->
+                <div class="secao-cfg" id="secao-vendas">
+                    <div class="card mb-16">
+                        <div class="card-head"><h3>Formas de pagamento</h3></div>
+                        <div class="card-body row between">
+                            <span class="muted">Formas de pagamento do PDV, atalhos e parcelamento máximo no crédito.</span>
+                            <a class="btn btn-primario" href="/config-pagamento.html"><span class="ms">payments</span>Configurar formas de pagamento</a>
+                        </div>
                     </div>
-                    <div class="campo">
-                        <label>Ambiente</label>
-                        <select id="n-tpAmb" style="padding:11px; font-size:15px; border:1px solid #aab2bd; border-radius:4px; color:#134074; background:white;">
-                            <option value="1">Produção</option>
-                            <option value="2">Homologação (testes)</option>
-                        </select>
+                    <div class="card">
+                        <div class="card-head"><h3>Regras de venda</h3></div>
+                        <div class="card-body">
+                            <div class="form-grid">
+                                <div class="campo"><label for="s-descontoLimite">Limite de desconto sem senha (R$)</label><input type="number" id="s-descontoLimite" min="0" step="0.01" value="0">
+                                    <span class="dica-campo">Descontos acima deste valor exigem a senha do administrador. 0 = sempre exigir.</span></div>
+                                <div class="campo"><label for="s-cashback">Cashback nas vendas (%)</label><input type="number" id="s-cashback" min="0" max="100" step="0.5" value="0">
+                                    <span class="dica-campo">Percentual creditado ao cliente identificado na venda.</span></div>
+                            </div>
+                            <label class="toggle"><input type="checkbox" id="s-bloquearLimite"><span class="trilho"></span><span>Bloquear venda quando o cliente exceder o limite de crédito</span></label>
+                            <div class="aviso" id="aviso-regras" style="display:none;"></div>
+                        </div>
+                        <div class="card-foot"><button class="btn btn-sucesso" onclick="salvarRegras()"><span class="ms">check</span>Salvar regras</button></div>
                     </div>
-                    <div class="campo"><label>Série</label><input type="number" id="n-serie" min="1" max="999" value="1"></div>
-                    <div class="campo"><label>Próximo Número</label><input type="number" id="n-proximoNumero" min="1" value="1"></div>
-                    <div class="campo"><label>CFOP Padrão</label><input type="text" id="n-cfopPadrao" placeholder="5102" maxlength="4"></div>
-                    <div class="campo"><label>CSOSN Padrão</label><input type="text" id="n-csosnPadrao" placeholder="102" maxlength="3"></div>
-                    <div class="campo full">
-                        <label>CSC (Código de Segurança do Contribuinte)</label>
-                        <div id="n-csc-status" style="font-size:13px; font-weight:bold;">—</div>
-                        <input type="password" id="n-csc" placeholder="Novo CSC — preencha apenas para alterar" autocomplete="new-password" style="margin-top:6px;">
-                    </div>
-                    <div class="campo"><label>ID do CSC</label><input type="text" id="n-cscId" placeholder="Novo ID — preencha apenas para alterar" autocomplete="off"></div>
-                    <div class="campo full"><label>URL do QR Code</label><input type="text" id="n-qrcodeUrl" value="https://www.sefaz.am.gov.br/nfce/consulta"></div>
                 </div>
-                <div class="acoes">
-                    <button class="btn btn-verde" onclick="salvarNfe()">Salvar Configuração Fiscal</button>
-                </div>
-                <div class="aviso" id="aviso-nfe" style="display:none; margin-top:16px;"></div>
-            </div>
-        </div>
 
-        <div class="painel">
-            <div class="painel-titulo">Operadores e Comissão</div>
-            <div class="painel-corpo">
-                <div style="overflow-x:auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Operador</th>
-                                <th>E-mail</th>
-                                <th>Papel</th>
-                                <th>Caixa</th>
-                                <th style="text-align:right;">Comissão (%)</th>
-                                <th>Ativo</th>
-                                <th style="text-align:center;">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabela-operadores">
-                            <tr><td colspan="7" class="sem-dados">Carregando...</td></tr>
-                        </tbody>
-                    </table>
+                <!-- USUÁRIOS E PERMISSÕES -->
+                <div class="secao-cfg" id="secao-usuarios">
+                    <div class="card mb-16">
+                        <div class="card-head"><h3>Usuários (operadores)</h3><span class="sub">Papel, caixa vinculado e comissão</span></div>
+                        <div class="tabela-wrap">
+                            <table>
+                                <thead><tr><th>Operador</th><th>E-mail</th><th>Papel</th><th>Caixa</th><th class="right">Comissão (%)</th><th>Ativo</th><th class="acoes">Ações</th></tr></thead>
+                                <tbody id="tabela-operadores"><tr><td colspan="7" class="sem-dados">Carregando...</td></tr></tbody>
+                            </table>
+                        </div>
+                        <div class="card-body" style="padding-top:0"><div class="aviso" id="aviso-operadores" style="display:none;"></div></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-head"><h3>Segurança</h3><span class="sub">Força bruta, sessão e política de senha</span></div>
+                        <div class="card-body">
+                            <div class="form-grid c4">
+                                <div class="campo"><label for="g-loginMax">Máximo de tentativas de login</label><input type="number" id="g-loginMax" min="1" max="20" value="5"><span class="dica-campo">Depois disso a conta é bloqueada.</span></div>
+                                <div class="campo"><label for="g-travamento">Tempo de bloqueio (min)</label><input type="number" id="g-travamento" min="1" max="1440" value="15"></div>
+                                <div class="campo"><label for="g-sessaoHoras">Sessão por inatividade (h)</label><input type="number" id="g-sessaoHoras" min="1" max="168" value="12"></div>
+                                <div class="campo"><label for="g-senhaMin">Mínimo de caracteres na senha</label><input type="number" id="g-senhaMin" min="4" max="32" value="8"></div>
+                            </div>
+                            <div class="stack" style="gap:10px">
+                                <label class="toggle"><input type="checkbox" id="g-senhaNumero"><span class="trilho"></span><span>Exigir pelo menos um número</span></label>
+                                <label class="toggle"><input type="checkbox" id="g-senhaMaiuscula"><span class="trilho"></span><span>Exigir pelo menos uma letra maiúscula</span></label>
+                                <label class="toggle"><input type="checkbox" id="g-senhaSimbolo"><span class="trilho"></span><span>Exigir pelo menos um símbolo (!@#...)</span></label>
+                            </div>
+                            <div class="aviso" id="aviso-seguranca" style="display:none;"></div>
+                        </div>
+                        <div class="card-foot"><button class="btn btn-sucesso" onclick="salvarSeguranca()"><span class="ms">check</span>Salvar segurança</button></div>
+                    </div>
                 </div>
-                <div class="aviso" id="aviso-operadores" style="display:none; margin-top:16px;"></div>
+
+                <!-- FISCAL -->
+                <div class="secao-cfg" id="secao-fiscal">
+                    <div class="card">
+                        <div class="card-head"><h3>NFC-e (cupom fiscal eletrônico)</h3></div>
+                        <div class="card-body">
+                            <div class="alerta mb-16"><span class="ms">info</span><div>Emissão de NFC-e (modelo 65) junto à SEFAZ. Antes de ativar, preencha os dados da empresa, os campos fiscais dos produtos (NCM, CFOP, CSOSN) e configure o certificado digital no arquivo <b>.env</b> do servidor.</div></div>
+                            <label class="toggle mb-16"><input type="checkbox" id="n-habilitado"><span class="trilho"></span><span><b>Emitir NFC-e nas vendas do PDV</b></span></label>
+                            <div class="form-grid c3 mt-16">
+                                <div class="campo"><label for="n-tpAmb">Ambiente</label><select id="n-tpAmb"><option value="1">Produção</option><option value="2">Homologação (testes)</option></select></div>
+                                <div class="campo"><label for="n-serie">Série</label><input type="number" id="n-serie" min="1" max="999" value="1"></div>
+                                <div class="campo"><label for="n-proximoNumero">Próximo número</label><input type="number" id="n-proximoNumero" min="1" value="1"></div>
+                                <div class="campo"><label for="n-cfopPadrao">CFOP padrão</label><input type="text" id="n-cfopPadrao" placeholder="5102" maxlength="4"></div>
+                                <div class="campo"><label for="n-csosnPadrao">CSOSN padrão</label><input type="text" id="n-csosnPadrao" placeholder="102" maxlength="3"></div>
+                                <div class="campo"><label for="n-cscId">ID do CSC</label><input type="text" id="n-cscId" placeholder="Preencha apenas para alterar" autocomplete="off"></div>
+                                <div class="campo span-2"><label for="n-csc">CSC (Código de Segurança do Contribuinte)</label>
+                                    <input type="password" id="n-csc" placeholder="Novo CSC — preencha apenas para alterar" autocomplete="new-password">
+                                    <span class="dica-campo" id="n-csc-status">—</span></div>
+                                <div class="campo span-all"><label for="n-qrcodeUrl">URL de consulta do QR Code</label><input type="text" id="n-qrcodeUrl" value="https://www.sefaz.am.gov.br/nfce/consulta"></div>
+                            </div>
+                            <div class="aviso" id="aviso-nfe" style="display:none;"></div>
+                        </div>
+                        <div class="card-foot"><button class="btn btn-sucesso" onclick="salvarNfe()"><span class="ms">check</span>Salvar configuração fiscal</button></div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
-
-    <footer>© 2026 JG Sistemas</footer>
-
-<script src="/seguranca.js"></script>
+    <script src="/seguranca.js"></script>
+    <script src="/ui/shell.js"></script>
     <script>
         const API_BASE = window.location.protocol.startsWith('http') ? '' : 'http://localhost:3000';
         const IDs = ['name','tradeName','document','stateReg','cityReg','crt','cnae','address','number','complement','neighborhood','city','state','zipCode','phone','email'];
@@ -408,16 +370,16 @@
                     tbody.innerHTML = '<tr><td colspan="7" class="sem-dados">Nenhum operador cadastrado</td></tr>';
                     return;
                 }
-                const papeis = { ADMIN: 'Administrador', MANAGER: 'Gerente', SELLER: 'Vendedor', SUPERVISOR: 'Supervisor' };
+                const papeis = { ADMIN: 'Administrador', MANAGER: 'Gerente', SELLER: 'Vendedor', SUPERVISOR: 'Supervisor', STOCKIST: 'Estoquista', FINANCIAL: 'Financeiro' };
                 tbody.innerHTML = ops.map(op => `
                     <tr>
                         <td><strong>${esc(op.nome)}</strong></td>
                         <td>${esc(op.email)}</td>
-                        <td>${papeis[op.papel] || op.papel}</td>
-                        <td>${op.caixaNumber ? 'Nº ' + op.caixaNumber : '-'}</td>
-                        <td style="text-align:right;"><input type="number" id="op-comissao-${op.id}" min="0" max="100" step="0.1" value="${op.commissionRate}" style="width:70px; padding:5px; border:1px solid #aab2bd; border-radius:3px; text-align:right;"></td>
-                        <td><input type="checkbox" id="op-ativo-${op.id}" ${op.papel === 'ADMIN' ? 'checked disabled' : 'checked'}></td>
-                        <td style="text-align:center;">
+                        <td><span class="badge azul sem-ponto">${papeis[op.papel] || op.papel}</span></td>
+                        <td>${op.caixaNumber ? 'Caixa ' + String(op.caixaNumber).padStart(2, '0') : '—'}</td>
+                        <td class="right"><input type="number" id="op-comissao-${op.id}" min="0" max="100" step="0.1" value="${op.commissionRate}" style="width:90px;height:34px;text-align:right"></td>
+                        <td><label class="toggle"><input type="checkbox" id="op-ativo-${op.id}" ${op.papel === 'ADMIN' ? 'checked disabled' : 'checked'}><span class="trilho"></span></label></td>
+                        <td class="acoes">
                             <button class="btn btn-mini btn-verde" onclick="salvarOperador('${op.id}')">Salvar</button>
                         </td>
                     </tr>`).join('');
@@ -473,6 +435,60 @@
 
         carregar();
         carregarOperadores();
+    </script>
+    <script>
+        // ---------- Menu de seções (Configurações)
+        function abrirSecao(nome) {
+            const btn = document.querySelector(`[data-secao="${nome}"]`);
+            if (!btn) return;
+            document.querySelectorAll('[data-secao]').forEach(b => b.classList.toggle('ativa', b === btn));
+            document.querySelectorAll('.secao-cfg').forEach(sx => sx.classList.toggle('ativa', sx.id === 'secao-' + nome));
+            history.replaceState(null, '', '#' + nome);
+            if (nome === 'modulos') carregarModulosCfg();
+        }
+        document.querySelectorAll('[data-secao]').forEach(b => b.addEventListener('click', () => abrirSecao(b.dataset.secao)));
+        if (location.hash) abrirSecao(location.hash.slice(1));
+
+        const SEGMENTOS_CFG = [
+            ['VAREJO', 'storefront', 'Varejo', 'Loja de produtos em geral'],
+            ['MODA', 'checkroom', 'Moda', 'Grade de cor e tamanho, coleções'],
+            ['SALAO', 'content_cut', 'Salão de beleza', 'Serviços, agenda e comissões']
+        ];
+        async function carregarModulosCfg() {
+            try {
+                const r = await fetch('/api/sistema/modulos');
+                const m = await r.json();
+                if (!r.ok) throw new Error(m.erro || 'Erro ao carregar módulos');
+                document.getElementById('cfg-plano').textContent = m.plano ? 'Plano ' + m.plano : (m.liberados === null ? 'Todos os módulos liberados' : 'Plano personalizado');
+                document.getElementById('cfg-segmentos').innerHTML = SEGMENTOS_CFG.map(([k, ic, nome, desc]) =>
+                    `<div class="segmento ${m.segmento === k ? 'ativo' : ''}"><span class="ms">${ic}</span><div><b>${nome}</b><br><small class="muted">${desc}</small></div></div>`).join('');
+                const grupos = {};
+                m.catalogo.forEach(x => (grupos[x.grupo] = grupos[x.grupo] || []).push(x));
+                const ativos = m.catalogo.filter(x => x.ativo).length;
+                document.getElementById('cfg-cont').textContent = `${ativos} de ${m.catalogo.filter(x => !x.futuro).length} liberados`;
+                document.getElementById('cfg-modulos').innerHTML = Object.entries(grupos).map(([g, lista]) =>
+                    `<div class="grupo-mod">${esc(g)}</div>` + lista.map(x => `<div class="it"><span class="ms">${esc(x.icone || 'apps')}</span><div><b>${esc(x.nome)}</b><small>${esc(x.descricao)}</small></div>
+                        ${x.futuro ? '<span class="badge cinza sem-ponto">Em breve</span>' : x.ativo ? '<span class="badge ativo">Liberado</span>' : '<span class="badge inativo">Não contratado</span>'}</div>`).join('')).join('');
+            } catch (e) {
+                document.getElementById('cfg-modulos').innerHTML = `<div class="alerta vermelho"><span class="ms">error</span><div>${esc(e.message)}</div></div>`;
+            }
+        }
+
+        async function buscarCepEmpresa() {
+            const cep = document.getElementById('c-zipCode').value.replace(/\D/g, '');
+            if (cep.length !== 8) { JG.toast('Informe um CEP com 8 dígitos.', 'alerta'); return; }
+            try {
+                const r = await fetch('/api/sistema/cep/' + cep);
+                const d = await r.json();
+                if (!r.ok) throw new Error(d.erro);
+                document.getElementById('c-zipCode').value = d.cep;
+                if (d.endereco) document.getElementById('c-address').value = d.endereco;
+                if (d.bairro) document.getElementById('c-neighborhood').value = d.bairro;
+                if (d.cidade) document.getElementById('c-city').value = d.cidade;
+                if (d.estado) document.getElementById('c-state').value = d.estado;
+                document.getElementById('c-number').focus();
+            } catch (e) { JG.toast('CEP não encontrado. Preencha o endereço manualmente.', 'alerta'); }
+        }
     </script>
 </body>
 </html>

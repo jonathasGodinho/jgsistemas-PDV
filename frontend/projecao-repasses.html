@@ -6,126 +6,65 @@
     <meta name="google" content="notranslate">
     <title>Projeção de Repasses - JG Sistemas</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
-        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
-        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
-        header a:hover { color: white; }
-        main { padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
-        footer { text-align: center; font-size: 11px; color: #8b95a1; }
-        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
-        .card { background: white; border: 1px solid #ccd1d9; border-radius: 4px; padding: 14px; }
-        .card .valor { font-size: 20px; font-weight: bold; color: #134074; margin-top: 6px; }
-        .card .rotulo { font-size: 11px; color: #656d78; font-weight: bold; text-transform: uppercase; }
-        .card.verde .valor { color: #008c45; }
-        .card.laranja .valor { color: #b26b00; }
-        .card.vermelho .valor { color: #d9534f; }
-        .filtros { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; background: white; border: 1px solid #ccd1d9; border-radius: 4px; padding: 12px; }
-        .filtros .campo { display: flex; flex-direction: column; gap: 4px; }
-        .filtros label { font-size: 11px; color: #656d78; font-weight: bold; text-transform: uppercase; }
-        .filtros select, .filtros input { padding: 8px; font-size: 13px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; }
-        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; padding: 16px; }
-        .painel h3 { font-size: 13px; color: #0b2545; text-transform: uppercase; margin-bottom: 12px; }
-        canvas { width: 100%; max-width: 100%; height: 320px; }
-        .grafico-vazio { color: #8b95a1; text-align: center; padding: 60px 0; font-size: 14px; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { background-color: #134074; color: white; padding: 8px; text-align: left; text-transform: uppercase; font-size: 11px; }
-        td { padding: 8px; border-bottom: 1px solid #e6e9ed; color: #333; }
-        tr:nth-child(even) { background-color: #f8f9fa; }
-        .sem-dados { text-align: center; color: #8b95a1; padding: 24px; font-size: 14px; }
-        .btn { border: none; border-radius: 4px; padding: 8px 14px; font-size: 13px; font-weight: bold; cursor: pointer; }
-        .btn-azul { background-color: #134074; color: white; }
+        .filtros .campo { width: 170px; }
+        canvas { width: 100%; max-width: 100%; height: 320px; display: block; }
+        .grafico-vazio { color: var(--text-2); text-align: center; padding: 60px 0; font-size: 14px; }
     </style>
+    <link rel="stylesheet" href="/ui/jg.css">
 </head>
-<body>
-
-    <header>
-        <div>JG SISTEMAS - PROJEÇÃO DE REPASSES</div>
-        <div><a href="/">← Menu Principal</a> &nbsp;|&nbsp; <a href="/recebiveis.html">Recebíveis</a> &nbsp;|&nbsp; <a href="/operadoras.html">Operadoras e Taxas</a></div>
-    </header>
-
+<body class="jg" data-pagina="cartoes" data-titulo="Cartões · Projeção de repasses">
     <main>
-        <div class="cards">
-            <div class="card verde">
-                <div class="rotulo">A Receber (líquido)</div>
-                <div class="valor" id="card-liquido">R$ 0,00</div>
+        <div class="page-head">
+            <div><h1>Cartões</h1><div class="sub">Projeção dos repasses D+ das operadoras (recebíveis pendentes)</div></div>
+        </div>
+        <div class="abas">
+            <a class="aba" href="/recebiveis.html"><span class="ms sm">credit_card</span>Recebíveis</a>
+            <a class="aba ativa" href="/projecao-repasses.html"><span class="ms sm">bar_chart</span>Projeção de repasses</a>
+            <a class="aba" href="/operadoras.html"><span class="ms sm">tune</span>Operadoras e taxas</a>
+        </div>
+
+        <div class="kpis">
+            <div class="kpi verde"><div class="kpi-top"><span>Líquido a receber</span><span class="ms">account_balance_wallet</span></div><div class="kpi-valor" id="card-liquido">R$ 0,00</div></div>
+            <div class="kpi"><div class="kpi-top"><span>Bruto</span><span class="ms">receipt_long</span></div><div class="kpi-valor" id="card-bruto">R$ 0,00</div></div>
+            <div class="kpi vermelho"><div class="kpi-top"><span>Taxas MDR</span><span class="ms">percent</span></div><div class="kpi-valor" id="card-taxa">R$ 0,00</div></div>
+            <div class="kpi"><div class="kpi-top"><span>Nº de recebíveis</span><span class="ms">tag</span></div><div class="kpi-valor" id="card-qtd">0</div></div>
+        </div>
+
+        <div class="card mb-16">
+            <div class="card-head"><h3>Valor líquido por dia de repasse</h3>
+                <div class="filtros" style="margin:0">
+                    <div class="campo"><label for="f-operadora">Operadora</label><select id="f-operadora" onchange="carregarProjecao()"><option value="">Todas</option></select></div>
+                    <div class="campo"><label for="f-de">De</label><input type="date" id="f-de" onchange="carregarProjecao()"></div>
+                    <div class="campo"><label for="f-ate">Até</label><input type="date" id="f-ate" onchange="carregarProjecao()"></div>
+                    <button class="btn" onclick="carregarProjecao()"><span class="ms">refresh</span></button>
+                </div>
+            </div>
+            <div class="card-body"><div id="grafico-holder"><canvas id="grafico" width="1140" height="320"></canvas></div></div>
+        </div>
+
+        <div class="grid g-2">
+            <div class="card">
+                <div class="card-head"><h3>Resumo por operadora</h3></div>
+                <div class="tabela-wrap">
+                    <table>
+                        <thead><tr><th>Operadora</th><th class="right">Bruto</th><th class="right">Taxa</th><th class="right">Líquido</th><th class="right">Qtd</th><th>1º repasse</th><th>Último</th></tr></thead>
+                        <tbody id="tabela-operadoras"></tbody>
+                    </table>
+                </div>
             </div>
             <div class="card">
-                <div class="rotulo">Bruto</div>
-                <div class="valor" id="card-bruto">R$ 0,00</div>
+                <div class="card-head"><h3>Dia a dia</h3></div>
+                <div class="tabela-wrap" style="max-height:420px;overflow-y:auto">
+                    <table>
+                        <thead><tr><th>Data</th><th class="right">Bruto</th><th class="right">Taxa</th><th class="right">Líquido</th><th class="right">Qtd</th><th>Por operadora</th></tr></thead>
+                        <tbody id="tabela-dias"></tbody>
+                    </table>
+                </div>
             </div>
-            <div class="card vermelho">
-                <div class="rotulo">Taxas MDR</div>
-                <div class="valor" id="card-taxa">R$ 0,00</div>
-            </div>
-            <div class="card">
-                <div class="rotulo">Recebíveis</div>
-                <div class="valor" id="card-qtd">0</div>
-            </div>
-        </div>
-
-        <div class="filtros">
-            <div class="campo">
-                <label>Operadora</label>
-                <select id="f-operadora" onchange="carregarProjecao()">
-                    <option value="">Todas</option>
-                </select>
-            </div>
-            <div class="campo">
-                <label>De</label>
-                <input type="date" id="f-de" onchange="carregarProjecao()">
-            </div>
-            <div class="campo">
-                <label>Até</label>
-                <input type="date" id="f-ate" onchange="carregarProjecao()">
-            </div>
-            <button class="btn btn-azul" onclick="carregarProjecao()">Atualizar</button>
-        </div>
-
-        <div class="painel">
-            <h3>Projeção por Data de Repasse (líquido por dia)</h3>
-            <div id="grafico-holder"><canvas id="grafico" width="1140" height="320"></canvas></div>
-        </div>
-
-        <div class="painel">
-            <h3>Resumo por Operadora</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Operadora</th>
-                        <th style="text-align:right;">Bruto</th>
-                        <th style="text-align:right;">Taxa</th>
-                        <th style="text-align:right;">Líquido</th>
-                        <th style="text-align:right;">Qtd</th>
-                        <th>1º Repasse</th>
-                        <th>Último Repasse</th>
-                    </tr>
-                </thead>
-                <tbody id="tabela-operadoras"></tbody>
-            </table>
-        </div>
-
-        <div class="painel">
-            <h3>Projeção Dia a Dia</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Data de Repasse</th>
-                        <th style="text-align:right;">Bruto</th>
-                        <th style="text-align:right;">Taxa</th>
-                        <th style="text-align:right;">Líquido</th>
-                        <th style="text-align:right;">Recebíveis</th>
-                        <th>Por Operadora</th>
-                    </tr>
-                </thead>
-                <tbody id="tabela-dias"></tbody>
-            </table>
         </div>
     </main>
-
-    <footer>JG Sistemas</footer>
-
     <script src="/seguranca.js"></script>
+    <script src="/ui/shell.js"></script>
     <script>
         const API_BASE = window.location.protocol.startsWith('http') ? '' : 'http://localhost:3000';
 
@@ -157,7 +96,7 @@
         }
         bloquear();
 
-        function moeda(v) { return `R$ ${Number(v || 0).toFixed(2)}`; }
+        function moeda(v) { return Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
         function formatarData(d) {
             if (!d) return '—';
             const dt = new Date(d);
@@ -199,9 +138,9 @@
 
             ctx.clearRect(0, 0, W, H);
 
-            ctx.strokeStyle = '#ccd1d9';
-            ctx.fillStyle = '#656d78';
-            ctx.font = '11px Segoe UI';
+            ctx.strokeStyle = '#E2E8F0';
+            ctx.fillStyle = '#64748B';
+            ctx.font = '11px Inter, Segoe UI';
             ctx.textAlign = 'right';
             const linhasY = 5;
             for (let i = 0; i <= linhasY; i++) {
@@ -216,7 +155,7 @@
             const n = porData.length;
             const passo = areaW / n;
             const largBarra = Math.min(passo * 0.6, 34);
-            const cores = ['#134074', '#00a651', '#f0ad4e', '#9b59b6', '#d9534f', '#16a2b8', '#7f8c8d', '#2ecc71'];
+            const cores = ['#1D4F91', '#16A34A', '#D97706', '#7C3AED', '#DC2626', '#0891B2', '#64748B', '#60A5FA'];
 
             porData.forEach((d, idx) => {
                 const x = margemEsq + passo * idx + (passo - largBarra) / 2;
@@ -225,16 +164,16 @@
                 ctx.fillStyle = cores[idx % cores.length];
                 ctx.fillRect(x, y, largBarra, alt);
 
-                ctx.fillStyle = '#134074';
-                ctx.font = 'bold 10px Segoe UI';
+                ctx.fillStyle = '#0F172A';
+                ctx.font = '600 10px Inter, Segoe UI';
                 ctx.textAlign = 'center';
                 if (d.liquido > 0) {
                     ctx.fillText(`R$ ${d.liquido.toFixed(0)}`, x + largBarra / 2, y - 4);
                 }
 
                 const dt = d.data.slice(5).replace('-', '/');
-                ctx.fillStyle = '#656d78';
-                ctx.font = '10px Segoe UI';
+                ctx.fillStyle = '#64748B';
+                ctx.font = '10px Inter, Segoe UI';
                 ctx.textAlign = 'center';
                 if (n > 22 && idx % 3 !== 0) return;
                 ctx.fillText(dt, x + largBarra / 2, margemTop + areaH + 14);

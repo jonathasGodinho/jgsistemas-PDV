@@ -6,74 +6,42 @@
     <meta name="google" content="notranslate">
     <title>Inventário - JG Sistemas</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #f0f2f5; min-height: 100vh; display: grid; grid-template-rows: 50px 1fr 36px; }
-        header { background-color: #0b2545; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 14px; font-weight: bold; }
-        header a { color: #aab2bd; text-decoration: none; font-weight: normal; }
-        header a:hover { color: white; }
-        main { padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
-        .grid { display: grid; grid-template-columns: 360px 1fr; gap: 20px; align-items: start; }
-        @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
-        .painel { background: white; border: 1px solid #ccd1d9; border-radius: 4px; overflow: hidden; }
-        .painel-titulo { background-color: #134074; color: white; padding: 10px 14px; font-weight: bold; text-transform: uppercase; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
-        .painel-corpo { padding: 14px; }
-        .campo { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
-        .campo label { font-size: 11px; color: #656d78; font-weight: bold; text-transform: uppercase; }
-        .campo input { padding: 9px; font-size: 14px; border: 1px solid #aab2bd; border-radius: 4px; color: #134074; width: 100%; }
-        .linha { display: flex; gap: 10px; align-items: flex-end; }
-        .linha .campo { flex: 1; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { background-color: #134074; color: white; padding: 8px; text-align: left; text-transform: uppercase; font-size: 11px; }
-        td { padding: 8px; border-bottom: 1px solid #e6e9ed; color: #333; }
-        tr:nth-child(even) { background-color: #f8f9fa; }
-        .btn { border: none; border-radius: 4px; padding: 8px 12px; font-size: 13px; font-weight: bold; cursor: pointer; }
-        .btn-azul { background-color: #134074; color: white; }
-        .btn-verde { background-color: #00a651; color: white; }
-        .btn-perigo { background-color: #d9534f; color: white; }
-        .btn-mini { padding: 4px 8px; font-size: 12px; }
-        .btn-block { width: 100%; padding: 12px; font-size: 15px; }
-        .sem-dados { text-align: center; color: #8b95a1; padding: 24px; font-size: 14px; }
-        .badge { display: inline-block; padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
-        .b-verde { background: #d8f3e3; color: #008c45; }
-        .b-cinza { background: #e6e9ed; color: #656d78; }
-        .b-amarelo { background: #fde8c8; color: #b26b00; }
-        .b-vermelho { background: #f8d7da; color: #b02a37; }
-        .divergencia { color: #d9534f; font-weight: bold; }
+        .inv-grid { display: grid; grid-template-columns: 380px minmax(0, 1fr); gap: 16px; align-items: start; }
+        @media (max-width: 1100px) { .inv-grid { grid-template-columns: 1fr; } }
         .oculto { display: none; }
-        .qtd-input { width: 80px; padding: 6px; border: 1px solid #aab2bd; border-radius: 4px; text-align: center; }
+        body.jg .qtd-input { width: 90px; height: 34px; text-align: center; }
+        .div-pos { color: var(--green); font-weight: 700; }
+        .div-neg { color: var(--red); font-weight: 700; }
+        .divergencia { font-weight: 700; }
+        tbody tr.sel-contagem { background: var(--primary-soft); }
     </style>
+    <link rel="stylesheet" href="/ui/jg.css">
 </head>
-<body>
-
-    <header>
-        <div>JG SISTEMAS - INVENTÁRIO</div>
-        <div><a href="/">← Menu Principal</a></div>
-    </header>
-
+<body class="jg" data-pagina="inventario">
     <main>
-        <div class="grid">
-            <div>
-                <div class="painel" style="margin-bottom:20px;">
-                    <div class="painel-titulo"><span>Abrir Contagem</span></div>
-                    <div class="painel-corpo">
-                        <div class="campo">
-                            <label>Nome da contagem</label>
-                            <input type="text" id="f-nome" placeholder="Ex.: CONTAGEM MENSAL">
-                        </div>
-                        <button class="btn btn-verde btn-block" id="btn-abrir" onclick="abrirContagem()">Abrir nova contagem</button>
+        <div class="page-head">
+            <div><h1>Inventário</h1><div class="sub">Contagem de estoque e ajuste das divergências</div></div>
+        </div>
+        <div class="inv-grid">
+            <div class="stack">
+                <div class="card">
+                    <div class="card-head"><h3>Abrir nova contagem</h3></div>
+                    <div class="card-body">
+                        <div class="campo"><label for="f-nome">Nome da contagem</label><input type="text" id="f-nome" placeholder="Ex.: Inventário Outubro – Jeans"></div>
+                        <button class="btn btn-sucesso btn-bloco" id="btn-abrir" onclick="abrirContagem()"><span class="ms">add</span>Abrir nova contagem</button>
                     </div>
                 </div>
 
-                <div class="painel">
-                    <div class="painel-titulo"><span>Contagens</span></div>
-                    <div class="painel-corpo" style="padding:0;">
+                <div class="card">
+                    <div class="card-head"><h3>Contagens</h3></div>
+                    <div class="tabela-wrap">
                         <table>
                             <thead>
                                 <tr>
                                     <th>Nome</th>
                                     <th>Status</th>
-                                    <th style="text-align:right;">Conferidos</th>
-                                    <th style="text-align:center;">Ações</th>
+                                    <th class="right">Conferidos</th>
+                                    <th class="acoes"></th>
                                 </tr>
                             </thead>
                             <tbody id="tabela-contagens">
@@ -84,26 +52,27 @@
                 </div>
             </div>
 
-            <div class="painel">
-                <div class="painel-titulo"><span id="titulo-detalhe">Conferência da Contagem</span></div>
-                <div class="painel-corpo">
-                    <div id="sem-selecao" class="sem-dados">Selecione uma contagem para conferir.</div>
+            <div class="card">
+                <div class="card-head"><h3 id="titulo-detalhe">Conferência da contagem</h3><span id="badge-status"></span></div>
+                <div class="card-body">
+                    <div id="sem-selecao" class="estado-vazio"><span class="ms">fact_check</span><p>Selecione uma contagem para conferir.</p></div>
                     <div id="detalhe" class="oculto">
-                        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:14px;">
-                            <span id="badge-status"></span>
-                            <span style="font-size:12px; color:#8b95a1;" id="resumo-contagem"></span>
-                            <span style="flex:1;"></span>
-                            <button class="btn btn-mini btn-perigo" id="btn-excluir" onclick="excluirContagem()">Cancelar</button>
-                            <button class="btn btn-verde" id="btn-finalizar" onclick="finalizarContagem()">Finalizar e aplicar ajustes</button>
+                        <div class="row between mb-16">
+                            <span class="muted" style="font-size:13px" id="resumo-contagem"></span>
+                            <div class="row" style="gap:8px">
+                                <button class="btn btn-contorno-perigo btn-sm" id="btn-excluir" onclick="excluirContagem()"><span class="ms">close</span>Cancelar contagem</button>
+                                <button class="btn btn-sucesso" id="btn-finalizar" onclick="finalizarContagem()"><span class="ms">done_all</span>Finalizar e aplicar ajustes</button>
+                            </div>
                         </div>
-                        <div style="overflow-x:auto;">
+                        <div class="progresso mb-16"><div id="barra-progresso" style="width:0"></div></div>
+                        <div class="tabela-wrap" style="border:1px solid var(--border)">
                             <table>
                                 <thead>
                                     <tr>
                                         <th>Produto</th>
-                                        <th style="text-align:right;">Esperado</th>
-                                        <th style="text-align:center;">Contado</th>
-                                        <th style="text-align:right;">Divergência</th>
+                                        <th class="right">Esperado</th>
+                                        <th class="center">Contado</th>
+                                        <th class="right">Divergência</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tabela-conferencia">
@@ -116,10 +85,8 @@
             </div>
         </div>
     </main>
-
-    <footer>© 2026 JG Sistemas</footer>
-
     <script src="/seguranca.js"></script>
+    <script src="/ui/shell.js"></script>
     <script>
         const API_BASE = '';
 
@@ -161,26 +128,25 @@
                 const lista = await api('/api/inventario');
                 const tbody = document.getElementById('tabela-contagens');
                 if (lista.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="sem-dados">Nenhuma contagem</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="4"><div class="estado-vazio"><span class="ms">inventory</span><p>Nenhuma contagem ainda.</p></div></td></tr>';
                     document.getElementById('btn-abrir').disabled = false;
                     return;
                 }
                 const temAberta = lista.some(c => c.status === 'OPEN');
                 document.getElementById('btn-abrir').disabled = temAberta;
-                document.getElementById('btn-abrir').innerText = temAberta ? 'Há uma contagem em aberto' : 'Abrir nova contagem';
+                document.getElementById('btn-abrir').innerHTML = temAberta ? '<span class="ms">lock</span>Há uma contagem em aberto' : '<span class="ms">add</span>Abrir nova contagem';
+                const selId = contagemSelecionada ? contagemSelecionada.id : null;
                 tbody.innerHTML = lista.map(c => `
-                    <tr>
-                        <td><strong>${esc(c.nome)}</strong><br><small style="color:#8b95a1;">${new Date(c.criadoEm).toLocaleDateString('pt-BR')}</small></td>
+                    <tr class="${c.id === selId ? 'sel-contagem' : ''}" style="cursor:pointer" onclick="abrirDetalhe('${c.id}')">
+                        <td><b>${esc(c.nome)}</b><br><small>${new Date(c.criadoEm).toLocaleDateString('pt-BR')}</small></td>
                         <td>
                             ${c.status === 'OPEN'
-                                ? `<span class="badge b-amarelo">Em aberto</span>`
-                                : `<span class="badge b-cinza">Finalizada</span>`}
-                            ${c.divergencias > 0 ? `<br><span class="badge b-vermelho">${c.divergencias} div.</span>` : ''}
+                                ? `<span class="badge pendente">Em andamento</span>`
+                                : `<span class="badge ativo">Finalizada</span>`}
+                            ${c.divergencias > 0 ? ` <span class="badge vencido sem-ponto">${c.divergencias} div.</span>` : ''}
                         </td>
-                        <td style="text-align:right;">${c.conferidos}/${c.totalItens}</td>
-                        <td style="text-align:center; white-space:nowrap;">
-                            <button class="btn btn-mini btn-azul" onclick="abrirDetalhe('${c.id}')">Conferir</button>
-                        </td>
+                        <td class="right">${c.conferidos}/${c.totalItens}</td>
+                        <td class="acoes"><button class="btn-icone" title="Conferir"><span class="ms">chevron_right</span></button></td>
                     </tr>`).join('');
             } catch (e) { alert(e.message); }
         }
@@ -202,14 +168,16 @@
                 contagemSelecionada = c;
                 document.getElementById('sem-selecao').classList.add('oculto');
                 document.getElementById('detalhe').classList.remove('oculto');
-                document.getElementById('titulo-detalhe').innerText = `Contagem: ${c.nome}`;
+                document.getElementById('titulo-detalhe').innerText = c.nome;
                 document.getElementById('badge-status').innerHTML = c.status === 'OPEN'
-                    ? '<span class="badge b-amarelo">Em aberto</span>'
-                    : '<span class="badge b-cinza">Finalizada</span>';
+                    ? '<span class="badge pendente">Em andamento</span>'
+                    : '<span class="badge ativo">Finalizada</span>';
                 const conferidos = c.itens.filter(i => i.contado !== null).length;
                 const divergencias = c.itens.filter(i => i.divergencia !== null && i.divergencia !== 0).length;
-                document.getElementById('resumo-contagem').innerText =
-                    `${conferidos}/${c.itens.length} conferidos · ${divergencias} com divergência`;
+                const pct = c.itens.length ? Math.round(conferidos / c.itens.length * 100) : 0;
+                document.getElementById('resumo-contagem').innerHTML =
+                    `<b style="color:var(--text)">${pct}%</b> · ${conferidos} de ${c.itens.length} conferidos · ${divergencias} com divergência`;
+                document.getElementById('barra-progresso').style.width = pct + '%';
                 document.getElementById('btn-finalizar').style.display = c.status === 'OPEN' ? '' : 'none';
                 document.getElementById('btn-excluir').style.display = c.status === 'OPEN' ? '' : 'none';
 
@@ -218,16 +186,16 @@
                     return `
                         <tr>
                             <td>
-                                <strong>${esc(i.produto)}</strong><br>
-                                <small style="color:#8b95a1;">${esc(i.codigo ?? '')}</small>
+                                <b>${esc(i.produto)}</b><br>
+                                <small>${esc(i.codigo ?? '')}</small>
                             </td>
-                            <td style="text-align:right;">${i.esperado}</td>
-                            <td style="text-align:center;">
+                            <td class="right">${i.esperado}</td>
+                            <td class="center">
                                 ${c.status === 'OPEN'
                                     ? `<input type="number" class="qtd-input" min="0" value="${i.contado ?? ''}" id="ct-${idx}" data-item="${i.id}" data-inv="${i.inventoryId}">`
                                     : (i.contado ?? '—')}
                             </td>
-                            <td style="text-align:right;" class="${div !== null && div !== 0 ? 'divergencia' : ''}">
+                            <td class="right ${div === null || div === 0 ? 'muted' : div > 0 ? 'div-pos' : 'div-neg'}">
                                 ${div === null ? '—' : (div > 0 ? '+' : '') + div}
                             </td>
                         </tr>`;

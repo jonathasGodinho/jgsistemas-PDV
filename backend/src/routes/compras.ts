@@ -54,6 +54,7 @@ router.get('/:id', async (req: any, res: any) => {
         observacoes: compra.notes,
         data: compra.createdAt,
         itens: compra.PurchaseItem.map(i => ({
+            id: i.id,
             produtoId: i.productId,
             codigo: i.Product.barcode ?? i.Product.sku,
             nome: i.Product.name,
@@ -134,7 +135,7 @@ router.post('/', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: 
 // POST /api/compras/:id/receber - Recebe a mercadoria: entra no estoque e gera contas a pagar
 router.post('/:id/receber', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     const { id } = req.params;
-    const { vencimento, observacoes } = req.body;
+    const { vencimento, observacoes, recebidos } = req.body;
 
     try {
         const compra = await prisma.purchase.findUnique({
@@ -155,22 +156,41 @@ router.post('/:id/receber', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), a
 
         const operador = await prisma.user.findFirst({ where: { id: req.operador.id } });
 
+        // Conferência: quantidade recebida por item (padrão = quantidade pedida)
+        const qtdRecebida = (item: any) => {
+            const v = recebidos && typeof recebidos === 'object' ? recebidos[item.id] : undefined;
+            if (v === undefined || v === null || v === '') return item.quantity;
+            return Math.max(0, Math.min(item.quantity, Math.round(Number(v) || 0)));
+        };
+        const totalRecebido = Number(compra.PurchaseItem.reduce((s, i) => s + qtdRecebida(i) * Number(i.unitCost), 0).toFixed(2));
+        if (totalRecebido <= 0) {
+            return res.status(400).json({ erro: "Nenhum item recebido! Informe as quantidades conferidas." });
+        }
+        const faltas = compra.PurchaseItem.filter(i => qtdRecebida(i) < i.quantity);
+
         await prisma.$transaction(async (tx) => {
             for (const item of compra.PurchaseItem) {
-                const inv = await tx.inventory.findFirst({
-                    where: { productId: item.productId, branchId: filial.id }
+                const recebido = qtdRecebida(item);
+                if (recebido <= 0) continue;
+                let inv = await tx.inventory.findFirst({
+                    where: { productId: item.productId, variantId: null, branchId: filial.id }
                 });
+                if (!inv) {
+                    inv = await tx.inventory.create({
+                        data: { id: randomUUID(), productId: item.productId, branchId: filial.id, quantity: 0, minQuantity: 0, maxQuantity: 0, createdAt: new Date(), updatedAt: new Date() }
+                    });
+                }
                 if (inv) {
                     await tx.inventory.update({
                         where: { id: inv.id },
-                        data: { quantity: inv.quantity + item.quantity, updatedAt: new Date() }
+                        data: { quantity: inv.quantity + recebido, updatedAt: new Date() }
                     });
                     await tx.inventoryMovement.create({
                         data: {
                             id: randomUUID(),
                             inventoryId: inv.id,
                             type: 'IN',
-                            quantity: item.quantity,
+                            quantity: recebido,
                             reason: `Recebimento compra ${compra.orderNumber}`,
                             userId: operador?.id ?? null,
                             createdAt: new Date()
@@ -188,12 +208,12 @@ router.post('/:id/receber', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), a
                     type: 'PAY',
                     status: 'PENDING',
                     description: `COMPRA - Nº ${compra.orderNumber}`,
-                    amount: Number(compra.total),
+                    amount: totalRecebido,
                     dueDate,
                     category: 'COMPRA',
                     supplierId: compra.supplierId ?? null,
                     purchaseId: compra.id,
-                    notes: observacoes || null,
+                    notes: [observacoes, faltas.length ? `Recebimento parcial: ${faltas.length} item(ns) com falta` : ''].filter(Boolean).join(' · ') || null,
                     createdAt: new Date(),
                     updatedAt: new Date()
                 }
@@ -210,10 +230,10 @@ router.post('/:id/receber', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), a
             action: 'COMPRA_RECEBIDA',
             entity: 'PURCHASE',
             entityId: compra.id,
-            detail: { numero: compra.orderNumber, total: Number(compra.total) }
+            detail: { numero: compra.orderNumber, total: Number(compra.total), totalRecebido, itensComFalta: faltas.length }
         });
 
-        return res.json({ ok: true, status: 'RECEIVED' });
+        return res.json({ ok: true, status: 'RECEIVED', totalRecebido, itensComFalta: faltas.length });
     } catch (e: any) {
         return res.status(400).json({ erro: e.message });
     }
