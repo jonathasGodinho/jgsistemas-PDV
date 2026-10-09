@@ -5,6 +5,17 @@ import prisma from '../db';
 import { autenticar, requerPermissao } from '../middlewares/auth';
 import { obterSetting } from '../utils/settings';
 import { validarPoliticaSenha } from '../utils/senhas';
+import { comEmpresa, comoSistema } from '../tenant';
+import { lerContrato, motivoBloqueio, situacaoMensalidade } from '../utils/contrato';
+
+// Cookie que lembra a empresa deste navegador (para a lista de operadores e o login
+// pelo nome). Não é credencial: só delimita a busca; a senha continua obrigatória.
+const COOKIE_EMPRESA = 'jg_empresa';
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const empresaDoNavegador = (req: any): string | null => {
+    const v = String(req.cookies?.[COOKIE_EMPRESA] ?? '');
+    return UUID.test(v) ? v : null;
+};
 
 const router = Router();
 
@@ -31,13 +42,13 @@ const registrarAudit = async (dados: {
     success: boolean;
     detail?: string;
     suspeito?: boolean;
+    companyId?: string | null;
 }) => {
     try {
-        const empresa = await prisma.company.findFirst({ select: { id: true } });
-        await prisma.loginAudit.create({
+        await comoSistema(() => prisma.loginAudit.create({
             data: {
                 id: randomUUID(),
-                companyId: empresa?.id ?? null,
+                companyId: dados.companyId ?? null,
                 userId: dados.userId ?? null,
                 identificador: String(dados.identificador).slice(0, 200),
                 ip: dados.ip ?? null,
@@ -46,16 +57,18 @@ const registrarAudit = async (dados: {
                 detail: dados.detail ? String(dados.detail).slice(0, 500) : null,
                 createdAt: new Date()
             }
-        });
+        }));
     } catch (e) { /* auditoria não pode derrubar o login */ }
 };
 
 // GET /api/auth/operadores - Lista operadores ativos (para a tela de login)
-router.get('/operadores', async (_req: any, res: any) => {
-    const operadores = await prisma.user.findMany({
+router.get('/operadores', async (req: any, res: any) => {
+    const empresaId = empresaDoNavegador(req);
+    if (!empresaId) return res.json([]); // primeiro acesso neste navegador: entrar pelo e-mail
+    const operadores = await comEmpresa(empresaId, () => prisma.user.findMany({
         where: { isActive: true },
         orderBy: { name: 'asc' }
-    });
+    }));
     return res.json(operadores.map((u) => ({
         id: u.id,
         nome: u.name,
@@ -76,29 +89,42 @@ router.post('/login', async (req: any, res: any) => {
     }
 
     const busca = String(identificador).trim();
-    const user = await prisma.user.findFirst({
+    const empresaNavegador = empresaDoNavegador(req);
+    // E-mail é único no sistema todo. O nome só vale dentro da empresa deste navegador.
+    const candidatos = await comoSistema(() => prisma.user.findMany({
         where: {
             isActive: true,
             OR: [
                 { email: { equals: busca, mode: 'insensitive' } },
-                { name: { equals: busca, mode: 'insensitive' } }
+                { name: { equals: busca, mode: 'insensitive' }, ...(empresaNavegador ? { companyId: empresaNavegador } : {}) }
             ]
-        }
-    });
+        },
+        take: 3
+    }));
+    const porEmail = candidatos.find(u => u.email.toLowerCase() === busca.toLowerCase());
+    const user = porEmail ?? (candidatos.length === 1 ? candidatos[0] : null);
 
     if (!user) {
-        await registrarAudit({ ip, identificador: busca, success: false, detail: 'Operador não encontrado ou inativo' });
-        return res.status(401).json({ erro: "Operador não encontrado ou inativo!" });
+        const ambiguo = !porEmail && candidatos.length > 1;
+        await registrarAudit({ ip, identificador: busca, success: false, companyId: empresaNavegador, detail: ambiguo ? 'Nome de operador em mais de uma empresa' : 'Operador não encontrado ou inativo' });
+        return res.status(401).json({ erro: ambiguo ? "Entre com o seu e-mail (há mais de um operador com esse nome)." : "Operador não encontrado ou inativo!" });
     }
+
+    // O restante do login acontece dentro da empresa do operador.
+    return comEmpresa(user.companyId, () => concluirLogin(req, res, user, busca, ip));
+});
+
+async function concluirLogin(req: any, res: any, user: any, busca: string, ip: string | null) {
+    const companyId = user.companyId;
 
     // Bloqueio por excesso de tentativas (anti força bruta)
     if (user.lockedUntil && user.lockedUntil > new Date()) {
         const min = Math.ceil((new Date(user.lockedUntil).getTime() - Date.now()) / 60000);
-        await registrarAudit({ ip, userId: user.id, identificador: busca, success: false, detail: 'Tentativa em conta bloqueada' });
+        await registrarAudit({ ip, companyId, userId: user.id, identificador: busca, success: false, detail: 'Tentativa em conta bloqueada' });
         return res.status(429).json({ erro: `Conta bloqueada por excesso de tentativas. Tente novamente em ${min} minuto(s).` });
     }
 
-    const senhaOk = await bcrypt.compare(String(senha), user.password);
+    const senhaOk = await bcrypt.compare(String(req.body?.senha ?? ""), user.password);
     if (!senhaOk) {
         const maxTentativas = Number(await obterSetting<number>('seg_login_max_tentativas', 5)) || 5;
         const travamentoMin = Number(await obterSetting<number>('seg_login_travamento_min', 15)) || 15;
@@ -115,6 +141,7 @@ router.post('/login', async (req: any, res: any) => {
         });
         await registrarAudit({
             ip,
+            companyId,
             userId: user.id,
             identificador: busca,
             success: false,
@@ -125,8 +152,15 @@ router.post('/login', async (req: any, res: any) => {
         return res.status(401).json({ erro: "Senha incorreta!" });
     }
 
-    // Controle de mensalidade: o painel injeta MENSALIDADE_VENCIMENTO no env da
-    // instância. Sem a variável (dev local, ex.: porta 3000) o controle não se aplica.
+    // Contrato da empresa (painel SaaS): suspensão e mensalidade vencida bloqueiam o acesso.
+    const contrato = await lerContrato(companyId);
+    const bloqueio = motivoBloqueio(contrato);
+    if (bloqueio) {
+        await registrarAudit({ ip, companyId, userId: user.id, identificador: busca, success: false, detail: 'Acesso bloqueado pelo contrato (suspensão ou mensalidade)' });
+        return res.status(403).json({ erro: bloqueio });
+    }
+
+    // Instalação local antiga: o painel injetava MENSALIDADE_VENCIMENTO no env da instância.
     const venc = process.env.MENSALIDADE_VENCIMENTO;
     if (venc && /^\d{4}-\d{2}-\d{2}/.test(venc)) {
         const janelaHoras = Number(process.env.MENSALIDADE_JANELA_HORAS) || 72;
@@ -135,6 +169,7 @@ router.post('/login', async (req: any, res: any) => {
         if (Date.now() > fim.getTime()) {
             await registrarAudit({
                 ip,
+                companyId,
                 userId: user.id,
                 identificador: busca,
                 success: false,
@@ -180,6 +215,7 @@ router.post('/login', async (req: any, res: any) => {
 
     await registrarAudit({
         ip,
+        companyId,
         userId: user.id,
         identificador: busca,
         success: true,
@@ -189,9 +225,9 @@ router.post('/login', async (req: any, res: any) => {
 
     // Aviso de mensalidade: venceu hoje (ou está na janela de tolerância) → avisa,
     // mas libera o acesso. O bloqueio duro fica com o painel (auto-suspensão).
-    let avisoMensalidade = null;
+    let avisoMensalidade: any = situacaoMensalidade(contrato).aviso;
     const vencAv = process.env.MENSALIDADE_VENCIMENTO;
-    if (vencAv && /^\d{4}-\d{2}-\d{2}/.test(vencAv)) {
+    if (!avisoMensalidade && vencAv && /^\d{4}-\d{2}-\d{2}/.test(vencAv)) {
         const janelaHoras = Number(process.env.MENSALIDADE_JANELA_HORAS) || 72;
         const inicio = new Date(`${vencAv.slice(0, 10)}T00:00:00`);
         const fim = new Date(inicio.getTime());
@@ -206,10 +242,13 @@ router.post('/login', async (req: any, res: any) => {
         }
     }
 
+    // Lembra a empresa deste navegador (lista de operadores e login pelo nome).
+    res.cookie(COOKIE_EMPRESA, companyId, { httpOnly: true, sameSite: 'lax', secure: viaHttps, path: '/', maxAge: 365 * 24 * 60 * 60 * 1000 });
+
     // O token é entregue somente no cookie httpOnly — não vai no corpo da resposta.
     const { token: _semToken, ...operador } = serializar(atualizado);
     return res.json({ ...operador, avisoMensalidade });
-});
+}
 
 // POST /api/auth/logout - Encerra a sessão do operador
 router.post('/logout', autenticar, async (req: any, res: any) => {
@@ -362,9 +401,19 @@ router.post('/operadores', autenticar, requerPermissao('ADMIN', 'MANAGER'), asyn
     }
 
     const emailNormalizado = String(email).trim().toLowerCase();
-    const existente = await prisma.user.findUnique({ where: { email: emailNormalizado } });
+    // O e-mail é o login e vale para o sistema todo (todas as empresas).
+    const existente = await comoSistema(() => prisma.user.findUnique({ where: { email: emailNormalizado } }));
     if (existente) {
         return res.status(400).json({ erro: "E-mail já cadastrado para outro operador!" });
+    }
+
+    // Limite de usuários do plano contratado (0 = ilimitado)
+    const contrato = await lerContrato(empresa.id);
+    if (contrato.limites.usuarios > 0) {
+        const ativos = await prisma.user.count({ where: { isActive: true } });
+        if (ativos >= contrato.limites.usuarios) {
+            return res.status(403).json({ erro: `Seu plano permite ${contrato.limites.usuarios} usuário(s) ativo(s). Desative um operador ou fale com a JG Sistemas para ampliar o plano.` });
+        }
     }
 
     const role = papel || 'SELLER';
@@ -416,9 +465,9 @@ router.put('/operadores/:id', autenticar, requerPermissao('ADMIN', 'MANAGER'), a
 
     if (email) {
         const normalizado = String(email).trim().toLowerCase();
-        const dup = await prisma.user.findFirst({
+        const dup = await comoSistema(() => prisma.user.findFirst({
             where: { email: normalizado, id: { not: id } }
-        });
+        }));
         if (dup) {
             return res.status(400).json({ erro: "E-mail já cadastrado para outro operador!" });
         }
@@ -442,6 +491,17 @@ router.put('/operadores/:id', autenticar, requerPermissao('ADMIN', 'MANAGER'), a
         dados.passwordChangedAt = new Date();
         dados.sessionToken = null;
         dados.sessionExpiresAt = null;
+    }
+
+    // Reativar operador também respeita o limite de usuários do plano
+    if (dados.isActive && !existente.isActive) {
+        const contrato = await lerContrato(existente.companyId);
+        if (contrato.limites.usuarios > 0) {
+            const ativos = await prisma.user.count({ where: { isActive: true } });
+            if (ativos >= contrato.limites.usuarios) {
+                return res.status(403).json({ erro: `Seu plano permite ${contrato.limites.usuarios} usuário(s) ativo(s).` });
+            }
+        }
     }
 
     const user = await prisma.user.update({ where: { id }, data: dados });

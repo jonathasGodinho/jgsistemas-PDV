@@ -6,6 +6,24 @@
 (function () {
     'use strict';
 
+    // Empresa suspensa ou com mensalidade vencida (painel SaaS): a API responde 403
+    // com { bloqueado: true }. Encerra a sessão local e leva ao login com o aviso.
+    if (window.fetch && !window.__jgFetchBloqueio) {
+        window.__jgFetchBloqueio = true;
+        const fetchOriginal = window.fetch.bind(window);
+        window.fetch = async function () {
+            const r = await fetchOriginal.apply(null, arguments);
+            if (r.status === 403) {
+                r.clone().json().then((d) => {
+                    if (!d || !d.bloqueado) return;
+                    try { localStorage.removeItem('jg_operador'); sessionStorage.setItem('jg_msg_login', d.erro || 'Acesso bloqueado.'); } catch (e) { /* ignore */ }
+                    location.href = '/login.html';
+                }).catch(() => { });
+            }
+            return r;
+        };
+    }
+
     // Papéis do sistema
     const PAPEIS = {
         ADMIN: 'Administrador',

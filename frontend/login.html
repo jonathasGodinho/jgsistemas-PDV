@@ -193,6 +193,12 @@
             el.style.display = 'flex';
         }
 
+        // Aviso deixado pelo shell quando a empresa foi suspensa/bloqueada
+        try {
+            const aviso = sessionStorage.getItem('jg_msg_login');
+            if (aviso) { sessionStorage.removeItem('jg_msg_login'); mostrarErro(aviso); }
+        } catch (e) { /* ignore */ }
+
         function limpar() {
             document.getElementById('erro').style.display = 'none';
             document.getElementById('operador').value = '';
@@ -209,7 +215,7 @@
 
         function abrirListaOperadores() {
             if (operadores.length === 0) {
-                mostrarErro("Nenhum operador disponível. Fale com o administrador.");
+                mostrarErro("No primeiro acesso neste aparelho, entre com o seu e-mail. Depois disso a lista de operadores (F2) fica disponível.");
                 return;
             }
             document.getElementById('busca-operador').value = '';

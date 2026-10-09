@@ -37,6 +37,7 @@ import cartoesRouter from './routes/cartoes';
 import conciliacaoRouter from './routes/conciliacao';
 import nfeRouter from './routes/nfe';
 import sistemaRouter from './routes/sistema';
+import painelRouter from './routes/painel';
 import { exigirModulos } from './utils/modulos';
 
 const app = express();
@@ -117,6 +118,21 @@ app.use('/api/cartoes', autenticar, cartoesRouter);
 app.use('/api/conciliacao', autenticar, conciliacaoRouter);
 app.use('/api/nfe', autenticar, nfeRouter);
 app.use('/api/sistema', sistemaRouter);
+// Painel do Administrador da JG Sistemas (SaaS) — login próprio, enxerga todas as empresas
+app.use('/api/painel', painelRouter);
+
+// Erros não tratados nas rotas. Registro inexistente (ou de outra empresa, que o
+// isolamento multiempresa esconde) vira 404 em vez de erro 500.
+app.use((err: any, _req: any, res: any, _next: any) => {
+    if (err?.code === 'P2025') return res.status(404).json({ erro: 'Registro não encontrado.' });
+    if (String(err?.message || '').startsWith('[multiempresa]')) {
+        console.error(err.message);
+        return res.status(403).json({ erro: 'Operação não permitida.' });
+    }
+    console.error(err);
+    if (res.headersSent) return;
+    return res.status(500).json({ erro: 'Erro interno do servidor.' });
+});
 
 // Na Vercel o app roda como função (api/index.ts): sem abrir porta.
 if (!process.env.VERCEL) {

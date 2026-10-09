@@ -6,6 +6,7 @@
 // reiniciar a instância. Sem a variável (desenvolvimento local), tudo fica liberado.
 import fs from 'fs';
 import path from 'path';
+import { contextoAtual } from '../tenant';
 
 export type ModuloDef = {
     chave: string;
@@ -35,8 +36,18 @@ type Liberacao = {
 
 let cache: { mtime: number; dados: Liberacao } | null = null;
 
-// Lê a liberação atual (com cache por mtime do arquivo).
+// Lê a liberação atual. Na nuvem (multiempresa) vem do contrato da empresa do
+// operador logado; na instalação local, do arquivo/variável (com cache por mtime).
 export function liberacaoAtual(): Liberacao {
+    const ctx = contextoAtual();
+    if (ctx && ctx.contrato) {
+        return {
+            liberados: ctx.contrato.modulos,
+            segmento: ctx.contrato.segmento,
+            plano: ctx.contrato.plano,
+            limites: ctx.contrato.limites
+        };
+    }
     const arquivo = process.env.JG_MODULOS_ARQUIVO;
     if (!arquivo) {
         const env = process.env.JG_MODULOS;
@@ -69,6 +80,15 @@ export function moduloAtivo(chave: string): boolean {
 function moduloDoCaminho(caminho: string, campo: 'paginas' | 'apis'): ModuloDef | undefined {
     const p = caminho.toLowerCase();
     return CATALOGO.find(m => m[campo].some(x => campo === 'paginas' ? p === x : (p === x || p.startsWith(x + '/') || p.startsWith(x + '?'))));
+}
+
+// Módulo bloqueado que atende a API (ou null se liberada). Usado na autenticação,
+// quando já se sabe a empresa do operador.
+export function moduloBloqueadoDaApi(caminho: string): ModuloDef | null {
+    const { liberados } = liberacaoAtual();
+    if (liberados === null) return null;
+    const m = moduloDoCaminho(caminho, 'apis');
+    return m && !liberados.includes(m.chave) ? m : null;
 }
 
 // Middleware: barra APIs exclusivas de módulos bloqueados (403) e páginas .html

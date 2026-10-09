@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { randomUUID } from 'crypto';
 import bcrypt from 'bcryptjs';
 import prisma from '../db';
+import { contextoAtual } from '../tenant';
 import { autenticar, requerPermissao, ehOperadorDeCaixa } from '../middlewares/auth';
 
 const router = Router();
@@ -125,6 +126,12 @@ router.post('/abrir', async (req: any, res: any) => {
 
     if (!num || num < 1 || num > NUM_CAIXAS) {
         return res.status(400).json({ erro: `Informe o número da registradora (1 a ${NUM_CAIXAS})!` });
+    }
+
+    // Limite de caixas do plano contratado (0 = ilimitado)
+    const limiteCaixas = contextoAtual()?.contrato?.limites.caixas ?? 0;
+    if (limiteCaixas > 0 && num > limiteCaixas) {
+        return res.status(403).json({ erro: `Seu plano permite ${limiteCaixas} caixa(s). Use uma registradora de 1 a ${limiteCaixas} ou fale com a JG Sistemas para ampliar o plano.` });
     }
 
     if (valorInicial === undefined || valorInicial === null || String(valorInicial).trim() === '') {

@@ -152,6 +152,8 @@ model Company {
   createdAt            DateTime               @default(now())
   updatedAt            DateTime
   Branch               Branch[]
+  SaasCobranca         SaasCobranca[]
+  SaasNota             SaasNota[]
   Brand                Brand[]
   CashRegister         CashRegister[]
   Category             Category[]
@@ -848,4 +850,48 @@ enum UserRole {
   SELLER
   STOCKIST
   FINANCIAL
+}
+
+// ---------------------------------------------------------------------------
+// Plataforma SaaS (Painel do Administrador da JG Sistemas). Acessível só pelo painel.
+// ---------------------------------------------------------------------------
+
+model PlatformSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+// Mensalidade de um cliente (uma por competência AAAA-MM)
+model SaasCobranca {
+  id             String    @id
+  companyId      String
+  competencia    String
+  descricao      String?
+  vencimento     DateTime  @db.Date
+  valor          Decimal   @db.Decimal(10, 2)
+  status         String    @default("PENDENTE")
+  pagoEm         DateTime?
+  valorPago      Decimal?  @db.Decimal(10, 2)
+  formaPagamento String?
+  observacao     String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @default(now()) @updatedAt
+  Company        Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, competencia])
+  @@index([status, vencimento])
+}
+
+// Histórico da gestão do cliente (anotações, contatos, eventos do contrato)
+model SaasNota {
+  id        String   @id
+  companyId String
+  tipo      String   @default("NOTA")
+  texto     String
+  autor     String?
+  createdAt DateTime @default(now())
+  Company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId, createdAt])
 }

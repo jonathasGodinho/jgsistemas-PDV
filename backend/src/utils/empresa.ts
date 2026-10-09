@@ -4,7 +4,7 @@ import prisma from '../db';
 export async function dadosEmpresa() {
     const empresa = await prisma.company.findFirst();
     if (!empresa) {
-        return { name: 'JG SISTEMAS', tradeName: 'TESTE LTDA', document: '', city: '', state: '', phone: '', email: '' };
+        return { name: '', tradeName: '', document: '', city: '', state: '', phone: '', email: '' };
     }
     return {
         name: empresa.name,

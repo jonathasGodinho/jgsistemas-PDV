@@ -67,5 +67,51 @@
         }
       ]
     }
+  ],
+  "redirects": [
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "painel.jgsistemas.dev.br"
+        }
+      ],
+      "destination": "/painel/",
+      "permanent": false
+    },
+    {
+      "source": "/login.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "painel.jgsistemas.dev.br"
+        }
+      ],
+      "destination": "/painel/",
+      "permanent": false
+    },
+    {
+      "source": "/painel",
+      "has": [
+        {
+          "type": "host",
+          "value": "erp.jgsistemas.dev.br"
+        }
+      ],
+      "destination": "https://painel.jgsistemas.dev.br/painel/",
+      "permanent": false
+    },
+    {
+      "source": "/painel/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "erp.jgsistemas.dev.br"
+        }
+      ],
+      "destination": "https://painel.jgsistemas.dev.br/painel/",
+      "permanent": false
+    }
   ]
 }

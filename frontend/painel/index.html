@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Painel Admin - JG Sistemas</title>
+    <link rel="stylesheet" href="/ui/jg.css">
+    <style>
+        .tag-painel { display: inline-block; margin-top: 2px; padding: 1px 6px; border-radius: 4px; background: #1F3A60; color: #CBD5E1; font-size: 10px; font-weight: 700; letter-spacing: .06em; }
+        .login-fundo { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--navy); padding: 20px; }
+        .login-card { width: 400px; max-width: 100%; background: #fff; border-radius: 12px; box-shadow: var(--shadow-lg); padding: 28px; }
+        .mod-grupo { margin-bottom: 16px; }
+        .mod-grupo .card-head .ms { color: var(--primary); }
+        .mod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; padding: 14px 16px 16px; }
+        .mod-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; background: #fff; }
+        .mod-card.on { border-color: #BBE5C8; }
+        .mod-card.extra { border-color: #F5D9A8; background: #FFFBF3; }
+        .mod-card.futuro { background: var(--surface-2); opacity: .75; }
+        .mod-card .topo { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+        .mod-card .nome { font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+        .mod-card .nome .ms { font-size: 18px; color: var(--text-2); }
+        .mod-card .desc { font-size: 12.5px; color: var(--text-2); line-height: 1.4; }
+        .mod-card .badge { align-self: flex-start; }
+        .resumo-lateral { position: sticky; top: calc(var(--topbar-h) + 20px); }
+        .plano-card { padding: 18px; display: flex; flex-direction: column; gap: 6px; }
+        .plano-card.destaque { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary), var(--shadow); }
+        .matriz td.c, .matriz th.c { text-align: center; }
+        .matriz input[type=number] { width: 96px; height: 32px; text-align: right; }
+        .cred { background: var(--surface-2); border: 1px dashed var(--border-strong); border-radius: var(--radius); padding: 12px 14px; font-size: 14px; line-height: 1.8; word-break: break-all; }
+        .alteracoes { display: none; align-items: center; gap: 8px; color: var(--text-2); font-size: 13px; margin-right: auto; }
+        .alteracoes.on { display: flex; }
+        .alteracoes i { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); }
+        .mini-barra { width: 70px; height: 6px; border-radius: 999px; background: #EEF2F7; overflow: hidden; display: inline-block; vertical-align: middle; margin-left: 6px; }
+        .mini-barra > div { height: 100%; background: var(--green); }
+        .saude { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: 12.5px; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+        .saude::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+        .saude.EM_DIA { background: var(--green-soft); color: var(--green); }
+        .saude.ATRASADO { background: var(--amber-soft); color: var(--amber); }
+        .saude.INADIMPLENTE { background: var(--red-soft); color: var(--red); }
+        .saude.SEM_COBRANCA { background: var(--surface-2); color: var(--text-2); }
+        .uso { font-size: 12px; color: var(--text-2); }
+        .uso b { color: var(--text); }
+        .uso.PARADO b, .uso.NUNCA b { color: var(--red); }
+        .uso.POUCO b { color: var(--amber); }
+        .barras { display: flex; align-items: flex-end; gap: 14px; height: 190px; padding: 10px 6px 0; }
+        .barras .col { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+        .barras .par { display: flex; gap: 4px; align-items: flex-end; width: 100%; justify-content: center; height: 100%; }
+        .barras .b { width: 40%; max-width: 26px; border-radius: 4px 4px 0 0; min-height: 2px; }
+        .barras .b.prev { background: #CBD5E1; }
+        .barras .b.rec { background: var(--green); }
+        .barras .rot { font-size: 11px; color: var(--text-2); }
+        .legenda-b { display: flex; gap: 16px; font-size: 12px; color: var(--text-2); }
+        .legenda-b i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+        .dist { display: flex; height: 14px; border-radius: 999px; overflow: hidden; background: var(--surface-2); }
+        .dist > div { height: 100%; }
+        .linha-hist { display: flex; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 13.5px; }
+        .linha-hist:last-child { border-bottom: 0; }
+        .linha-hist .ic { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: var(--surface-2); }
+        .linha-hist .ic .ms { font-size: 18px; color: var(--text-2); }
+        .linha-hist.COBRANCA .ic { background: var(--green-soft); } .linha-hist.COBRANCA .ic .ms { color: var(--green); }
+        .linha-hist.CONTATO .ic { background: var(--primary-soft); } .linha-hist.CONTATO .ic .ms { color: var(--primary); }
+        .linha-hist small { color: var(--text-2); display: block; margin-top: 2px; }
+        .ficha-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+        .info-l { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px dashed var(--border); font-size: 13.5px; }
+        .info-l:last-child { border-bottom: 0; }
+        .info-l span { color: var(--text-2); }
+        .info-l b { text-align: right; }
+        @media (max-width: 1100px) { .ficha-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 600px) { .ficha-grid { grid-template-columns: minmax(0, 1fr); } .barras { gap: 6px; } }
+    </style>
+</head>
+<body class="jg sem-shell">
+
+    <!-- ===================== LOGIN ===================== -->
+    <div class="login-fundo" id="view-login">
+        <div class="login-card">
+            <div class="row" style="gap:12px;margin-bottom:20px">
+                <div class="jg-brand-logo" style="width:42px;height:42px;font-size:16px">JG</div>
+                <div>
+                    <div style="font-weight:700;font-size:18px">JG Sistemas</div>
+                    <div class="muted" style="font-size:13px">Painel do Administrador</div>
+                </div>
+            </div>
+            <div class="alerta vermelho hidden mb-16" id="msg-login"><span class="ms">error</span><div></div></div>
+            <div class="campo">
+                <label for="inp-senha">Senha do painel</label>
+                <input type="password" id="inp-senha" placeholder="Digite sua senha" autocomplete="current-password">
+            </div>
+            <button class="btn btn-primario btn-bloco" id="btn-entrar"><span class="ms">login</span>Entrar</button>
+            <div class="muted mt-16" style="font-size:12px;text-align:center">Acesso restrito à equipe JG Sistemas.</div>
+        </div>
+    </div>
+
+    <!-- ===================== APP ===================== -->
+    <div id="view-app" class="hidden">
+        <aside class="jg-sidebar">
+            <a class="jg-brand" href="#inicio"><div class="jg-brand-logo">JG</div><div class="jg-brand-txt"><div class="jg-brand-nome">JG Sistemas</div><span class="tag-painel">PAINEL ADMIN</span></div></a>
+            <nav class="jg-nav" id="nav">
+                <div class="jg-nav-grupo"><div class="jg-nav-itens">
+                    <a href="#inicio" data-view="inicio"><span class="ms">dashboard</span><span>Visão geral</span></a>
+                    <a href="#clientes" data-view="clientes"><span class="ms">storefront</span><span>Clientes</span></a>
+                    <a href="#financeiro" data-view="financeiro"><span class="ms">payments</span><span>Financeiro</span></a>
+                    <a href="#planos" data-view="planos"><span class="ms">view_module</span><span>Planos e módulos</span></a>
+                    <a href="#conta" data-view="conta"><span class="ms">admin_panel_settings</span><span>Acesso ao painel</span></a>
+                </div></div>
+            </nav>
+            <div class="jg-sidebar-rodape"><div class="jg-segmento"><span class="ms sm">cloud</span><span>Produção SaaS</span><i class="ponto"></i></div></div>
+        </aside>
+        <header class="jg-topbar">
+            <button class="jg-icon-btn jg-menu-btn" id="btn-menu" title="Menu"><span class="ms">menu</span></button>
+            <div class="jg-breadcrumb" id="breadcrumb"><span>Painel</span><span class="sep">/</span><b>Visão geral</b></div>
+            <div class="jg-topbar-dir">
+                <button class="jg-icon-btn" id="btn-atualizar" title="Atualizar"><span class="ms">refresh</span></button>
+                <a class="btn btn-sm" href="https://erp.jgsistemas.dev.br" target="_blank" rel="noopener" title="Abrir o ERP"><span class="ms">open_in_new</span><span class="btn-pdv-txt">ERP</span></a>
+                <button class="btn btn-sm" id="btn-sair"><span class="ms">logout</span><span class="btn-pdv-txt">Sair</span></button>
+            </div>
+        </header>
+
+        <main class="jg-main">
+            <!-- ---------- Visão geral ---------- -->
+            <section id="view-inicio">
+                <div class="page-head">
+                    <div><h1>Visão geral</h1><div class="sub">Saúde da carteira de clientes do ERP JG Sistemas.</div></div>
+                    <div class="acoes"><button class="btn btn-sucesso" onclick="abrirNovo()"><span class="ms">add</span>Novo cliente</button></div>
+                </div>
+                <div class="kpis" id="ini-kpis"></div>
+                <div class="grid g-2 mb-16">
+                    <div class="card">
+                        <div class="card-head"><div><h3>Saúde financeira dos clientes</h3><div class="sub">Pela mensalidade em aberto mais antiga</div></div></div>
+                        <div class="card-body"><div class="dist mb-16" id="ini-dist"></div><div id="ini-dist-leg"></div></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-head"><div><h3>Receita — últimos 6 meses</h3><div class="sub">Previsto x recebido por competência</div></div>
+                            <div class="legenda-b"><span><i style="background:#CBD5E1"></i>Previsto</span><span><i style="background:var(--green)"></i>Recebido</span></div></div>
+                        <div class="card-body"><div class="barras" id="ini-barras"></div></div>
+                    </div>
+                </div>
+                <div class="grid g-2">
+                    <div class="card">
+                        <div class="card-head"><h3>Precisam de atenção</h3><span class="ms muted">priority_high</span></div>
+                        <div class="tabela-wrap"><table><thead><tr><th>Cliente</th><th>Motivo</th><th class="right">Em aberto</th></tr></thead><tbody id="ini-risco"></tbody></table></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-head"><h3>Uso do sistema</h3><span class="ms muted">monitoring</span></div>
+                        <div class="tabela-wrap"><table><thead><tr><th>Cliente</th><th>Último acesso</th><th class="right">Vendas 30 dias</th></tr></thead><tbody id="ini-uso"></tbody></table></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ---------- Clientes ---------- -->
+            <section id="view-clientes" class="hidden">
+                <div class="page-head">
+                    <div><h1>Clientes</h1><div class="sub">Empresas que contrataram o ERP: plano, uso e situação financeira.</div></div>
+                    <div class="acoes"><button class="btn btn-sucesso" onclick="abrirNovo()"><span class="ms">add</span>Novo cliente</button></div>
+                </div>
+                <div class="card">
+                    <div class="card-body" style="padding-bottom:0">
+                        <div class="filtros">
+                            <div class="input-icone" style="flex:1;min-width:240px"><span class="ms">search</span><input type="text" id="f-busca" placeholder="Buscar por empresa, CNPJ, cidade ou e-mail"></div>
+                            <select id="f-saude" style="width:190px"><option value="">Toda situação financeira</option><option value="EM_DIA">Em dia</option><option value="ATRASADO">Atrasado</option><option value="INADIMPLENTE">Inadimplente</option><option value="SEM_COBRANCA">Sem cobrança</option></select>
+                            <select id="f-status" style="width:170px"><option value="">Todos os acessos</option><option value="ATIVO">Ativo</option><option value="SUSPENSO">Suspenso</option><option value="BLOQUEADO">Bloqueado</option></select>
+                            <select id="f-plano" style="width:170px"><option value="">Todos os planos</option></select>
+                        </div>
+                    </div>
+                    <div class="tabela-wrap">
+                        <table>
+                            <thead><tr><th>Empresa</th><th>Plano</th><th>Uso</th><th>Financeiro</th><th>Acesso</th><th class="acoes">Ações</th></tr></thead>
+                            <tbody id="tabela-clientes"><tr><td colspan="6" class="sem-dados">Carregando...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ---------- Cliente: ficha ---------- -->
+            <section id="view-cliente" class="hidden">
+                <div class="page-head">
+                    <div>
+                        <div class="row" style="gap:10px;flex-wrap:wrap"><h1 id="c-nome">Cliente</h1><span id="c-status"></span><span id="c-saude"></span></div>
+                        <div class="sub" id="c-info"></div>
+                    </div>
+                    <div class="acoes" id="c-acoes"></div>
+                </div>
+                <div class="abas">
+                    <button class="aba ativa" data-aba="resumo">Resumo</button>
+                    <button class="aba" data-aba="financeiro">Financeiro <span class="contador" id="c-cont-fin">0</span></button>
+                    <button class="aba" data-aba="modulos">Módulos <span class="contador" id="c-cont">0</span></button>
+                    <button class="aba" data-aba="historico">Histórico</button>
+                    <button class="aba" data-aba="dados">Dados e contrato</button>
+                </div>
+
+                <!-- Resumo -->
+                <div id="aba-resumo">
+                    <div class="kpis" id="c-kpis"></div>
+                    <div class="grid g-2">
+                        <div class="card"><div class="card-head"><h3>Contrato</h3><span class="ms muted">description</span></div><div class="card-body" id="c-contrato"></div></div>
+                        <div class="card"><div class="card-head"><h3>Acesso e uso</h3><span class="ms muted">person</span></div><div class="card-body" id="c-acesso"></div></div>
+                    </div>
+                </div>
+
+                <!-- Financeiro do cliente -->
+                <div id="aba-financeiro" class="hidden">
+                    <div class="card">
+                        <div class="card-head"><div><h3>Mensalidades</h3><div class="sub" id="c-fin-sub"></div></div><button class="btn btn-sm btn-primario" onclick="abrirNovaCobranca(atual.id)"><span class="ms">add</span>Nova cobrança</button></div>
+                        <div class="tabela-wrap"><table><thead><tr><th>Competência</th><th>Vencimento</th><th class="right">Valor</th><th>Situação</th><th>Pagamento</th><th class="acoes">Ações</th></tr></thead><tbody id="c-cobrancas"></tbody></table></div>
+                    </div>
+                </div>
+
+                <!-- Módulos -->
+                <div id="aba-modulos" class="hidden">
+                    <div class="grid g-main-side" style="align-items:start">
+                        <div>
+                            <div class="card mb-16">
+                                <div class="card-body">
+                                    <div class="form-grid c3" style="align-items:end">
+                                        <div class="campo"><label for="m-plano">Plano base</label><select id="m-plano"></select></div>
+                                        <div class="campo"><label for="m-segmento">Segmento</label>
+                                            <select id="m-segmento"><option value="MODA">Varejo · Moda</option><option value="VAREJO">Varejo</option><option value="SALAO">Salão de beleza</option></select></div>
+                                        <div class="campo"><button class="btn w-100" id="btn-aplicar-plano"><span class="ms">sync</span>Aplicar módulos do plano</button></div>
+                                    </div>
+                                    <div class="row between" style="font-size:13px;flex-wrap:wrap;gap:8px">
+                                        <span class="muted">Módulos liberados: <b id="m-cont" style="color:var(--text)">0 de 0</b></span>
+                                        <span id="m-personalizado"></span>
+                                    </div>
+                                    <div class="progresso mt-8"><div id="m-barra" style="width:0"></div></div>
+                                </div>
+                            </div>
+                            <div class="input-icone mb-16"><span class="ms">filter_list</span><input type="text" id="m-filtro" placeholder="Filtrar módulos por nome ou descrição..."></div>
+                            <div id="m-grupos"></div>
+                        </div>
+                        <div class="stack resumo-lateral">
+                            <div class="card">
+                                <div class="card-head"><h3>Valor mensal</h3><span class="ms muted">receipt_long</span></div>
+                                <div class="card-body">
+                                    <div class="resumo-linhas">
+                                        <div class="l"><span id="r-plano-nome">Plano</span><b id="r-plano">R$ 0,00</b></div>
+                                        <div class="l"><span>Módulos adicionais (<span id="r-qtd-extra">0</span>)</span><b class="txt-ambar" id="r-extras">R$ 0,00</b></div>
+                                        <div class="l total"><span>Total mensal</span><b id="r-total" style="font-size:20px">R$ 0,00</b></div>
+                                    </div>
+                                    <div class="muted mt-8" style="font-size:12px" id="r-lista-extra"></div>
+                                    <label class="check mt-8" style="font-size:13px"><input type="checkbox" id="m-atualizar-valor" checked>Atualizar o valor do contrato com este total</label>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-head"><h3>Limites</h3><span class="ms muted">tune</span></div>
+                                <div class="card-body">
+                                    <div class="campo"><label for="m-usuarios">Usuários (0 = ilimitado)</label><input type="number" id="m-usuarios" min="0" placeholder="Do plano"></div>
+                                    <div class="campo" style="margin:0"><label for="m-caixas">Caixas / PDVs (0 = ilimitado)</label><input type="number" id="m-caixas" min="0" placeholder="Do plano"></div>
+                                </div>
+                            </div>
+                            <div class="alerta"><span class="ms">info</span><div><b>Vale na hora.</b> Módulos bloqueados somem do menu do cliente e as telas e APIs deles ficam indisponíveis. Os dados não são apagados.</div></div>
+                        </div>
+                    </div>
+                    <div class="barra-fixa">
+                        <div class="alteracoes" id="m-alteracoes"><i></i><span>Alterações não salvas</span></div>
+                        <button class="btn" id="btn-descartar">Descartar</button>
+                        <button class="btn btn-sucesso" id="btn-salvar-modulos"><span class="ms">check</span>Salvar permissões</button>
+                    </div>
+                </div>
+
+                <!-- Histórico -->
+                <div id="aba-historico" class="hidden">
+                    <div class="grid g-main-side" style="align-items:start">
+                        <div class="card"><div class="card-head"><h3>Histórico do cliente</h3><span class="ms muted">history</span></div><div id="c-historico"></div></div>
+                        <div class="card">
+                            <div class="card-head"><h3>Nova anotação</h3></div>
+                            <div class="card-body">
+                                <div class="campo"><label for="h-tipo">Tipo</label><select id="h-tipo"><option value="CONTATO">Contato com o cliente</option><option value="COBRANCA">Cobrança</option><option value="NOTA">Anotação interna</option></select></div>
+                                <div class="campo"><label for="h-texto">Descrição</label><textarea id="h-texto" rows="5" placeholder="Ex.: Liguei para o cliente, prometeu pagar até sexta."></textarea></div>
+                                <button class="btn btn-primario w-100" id="btn-nota"><span class="ms">add_comment</span>Registrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dados -->
+                <div id="aba-dados" class="hidden">
+                    <div class="grid g-2" style="align-items:start">
+                        <div class="card">
+                            <div class="card-head"><h3>Dados da empresa</h3></div>
+                            <div class="card-body">
+                                <div class="form-grid">
+                                    <div class="campo span-2"><label for="e-nome">Razão social *</label><input type="text" id="e-nome"></div>
+                                    <div class="campo"><label for="e-fantasia">Nome fantasia</label><input type="text" id="e-fantasia"></div>
+                                    <div class="campo"><label for="e-cnpj">CNPJ / CPF *</label><input type="text" id="e-cnpj"></div>
+                                    <div class="campo"><label for="e-email">E-mail da empresa</label><input type="email" id="e-email"></div>
+                                    <div class="campo"><label for="e-telefone">Telefone / WhatsApp</label><input type="text" id="e-telefone"></div>
+                                    <div class="campo"><label for="e-cidade">Cidade</label><input type="text" id="e-cidade"></div>
+                                    <div class="campo"><label for="e-uf">UF</label><input type="text" id="e-uf" maxlength="2"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-head"><h3>Contrato e cobrança</h3></div>
+                            <div class="card-body">
+                                <div class="form-grid">
+                                    <div class="campo"><label for="e-valor">Valor mensal (R$)</label><input type="number" id="e-valor" step="0.01" min="0"></div>
+                                    <div class="campo"><label for="e-dia">Dia do vencimento</label><input type="number" id="e-dia" min="1" max="28"></div>
+                                    <div class="campo"><label for="e-tolerancia">Tolerância (dias)</label><input type="number" id="e-tolerancia" min="0" max="60"></div>
+                                    <div class="campo"><label>&nbsp;</label><label class="toggle"><input type="checkbox" id="e-bloqueio"><span class="trilho"></span><span>Bloquear acesso após a tolerância</span></label></div>
+                                </div>
+                                <div class="alerta mt-8"><span class="ms">info</span><div>Com o bloqueio automático ligado, o cliente perde o acesso quando a mensalidade em aberto mais antiga passa da tolerância. Ao registrar o pagamento, o acesso volta na hora.</div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="barra-fixa"><button class="btn btn-sucesso" id="btn-salvar-dados"><span class="ms">check</span>Salvar dados</button></div>
+                </div>
+            </section>
+
+            <!-- ---------- Financeiro ---------- -->
+            <section id="view-financeiro" class="hidden">
+                <div class="page-head">
+                    <div><h1>Financeiro</h1><div class="sub">Mensalidades dos clientes, recebimentos e inadimplência.</div></div>
+                    <div class="acoes">
+                        <input type="month" id="fin-mes" style="width:170px">
+                        <button class="btn btn-primario" id="btn-gerar"><span class="ms">auto_mode</span>Gerar mensalidades do mês</button>
+                    </div>
+                </div>
+                <div class="kpis" id="fin-kpis"></div>
+                <div class="alerta ambar mb-16 hidden" id="fin-aviso-gerar"><span class="ms">warning</span><div></div></div>
+                <div class="card mb-16">
+                    <div class="card-head"><div><h3>Mensalidades da competência</h3><div class="sub" id="fin-sub"></div></div>
+                        <select id="fin-filtro" style="width:180px"><option value="">Todas</option><option value="A_VENCER">A vencer</option><option value="VENCIDA">Vencidas</option><option value="PAGO">Pagas</option></select></div>
+                    <div class="tabela-wrap"><table><thead><tr><th>Cliente</th><th>Vencimento</th><th class="right">Valor</th><th>Situação</th><th>Pagamento</th><th class="acoes">Ações</th></tr></thead><tbody id="fin-tabela"></tbody></table></div>
+                </div>
+                <div class="card">
+                    <div class="card-head"><div><h3>Todas as mensalidades vencidas</h3><div class="sub">De qualquer competência, ordenadas pela mais antiga</div></div><span class="ms muted">warning</span></div>
+                    <div class="tabela-wrap"><table><thead><tr><th>Cliente</th><th>Competência</th><th>Vencimento</th><th class="right">Valor</th><th>Atraso</th><th class="acoes">Ações</th></tr></thead><tbody id="fin-vencidas"></tbody></table></div>
+                </div>
+            </section>
+
+            <!-- ---------- Planos ---------- -->
+            <section id="view-planos" class="hidden">
+                <div class="page-head">
+                    <div><h1>Planos e módulos</h1><div class="sub">Defina o que cada plano inclui e o preço dos módulos vendidos como adicional.</div></div>
+                    <div class="acoes"><button class="btn" id="btn-novo-plano"><span class="ms">add</span>Novo plano</button></div>
+                </div>
+                <div class="grid g-3 mb-16" id="planos-cards"></div>
+                <div class="card">
+                    <div class="card-head"><div><h3>Módulos por plano</h3><div class="sub">Clientes que seguem o plano (sem ajuste manual) recebem as mudanças ao salvar.</div></div></div>
+                    <div class="tabela-wrap"><table class="matriz"><thead id="matriz-head"></thead><tbody id="matriz-body"></tbody></table></div>
+                </div>
+                <div class="barra-fixa">
+                    <div class="alteracoes" id="p-alteracoes"><i></i><span>Alterações não salvas</span></div>
+                    <button class="btn btn-sucesso" id="btn-salvar-planos"><span class="ms">check</span>Salvar planos</button>
+                </div>
+            </section>
+
+            <!-- ---------- Conta ---------- -->
+            <section id="view-conta" class="hidden">
+                <div class="page-head"><div><h1>Acesso ao painel</h1><div class="sub">Senha usada pela equipe JG Sistemas para entrar neste painel.</div></div></div>
+                <div class="card" style="max-width:520px">
+                    <div class="card-head"><h3>Trocar senha do painel</h3></div>
+                    <div class="card-body">
+                        <div class="campo"><label for="s-atual">Senha atual</label><input type="password" id="s-atual" autocomplete="current-password"></div>
+                        <div class="campo"><label for="s-nova">Nova senha (mín. 10 caracteres)</label><input type="password" id="s-nova" autocomplete="new-password"></div>
+                        <div class="campo"><label for="s-conf">Confirme a nova senha</label><input type="password" id="s-conf" autocomplete="new-password"></div>
+                    </div>
+                    <div class="card-foot"><button class="btn btn-primario" id="btn-senha"><span class="ms">key</span>Trocar senha</button></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal: novo cliente -->
+    <div class="modal-overlay drawer" id="modal-novo">
+        <div class="modal">
+            <div class="modal-head"><span>Novo cliente</span><button class="close" data-fechar>&times;</button></div>
+            <div class="modal-body">
+                <div class="campo"><label for="n-nome">Razão social *</label><input type="text" id="n-nome" placeholder="Ex.: Boutique Flor de Lis Ltda"></div>
+                <div class="form-grid">
+                    <div class="campo"><label for="n-fantasia">Nome fantasia</label><input type="text" id="n-fantasia" placeholder="Ex.: Flor de Lis"></div>
+                    <div class="campo"><label for="n-cnpj">CNPJ / CPF *</label><input type="text" id="n-cnpj" placeholder="Somente números"></div>
+                    <div class="campo"><label for="n-telefone">Telefone / WhatsApp</label><input type="text" id="n-telefone" placeholder="(92) 90000-0000"></div>
+                    <div class="campo"><label for="n-email">E-mail da empresa</label><input type="email" id="n-email"></div>
+                    <div class="campo"><label for="n-cidade">Cidade</label><input type="text" id="n-cidade" placeholder="Manaus"></div>
+                    <div class="campo"><label for="n-uf">UF</label><input type="text" id="n-uf" maxlength="2" placeholder="AM"></div>
+                </div>
+                <h4 class="mt-8" style="font-size:13px;color:var(--text-2);text-transform:uppercase;letter-spacing:.04em">Administrador do cliente</h4>
+                <div class="form-grid">
+                    <div class="campo"><label for="n-admin-nome">Nome</label><input type="text" id="n-admin-nome" placeholder="Ex.: Maria Souza"></div>
+                    <div class="campo"><label for="n-admin-email">E-mail (login no ERP) *</label><input type="email" id="n-admin-email" placeholder="maria@loja.com.br"></div>
+                </div>
+                <h4 class="mt-8" style="font-size:13px;color:var(--text-2);text-transform:uppercase;letter-spacing:.04em">Plano e cobrança</h4>
+                <div class="form-grid">
+                    <div class="campo"><label for="n-plano">Plano</label><select id="n-plano"></select></div>
+                    <div class="campo"><label for="n-segmento">Segmento</label><select id="n-segmento"><option value="MODA">Varejo · Moda</option><option value="VAREJO">Varejo</option><option value="SALAO">Salão de beleza</option></select></div>
+                    <div class="campo"><label for="n-valor">Valor mensal (R$)</label><input type="number" id="n-valor" step="0.01" min="0" placeholder="Do plano"></div>
+                    <div class="campo"><label for="n-dia">Dia do vencimento</label><input type="number" id="n-dia" min="1" max="28" value="10"></div>
+                    <div class="campo span-2"><label for="n-primeiro">Primeira mensalidade vence em</label><input type="date" id="n-primeiro"><span class="dica-campo">Em branco = sem cobrança agora (gere depois no Financeiro).</span></div>
+                </div>
+            </div>
+            <div class="modal-foot"><button class="btn" data-fechar>Cancelar</button><button class="btn btn-sucesso" id="btn-criar"><span class="ms">check</span>Cadastrar e liberar acesso</button></div>
+        </div>
+    </div>
+
+    <!-- Modal: credenciais -->
+    <div class="modal-overlay" id="modal-credenciais">
+        <div class="modal sm">
+            <div class="modal-head"><span id="cred-titulo">Acesso do cliente</span><button class="close" data-fechar>&times;</button></div>
+            <div class="modal-body"><div class="cred" id="cred-info"></div><div class="alerta ambar mt-16"><span class="ms">warning</span><div>Guarde a senha: ela é mostrada apenas uma vez. No primeiro acesso o sistema pede para o cliente criar uma senha nova.</div></div></div>
+            <div class="modal-foot"><button class="btn" id="btn-copiar-cred"><span class="ms">content_copy</span>Copiar</button><button class="btn btn-primario" data-fechar>Ok</button></div>
+        </div>
+    </div>
+
+    <!-- Modal: cobrança (nova / editar) -->
+    <div class="modal-overlay" id="modal-cobranca">
+        <div class="modal sm">
+            <div class="modal-head"><span id="cob-titulo">Nova cobrança</span><button class="close" data-fechar>&times;</button></div>
+            <div class="modal-body">
+                <div class="campo" id="cob-cliente-campo"><label for="cob-cliente">Cliente</label><select id="cob-cliente"></select></div>
+                <div class="form-grid">
+                    <div class="campo"><label for="cob-competencia">Competência</label><input type="month" id="cob-competencia"></div>
+                    <div class="campo"><label for="cob-vencimento">Vencimento</label><input type="date" id="cob-vencimento"></div>
+                    <div class="campo"><label for="cob-valor">Valor (R$)</label><input type="number" id="cob-valor" step="0.01" min="0"></div>
+                    <div class="campo"><label for="cob-descricao">Descrição</label><input type="text" id="cob-descricao" placeholder="Mensalidade / implantação..."></div>
+                </div>
+            </div>
+            <div class="modal-foot"><button class="btn" data-fechar>Cancelar</button><button class="btn btn-primario" id="btn-salvar-cob"><span class="ms">check</span>Salvar</button></div>
+        </div>
+    </div>
+
+    <!-- Modal: registrar pagamento -->
+    <div class="modal-overlay" id="modal-pagar">
+        <div class="modal sm">
+            <div class="modal-head"><span>Registrar pagamento</span><button class="close" data-fechar>&times;</button></div>
+            <div class="modal-body">
+                <div class="destaque mb-16" id="pag-resumo"></div>
+                <div class="form-grid">
+                    <div class="campo"><label for="pag-data">Data do pagamento</label><input type="date" id="pag-data"></div>
+                    <div class="campo"><label for="pag-valor">Valor pago (R$)</label><input type="number" id="pag-valor" step="0.01" min="0"></div>
+                    <div class="campo"><label for="pag-forma">Forma</label><select id="pag-forma"><option value="PIX">PIX</option><option value="BOLETO">Boleto</option><option value="CARTAO">Cartão</option><option value="TRANSFERENCIA">Transferência</option><option value="DINHEIRO">Dinheiro</option><option value="OUTRO">Outro</option></select></div>
+                    <div class="campo"><label for="pag-obs">Observação</label><input type="text" id="pag-obs" placeholder="Opcional"></div>
+                </div>
+            </div>
+            <div class="modal-foot"><button class="btn" data-fechar>Cancelar</button><button class="btn btn-sucesso" id="btn-confirmar-pag"><span class="ms">check</span>Confirmar pagamento</button></div>
+        </div>
+    </div>
+
+    <!-- Modal: confirmação -->
+    <div class="modal-overlay" id="modal-confirmar">
+        <div class="modal sm">
+            <div class="modal-head"><span id="conf-titulo">Confirmar</span><button class="close" data-fechar>&times;</button></div>
+            <div class="modal-body"><p id="conf-texto" style="margin:0"></p><div class="campo mt-16 hidden" id="conf-campo"><label for="conf-input" id="conf-label"></label><input type="text" id="conf-input"></div></div>
+            <div class="modal-foot"><button class="btn" data-fechar>Cancelar</button><button class="btn btn-perigo" id="conf-ok">Confirmar</button></div>
+        </div>
+    </div>
+
+    <script>
+        // ------------------------------------------------------------ utilidades
+        const API = '/api/painel';
+        const URL_ERP = 'https://erp.jgsistemas.dev.br';
+        const $ = (id) => document.getElementById(id);
+        const fmt = (v) => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const fmtData = (d) => d ? String(d).slice(0, 10).split('-').reverse().join('/') : '—';
+        const fmtMes = (c) => { if (!c) return '—'; const [a, m] = c.split('-'); return ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'][Number(m) - 1] + '/' + a; };
+        const fmtDataHora = (d) => d ? new Date(d).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
+        const hoje = () => new Date(Date.now() - 4 * 3600000).toISOString().slice(0, 10);
+        const SEGMENTOS = { MODA: 'Varejo · Moda', VAREJO: 'Varejo', SALAO: 'Salão de beleza' };
+        const SAUDE = { EM_DIA: 'Em dia', ATRASADO: 'Atrasado', INADIMPLENTE: 'Inadimplente', SEM_COBRANCA: 'Sem cobrança' };
+        const CORES_SAUDE = { EM_DIA: 'var(--green)', ATRASADO: 'var(--amber)', INADIMPLENTE: 'var(--red)', SEM_COBRANCA: '#CBD5E1' };
+        const FORMAS = { PIX: 'PIX', BOLETO: 'Boleto', CARTAO: 'Cartão', TRANSFERENCIA: 'Transferência', DINHEIRO: 'Dinheiro', OUTRO: 'Outro' };
+        const ICONES_GRUPO = { 'Vendas': 'point_of_sale', 'Clientes': 'group', 'Catálogo': 'sell', 'Estoque': 'warehouse', 'Financeiro': 'account_balance', 'Fiscal': 'receipt', 'Serviços': 'content_cut', 'Pessoas': 'badge', 'Relatórios': 'analytics' };
+        function esc(v) {
+            if (v === null || v === undefined) return '';
+            return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+        const fmtDoc = (d) => { d = String(d || ''); return d.length === 14 ? d.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5') : d.length === 11 ? d.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4') : d || '—'; };
+        function toast(msg, tipo) {
+            let box = document.querySelector('.jg-toasts');
+            if (!box) { box = document.createElement('div'); box.className = 'jg-toasts'; document.body.appendChild(box); }
+            const el = document.createElement('div');
+            el.className = 'jg-toast ' + (tipo || 'sucesso');
+            el.innerHTML = '<span class="ms">' + (tipo === 'erro' ? 'error' : 'check_circle') + '</span><div></div>';
+            el.lastChild.textContent = msg;
+            box.appendChild(el);
+            setTimeout(() => el.remove(), 4500);
+        }
+        async function api(url, metodo = 'GET', corpo = null) {
+            const opcoes = { method: metodo, headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin' };
+            if (corpo) opcoes.body = JSON.stringify(corpo);
+            const r = await fetch(API + url, opcoes);
+            if (r.status === 401 && url !== '/login') { mostrarLogin(); throw new Error('Sessão expirada. Entre novamente.'); }
+            const dados = await r.json().catch(() => ({}));
+            if (!r.ok) throw new Error(dados.erro || 'Erro na requisição');
+            return dados;
+        }
+        function abrir(id) { $(id).classList.add('active'); }
+        function fechar(id) { $(id).classList.remove('active'); }
+        document.querySelectorAll('.modal-overlay').forEach((m) => {
+            m.addEventListener('click', (e) => { if (e.target === m || e.target.closest('[data-fechar]')) m.classList.remove('active'); });
+        });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.active').forEach((m) => m.classList.remove('active')); });
+        function confirmar(titulo, texto, rotulo = 'Confirmar', perigo = true, pedir = null) {
+            return new Promise((resolve) => {
+                $('conf-titulo').textContent = titulo;
+                $('conf-texto').textContent = texto;
+                $('conf-campo').classList.toggle('hidden', !pedir);
+                $('conf-input').value = '';
+                if (pedir) $('conf-label').textContent = pedir;
+                const ok = $('conf-ok');
+                ok.textContent = rotulo;
+                ok.className = 'btn ' + (perigo ? 'btn-perigo' : 'btn-primario');
+                const modal = $('modal-confirmar');
+                const limpar = (v) => { ok.onclick = null; modal.removeEventListener('click', fora); fechar('modal-confirmar'); resolve(v); };
+                const fora = (e) => { if (e.target === modal || e.target.closest('[data-fechar]')) limpar(false); };
+                ok.onclick = () => limpar(pedir ? ($('conf-input').value || '').trim() : true);
+                modal.addEventListener('click', fora);
+                abrir('modal-confirmar');
+                if (pedir) setTimeout(() => $('conf-input').focus(), 50);
+            });
+        }
+        const saudeHtml = (s) => `<span class="saude ${s}">${SAUDE[s] || s}</span>`;
+        function acessoHtml(c) {
+            if (c.status === 'SUSPENSO') return '<span class="badge vencido">Suspenso</span>';
+            if (c.bloqueio) return '<span class="badge vencido" title="Mensalidade vencida além da tolerância">Bloqueado</span>';
+            return '<span class="badge ativo">Ativo</span>';
+        }
+        function usoHtml(c) {
+            const t = c.uso === 'NUNCA' ? 'Nunca acessou' : c.diasSemUso === 0 ? 'Acessou hoje' : `Há ${c.diasSemUso} dia${c.diasSemUso > 1 ? 's' : ''}`;
+            return `<div class="uso ${c.uso}"><b>${t}</b><br>${c.vendas30d.qtd} venda(s) em 30 dias · ${c.usuariosAtivos} usuário(s)</div>`;
+        }
+        function situacaoCobHtml(c) {
+            if (c.situacao === 'PAGO') return '<span class="badge ativo">Paga</span>';
+            if (c.situacao === 'CANCELADO') return '<span class="badge inativo">Cancelada</span>';
+            if (c.situacao === 'VENCIDA') return `<span class="badge vencido">Vencida · ${c.diasAtraso} dia${c.diasAtraso > 1 ? 's' : ''}</span>`;
+            return '<span class="badge azul">A vencer</span>';
+        }
+        function pagamentoHtml(c) {
+            return c.status === 'PAGO' ? `${fmtData(c.pagoEm)} · ${FORMAS[c.formaPagamento] || c.formaPagamento || ''}<br><small>${fmt(c.valorPago)}</small>` : '<span class="muted">—</span>';
+        }
+        function acoesCobHtml(c) {
+            const b = [];
+            if (c.status === 'PENDENTE') {
+                b.push(`<button class="btn btn-sm btn-sucesso" onclick="abrirPagamento('${c.id}')"><span class="ms">paid</span>Pagar</button>`);
+                b.push(`<button class="btn-icone" title="Editar" onclick="editarCobranca('${c.id}')"><span class="ms">edit</span></button>`);
+                b.push(`<button class="btn-icone perigo" title="Cancelar cobrança" onclick="cancelarCobranca('${c.id}')"><span class="ms">block</span></button>`);
+            } else {
+                b.push(`<button class="btn-icone" title="Reabrir" onclick="reabrirCobranca('${c.id}')"><span class="ms">undo</span></button>`);
+            }
+            return b.join('');
+        }
+
+        // ------------------------------------------------------------ estado
+        let clientes = [];
+        let catalogo = { modulos: [], planos: [], adicionais: {} };
+        let financeiro = null;
+        let atual = null;          // ficha aberta (detalhe completo)
+        let cobrancasIndex = {};   // id -> cobrança (para os modais)
+        let modSel = new Set();
+        let modOrig = '';
+        let planosEdit = [];
+        let adicionaisEdit = {};
+        let cobEditando = null;
+        let pagando = null;
+
+        // ------------------------------------------------------------ login
+        function mostrarLogin() {
+            $('view-app').classList.add('hidden');
+            $('view-login').classList.remove('hidden');
+            document.body.classList.add('sem-shell');
+            setTimeout(() => $('inp-senha').focus(), 50);
+        }
+        async function logar() {
+            const senha = $('inp-senha').value;
+            try {
+                await api('/login', 'POST', { senha });
+                $('inp-senha').value = '';
+                $('msg-login').classList.add('hidden');
+                entrar();
+            } catch (e) {
+                $('msg-login').classList.remove('hidden');
+                $('msg-login').querySelector('div').textContent = e.message;
+            }
+        }
+        $('btn-entrar').onclick = logar;
+        $('inp-senha').addEventListener('keydown', (e) => { if (e.key === 'Enter') logar(); });
+        $('btn-sair').onclick = async () => {
+            try { await fetch(API + '/logout', { method: 'POST' }); } catch (e) { /* ignora */ }
+            location.hash = '';
+            mostrarLogin();
+        };
+        $('btn-menu').onclick = () => document.body.classList.toggle('sidebar-aberta');
+        document.querySelectorAll('#nav a').forEach((a) => a.addEventListener('click', () => document.body.classList.remove('sidebar-aberta')));
+
+        async function entrar() {
+            $('view-login').classList.add('hidden');
+            $('view-app').classList.remove('hidden');
+            document.body.classList.remove('sem-shell');
+            await carregarTudo();
+            rotear();
+        }
+
+        async function carregarTudo() {
+            try {
+                [clientes, catalogo] = await Promise.all([api('/clientes'), api('/catalogo')]);
+            } catch (e) { toast(e.message, 'erro'); }
+            preencherSelectsPlano();
+        }
+
+        function preencherSelectsPlano() {
+            const opts = catalogo.planos.map((p) => `<option value="${esc(p.id)}">${esc(p.nome)} (${fmt(p.valor)}/mês)</option>`).join('');
+            $('n-plano').innerHTML = opts + '<option value="">Sem plano (personalizado)</option>';
+            $('m-plano').innerHTML = '<option value="">Sem plano (personalizado)</option>' + opts;
+            $('f-plano').innerHTML = '<option value="">Todos os planos</option>' + catalogo.planos.map((p) => `<option value="${esc(p.id)}">${esc(p.nome)}</option>`).join('');
+        }
+        const nomePlano = (id) => { const p = catalogo.planos.find((x) => x.id === id); return p ? p.nome : null; };
+
+        // ------------------------------------------------------------ rotas
+        const VIEWS = ['inicio', 'clientes', 'cliente', 'financeiro', 'planos', 'conta'];
+        const TITULOS = { inicio: 'Visão geral', clientes: 'Clientes', financeiro: 'Financeiro', planos: 'Planos e módulos', conta: 'Acesso ao painel' };
+        window.addEventListener('hashchange', rotear);
+        function rotear() {
+            if ($('view-app').classList.contains('hidden')) return;
+            const h = location.hash.replace(/^#/, '') || 'inicio';
+            VIEWS.forEach((v) => $('view-' + v).classList.add('hidden'));
+            const base = h.startsWith('cliente/') ? 'clientes' : h;
+            document.querySelectorAll('#nav a').forEach((a) => a.classList.toggle('ativo', a.dataset.view === base));
+            if (h.startsWith('cliente/')) { abrirCliente(h.split('/')[1]); return; }
+            const v = VIEWS.includes(h) ? h : 'inicio';
+            $('view-' + v).classList.remove('hidden');
+            $('breadcrumb').innerHTML = `<span>Painel</span><span class="sep">/</span><b>${TITULOS[v]}</b>`;
+            if (v === 'inicio') renderInicio();
+            if (v === 'clientes') renderClientes();
+            if (v === 'financeiro') carregarFinanceiro();
+            if (v === 'planos') renderPlanos();
+        }
+        $('btn-atualizar').onclick = async () => { await carregarTudo(); rotear(); toast('Dados atualizados.'); };
+
+        // ------------------------------------------------------------ visão geral
+        async function renderInicio() {
+            const ativos = clientes.filter((c) => c.status === 'ATIVO');
+            const mrr = ativos.reduce((s, c) => s + Number(c.contrato.valorMensal || 0), 0);
+            const emAberto = clientes.reduce((s, c) => s + c.saude.vencido, 0);
+            const parados = clientes.filter((c) => c.status === 'ATIVO' && (c.uso === 'PARADO' || c.uso === 'NUNCA')).length;
+            $('ini-kpis').innerHTML = [
+                { r: 'Clientes ativos', v: ativos.length, i: 'storefront', c: '' },
+                { r: 'Receita mensal (MRR)', v: fmt(mrr), i: 'trending_up', c: 'verde' },
+                { r: 'Valor vencido', v: fmt(emAberto), i: 'warning', c: emAberto ? 'vermelho' : '' },
+                { r: 'Suspensos / bloqueados', v: clientes.filter((c) => c.status === 'SUSPENSO' || c.bloqueio).length, i: 'block', c: '' },
+                { r: 'Sem uso há 15+ dias', v: parados, i: 'bedtime', c: parados ? 'ambar' : '' }
+            ].map((k) => `<div class="kpi ${k.c}"><div class="kpi-top"><span>${k.r}</span><span class="ms">${k.i}</span></div><div class="kpi-valor">${k.v}</div></div>`).join('');
+
+            const total = clientes.length || 1;
+            const cont = (s) => clientes.filter((c) => c.saude.situacao === s).length;
+            $('ini-dist').innerHTML = Object.keys(SAUDE).map((s) => `<div style="width:${cont(s) / total * 100}%;background:${CORES_SAUDE[s]}" title="${SAUDE[s]}: ${cont(s)}"></div>`).join('');
+            $('ini-dist-leg').innerHTML = Object.keys(SAUDE).map((s) => `<div class="info-l"><span><span class="saude ${s}">${SAUDE[s]}</span></span><b>${cont(s)} cliente(s)</b></div>`).join('');
+
+            const risco = clientes.filter((c) => c.saude.situacao === 'INADIMPLENTE' || c.saude.situacao === 'ATRASADO' || c.status === 'SUSPENSO' || (c.status === 'ATIVO' && c.uso === 'PARADO'))
+                .sort((a, b) => b.saude.vencido - a.saude.vencido);
+            $('ini-risco').innerHTML = risco.length ? risco.slice(0, 8).map((c) => {
+                const motivo = c.status === 'SUSPENSO' ? 'Acesso suspenso' : c.saude.situacao === 'INADIMPLENTE' ? `Inadimplente · ${c.saude.diasAtraso} dias` : c.saude.situacao === 'ATRASADO' ? `Atrasado · ${c.saude.diasAtraso} dia(s)` : `Sem uso há ${c.diasSemUso} dias`;
+                return `<tr style="cursor:pointer" onclick="location.hash='cliente/${c.id}'"><td><b>${esc(c.fantasia || c.nome)}</b></td><td>${motivo}</td><td class="right num">${fmt(c.saude.vencido)}</td></tr>`;
+            }).join('') : '<tr><td colspan="3" class="sem-dados">Nenhum cliente precisando de atenção. 🎉</td></tr>';
+
+            const porUso = [...clientes].sort((a, b) => (b.vendas30d.total - a.vendas30d.total));
+            $('ini-uso').innerHTML = porUso.length ? porUso.slice(0, 8).map((c) => `<tr style="cursor:pointer" onclick="location.hash='cliente/${c.id}'"><td><b>${esc(c.fantasia || c.nome)}</b></td><td><span class="uso ${c.uso}"><b>${c.ultimoAcesso ? fmtDataHora(c.ultimoAcesso) : 'Nunca'}</b></span></td><td class="right num">${c.vendas30d.qtd} · ${fmt(c.vendas30d.total)}</td></tr>`).join('') : '<tr><td colspan="3" class="sem-dados">Nenhum cliente.</td></tr>';
+
+            try {
+                const f = await api('/financeiro');
+                renderBarras(f.historico);
+            } catch (e) { /* já avisado */ }
+        }
+        function renderBarras(hist) {
+            const max = Math.max(1, ...hist.map((h) => Math.max(h.previsto, h.recebido)));
+            $('ini-barras').innerHTML = hist.map((h) => `<div class="col"><div class="par">
+                <div class="b prev" style="height:${h.previsto / max * 100}%" title="Previsto ${fmt(h.previsto)}"></div>
+                <div class="b rec" style="height:${h.recebido / max * 100}%" title="Recebido ${fmt(h.recebido)}"></div></div>
+                <span class="rot">${fmtMes(h.competencia)}</span></div>`).join('');
+        }
+
+        // ------------------------------------------------------------ lista de clientes
+        function renderClientes() {
+            const q = $('f-busca').value.trim().toLowerCase();
+            const sd = $('f-saude').value, st = $('f-status').value, pl = $('f-plano').value;
+            const lista = clientes.filter((c) =>
+                (!q || [c.nome, c.fantasia, c.cnpj, c.cidade, c.email, c.admin && c.admin.email].join(' ').toLowerCase().includes(q)) &&
+                (!sd || c.saude.situacao === sd) &&
+                (!st || (st === 'BLOQUEADO' ? !!c.bloqueio && c.status === 'ATIVO' : c.status === st)) &&
+                (!pl || c.planoId === pl));
+            const tbody = $('tabela-clientes');
+            if (!lista.length) {
+                tbody.innerHTML = `<tr><td colspan="6"><div class="estado-vazio"><span class="ms">storefront</span><p>${clientes.length ? 'Nenhum cliente encontrado com esses filtros.' : 'Nenhum cliente cadastrado ainda.'}</p>${clientes.length ? '' : '<button class="btn btn-sucesso" onclick="abrirNovo()"><span class="ms">add</span>Novo cliente</button>'}</div></td></tr>`;
+                return;
+            }
+            tbody.innerHTML = lista.map((c) => {
+                const pct = c.modulosTotal ? Math.round(c.modulosAtivos / c.modulosTotal * 100) : 0;
+                const fin = c.saude.situacao === 'SEM_COBRANCA' ? saudeHtml('SEM_COBRANCA')
+                    : `${saudeHtml(c.saude.situacao)}<br><small>${c.saude.vencido ? 'Vencido ' + fmt(c.saude.vencido) : c.saude.proximoVencimento ? 'Próx. ' + fmtData(c.saude.proximoVencimento) : 'Nada em aberto'}</small>`;
+                return `<tr>
+                    <td><a href="#cliente/${c.id}" style="color:inherit;text-decoration:none"><b>${esc(c.fantasia || c.nome)}</b></a><br><small>${fmtDoc(c.cnpj)}${c.cidade ? ' · ' + esc(c.cidade) + (c.uf ? '/' + esc(c.uf) : '') : ''}</small></td>
+                    <td>${nomePlano(c.planoId) ? `<span class="badge azul sem-ponto">${esc(nomePlano(c.planoId))}</span>` : '<span class="muted">Personalizado</span>'}<br><small>${fmt(c.contrato.valorMensal)}/mês · ${c.modulosAtivos}/${c.modulosTotal} mód.<span class="mini-barra"><div style="width:${pct}%"></div></span></small></td>
+                    <td>${usoHtml(c)}</td>
+                    <td>${fin}</td>
+                    <td>${acessoHtml(c)}</td>
+                    <td class="acoes"><button class="btn btn-sm" onclick="location.hash='cliente/${c.id}'"><span class="ms">visibility</span>Ficha</button></td>
+                </tr>`;
+            }).join('');
+        }
+        ['f-busca', 'f-saude', 'f-status', 'f-plano'].forEach((id) => $(id).addEventListener('input', renderClientes));
+
+        // ------------------------------------------------------------ ações do cliente
+        function mostrarCredenciais(titulo, nome, email, senha) {
+            $('cred-titulo').textContent = titulo;
+            $('cred-info').innerHTML = `<b>${esc(nome)}</b><br>Endereço: <a href="${URL_ERP}" target="_blank" rel="noopener">${URL_ERP}</a><br>Login: <b>${esc(email)}</b><br>Senha: <b>${esc(senha)}</b>`;
+            $('btn-copiar-cred').onclick = () => {
+                const txt = `Acesso ao JG Sistemas (${nome})\nEndereço: ${URL_ERP}\nLogin: ${email}\nSenha: ${senha}\nNo primeiro acesso o sistema pede para criar uma senha nova.`;
+                navigator.clipboard.writeText(txt).then(() => toast('Acesso copiado.'), () => toast('Não foi possível copiar.', 'erro'));
+            };
+            abrir('modal-credenciais');
+        }
+        async function suspender(id) {
+            const motivo = await confirmar('Suspender cliente', 'O acesso de todos os usuários do cliente é bloqueado imediatamente. Os dados são mantidos.', 'Suspender', true, 'Motivo (opcional)');
+            if (motivo === false) return;
+            try { await api(`/clientes/${id}/suspender`, 'POST', { motivo: motivo || '' }); toast('Cliente suspenso.'); await recarregarAtual(); }
+            catch (e) { toast(e.message, 'erro'); }
+        }
+        async function reativar(id) {
+            try {
+                const r = await api(`/clientes/${id}/reativar`, 'POST');
+                toast(r.aviso ? 'Reativado, mas o acesso segue bloqueado por mensalidade vencida.' : 'Cliente reativado.', r.aviso ? 'alerta' : 'sucesso');
+                await recarregarAtual();
+            } catch (e) { toast(e.message, 'erro'); }
+        }
+        async function resetarSenha(id) {
+            if (!await confirmar('Gerar nova senha', 'Uma nova senha será gerada para o administrador do cliente e as sessões abertas serão encerradas.', 'Gerar senha', false)) return;
+            try {
+                const r = await api(`/clientes/${id}/resetar-senha`, 'POST');
+                const c = clientes.find((x) => x.id === id) || atual;
+                mostrarCredenciais('Nova senha do administrador', c ? (c.fantasia || c.nome) : '', r.email, r.senha);
+                await recarregarAtual();
+            } catch (e) { toast(e.message, 'erro'); }
+        }
+        async function excluirCliente(id) {
+            const c = atual;
+            const doc = await confirmar('Excluir cliente', `Isso apaga DEFINITIVAMENTE todos os dados de ${c.fantasia || c.nome} (vendas, produtos, clientes, financeiro). Não pode ser desfeito.`, 'Excluir definitivamente', true, `Digite o CNPJ/CPF ${fmtDoc(c.cnpj)} para confirmar`);
+            if (!doc) return;
+            try { await api(`/clientes/${id}`, 'DELETE', { confirmacao: doc }); toast('Cliente excluído.'); await carregarTudo(); location.hash = 'clientes'; }
+            catch (e) { toast(e.message, 'erro'); }
+        }
+        async function recarregarAtual() {
+            await carregarTudo();
+            if (atual && location.hash.startsWith('#cliente/')) abrirCliente(atual.id, true); else rotear();
+        }
+
+        // ------------------------------------------------------------ novo cliente
+        async function abrirNovo() {
+            if (!catalogo.planos.length) {
+                try { catalogo = await api('/catalogo'); preencherSelectsPlano(); } catch (e) { toast(e.message, 'erro'); return; }
+            }
+            ['n-nome', 'n-fantasia', 'n-cnpj', 'n-valor', 'n-primeiro', 'n-telefone', 'n-email', 'n-cidade', 'n-uf', 'n-admin-nome', 'n-admin-email'].forEach((i) => $(i).value = '');
+            $('n-dia').value = 10;
+            const destaque = catalogo.planos.find((p) => p.destaque) || catalogo.planos[0];
+            if (destaque) $('n-plano').value = destaque.id;
+            abrir('modal-novo');
+            setTimeout(() => $('n-nome').focus(), 50);
+        }
+        $('btn-criar').onclick = async () => {
+            const corpo = {
+                nome: $('n-nome').value, fantasia: $('n-fantasia').value, cnpj: $('n-cnpj').value,
+                telefone: $('n-telefone').value, email: $('n-email').value, cidade: $('n-cidade').value, uf: $('n-uf').value,
+                adminNome: $('n-admin-nome').value, adminEmail: $('n-admin-email').value,
+                planoId: $('n-plano').value || null, segmento: $('n-segmento').value,
+                valor: $('n-valor').value, diaVencimento: $('n-dia').value, primeiroVencimento: $('n-primeiro').value || null
+            };
+            if (!corpo.planoId && !await confirmar('Cliente sem plano', 'Nenhum plano foi escolhido: o cliente fica com todos os módulos e valor definido manualmente. Continuar?', 'Continuar', false)) return;
+            const btn = $('btn-criar'); btn.disabled = true;
+            btn.innerHTML = '<span class="ms">hourglass_top</span>Cadastrando...';
+            try {
+                const c = await api('/clientes', 'POST', corpo);
+                fechar('modal-novo');
+                await carregarTudo();
+                location.hash = 'cliente/' + c.id;
+                mostrarCredenciais('Cliente cadastrado', c.fantasia || c.nome, c.credenciais.email, c.credenciais.senha);
+            } catch (e) { toast(e.message, 'erro'); }
+            finally { btn.disabled = false; btn.innerHTML = '<span class="ms">check</span>Cadastrar e liberar acesso'; }
+        };
+
+        // ------------------------------------------------------------ ficha do cliente
+        let abaAtual = 'resumo';
+        async function abrirCliente(id, manterAba) {
+            $('view-cliente').classList.remove('hidden');
+            try { atual = await api(`/clientes/${id}`); } catch (e) { toast(e.message, 'erro'); location.hash = 'clientes'; return; }
+            const c = atual;
+            $('breadcrumb').innerHTML = `<a href="#clientes" style="color:inherit;text-decoration:none">Clientes</a><span class="sep">/</span><b>${esc(c.fantasia || c.nome)}</b>`;
+            $('c-nome').textContent = c.fantasia || c.nome;
+            $('c-status').innerHTML = acessoHtml(c);
+            $('c-saude').innerHTML = saudeHtml(c.saude.situacao);
+            $('c-info').innerHTML = `${esc(c.nome)} · ${fmtDoc(c.cnpj)} · cliente desde ${fmtData(c.criadoEm)}`;
+            $('c-acoes').innerHTML =
+                (c.status === 'SUSPENSO'
+                    ? `<button class="btn btn-sucesso" onclick="reativar('${c.id}')"><span class="ms">play_circle</span>Reativar</button>`
+                    : `<button class="btn btn-contorno-perigo" onclick="suspender('${c.id}')"><span class="ms">block</span>Suspender</button>`) +
+                ` <button class="btn" onclick="resetarSenha('${c.id}')"><span class="ms">key</span>Nova senha do admin</button>` +
+                ` <a class="btn btn-primario" href="${URL_ERP}" target="_blank" rel="noopener"><span class="ms">open_in_new</span>Abrir ERP</a>` +
+                ` <button class="btn-icone perigo" title="Excluir cliente" onclick="excluirCliente('${c.id}')"><span class="ms">delete</span></button>`;
+
+            // Resumo
+            const s = c.saude;
+            $('c-kpis').innerHTML = [
+                { r: 'Mensalidade', v: fmt(c.contrato.valorMensal), i: 'payments', c: '' },
+                { r: 'Vencido', v: fmt(s.vencido), i: 'warning', c: s.vencido ? 'vermelho' : '', sub: s.qtdVencidas ? `${s.qtdVencidas} mensalidade(s) · ${s.diasAtraso} dia(s)` : 'Nada vencido' },
+                { r: 'Vendas em 30 dias', v: fmt(c.vendas30d.total), i: 'point_of_sale', c: 'verde', sub: `${c.vendas30d.qtd} venda(s)` },
+                { r: 'Último acesso', v: c.ultimoAcesso ? fmtData(c.ultimoAcesso) : 'Nunca', i: 'schedule', c: c.uso === 'PARADO' || c.uso === 'NUNCA' ? 'ambar' : '', sub: c.ultimoAcesso ? new Date(c.ultimoAcesso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '' }
+            ].map((k) => `<div class="kpi ${k.c}"><div class="kpi-top"><span>${k.r}</span><span class="ms">${k.i}</span></div><div class="kpi-valor">${k.v}</div>${k.sub ? `<div class="kpi-sub">${k.sub}</div>` : ''}</div>`).join('');
+            const ct = c.contrato;
+            $('c-contrato').innerHTML = [
+                ['Plano', nomePlano(ct.planoId) || 'Personalizado'],
+                ['Segmento', SEGMENTOS[ct.segmento] || ct.segmento],
+                ['Valor mensal', fmt(ct.valorMensal)],
+                ['Vencimento', `Todo dia ${ct.diaVencimento}`],
+                ['Tolerância', `${ct.toleranciaDias} dia(s) ${ct.bloqueioAutomatico ? '· bloqueio automático' : '· sem bloqueio automático'}`],
+                ['Limites', `${ct.limites.usuarios || 'ilimitados'} usuário(s) · ${ct.limites.caixas || 'ilimitados'} caixa(s)`],
+                ['Módulos liberados', `${c.modulosAtivos} de ${c.modulosTotal}`],
+                ['Próximo vencimento', fmtData(s.proximoVencimento)],
+                ['Último pagamento', fmtData(s.ultimoPagamento)]
+            ].map(([a, b]) => `<div class="info-l"><span>${a}</span><b>${esc(b)}</b></div>`).join('');
+            $('c-acesso').innerHTML = [
+                ['Administrador', c.admin ? `${c.admin.nome} · ${c.admin.email}` : '—'],
+                ['Usuários ativos', c.usuariosAtivos],
+                ['Produtos cadastrados', c.totais.produtos],
+                ['Clientes cadastrados', c.totais.clientes],
+                ['Contato', [c.telefone, c.email].filter(Boolean).join(' · ') || '—'],
+                ['Cidade', c.cidade ? c.cidade + (c.uf ? '/' + c.uf : '') : '—'],
+                ['Situação do acesso', c.status === 'SUSPENSO' ? 'Suspenso pelo painel' : c.bloqueio ? 'Bloqueado por mensalidade vencida' : 'Liberado']
+            ].map(([a, b]) => `<div class="info-l"><span>${a}</span><b>${esc(b)}</b></div>`).join('') +
+                (c.telefone ? `<a class="btn btn-sucesso w-100 mt-16" href="https://wa.me/55${String(c.telefone).replace(/\D/g, '').replace(/^55/, '')}" target="_blank" rel="noopener"><span class="ms">chat</span>Falar no WhatsApp</a>` : '');
+
+            // Financeiro do cliente
+            cobrancasIndex = {};
+            c.cobrancas.forEach((x) => { cobrancasIndex[x.id] = { ...x, cliente: c.fantasia || c.nome }; });
+            $('c-cont-fin').textContent = c.cobrancas.filter((x) => x.status === 'PENDENTE').length;
+            $('c-fin-sub').textContent = `Em aberto: ${fmt(s.emAberto)} · vencido: ${fmt(s.vencido)}`;
+            $('c-cobrancas').innerHTML = c.cobrancas.length ? c.cobrancas.map((x) => `<tr>
+                <td><b>${fmtMes(x.competencia)}</b><br><small>${esc(x.descricao || '')}</small></td>
+                <td>${fmtData(x.vencimento)}</td><td class="right num">${fmt(x.valor)}</td>
+                <td>${situacaoCobHtml(x)}</td><td>${pagamentoHtml(x)}</td><td class="acoes">${acoesCobHtml(x)}</td></tr>`).join('')
+                : `<tr><td colspan="6"><div class="estado-vazio"><span class="ms">receipt_long</span><p>Nenhuma mensalidade lançada.</p><button class="btn btn-primario" onclick="abrirNovaCobranca('${c.id}')"><span class="ms">add</span>Lançar cobrança</button></div></td></tr>`;
+
+            // Histórico
+            const ICONES = { COBRANCA: 'paid', CONTATO: 'call', NOTA: 'sticky_note_2', SISTEMA: 'settings' };
+            $('c-historico').innerHTML = c.notas.length ? c.notas.map((n) => `<div class="linha-hist ${n.tipo}"><div class="ic"><span class="ms">${ICONES[n.tipo] || 'info'}</span></div><div>${esc(n.texto)}<small>${fmtDataHora(n.createdAt)}</small></div></div>`).join('')
+                : '<div class="estado-vazio"><span class="ms">history</span><p>Sem registros ainda.</p></div>';
+
+            // Dados
+            $('e-nome').value = c.nome || ''; $('e-fantasia').value = c.fantasia || ''; $('e-cnpj').value = c.cnpj || '';
+            $('e-email').value = c.email || ''; $('e-telefone').value = c.telefone || ''; $('e-cidade').value = c.cidade || ''; $('e-uf').value = c.uf || '';
+            $('e-valor').value = ct.valorMensal; $('e-dia').value = ct.diaVencimento; $('e-tolerancia').value = ct.toleranciaDias; $('e-bloqueio').checked = ct.bloqueioAutomatico;
+
+            // Módulos
+            try {
+                const m = await api(`/clientes/${c.id}/modulos`);
+                modSel = new Set(m.modulos);
+                $('m-plano').value = m.planoId || '';
+                $('m-segmento').value = m.segmento || 'MODA';
+                $('m-usuarios').value = m.limiteUsuarios ?? '';
+                $('m-caixas').value = m.limiteCaixas ?? '';
+                modOrig = assinatura();
+                renderModulos();
+            } catch (e) { toast(e.message, 'erro'); }
+            mostrarAba(manterAba ? abaAtual : 'resumo');
+        }
+        function mostrarAba(nome) {
+            abaAtual = nome;
+            document.querySelectorAll('[data-aba]').forEach((x) => x.classList.toggle('ativa', x.dataset.aba === nome));
+            ['resumo', 'financeiro', 'modulos', 'historico', 'dados'].forEach((a) => $('aba-' + a).classList.toggle('hidden', a !== nome));
+        }
+        document.querySelectorAll('[data-aba]').forEach((b) => b.addEventListener('click', () => mostrarAba(b.dataset.aba)));
+
+        $('btn-nota').onclick = async () => {
+            const texto = $('h-texto').value.trim();
+            if (!texto) { toast('Escreva a anotação.', 'erro'); return; }
+            try { await api(`/clientes/${atual.id}/notas`, 'POST', { tipo: $('h-tipo').value, texto }); $('h-texto').value = ''; toast('Registrado no histórico.'); abrirCliente(atual.id, true); }
+            catch (e) { toast(e.message, 'erro'); }
+        };
+        $('btn-salvar-dados').onclick = async () => {
+            if (!atual) return;
+            try {
+                await api(`/clientes/${atual.id}`, 'PUT', {
+                    nome: $('e-nome').value, fantasia: $('e-fantasia').value, cnpj: $('e-cnpj').value,
+                    email: $('e-email').value, telefone: $('e-telefone').value, cidade: $('e-cidade').value, uf: $('e-uf').value,
+                    valor: $('e-valor').value, diaVencimento: $('e-dia').value, toleranciaDias: $('e-tolerancia').value, bloqueioAutomatico: $('e-bloqueio').checked
+                });
+                toast('Dados salvos.');
+                await recarregarAtual();
+            } catch (e) { toast(e.message, 'erro'); }
+        };
+
+        // ------------------------------------------------------------ módulos
+        function assinatura() {
+            return JSON.stringify([[...modSel].sort(), $('m-plano').value, $('m-segmento').value, $('m-usuarios').value, $('m-caixas').value]);
+        }
+        function planoAtual() { return catalogo.planos.find((p) => p.id === $('m-plano').value) || null; }
+        function renderModulos() {
+            const plano = planoAtual();
+            const incluidos = new Set(plano ? plano.modulos : []);
+            const filtro = $('m-filtro').value.trim().toLowerCase();
+            const disponiveis = catalogo.modulos.filter((m) => !m.futuro);
+            const grupos = {};
+            catalogo.modulos.forEach((m) => {
+                if (filtro && !(m.nome + ' ' + m.descricao).toLowerCase().includes(filtro)) return;
+                (grupos[m.grupo] = grupos[m.grupo] || []).push(m);
+            });
+            $('m-grupos').innerHTML = Object.entries(grupos).map(([g, mods]) => {
+                const ativos = mods.filter((m) => modSel.has(m.chave)).length;
+                return `<div class="card mod-grupo">
+                    <div class="card-head"><div class="row" style="gap:8px"><span class="ms">${ICONES_GRUPO[g] || 'apps'}</span><h3>${esc(g)}</h3></div><span class="badge ${ativos ? 'ativo' : 'inativo'} sem-ponto">${ativos} ativo${ativos === 1 ? '' : 's'}</span></div>
+                    <div class="mod-grid">${mods.map((m) => {
+                        const on = modSel.has(m.chave);
+                        const extra = on && !incluidos.has(m.chave);
+                        let selo;
+                        if (m.futuro) selo = '<span class="badge inativo sem-ponto">Em breve</span>';
+                        else if (!on) selo = '<span class="badge inativo sem-ponto">Bloqueado</span>';
+                        else if (extra) selo = `<span class="badge pendente sem-ponto">Adicional ${fmt(m.precoAdicional)}/mês</span>`;
+                        else selo = '<span class="badge ativo sem-ponto">Incluso no plano</span>';
+                        return `<div class="mod-card ${m.futuro ? 'futuro' : (on ? (extra ? 'extra' : 'on') : '')}">
+                            <div class="topo"><div class="nome"><span class="ms">${esc(m.icone || 'apps')}</span>${esc(m.nome)}</div>
+                            <label class="toggle" title="${on ? 'Bloquear' : 'Liberar'}"><input type="checkbox" data-mod="${esc(m.chave)}" ${on ? 'checked' : ''} ${m.futuro ? 'disabled' : ''}><span class="trilho"></span></label></div>
+                            <div class="desc">${esc(m.descricao)}</div>${selo}</div>`;
+                    }).join('')}</div></div>`;
+            }).join('') || '<div class="card"><div class="estado-vazio"><span class="ms">search_off</span><p>Nenhum módulo encontrado.</p></div></div>';
+            const qtd = disponiveis.filter((m) => modSel.has(m.chave)).length;
+            $('m-cont').textContent = `${qtd} de ${disponiveis.length}`;
+            $('c-cont').textContent = qtd;
+            $('m-barra').style.width = (disponiveis.length ? qtd / disponiveis.length * 100 : 0) + '%';
+            const personalizado = !plano || [...incluidos].filter((k) => disponiveis.some((m) => m.chave === k)).sort().join() !== [...modSel].sort().join();
+            $('m-personalizado').innerHTML = personalizado ? '<span class="badge pendente sem-ponto">Ajustado manualmente</span>' : '<span class="badge ativo sem-ponto">Igual ao plano</span>';
+            const extras = [...modSel].filter((k) => !incluidos.has(k));
+            const valorExtras = extras.reduce((s, k) => s + Number((catalogo.modulos.find((m) => m.chave === k) || {}).precoAdicional || 0), 0);
+            $('r-plano-nome').textContent = plano ? `Plano ${plano.nome}` : 'Sem plano';
+            $('r-plano').textContent = fmt(plano ? plano.valor : 0);
+            $('r-qtd-extra').textContent = extras.length;
+            $('r-extras').textContent = '+ ' + fmt(valorExtras);
+            $('r-total').textContent = fmt((plano ? plano.valor : 0) + valorExtras);
+            $('r-lista-extra').textContent = extras.length ? 'Adicionais: ' + extras.map((k) => (catalogo.modulos.find((m) => m.chave === k) || {}).nome || k).join(', ') : '';
+            $('m-usuarios').placeholder = plano ? `Do plano: ${plano.usuarios || 'ilimitado'}` : 'Ilimitado';
+            $('m-caixas').placeholder = plano ? `Do plano: ${plano.caixas || 'ilimitado'}` : 'Ilimitado';
+            $('m-alteracoes').classList.toggle('on', assinatura() !== modOrig);
+        }
+        $('m-grupos').addEventListener('change', (e) => {
+            const chk = e.target.closest('[data-mod]');
+            if (!chk) return;
+            if (chk.checked) modSel.add(chk.dataset.mod); else modSel.delete(chk.dataset.mod);
+            renderModulos();
+        });
+        $('m-filtro').addEventListener('input', renderModulos);
+        ['m-plano', 'm-segmento', 'm-usuarios', 'm-caixas'].forEach((id) => $(id).addEventListener('input', renderModulos));
+        $('btn-aplicar-plano').onclick = () => {
+            const plano = planoAtual();
+            if (!plano) { toast('Escolha um plano primeiro.', 'erro'); return; }
+            modSel = new Set(plano.modulos);
+            renderModulos();
+        };
+        $('btn-descartar').onclick = () => { if (atual) abrirCliente(atual.id, true); };
+        $('btn-salvar-modulos').onclick = async () => {
+            if (!atual) return;
+            try {
+                const r = await api(`/clientes/${atual.id}/modulos`, 'PUT', {
+                    planoId: $('m-plano').value || null, segmento: $('m-segmento').value, modulos: [...modSel],
+                    limiteUsuarios: $('m-usuarios').value, limiteCaixas: $('m-caixas').value, atualizarValor: $('m-atualizar-valor').checked
+                });
+                modOrig = assinatura();
+                renderModulos();
+                toast(`Permissões salvas. Valor mensal: ${fmt(r.contrato.valorMensal)}.`);
+                await recarregarAtual();
+            } catch (e) { toast(e.message, 'erro'); }
+        };
+        window.addEventListener('beforeunload', (e) => {
+            if (!$('view-cliente').classList.contains('hidden') && abaAtual === 'modulos' && assinatura() !== modOrig) { e.preventDefault(); e.returnValue = ''; }
+        });
+
+        // ------------------------------------------------------------ financeiro
+        $('fin-mes').value = hoje().slice(0, 7);
+        $('fin-mes').addEventListener('change', carregarFinanceiro);
+        $('fin-filtro').addEventListener('change', renderFinanceiro);
+        async function carregarFinanceiro() {
+            try { financeiro = await api('/financeiro?competencia=' + encodeURIComponent($('fin-mes').value)); renderFinanceiro(); }
+            catch (e) { toast(e.message, 'erro'); }
+        }
+        function renderFinanceiro() {
+            const f = financeiro; if (!f) return;
+            const k = f.kpis;
+            $('fin-kpis').innerHTML = [
+                { r: 'Receita mensal (MRR)', v: fmt(k.mrr), i: 'trending_up', c: '', sub: `${k.clientesAtivos} cliente(s) ativo(s)` },
+                { r: `Previsto em ${fmtMes(f.competencia)}`, v: fmt(k.previstoMes), i: 'event', c: '', sub: `Pago ${fmt(k.pagoCompetencia)}` },
+                { r: 'Recebido no mês', v: fmt(k.recebidoNoMes), i: 'paid', c: 'verde', sub: 'Pagamentos com data no mês' },
+                { r: 'A receber', v: fmt(k.aReceber), i: 'schedule', c: '', sub: 'Mensalidades em aberto do mês' },
+                { r: 'Vencido (total)', v: fmt(k.vencido), i: 'warning', c: k.vencido ? 'vermelho' : '', sub: `Inadimplência do mês ${String(k.inadimplencia).replace('.', ',')}%` },
+                { r: 'Situação dos clientes', v: `${k.emDia} · ${k.atrasados} · ${k.inadimplentes}`, i: 'monitor_heart', c: k.inadimplentes ? 'vermelho' : k.atrasados ? 'ambar' : 'verde', sub: 'em dia · atrasados · inadimplentes' }
+            ].map((x) => `<div class="kpi ${x.c}"><div class="kpi-top"><span>${x.r}</span><span class="ms">${x.i}</span></div><div class="kpi-valor">${x.v}</div><div class="kpi-sub">${x.sub}</div></div>`).join('');
+            const aviso = $('fin-aviso-gerar');
+            aviso.classList.toggle('hidden', !k.semMensalidadeNoMes);
+            aviso.querySelector('div').textContent = `${k.semMensalidadeNoMes} cliente(s) ativo(s) ainda sem mensalidade em ${fmtMes(f.competencia)}. Use "Gerar mensalidades do mês".`;
+            $('fin-sub').textContent = `${f.cobrancas.length} mensalidade(s) em ${fmtMes(f.competencia)}`;
+            cobrancasIndex = {};
+            [...f.cobrancas, ...f.vencidas].forEach((x) => { cobrancasIndex[x.id] = x; });
+            const filtro = $('fin-filtro').value;
+            const lista = f.cobrancas.filter((x) => !filtro || x.situacao === filtro).sort((a, b) => a.vencimento.localeCompare(b.vencimento));
+            $('fin-tabela').innerHTML = lista.length ? lista.map((x) => `<tr>
+                <td><a href="#cliente/${x.companyId}" style="color:inherit;text-decoration:none"><b>${esc(x.cliente)}</b></a><br><small>${esc(x.descricao || '')}</small></td>
+                <td>${fmtData(x.vencimento)}</td><td class="right num">${fmt(x.valor)}</td><td>${situacaoCobHtml(x)}</td><td>${pagamentoHtml(x)}</td><td class="acoes">${acoesCobHtml(x)}</td></tr>`).join('')
+                : `<tr><td colspan="6"><div class="estado-vazio"><span class="ms">receipt_long</span><p>Nenhuma mensalidade ${filtro ? 'com esse filtro' : 'nesta competência'}.</p></div></td></tr>`;
+            $('fin-vencidas').innerHTML = f.vencidas.length ? f.vencidas.map((x) => `<tr>
+                <td><a href="#cliente/${x.companyId}" style="color:inherit;text-decoration:none"><b>${esc(x.cliente)}</b></a></td>
+                <td>${fmtMes(x.competencia)}</td><td>${fmtData(x.vencimento)}</td><td class="right num">${fmt(x.valor)}</td>
+                <td><span class="badge vencido">${x.diasAtraso} dia${x.diasAtraso > 1 ? 's' : ''}</span></td><td class="acoes">${acoesCobHtml(x)}</td></tr>`).join('')
+                : '<tr><td colspan="6" class="sem-dados">Nenhuma mensalidade vencida. 🎉</td></tr>';
+        }
+        $('btn-gerar').onclick = async () => {
+            const mes = $('fin-mes').value;
+            if (!await confirmar('Gerar mensalidades', `Cria a mensalidade de ${fmtMes(mes)} para cada cliente ativo que ainda não tem, com o valor e o dia de vencimento do contrato.`, 'Gerar', false)) return;
+            try { const r = await api('/financeiro/gerar', 'POST', { competencia: mes }); toast(`${r.criadas} mensalidade(s) criada(s).`); await carregarTudo(); carregarFinanceiro(); }
+            catch (e) { toast(e.message, 'erro'); }
+        };
+
+        function abrirNovaCobranca(companyId) {
+            cobEditando = null;
+            $('cob-titulo').textContent = 'Nova cobrança';
+            $('cob-cliente-campo').classList.remove('hidden');
+            $('cob-cliente').innerHTML = clientes.map((c) => `<option value="${c.id}">${esc(c.fantasia || c.nome)}</option>`).join('');
+            if (companyId) $('cob-cliente').value = companyId;
+            const c = clientes.find((x) => x.id === $('cob-cliente').value);
+            const mes = hoje().slice(0, 7);
+            $('cob-competencia').value = mes;
+            $('cob-vencimento').value = `${mes}-${String(c ? c.contrato.diaVencimento : 10).padStart(2, '0')}`;
+            $('cob-valor').value = c ? c.contrato.valorMensal : '';
+            $('cob-descricao').value = '';
+            abrir('modal-cobranca');
+        }
+        $('cob-cliente').addEventListener('change', () => {
+            const c = clientes.find((x) => x.id === $('cob-cliente').value);
+            if (c) { $('cob-valor').value = c.contrato.valorMensal; $('cob-vencimento').value = `${$('cob-competencia').value}-${String(c.contrato.diaVencimento).padStart(2, '0')}`; }
+        });
+        function editarCobranca(id) {
+            const x = cobrancasIndex[id]; if (!x) return;
+            cobEditando = x;
+            $('cob-titulo').textContent = 'Editar cobrança';
+            $('cob-cliente-campo').classList.add('hidden');
+            $('cob-competencia').value = x.competencia; $('cob-vencimento').value = x.vencimento; $('cob-valor').value = x.valor; $('cob-descricao').value = x.descricao || '';
+            abrir('modal-cobranca');
+        }
+        $('btn-salvar-cob').onclick = async () => {
+            try {
+                if (cobEditando) await api(`/cobrancas/${cobEditando.id}`, 'PUT', { valor: $('cob-valor').value, vencimento: $('cob-vencimento').value, descricao: $('cob-descricao').value });
+                else await api('/cobrancas', 'POST', { companyId: $('cob-cliente').value, competencia: $('cob-competencia').value, vencimento: $('cob-vencimento').value, valor: $('cob-valor').value, descricao: $('cob-descricao').value });
+                fechar('modal-cobranca'); toast('Cobrança salva.'); await depoisDeCobranca();
+            } catch (e) { toast(e.message, 'erro'); }
+        };
+        function abrirPagamento(id) {
+            const x = cobrancasIndex[id]; if (!x) return;
+            pagando = x;
+            $('pag-resumo').innerHTML = `<b>${esc(x.cliente || '')}</b><br>${esc(x.descricao || fmtMes(x.competencia))} · vence ${fmtData(x.vencimento)}<br><span style="font-size:20px;font-weight:700">${fmt(x.valor)}</span>`;
+            $('pag-data').value = hoje(); $('pag-valor').value = x.valor; $('pag-forma').value = 'PIX'; $('pag-obs').value = '';
+            abrir('modal-pagar');
+        }
+        $('btn-confirmar-pag').onclick = async () => {
+            if (!pagando) return;
+            try {
+                await api(`/cobrancas/${pagando.id}/pagar`, 'POST', { pagoEm: $('pag-data').value, valorPago: $('pag-valor').value, formaPagamento: $('pag-forma').value, observacao: $('pag-obs').value });
+                fechar('modal-pagar'); toast('Pagamento registrado. Se o acesso estava bloqueado, já foi liberado.'); await depoisDeCobranca();
+            } catch (e) { toast(e.message, 'erro'); }
+        };
+        async function reabrirCobranca(id) {
+            if (!await confirmar('Reabrir cobrança', 'A cobrança volta a ficar em aberto (o pagamento registrado é desfeito).', 'Reabrir', false)) return;
+            try { await api(`/cobrancas/${id}/reabrir`, 'POST'); toast('Cobrança reaberta.'); await depoisDeCobranca(); } catch (e) { toast(e.message, 'erro'); }
+        }
+        async function cancelarCobranca(id) {
+            const motivo = await confirmar('Cancelar cobrança', 'A cobrança deixa de ser cobrada e não conta como atraso.', 'Cancelar cobrança', true, 'Motivo (opcional)');
+            if (motivo === false) return;
+            try { await api(`/cobrancas/${id}/cancelar`, 'POST', { motivo }); toast('Cobrança cancelada.'); await depoisDeCobranca(); } catch (e) { toast(e.message, 'erro'); }
+        }
+        async function depoisDeCobranca() {
+            await carregarTudo();
+            if (location.hash.startsWith('#cliente/') && atual) abrirCliente(atual.id, true);
+            else carregarFinanceiro();
+        }
+
+        // ------------------------------------------------------------ planos
+        function renderPlanos() {
+            if (!planosEdit.length) {
+                planosEdit = JSON.parse(JSON.stringify(catalogo.planos));
+                adicionaisEdit = JSON.parse(JSON.stringify(catalogo.adicionais || {}));
+            }
+            const contagem = (id) => clientes.filter((c) => c.planoId === id).length;
+            $('planos-cards').innerHTML = planosEdit.map((p, i) => `
+                <div class="card plano-card ${p.destaque ? 'destaque' : ''}">
+                    <div class="row between"><input type="text" value="${esc(p.nome)}" data-p="${i}" data-campo="nome" style="font-weight:600;max-width:60%">
+                    ${p.destaque ? '<span class="badge azul sem-ponto">Destaque</span>' : ''}</div>
+                    <div class="form-grid c3 mt-8">
+                        <div class="campo"><label>Valor (R$/mês)</label><input type="number" step="0.01" value="${p.valor}" data-p="${i}" data-campo="valor"></div>
+                        <div class="campo"><label>Usuários</label><input type="number" value="${p.usuarios}" data-p="${i}" data-campo="usuarios" title="0 = ilimitado"></div>
+                        <div class="campo"><label>Caixas</label><input type="number" value="${p.caixas}" data-p="${i}" data-campo="caixas" title="0 = ilimitado"></div>
+                    </div>
+                    <input type="text" value="${esc(p.descricao || '')}" data-p="${i}" data-campo="descricao" placeholder="Descrição curta">
+                    <div class="row between mt-8" style="font-size:13px"><span class="muted">${p.modulos.length} módulos · ${contagem(p.id)} cliente(s)</span>
+                    <span class="row" style="gap:4px"><label class="check" style="font-size:12.5px!important"><input type="radio" name="destaque" ${p.destaque ? 'checked' : ''} data-destaque="${i}">Destaque</label>
+                    ${contagem(p.id) ? '' : `<button class="btn-icone perigo" title="Excluir plano" data-excluir="${i}"><span class="ms">delete</span></button>`}</span></div>
+                </div>`).join('');
+            $('matriz-head').innerHTML = '<tr><th>Módulo</th>' + planosEdit.map((p) => `<th class="c">${esc(p.nome)}</th>`).join('') + '<th class="right">Preço como adicional</th></tr>';
+            let grupoAnt = null;
+            $('matriz-body').innerHTML = catalogo.modulos.map((m) => {
+                let linha = '';
+                if (m.grupo !== grupoAnt) {
+                    grupoAnt = m.grupo;
+                    linha += `<tr><td colspan="${planosEdit.length + 2}" style="background:var(--surface-2);height:32px;font-size:12px;font-weight:600;color:var(--text-2)">${esc(m.grupo).toUpperCase()}</td></tr>`;
+                }
+                linha += `<tr><td><span class="ms sm muted">${esc(m.icone || 'apps')}</span> ${esc(m.nome)} ${m.futuro ? '<span class="badge inativo sem-ponto">Em breve</span>' : ''}</td>` +
+                    planosEdit.map((p, i) => `<td class="c"><input type="checkbox" data-matriz="${i}" data-mod="${esc(m.chave)}" ${p.modulos.includes(m.chave) ? 'checked' : ''} ${m.futuro ? 'disabled' : ''}></td>`).join('') +
+                    `<td class="right"><input type="number" step="0.01" value="${adicionaisEdit[m.chave] ?? m.precoAdicional}" data-adicional="${esc(m.chave)}"></td></tr>`;
+                return linha;
+            }).join('');
+        }
+        function marcarPlanosAlterados() { $('p-alteracoes').classList.add('on'); }
+        $('view-planos').addEventListener('input', (e) => {
+            const t = e.target;
+            if (t.dataset.campo) {
+                const p = planosEdit[Number(t.dataset.p)];
+                p[t.dataset.campo] = ['valor', 'usuarios', 'caixas'].includes(t.dataset.campo) ? Number(t.value) || 0 : t.value;
+            } else if (t.dataset.matriz !== undefined) {
+                const p = planosEdit[Number(t.dataset.matriz)];
+                const set = new Set(p.modulos);
+                if (t.checked) set.add(t.dataset.mod); else set.delete(t.dataset.mod);
+                p.modulos = [...set];
+            } else if (t.dataset.adicional) {
+                adicionaisEdit[t.dataset.adicional] = Number(t.value) || 0;
+            } else if (t.dataset.destaque !== undefined) {
+                planosEdit.forEach((p, i) => { p.destaque = i === Number(t.dataset.destaque); });
+                renderPlanos();
+            } else return;
+            marcarPlanosAlterados();
+        });
+        $('view-planos').addEventListener('click', async (e) => {
+            const b = e.target.closest('[data-excluir]');
+            if (!b) return;
+            const p = planosEdit[Number(b.dataset.excluir)];
+            if (!await confirmar('Excluir plano', `Excluir o plano "${p.nome}"? Clientes não são afetados.`, 'Excluir')) return;
+            planosEdit.splice(Number(b.dataset.excluir), 1);
+            renderPlanos(); marcarPlanosAlterados();
+        });
+        $('btn-novo-plano').onclick = () => {
+            planosEdit.push({ id: 'plano-' + Date.now().toString(36), nome: 'Novo plano', valor: 0, usuarios: 0, caixas: 0, descricao: '', modulos: [] });
+            renderPlanos(); marcarPlanosAlterados();
+        };
+        $('btn-salvar-planos').onclick = async () => {
+            try {
+                const r = await api('/planos', 'PUT', { planos: planosEdit, adicionais: adicionaisEdit });
+                catalogo = await api('/catalogo');
+                planosEdit = [];
+                preencherSelectsPlano();
+                await carregarTudo();
+                renderPlanos();
+                $('p-alteracoes').classList.remove('on');
+                toast(`Planos salvos.${r.clientesAtualizados ? ` ${r.clientesAtualizados} cliente(s) atualizados.` : ''}`);
+            } catch (e) { toast(e.message, 'erro'); }
+        };
+
+        // ------------------------------------------------------------ senha do painel
+        $('btn-senha').onclick = async () => {
+            if ($('s-nova').value !== $('s-conf').value) { toast('A confirmação não confere com a nova senha.', 'erro'); return; }
+            try {
+                await api('/senha', 'PUT', { atual: $('s-atual').value, nova: $('s-nova').value });
+                ['s-atual', 's-nova', 's-conf'].forEach((i) => $(i).value = '');
+                toast('Senha do painel alterada.');
+            } catch (e) { toast(e.message, 'erro'); }
+        };
+
+        // ------------------------------------------------------------ início
+        (async () => {
+            try { const r = await fetch(API + '/sessao'); if (r.ok) { entrar(); return; } } catch (e) { /* sem rede */ }
+            mostrarLogin();
+        })();
+    </script>
+</body>
+</html>
