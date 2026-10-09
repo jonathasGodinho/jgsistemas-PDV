@@ -205,7 +205,7 @@
 
         async function antecipar(id) {
             const taxa = parseFloat(document.getElementById('f-taxa-antecipacao').value) || 0;
-            if (!confirm(`Antecipar este recebível com taxa de ${taxa.toFixed(2)}%?`)) return;
+            if (!confirm(`Antecipar este recebível com taxa de ${Number(taxa).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%?`)) return;
             try {
                 const r = await api(`/api/cartoes/recebiveis/${id}/antecipar`, 'POST', { taxa });
                 alert(`Recebível antecipado! Valor líquido: ${moeda(r.valorAntecipado)}`);
@@ -215,7 +215,7 @@
 
         async function anteciparPendentes() {
             const taxa = parseFloat(document.getElementById('f-taxa-antecipacao').value) || 0;
-            if (!confirm(`Antecipar TODOS os recebíveis pendentes com taxa de ${taxa.toFixed(2)}%?`)) return;
+            if (!confirm(`Antecipar TODOS os recebíveis pendentes com taxa de ${Number(taxa).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%?`)) return;
             try {
                 const r = await api('/api/cartoes/recebiveis/antecipar-pendentes', 'POST', { taxa });
                 alert(`${r.qtd} recebível(is) antecipado(s)! Valor total: ${moeda(r.valorAntecipado)}`);

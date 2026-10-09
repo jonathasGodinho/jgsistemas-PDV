@@ -122,7 +122,7 @@
                 </table>`;
         }
 
-        let CONFIG = { name: 'JG SISTEMAS', tradeName: 'TESTE LTDA', document: '', logo: null };
+        let CONFIG = { name: 'JG SISTEMAS', tradeName: '', document: '', logo: null };
         async function carregarConfig() {
             try {
                 const r = await fetch('/api/configuracoes', { headers: tokenAuth() });

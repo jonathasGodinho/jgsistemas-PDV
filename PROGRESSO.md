@@ -161,3 +161,13 @@ Escopo: resposta à pergunta "o que acontece se um hacker tentar invadir?" → i
 - **Módulos por cliente (SaaS)**: catálogo em `backend/modulos.json`. Painel grava `dados/modulos/<id>.json` e inicia a instância com `JG_MODULOS_ARQUIVO` (relido por mtime, vale sem reiniciar). `utils/modulos.ts` bloqueia páginas (redirect `/?bloqueado=`) e APIs exclusivas (403); promoções/tabelas, cashback, recebíveis de cartão e NFC-e respeitam o módulo. Sem a variável (dev local) tudo fica liberado.
 - **Painel** (`painel/public/painel.html`): telas Clientes, Cliente › Módulos (liberar/bloquear, valor mensal, limites) e Planos e módulos (matriz). APIs: `GET /api/catalogo`, `PUT /api/planos`, `GET/PUT /api/clientes/:id/modulos`. Planos em `dados/planos.json`.
 - **Pendências**: testar tudo com banco real (o `.env` aponta para `localhost:5433/jg_dev`, que não estava no ar); limites de usuários/caixas do plano ainda não são aplicados no ERP; tela de conciliação de cartões; aplicar Stepper em Trocas.
+
+## Retomada OpenCode — Setup, senhas, NFC-e e PDF de acessos (08/10/2026)
+- **Dependências**: `painel/` sem `node_modules` → `npm install` (70 pacotes). Backend já tinha as dele.
+- **Ambiente**: produção na Vercel (`erp.jgsistemas.dev.br`, projeto `jgsistemas-erp`) com `DATABASE_URL`, `JG_CHAVE_CRIPTO` e `TRUST_PROXY` (Production + Preview). `backend/.env` aponta para o Supabase (não mais Postgres local).
+- **`server.ts`**: adicionado `import 'dotenv/config'` no topo — o servidor dev não lia o `.env` (rodava em dry-run e sem cripto). Agora local == produção em NFC-e: `simulacao:false` e `criptoDisponivel:true`. Typecheck verde.
+- **Senhas (08/10/2026)**: senha do ADMIN do ERP principal redefinida (script one-off, removido depois; senha entregue no chat/PDF, **não** versionada) e hash bcrypt do Painel regravado em `dados/painel.senha`. PDV/Painel seguem exigindo força-bruta/lockout já implementados.
+- **NFC-e — status**: pronto no código; faltam dados fiscais do cliente para emitir: CNPJ, Inscrição Estadual, endereço completo, UF=AM, código IBGE (via CEP), certificado A1 (.pfx) e CSC/ID CSC da SEFAZ-AM (homologação). Ambiente em `tpAmb=2`. Sem certificado a emissão falha com aviso (seguro) e `habilitado` permanece `false`.
+- **PDF de acessos**: gerado em `C:\Users\Mauricio Medeiros\OneDrive\Documentos\Acessos-JG-Sistemas.pdf` (não versionado no repo).
+- **Painel SaaS**: porta 3100 exige `PG_PASSWORD` (PostgreSQL local, usuário `jgadmin`) — senha do banco não armazenada em arquivo; definir no ambiente para subir.
+- **Legado**: `https://jgsistemas-api.vercel.app` responde 500 (projeto antigo; não usar). Site institucional `https://jgsistemas.dev.br` ok.

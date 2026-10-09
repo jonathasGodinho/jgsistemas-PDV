@@ -36,7 +36,7 @@
         .pend.nok .ms { color: var(--amber); }
         .pend small { display: block; color: var(--text-2); font-size: 12px; }
         @media (max-width: 1000px) { .pendencias { grid-template-columns: 1fr; } }
-        @media (max-width: 1000px) { .cfg-grid { grid-template-columns: 1fr; } .cfg-menu { position: static; } .segmentos { grid-template-columns: 1fr; } }
+        @media (max-width: 1000px) { .cfg-grid { grid-template-columns: minmax(0, 1fr); } .menu-secoes button { min-width: 0; } .cfg-menu { position: static; } .segmentos { grid-template-columns: 1fr; } }
     </style>
     <link rel="stylesheet" href="/ui/jg.css">
 </head>

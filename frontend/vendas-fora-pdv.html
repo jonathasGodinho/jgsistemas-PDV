@@ -251,7 +251,7 @@ async function api(url, metodo = 'GET', corpo = null) {
     return dados;
 }
 
-let CONFIG = { name: 'JG SISTEMAS', tradeName: 'TESTE LTDA', document: '', logo: null };
+let CONFIG = { name: 'JG SISTEMAS', tradeName: '', document: '', logo: null };
 async function carregarConfig() {
     try {
         const r = await fetch('/api/configuracoes', { headers: tokenAuth() });

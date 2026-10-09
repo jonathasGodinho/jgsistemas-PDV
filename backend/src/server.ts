@@ -1,3 +1,7 @@
+// Carrega o .env local (dev). Em produção na Vercel as variáveis já vêm do
+// ambiente do projeto e não existe arquivo .env, então isto é inofensivo.
+// Deve vir antes de qualquer import que leia process.env (ex.: ./db, ./utils/cripto).
+import 'dotenv/config';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import path from 'path';

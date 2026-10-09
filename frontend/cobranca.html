@@ -139,7 +139,7 @@
             try {
                 const r = await api('/api/relatorios/inadimplencia');
                 document.getElementById('card-total').innerText = r.totalInadimplentes;
-                document.getElementById('card-aberto').innerText = `R$ ${r.totalEmAberto.toFixed(2)}`;
+                document.getElementById('card-aberto').innerText = `R$ ${Number(r.totalEmAberto).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
                 const tbody = document.getElementById('tabela-inadimplentes');
                 if (r.clientes.length === 0) {
@@ -153,7 +153,7 @@
                         <td>${esc(c.celular ?? '—')}</td>
                         <td style="text-align:right;"><span class="badge b-vermelho">${c.maiorAtraso}d</span></td>
                         <td style="text-align:right;">${c.qtdParcelas}</td>
-                        <td style="text-align:right;">R$ ${c.total.toFixed(2)}</td>
+                        <td style="text-align:right;">R$ ${Number(c.total).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                     </tr>
                     <tr id="vendas-${c.clienteId}" style="display:none;">
                         <td colspan="5" style="padding:0;">
@@ -163,7 +163,7 @@
                                         <td>Venda ${esc(v.numero ?? '—')}</td>
                                         <td><span class="badge b-amarelo">${v.maiorAtraso}d</span></td>
                                         <td style="text-align:right;">${v.qtdParcelas} parc.</td>
-                                        <td style="text-align:right;"><strong>R$ ${v.total.toFixed(2)}</strong></td>
+                                        <td style="text-align:right;"><strong>R$ ${Number(v.total).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></td>
                                         <td style="text-align:center;">
                                             <button class="btn btn-mini btn-verde" onclick="abrirRenegociar('${v.vendaId}', '${esc(v.numero)}', ${v.total})">Renegociar</button>
                                         </td>
@@ -181,7 +181,7 @@
 
         function abrirRenegociar(vendaId, numero, total) {
             vendaRenegociando = vendaId;
-            document.getElementById('modal-titulo').innerText = `Renegociar Venda ${numero} (R$ ${total.toFixed(2)})`;
+            document.getElementById('modal-titulo').innerText = `Renegociar Venda ${numero} (R$ ${Number(total).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })})`;
             document.getElementById('r-data').value = hoje();
             document.getElementById('r-parcelas').value = '6';
             document.getElementById('r-juros').value = '0';
@@ -205,7 +205,7 @@
                     jurosPercent: Number(document.getElementById('r-juros').value) || 0,
                     senhaAdmin
                 });
-                alert(`Renegociação concluída!\nNovo total: R$ ${r.novoTotal.toFixed(2)} em ${r.parcelas}x`);
+                alert(`Renegociação concluída!\nNovo total: R$ ${Number(r.novoTotal).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} em ${r.parcelas}x`);
                 fecharModal();
                 carregarInadimplencia();
             } catch (e) { alert(e.message); }

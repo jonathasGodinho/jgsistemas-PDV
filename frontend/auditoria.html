@@ -151,6 +151,23 @@
         carregarLogs();
         carregarLogins();
 
+        const ENTIDADES = { COMPANY: 'Empresa', SALE: 'Venda', PRODUCT: 'Produto', CUSTOMER: 'Cliente', USER: 'Usuário', CASH_REGISTER: 'Caixa', CAIXA: 'Caixa', STOCK: 'Estoque', SETTING: 'Configuração', SUPPLIER: 'Fornecedor', PURCHASE: 'Compra', FINANCIAL: 'Financeiro', CATEGORY: 'Categoria', INSTALLMENT: 'Parcela', NFCE: 'NFC-e' };
+        const ROTULOS = { cnpj: 'CNPJ', titular: 'Titular', validoAte: 'Válido até', total: 'Total', motivo: 'Motivo', numero: 'Nº', valor: 'Valor', antes: 'Antes', depois: 'Depois', quantidade: 'Qtd', produto: 'Produto', cliente: 'Cliente' };
+        // Ação: VENDA_CANCELADA -> "Venda cancelada"
+        function nomeAcao(a) { const t = String(a || '').toLowerCase().replace(/_/g, ' ').replace(/nfce/g, 'NFC-e'); return t.charAt(0).toUpperCase() + t.slice(1); }
+        function valorDetalhe(v) {
+            if (v === null || v === undefined || v === '') return '—';
+            if (typeof v === 'boolean') return v ? 'sim' : 'não';
+            if (typeof v === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(v)) return new Date(v).toLocaleString('pt-BR');
+            if (typeof v === 'object') return Array.isArray(v) ? v.map(valorDetalhe).join(', ') : Object.entries(v).map(([k, x]) => `${ROTULOS[k] || k}: ${valorDetalhe(x)}`).join('; ');
+            return String(v);
+        }
+        function textoDetalhe(d) {
+            if (!d || (typeof d === 'object' && !Object.keys(d).length)) return '-';
+            if (typeof d !== 'object') return String(d);
+            return Object.entries(d).map(([k, v]) => `${ROTULOS[k] || k}: ${valorDetalhe(v)}`).join(' · ');
+        }
+
         async function carregarLogs() {
             try {
                 const params = new URLSearchParams();
@@ -174,9 +191,9 @@
                     <tr>
                         <td>${formatarDataHora(l.data)}</td>
                         <td><strong>${esc(l.operador)}</strong></td>
-                        <td><span class="acao">${esc(l.acao)}</span></td>
-                        <td>${esc(l.entidade)}<br><small style="color:#aab2bd;">${esc(l.entidadeId || '')}</small></td>
-                        <td><span class="detalhe" title="${esc(l.detalhe ? JSON.stringify(l.detalhe) : '')}">${esc(l.detalhe ? JSON.stringify(l.detalhe) : '-')}</span></td>
+                        <td><span class="acao" title="${esc(l.acao)}">${esc(nomeAcao(l.acao))}</span></td>
+                        <td>${esc(ENTIDADES[l.entidade] || l.entidade || '-')}${l.entidadeId ? `<br><small style="color:var(--text-3);">${esc(l.entidadeId)}</small>` : ''}</td>
+                        <td><span class="detalhe" title="${esc(textoDetalhe(l.detalhe))}">${esc(textoDetalhe(l.detalhe))}</span></td>
                         <td><span class="ip">${esc(l.ip || '-')}</span></td>
                     </tr>`).join('');
             } catch (e) { alert(e.message); }

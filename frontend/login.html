@@ -15,8 +15,8 @@
         .vitrine .marca { display: flex; align-items: center; gap: 12px; }
         .vitrine .marca .jg-brand-logo { width: 44px; height: 44px; font-size: 17px; }
         .vitrine .marca b { color: #fff; font-size: 19px; }
-        .vitrine h1 { color: #fff; font-size: 34px; line-height: 1.15; letter-spacing: -.02em; font-weight: 700; max-width: 560px; }
-        .vitrine h1 em { font-style: normal; color: #4ADE80; }
+        body.jg .vitrine h1 { color: #fff; font-size: 34px; line-height: 1.15; letter-spacing: -.02em; font-weight: 700; max-width: 560px; }
+        body.jg .vitrine h1 em { font-style: normal; color: #4ADE80; }
         .vitrine .lead { font-size: 15.5px; line-height: 1.6; max-width: 560px; color: #CBD5E1; }
         .recursos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 22px; max-width: 640px; }
         .recurso { display: flex; gap: 12px; align-items: flex-start; }
@@ -38,6 +38,9 @@
         .login-card { width: 420px; max-width: 100%; background: #fff; border-radius: 14px; border: 1px solid var(--border); box-shadow: 0 18px 50px rgba(15, 39, 71, .12); padding: 32px 30px 26px; }
         .login-card h2 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
         .login-card .sub { font-size: 13.5px; color: var(--text-2); margin-bottom: 22px; }
+        .login-card .tagline { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; padding: 11px 13px; border-radius: 10px; background: rgba(22, 163, 74, .08); border: 1px solid rgba(74, 222, 128, .45); color: #14532D; font-size: 13.5px; font-weight: 600; line-height: 1.4; }
+        .login-card .tagline .ms { color: var(--green); font-size: 20px; flex-shrink: 0; }
+        .login-card .tagline b { font-weight: 700; color: #0B7A44; }
         body.jg .login-card input[type] { height: 44px; font-size: 15px; }
         .login-card .input-grupo .btn { height: 44px; }
         .senha-wrap { position: relative; }
@@ -59,12 +62,15 @@
         .sem-operador { text-align: center; color: var(--text-2); padding: 22px; font-size: 14px; }
         .modal-busca { padding: 12px 20px; border-bottom: 1px solid var(--border); }
         @media (max-width: 1000px) {
-            body.jg { grid-template-columns: 1fr; }
+            body.jg { grid-template-columns: minmax(0, 1fr); }
+            .lado-login { padding-left: 16px; padding-right: 16px; }
             .lado-login { order: 1; padding-top: 28px; }
             .vitrine { order: 2; padding: 32px 22px; }
             .vitrine h1 { font-size: 26px; }
             .recursos { grid-template-columns: 1fr; }
-            .suporte { flex-wrap: wrap; }
+            .suporte { flex-wrap: wrap; padding: 16px; gap: 12px 14px; }
+            .suporte .txt { flex: 1 1 200px; }
+            .btn-whatsapp { flex: 1 1 100%; justify-content: center; }
         }
     </style>
 </head>
@@ -93,6 +99,7 @@
 
     <main class="lado-login">
     <div class="login-card">
+        <div class="tagline"><span class="ms">trending_up</span><span>Venda mais e controle tudo <b>em um só lugar</b>.</span></div>
         <h2>Entrar</h2>
         <div class="sub">Acesse com seu operador e senha</div>
 

@@ -244,7 +244,7 @@ body.jg .registradora .ic .ms { font-size: 28px; }
         }
 
         // Dados da empresa usados nos comprovantes de sangria/suprimento
-        let CONFIG = { name: 'JG SISTEMAS', tradeName: 'TESTE LTDA', document: '', logo: null };
+        let CONFIG = { name: 'JG SISTEMAS', tradeName: '', document: '', logo: null };
         async function carregarConfig() {
             try {
                 const r = await fetch(`${API_BASE}/api/configuracoes`, { headers: tokenAuth() });
@@ -313,7 +313,7 @@ body.jg .registradora .ic .ms { font-size: 28px; }
             } catch (e) { alert(e.message); }
         }
 
-        const NOMES_METODO = { MONEY: ['Dinheiro', 'payments'], PIX: ['PIX', 'qr_code_2'], DEBIT_CARD: ['Débito', 'credit_card'], CREDIT_CARD: ['Crédito', 'credit_score'], CREDIARIO: ['Crediário', 'receipt_long'] };
+        const NOMES_METODO = { MONEY: ['Dinheiro', 'payments'], PIX: ['PIX', 'qr_code_2'], DEBIT_CARD: ['Débito', 'credit_card'], CREDIT_CARD: ['Crédito', 'credit_score'], CREDIARIO: ['Crediário', 'receipt_long'], VOUCHER: ['Vale', 'redeem'], TRANSFER: ['Transferência', 'swap_horiz'] };
         function renderizarMetodos(porMetodo) {
             const ordem = ['MONEY', 'PIX', 'DEBIT_CARD', 'CREDIT_CARD', 'CREDIARIO'];
             const chaves = ordem.filter(k => k in porMetodo || k !== 'CREDIARIO').concat(Object.keys(porMetodo).filter(k => !ordem.includes(k)));

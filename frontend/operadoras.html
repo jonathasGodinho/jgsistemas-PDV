@@ -267,7 +267,7 @@
                         <td>${esc(t.bandeira ?? 'Genérica')}</td>
                         <td>${t.metodo === 'CREDIT' ? 'CRÉDITO' : 'DÉBITO'}</td>
                         <td style="text-align:right;">${t.parcelas}</td>
-                        <td style="text-align:right;"><strong>${t.taxa.toFixed(2)}%</strong></td>
+                        <td style="text-align:right;"><strong>${Number(t.taxa).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</strong></td>
                         <td style="text-align:right;">
                             <button class="btn-icone perigo" title="Excluir" onclick="excluirTaxa('${t.id}')"><span class="ms">delete</span></button>
                         </td>

@@ -649,3 +649,44 @@ body.jg.sem-shell .jg-main { margin: 0; padding: 0; }
 body.jg .btn-block { width: 100%; margin-top: 8px; }
 body.jg .painel + .painel, body.jg .card + .painel, body.jg .painel + .card { margin-top: 16px; }
 body.jg .painel h3 { font-size: 15px; font-weight: 600; padding: 14px 16px; margin: 0; border-bottom: 1px solid var(--border); }
+
+/* ---------- Responsividade: proteções gerais ---------- */
+/* Itens de grid/flex não podem crescer além da coluna por causa do conteúdo */
+.card, body.jg .painel, .jg-main > *, .g-2 > *, .g-3 > *, .g-4 > *, .g-main-side > *, .g-side-main > * { min-width: 0; }
+.card-head { flex-wrap: wrap; row-gap: 6px; }
+body.jg img, body.jg canvas, body.jg video { max-width: 100%; }
+body.jg canvas { height: auto; }
+@media (max-width: 900px) {
+    .jg-topbar { padding: 0 12px; gap: 8px; }
+    .jg-breadcrumb { flex: 1 1 auto; overflow: hidden; }
+    .jg-breadcrumb b { min-width: 0; }
+    .jg-topbar-dir { gap: 4px; flex-shrink: 0; }
+    .jg-user { padding: 4px 2px; }
+    .card-foot { flex-wrap: wrap; }
+    .page-head { flex-wrap: wrap; }
+    .page-head .acoes { flex-wrap: wrap; }
+    body.jg .modal-overlay { padding: 12px; }
+    body.jg .modal { max-width: 100%; max-height: calc(100vh - 24px); }
+}
+@media (max-width: 600px) {
+    .jg-breadcrumb > span:not(.sep):first-child, .jg-breadcrumb .sep { display: none; }
+    .estado-vazio { padding: 28px 12px; }
+}
+/* Grids com colunas fixas declaradas inline (ex.: "minmax(0,1fr) 380px") empilham em telas menores */
+@media (max-width: 1000px) {
+    body.jg .grid[style*="grid-template-columns"], body.jg .g-main-side[style*="grid-template-columns"] { grid-template-columns: minmax(0, 1fr) !important; }
+}
+@media (max-width: 600px) {
+    body.jg .filtros > *, body.jg .toolbar > * { max-width: 100%; }
+    body.jg [style*="min-width:2"] { min-width: 0 !important; flex-basis: 100% !important; }
+    body.jg .filtros select[style*="width:"], body.jg .filtros input[style*="width:"] { flex: 1 1 140px; }
+}
+@media (max-width: 600px) {
+    body.jg .modal-overlay.drawer { padding: 0; }
+    body.jg .modal-overlay.drawer .modal { width: 100%; max-width: 100%; max-height: 100vh; }
+    body.jg .modal-foot, body.jg .modal-footer { flex-wrap: wrap; }
+}
+/* Estado vazio dentro de tabela com rolagem lateral: fica visível na área da tela */
+@media (max-width: 900px) {
+    body.jg td .estado-vazio, body.jg td .sem-dados { position: sticky; left: 0; width: calc(100vw - 66px); max-width: calc(100vw - 66px); box-sizing: border-box; white-space: normal; }
+}

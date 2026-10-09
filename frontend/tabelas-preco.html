@@ -71,7 +71,7 @@
             <div class="painel">
                 <div class="painel-titulo"><span id="titulo-detalhe">Detalhe da Tabela</span></div>
                 <div class="painel-corpo">
-                    <div id="sem-selecao" class="sem-dados">Clique em "Itens" em uma tabela ao lado para gerenciar preços.</div>
+                    <div id="sem-selecao" class="sem-dados">Clique em "Itens" em uma das tabelas cadastradas para gerenciar preços.</div>
 
                     <div id="detalhe" style="display:none;">
                         <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:14px;">
@@ -263,7 +263,7 @@
                             <td><strong>${esc(i.produto)}</strong><br><small style="color:#8b95a1;">${esc(i.codigo ?? '')}</small></td>
                             <td style="text-align:right;">${i.minQtd ?? '—'}</td>
                             <td style="text-align:right;">
-                                ${i.preco !== null ? `<strong>R$ ${i.preco.toFixed(2)}</strong>` : ''}
+                                ${i.preco !== null ? `<strong>R$ ${Number(i.preco).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>` : ''}
                                 ${i.preco !== null && i.percentual !== null ? ' / ' : ''}
                                 ${i.percentual !== null ? `<strong>${i.percentual > 0 ? '+' : ''}${i.percentual}%</strong>` : ''}
                             </td>

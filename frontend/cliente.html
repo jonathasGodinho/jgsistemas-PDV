@@ -176,7 +176,7 @@
         const $ = (id) => document.getElementById(id);
         const fmt = (v) => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         const parseMoeda = (v) => parseFloat(String(v ?? '').replace(/\./g, '').replace(',', '.')) || 0;
-        const METODOS = { MONEY: 'Dinheiro', PIX: 'PIX', CREDIT_CARD: 'Crédito', DEBIT_CARD: 'Débito', CREDIARIO: 'Crediário' };
+        const METODOS = { MONEY: 'Dinheiro', PIX: 'PIX', CREDIT_CARD: 'Crédito', DEBIT_CARD: 'Débito', CREDIARIO: 'Crediário', VOUCHER: 'Vale', TRANSFER: 'Transferência' };
         const STATUS_VENDA = { COMPLETED: ['Concluída', 'ativo'], CANCELLED: ['Cancelada', 'vencido'], REFUNDED: ['Devolvida', 'pendente'], PENDING: ['Pendente', 'pendente'], QUOTE: ['Orçamento', 'azul'] };
         const TIPOS_FID = { CASHBACK_CREDITO: ['Crédito por compra', 'ativo'], CASHBACK_RESGATE: ['Resgate', 'vencido'], CASHBACK_AJUSTE_CREDITO: ['Ajuste (crédito)', 'azul'], CASHBACK_AJUSTE_DEBITO: ['Ajuste (débito)', 'pendente'], CASHBACK_EXPIRADO: ['Expirado', 'inativo'] };
         let cliente = null;

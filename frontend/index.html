@@ -15,6 +15,12 @@
         .grafico-horas .bar:hover { background: var(--primary-hover); }
         .grafico-horas .bar[data-v]:hover::after { content: attr(data-v); position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%); background: var(--text); color: #fff; font-size: 11px; padding: 3px 6px; border-radius: 4px; white-space: nowrap; }
         .grafico-horas .h { font-size: 11px; color: var(--text-2); font-variant-numeric: tabular-nums; }
+        .grafico-horas .col { min-width: 0; }
+        @media (max-width: 600px) {
+            .grafico-horas { gap: 2px; padding: 8px 0 0; }
+            .grafico-horas .h { font-size: 9px; writing-mode: vertical-rl; transform: rotate(180deg); }
+            .donut-wrap { flex-wrap: wrap; justify-content: center; }
+        }
         .donut-wrap { display: flex; align-items: center; gap: 20px; }
         .donut { width: 140px; height: 140px; border-radius: 50%; flex-shrink: 0; position: relative; background: #E5EAF2; }
         .donut::after { content: ''; position: absolute; inset: 22px; background: #fff; border-radius: 50%; }
@@ -111,8 +117,8 @@
     <script src="/seguranca.js"></script>
     <script src="/ui/shell.js"></script>
     <script>
-        const METODOS = { MONEY: 'Dinheiro', PIX: 'PIX', CREDIT_CARD: 'Crédito', DEBIT_CARD: 'Débito', CREDIARIO: 'Crediário' };
-        const CORES_METODO = { PIX: '#1D4F91', CREDIT_CARD: '#16A34A', DEBIT_CARD: '#60A5FA', MONEY: '#D97706', CREDIARIO: '#7C3AED' };
+        const METODOS = { MONEY: 'Dinheiro', PIX: 'PIX', CREDIT_CARD: 'Crédito', DEBIT_CARD: 'Débito', CREDIARIO: 'Crediário', VOUCHER: 'Vale', TRANSFER: 'Transferência' };
+        const CORES_METODO = { PIX: '#1D4F91', CREDIT_CARD: '#16A34A', DEBIT_CARD: '#60A5FA', MONEY: '#D97706', CREDIARIO: '#7C3AED', VOUCHER: '#0EA5E9', TRANSFER: '#64748B' };
         const fmt = (v) => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         const op = JG.operador();
 

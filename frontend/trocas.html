@@ -188,13 +188,13 @@
                 document.getElementById('resumo-venda').innerHTML = `
                     <strong>Venda ${esc(venda.numero)}</strong> — ${new Date(venda.data).toLocaleDateString('pt-BR')} ${new Date(venda.data).toLocaleTimeString('pt-BR').slice(0,5)}<br>
                     Cliente: ${esc(venda.cliente ?? 'Consumidor final')} · Operador: ${esc(venda.operador)}<br>
-                    Total: <strong>R$ ${venda.total.toFixed(2)}</strong> (subtotal R$ ${venda.subtotal.toFixed(2)} ${venda.desconto > 0 ? '· desconto R$ ' + venda.desconto.toFixed(2) : ''})
+                    Total: <strong>R$ ${Number(venda.total).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong> (subtotal R$ ${Number(venda.subtotal).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${venda.desconto > 0 ? '· desconto R$ ' + Number(venda.desconto).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : ''})
                 `;
                 document.getElementById('tabela-itens-venda').innerHTML = venda.itensDetalhe.map((i, idx) => `
                     <tr>
                         <td><strong>${esc(i.nome)}</strong><br><small style="color:#8b95a1;">${esc(i.codigo)}</small></td>
                         <td style="text-align:right;">${i.quantidade}</td>
-                        <td style="text-align:right;">${i.unitario.toFixed(2)}</td>
+                        <td style="text-align:right;">${Number(i.unitario).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                         <td style="text-align:center;">
                             <input type="number" class="qtd-input" min="0" max="${i.quantidade}" value="${i.quantidade}" id="qtd-dev-${idx}">
                         </td>
@@ -225,8 +225,8 @@
                 <tr>
                     <td><strong>${esc(i.produto)}</strong><br><small style="color:#8b95a1;">${esc(i.codigo)}</small></td>
                     <td style="text-align:right;">${i.quantidade}</td>
-                    <td style="text-align:right;">${i.preco.toFixed(2)}</td>
-                    <td style="text-align:right;">${(i.preco * i.quantidade).toFixed(2)}</td>
+                    <td style="text-align:right;">${Number(i.preco).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td style="text-align:right;">${Number((i.preco * i.quantidade)).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                     <td style="text-align:center;">
                         <button class="btn-icone perigo" title="Remover" onclick="removerItemNovo(${idx})"><span class="ms">delete</span></button>
                     </td>
@@ -266,10 +266,10 @@
             try {
                 const r = await api('/api/trocas', 'POST', corpo);
                 const msg = `Troca registrada!\n\n` +
-                    `Valor devolvido: R$ ${r.valorDevolvido.toFixed(2)}\n` +
-                    `Valor dos novos: R$ ${r.valorNovos.toFixed(2)}\n` +
-                    `Diferença: R$ ${r.diferenca.toFixed(2)}\n` +
-                    (r.diferenca < 0 ? `Troco a devolver ao cliente: R$ ${r.troco.toFixed(2)}` : `Pagamento: R$ ${r.diferenca.toFixed(2)}`) +
+                    `Valor devolvido: R$ ${Number(r.valorDevolvido).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}\n` +
+                    `Valor dos novos: R$ ${Number(r.valorNovos).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}\n` +
+                    `Diferença: R$ ${Number(r.diferenca).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}\n` +
+                    (r.diferenca < 0 ? `Troco a devolver ao cliente: R$ ${Number(r.troco).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : `Pagamento: R$ ${Number(r.diferenca).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`) +
                     `\nNova venda: ${r.novaVenda}`;
                 alert(msg);
                 vendaSelecionada = null;
@@ -297,7 +297,7 @@
                         <td><strong>${t.numero}</strong></td>
                         <td>${new Date(t.data).toLocaleDateString('pt-BR')} ${new Date(t.data).toLocaleTimeString('pt-BR').slice(0,5)}</td>
                         <td>${esc(t.cliente ?? '—')}</td>
-                        <td style="text-align:right;">R$ ${t.total.toFixed(2)}</td>
+                        <td style="text-align:right;">R$ ${Number(t.total).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                     </tr>`).join('');
             } catch (e) { alert(e.message); }
         }

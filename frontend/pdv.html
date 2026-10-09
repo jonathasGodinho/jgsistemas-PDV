@@ -133,10 +133,22 @@
         @media (max-width: 1100px) { .pdv-topo .info .esconde { display: none; } .pdv-container { grid-template-columns: minmax(0, 1fr) 300px; } .total-box .value { font-size: 36px; } }
         @media (max-width: 800px) {
             body.jg.pdv { overflow: auto; height: auto; }
-            .pdv-container { grid-template-columns: 1fr; overflow: visible; }
+            .pdv-container { grid-template-columns: minmax(0, 1fr); overflow: visible; }
             .left-panel { min-height: 420px; }
             .pg-grid { grid-template-columns: 1fr; }
             .pdv-topo .links span { display: none; }
+            .pdv-topo { height: auto; flex-wrap: wrap; gap: 6px 12px; padding: 8px 12px; }
+            .pdv-topo .header-nome { max-width: 180px; font-size: 14px; }
+            .pdv-topo .info { margin-left: 0; width: 100%; flex-wrap: wrap; gap: 6px 12px; white-space: normal; justify-content: space-between; }
+            .pdv-topo .relogio { font-size: 16px; }
+            .pdv-topo .relogio-data { display: none; }
+            .pdv-container { padding: 10px; }
+            .table-container { overflow-x: auto; }
+            .input-bar { grid-template-columns: minmax(0, 1fr) 90px; padding: 12px; }
+            body.jg .input-bar input { height: 50px; font-size: 17px; }
+            .pdv-rodape { padding: 8px 12px; gap: 4px 12px; }
+            .pdv-rodape .status { margin-left: 0; }
+            .parcelas-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
@@ -440,7 +452,7 @@
         let promocaoPdv = { descontos: [], totalDesconto: 0 };
 
         // Dados da empresa (logo + identificação) usados no comprovante fiscal
-        let CONFIG = { name: 'JG SISTEMAS', tradeName: 'TESTE LTDA', document: '', address: '', number: '', city: '', state: '', phone: '', logo: null };
+        let CONFIG = { name: 'JG SISTEMAS', tradeName: '', document: '', address: '', number: '', city: '', state: '', phone: '', logo: null };
         async function carregarConfig() {
             try {
                 const r = await fetch(`${API_BASE}/api/configuracoes`, { headers: tokenAuth() });
