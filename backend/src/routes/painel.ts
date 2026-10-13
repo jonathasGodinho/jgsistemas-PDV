@@ -550,6 +550,27 @@ router.post('/clientes/:id/notas', h(async (req, res) => {
     return res.json({ ok: true });
 }));
 
+async function notaOu404(companyId: string, id: string) {
+    const n = await sistema(() => prisma.saasNota.findFirst({ where: { id, companyId } }));
+    if (!n) throw falha(404, 'Registro do histórico não encontrado!');
+    return n;
+}
+
+router.put('/clientes/:id/notas/:notaId', h(async (req, res) => {
+    const n = await notaOu404(req.params.id, req.params.notaId);
+    const texto = String(req.body?.texto || '').trim();
+    if (!texto) throw falha(400, 'Escreva a anotação.');
+    const tipo = ['NOTA', 'CONTATO', 'COBRANCA', 'SISTEMA'].includes(req.body?.tipo) ? req.body.tipo : n.tipo;
+    await sistema(() => prisma.saasNota.update({ where: { id: n.id }, data: { texto: texto.slice(0, 2000), tipo } }));
+    return res.json({ ok: true });
+}));
+
+router.delete('/clientes/:id/notas/:notaId', h(async (req, res) => {
+    const n = await notaOu404(req.params.id, req.params.notaId);
+    await sistema(() => prisma.saasNota.delete({ where: { id: n.id } }));
+    return res.json({ ok: true });
+}));
+
 // ---------------------------------------------------------------- financeiro
 router.get('/financeiro', h(async (req, res) => {
     const competencia = /^\d{4}-\d{2}$/.test(String(req.query.competencia || '')) ? String(req.query.competencia) : competenciaAtual();
@@ -680,6 +701,16 @@ router.post('/cobrancas/:id/cancelar', h(async (req, res) => {
     await sincronizarVencimento(c.companyId);
     await nota(c.companyId, 'COBRANCA', `Cobrança cancelada: ${c.descricao || c.competencia}.${req.body?.motivo ? ' Motivo: ' + String(req.body.motivo) : ''}`);
     return res.json(serializarCobranca(novo));
+}));
+
+// Exclusão definitiva (o histórico do cliente guarda o registro do que foi apagado).
+router.delete('/cobrancas/:id', h(async (req, res) => {
+    const c = await cobrancaOu404(req.params.id);
+    await sistema(() => prisma.saasCobranca.delete({ where: { id: c.id } }));
+    await sincronizarVencimento(c.companyId);
+    const situacao = c.status === 'PAGO' ? 'paga' : c.status === 'CANCELADO' ? 'cancelada' : 'em aberto';
+    await nota(c.companyId, 'COBRANCA', `Cobrança excluída (${situacao}): ${c.descricao || c.competencia} — ${num(c.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}, vencimento ${dia(c.vencimento)}.`);
+    return res.json({ ok: true });
 }));
 
 export default router;

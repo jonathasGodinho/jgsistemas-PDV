@@ -492,12 +492,12 @@
             m.addEventListener('click', (e) => { if (e.target === m || e.target.closest('[data-fechar]')) m.classList.remove('active'); });
         });
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.active').forEach((m) => m.classList.remove('active')); });
-        function confirmar(titulo, texto, rotulo = 'Confirmar', perigo = true, pedir = null) {
+        function confirmar(titulo, texto, rotulo = 'Confirmar', perigo = true, pedir = null, inicial = '') {
             return new Promise((resolve) => {
                 $('conf-titulo').textContent = titulo;
                 $('conf-texto').textContent = texto;
                 $('conf-campo').classList.toggle('hidden', !pedir);
-                $('conf-input').value = '';
+                $('conf-input').value = inicial;
                 if (pedir) $('conf-label').textContent = pedir;
                 const ok = $('conf-ok');
                 ok.textContent = rotulo;
@@ -539,6 +539,7 @@
             } else {
                 b.push(`<button class="btn-icone" title="Reabrir" onclick="reabrirCobranca('${c.id}')"><span class="ms">undo</span></button>`);
             }
+            b.push(`<button class="btn-icone perigo" title="Excluir definitivamente" onclick="excluirCobranca('${c.id}')"><span class="ms">delete</span></button>`);
             return b.join('');
         }
 
@@ -840,7 +841,7 @@
 
             // Histórico
             const ICONES = { COBRANCA: 'paid', CONTATO: 'call', NOTA: 'sticky_note_2', SISTEMA: 'settings' };
-            $('c-historico').innerHTML = c.notas.length ? c.notas.map((n) => `<div class="linha-hist ${n.tipo}"><div class="ic"><span class="ms">${ICONES[n.tipo] || 'info'}</span></div><div>${esc(n.texto)}<small>${fmtDataHora(n.createdAt)}</small></div></div>`).join('')
+            $('c-historico').innerHTML = c.notas.length ? c.notas.map((n) => `<div class="linha-hist ${n.tipo}"><div class="ic"><span class="ms">${ICONES[n.tipo] || 'info'}</span></div><div style="flex:1">${esc(n.texto)}<small>${fmtDataHora(n.createdAt)}</small></div><div style="display:flex;gap:4px;align-self:flex-start"><button class="btn-icone" title="Editar" onclick="editarNota('${n.id}')"><span class="ms">edit</span></button><button class="btn-icone perigo" title="Excluir" onclick="excluirNota('${n.id}')"><span class="ms">delete</span></button></div></div>`).join('')
                 : '<div class="estado-vazio"><span class="ms">history</span><p>Sem registros ainda.</p></div>';
 
             // Dados
@@ -874,6 +875,19 @@
             try { await api(`/clientes/${atual.id}/notas`, 'POST', { tipo: $('h-tipo').value, texto }); $('h-texto').value = ''; toast('Registrado no histórico.'); abrirCliente(atual.id, true); }
             catch (e) { toast(e.message, 'erro'); }
         };
+        async function editarNota(id) {
+            const n = atual && atual.notas.find((x) => x.id === id);
+            if (!n) return;
+            const texto = await confirmar('Editar registro', 'Altere o texto do registro do histórico.', 'Salvar', false, 'Descrição', n.texto);
+            if (!texto || texto === n.texto) return;
+            try { await api(`/clientes/${atual.id}/notas/${id}`, 'PUT', { texto }); toast('Registro atualizado.'); abrirCliente(atual.id, true); }
+            catch (e) { toast(e.message, 'erro'); }
+        }
+        async function excluirNota(id) {
+            if (!await confirmar('Excluir registro', 'O registro sai do histórico do cliente. Não pode ser desfeito.', 'Excluir')) return;
+            try { await api(`/clientes/${atual.id}/notas/${id}`, 'DELETE'); toast('Registro excluído.'); abrirCliente(atual.id, true); }
+            catch (e) { toast(e.message, 'erro'); }
+        }
         $('btn-salvar-dados').onclick = async () => {
             if (!atual) return;
             try {
@@ -1069,6 +1083,10 @@
             const motivo = await confirmar('Cancelar cobrança', 'A cobrança deixa de ser cobrada e não conta como atraso.', 'Cancelar cobrança', true, 'Motivo (opcional)');
             if (motivo === false) return;
             try { await api(`/cobrancas/${id}/cancelar`, 'POST', { motivo }); toast('Cobrança cancelada.'); await depoisDeCobranca(); } catch (e) { toast(e.message, 'erro'); }
+        }
+        async function excluirCobranca(id) {
+            if (!await confirmar('Excluir cobrança', 'A cobrança é apagada definitivamente (inclusive o pagamento, se houver). Fica só um registro no histórico do cliente. Para apenas deixar de cobrar, use Cancelar.', 'Excluir definitivamente')) return;
+            try { await api(`/cobrancas/${id}`, 'DELETE'); toast('Cobrança excluída.'); await depoisDeCobranca(); } catch (e) { toast(e.message, 'erro'); }
         }
         async function depoisDeCobranca() {
             await carregarTudo();
