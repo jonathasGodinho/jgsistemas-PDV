@@ -703,6 +703,124 @@ router.post('/cobrancas/:id/cancelar', h(async (req, res) => {
     return res.json(serializarCobranca(novo));
 }));
 
+// ---------------------------------------------------------------- tarefas (kanban)
+// O quadro inteiro fica num registro da plataforma. Toda alteração roda numa
+// transação com trava, para duas pessoas mexendo ao mesmo tempo não se sobrescreverem.
+type Etapa = { id: string; nome: string; cor: string };
+type Tarefa = { id: string; etapaId: string; titulo: string; descricao: string; clienteId: string | null; prioridade: string; prazo: string | null; criadaEm: string; atualizadaEm: string };
+type Quadro = { etapas: Etapa[]; tarefas: Tarefa[] };
+const CHAVE_QUADRO = 'tarefas_quadro';
+const CORES_ETAPA = ['azul', 'ambar', 'roxo', 'verde', 'cinza', 'vermelho'];
+const PRIORIDADES = ['BAIXA', 'MEDIA', 'ALTA'];
+const QUADRO_PADRAO: Quadro = {
+    etapas: [
+        { id: 'prospeccao', nome: 'Prospecção', cor: 'cinza' },
+        { id: 'contato', nome: 'Contato feito', cor: 'azul' },
+        { id: 'proposta', nome: 'Proposta enviada', cor: 'ambar' },
+        { id: 'implantacao', nome: 'Implantação', cor: 'roxo' },
+        { id: 'concluido', nome: 'Concluído', cor: 'verde' }
+    ],
+    tarefas: []
+};
+
+async function alterarQuadro<T>(fn: (q: Quadro) => T): Promise<{ quadro: Quadro; resultado: T }> {
+    return sistema(() => prisma.$transaction(async (tx) => {
+        await tx.$queryRaw`SELECT 1 AS ok FROM pg_advisory_xact_lock(7461001)`;
+        const l = await tx.platformSetting.findUnique({ where: { key: CHAVE_QUADRO } });
+        const quadro: Quadro = l ? (l.value as any) : JSON.parse(JSON.stringify(QUADRO_PADRAO));
+        const resultado = fn(quadro);
+        await tx.platformSetting.upsert({ where: { key: CHAVE_QUADRO }, create: { key: CHAVE_QUADRO, value: quadro as any }, update: { value: quadro as any } });
+        return { quadro, resultado };
+    }));
+}
+
+function camposTarefa(b: any, q: Quadro, t: Partial<Tarefa>) {
+    if (b.titulo !== undefined) {
+        const titulo = String(b.titulo || '').trim().slice(0, 200);
+        if (!titulo) throw falha(400, 'Informe o título da tarefa.');
+        t.titulo = titulo;
+    }
+    if (b.descricao !== undefined) t.descricao = String(b.descricao || '').slice(0, 5000);
+    if (b.etapaId !== undefined) {
+        if (!q.etapas.some(e => e.id === b.etapaId)) throw falha(400, 'Etapa não encontrada.');
+        t.etapaId = b.etapaId;
+    }
+    if (b.clienteId !== undefined) t.clienteId = b.clienteId ? String(b.clienteId) : null;
+    if (b.prioridade !== undefined) t.prioridade = PRIORIDADES.includes(b.prioridade) ? b.prioridade : 'MEDIA';
+    if (b.prazo !== undefined) t.prazo = /^\d{4}-\d{2}-\d{2}$/.test(String(b.prazo || '')) ? String(b.prazo) : null;
+}
+
+router.get('/tarefas', h(async (_req, res) => res.json(await lerPlataforma<Quadro>(CHAVE_QUADRO, QUADRO_PADRAO))));
+
+router.post('/tarefas', h(async (req, res) => {
+    const b = req.body || {};
+    const { quadro, resultado } = await alterarQuadro(q => {
+        const agora = new Date().toISOString();
+        const t: Tarefa = { id: randomUUID(), etapaId: q.etapas[0]?.id, titulo: '', descricao: '', clienteId: null, prioridade: 'MEDIA', prazo: null, criadaEm: agora, atualizadaEm: agora };
+        if (!t.etapaId) throw falha(400, 'Crie uma etapa antes de lançar tarefas.');
+        camposTarefa({ titulo: '', ...b }, q, t);
+        q.tarefas.push(t);
+        return t;
+    });
+    return res.status(201).json({ tarefa: resultado, quadro });
+}));
+
+router.put('/tarefas/:id', h(async (req, res) => {
+    const { quadro } = await alterarQuadro(q => {
+        const t = q.tarefas.find(x => x.id === req.params.id);
+        if (!t) throw falha(404, 'Tarefa não encontrada!');
+        camposTarefa(req.body || {}, q, t);
+        t.atualizadaEm = new Date().toISOString();
+    });
+    return res.json(quadro);
+}));
+
+// Arrastar: tira a tarefa de onde está e põe na etapa indicada, na posição indicada.
+router.post('/tarefas/:id/mover', h(async (req, res) => {
+    const { etapaId, posicao } = req.body || {};
+    const { quadro } = await alterarQuadro(q => {
+        const i = q.tarefas.findIndex(x => x.id === req.params.id);
+        if (i < 0) throw falha(404, 'Tarefa não encontrada!');
+        if (!q.etapas.some(e => e.id === etapaId)) throw falha(400, 'Etapa não encontrada.');
+        const [t] = q.tarefas.splice(i, 1);
+        t.etapaId = etapaId;
+        t.atualizadaEm = new Date().toISOString();
+        const daEtapa = q.tarefas.filter(x => x.etapaId === etapaId);
+        const p = Math.max(0, Math.min(daEtapa.length, Math.round(num(posicao))));
+        const antes = daEtapa[p];
+        q.tarefas.splice(antes ? q.tarefas.indexOf(antes) : q.tarefas.length, 0, t);
+    });
+    return res.json(quadro);
+}));
+
+router.delete('/tarefas/:id', h(async (req, res) => {
+    const { quadro } = await alterarQuadro(q => {
+        const i = q.tarefas.findIndex(x => x.id === req.params.id);
+        if (i < 0) throw falha(404, 'Tarefa não encontrada!');
+        q.tarefas.splice(i, 1);
+    });
+    return res.json(quadro);
+}));
+
+// Etapas do funil: a lista enviada substitui a atual (nomes, cores e ordem).
+router.put('/tarefas-etapas', h(async (req, res) => {
+    const lista = req.body?.etapas;
+    if (!Array.isArray(lista) || !lista.length) throw falha(400, 'O quadro precisa de ao menos uma etapa.');
+    const etapas: Etapa[] = lista.map((e: any) => ({
+        id: /^[a-z0-9-]{1,40}$/.test(String(e.id || '')) ? String(e.id) : 'etapa-' + randomBytes(4).toString('hex'),
+        nome: String(e.nome || '').trim().slice(0, 60) || 'Etapa',
+        cor: CORES_ETAPA.includes(e.cor) ? e.cor : 'cinza'
+    }));
+    if (new Set(etapas.map(e => e.id)).size !== etapas.length) throw falha(400, 'Há etapas repetidas.');
+    const { quadro } = await alterarQuadro(q => {
+        const ids = new Set(etapas.map(e => e.id));
+        const removidas = q.etapas.filter(e => !ids.has(e.id) && q.tarefas.some(t => t.etapaId === e.id));
+        if (removidas.length) throw falha(400, `Mova ou exclua as tarefas de "${removidas.map(e => e.nome).join('", "')}" antes de remover a etapa.`);
+        q.etapas = etapas;
+    });
+    return res.json(quadro);
+}));
+
 // Exclusão definitiva (o histórico do cliente guarda o registro do que foi apagado).
 router.delete('/cobrancas/:id', h(async (req, res) => {
     const c = await cobrancaOu404(req.params.id);

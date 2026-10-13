@@ -67,6 +67,27 @@
         .info-l:last-child { border-bottom: 0; }
         .info-l span { color: var(--text-2); }
         .info-l b { text-align: right; }
+        .kb-quadro { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 12px; align-items: flex-start; min-height: calc(100vh - 230px); }
+        .kb-coluna { flex: 0 0 290px; background: var(--surface-2); border: 1px solid var(--border); border-top: 3px solid var(--kb-cor, #94A3B8); border-radius: var(--radius); display: flex; flex-direction: column; max-height: calc(100vh - 230px); }
+        .kb-col-head { display: flex; align-items: center; gap: 8px; padding: 10px 12px; font-weight: 600; font-size: 14px; }
+        .kb-col-head .qtd { background: #fff; border: 1px solid var(--border); border-radius: 999px; font-size: 12px; padding: 0 8px; color: var(--text-2); font-weight: 600; }
+        .kb-col-head .btn-icone { margin-left: auto; }
+        .kb-lista { flex: 1; overflow-y: auto; padding: 4px 10px 10px; display: flex; flex-direction: column; gap: 8px; min-height: 60px; }
+        .kb-cartao { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; box-shadow: var(--shadow); cursor: grab; user-select: none; display: flex; gap: 6px; }
+        .kb-cartao:hover { border-color: var(--border-strong); }
+        .kb-cartao .corpo { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+        .kb-cartao .titulo { font-weight: 600; font-size: 13.5px; line-height: 1.35; word-break: break-word; }
+        .kb-cartao .meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12px; color: var(--text-2); }
+        .kb-cartao .meta .ms { font-size: 15px; vertical-align: -3px; }
+        .kb-cartao .meta .atrasada { color: var(--red); font-weight: 600; }
+        .kb-alca { color: var(--text-3); touch-action: none; cursor: grab; align-self: flex-start; margin: -2px -4px 0 0; }
+        .kb-marcador { border: 2px dashed var(--border-strong); border-radius: var(--radius); background: var(--primary-soft); flex-shrink: 0; }
+        .kb-fantasma { position: fixed; left: 0; top: 0; z-index: 200; pointer-events: none; box-shadow: var(--shadow-lg); opacity: .95; }
+        .kb-vazia { text-align: center; color: var(--text-3); font-size: 12.5px; padding: 14px 0; }
+        body.kb-arrastando-on, body.kb-arrastando-on * { cursor: grabbing !important; user-select: none; }
+        .et-linha { display: grid; grid-template-columns: minmax(0, 1fr) 130px auto; gap: 8px; align-items: center; margin-bottom: 8px; }
+        .et-linha .botoes { display: flex; gap: 2px; }
+        @media (max-width: 600px) { .kb-coluna { flex-basis: 82vw; } .et-linha { grid-template-columns: minmax(0, 1fr) 100px; } .et-linha .botoes { grid-column: 1 / -1; justify-content: flex-end; } }
         @media (max-width: 1100px) { .ficha-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
         @media (max-width: 600px) { .ficha-grid { grid-template-columns: minmax(0, 1fr); } .barras { gap: 6px; } }
     </style>
@@ -102,6 +123,7 @@
                     <a href="#inicio" data-view="inicio"><span class="ms">dashboard</span><span>Visão geral</span></a>
                     <a href="#clientes" data-view="clientes"><span class="ms">storefront</span><span>Clientes</span></a>
                     <a href="#financeiro" data-view="financeiro"><span class="ms">payments</span><span>Financeiro</span></a>
+                    <a href="#tarefas" data-view="tarefas"><span class="ms">view_kanban</span><span>Tarefas</span></a>
                     <a href="#planos" data-view="planos"><span class="ms">view_module</span><span>Planos e módulos</span></a>
                     <a href="#conta" data-view="conta"><span class="ms">admin_panel_settings</span><span>Acesso ao painel</span></a>
                 </div></div>
@@ -330,6 +352,19 @@
                 </div>
             </section>
 
+            <!-- ---------- Tarefas ---------- -->
+            <section id="view-tarefas" class="hidden">
+                <div class="page-head">
+                    <div><h1>Tarefas</h1><div class="sub">Arraste os cartões entre as etapas do funil.</div></div>
+                    <div class="acoes">
+                        <input type="search" id="kb-busca" placeholder="Buscar tarefa ou cliente" style="width:220px">
+                        <button class="btn" id="btn-etapas"><span class="ms">tune</span>Etapas</button>
+                        <button class="btn btn-sucesso" id="btn-nova-tarefa"><span class="ms">add</span>Nova tarefa</button>
+                    </div>
+                </div>
+                <div class="kb-quadro" id="kb-quadro"></div>
+            </section>
+
             <!-- ---------- Planos ---------- -->
             <section id="view-planos" class="hidden">
                 <div class="page-head">
@@ -435,6 +470,41 @@
                 </div>
             </div>
             <div class="modal-foot"><button class="btn" data-fechar>Cancelar</button><button class="btn btn-sucesso" id="btn-confirmar-pag"><span class="ms">check</span>Confirmar pagamento</button></div>
+        </div>
+    </div>
+
+    <!-- Modal: tarefa (nova / editar) -->
+    <div class="modal-overlay" id="modal-tarefa">
+        <div class="modal">
+            <div class="modal-head"><span id="tar-titulo-modal">Nova tarefa</span><button class="close" data-fechar>&times;</button></div>
+            <div class="modal-body">
+                <div class="campo"><label for="tar-titulo">Título *</label><input type="text" id="tar-titulo" maxlength="200" placeholder="Ex.: Ligar para apresentar o plano Profissional"></div>
+                <div class="campo"><label for="tar-descricao">Descrição</label><textarea id="tar-descricao" rows="5" placeholder="Detalhes, combinados, próximos passos..."></textarea></div>
+                <div class="form-grid">
+                    <div class="campo"><label for="tar-etapa">Etapa</label><select id="tar-etapa"></select></div>
+                    <div class="campo"><label for="tar-cliente">Cliente</label><select id="tar-cliente"></select></div>
+                    <div class="campo"><label for="tar-prioridade">Prioridade</label><select id="tar-prioridade"><option value="BAIXA">Baixa</option><option value="MEDIA">Média</option><option value="ALTA">Alta</option></select></div>
+                    <div class="campo"><label for="tar-prazo">Prazo</label><input type="date" id="tar-prazo"></div>
+                </div>
+                <div class="muted" id="tar-datas" style="font-size:12px"></div>
+            </div>
+            <div class="modal-foot">
+                <button class="btn btn-perigo hidden" id="btn-excluir-tarefa" style="margin-right:auto"><span class="ms">delete</span>Excluir</button>
+                <button class="btn" data-fechar>Cancelar</button><button class="btn btn-primario" id="btn-salvar-tarefa"><span class="ms">check</span>Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: etapas do funil -->
+    <div class="modal-overlay" id="modal-etapas">
+        <div class="modal">
+            <div class="modal-head"><span>Etapas do funil</span><button class="close" data-fechar>&times;</button></div>
+            <div class="modal-body">
+                <div id="et-lista"></div>
+                <button class="btn btn-sm" id="btn-add-etapa"><span class="ms">add</span>Adicionar etapa</button>
+                <div class="alerta mt-16"><span class="ms">info</span><div>Uma etapa só pode ser removida quando não tiver tarefas. A última etapa é tratada como concluída: prazos vencidos nela não ficam em vermelho.</div></div>
+            </div>
+            <div class="modal-foot"><button class="btn" data-fechar>Cancelar</button><button class="btn btn-primario" id="btn-salvar-etapas"><span class="ms">check</span>Salvar etapas</button></div>
         </div>
     </div>
 
@@ -609,8 +679,8 @@
         const nomePlano = (id) => { const p = catalogo.planos.find((x) => x.id === id); return p ? p.nome : null; };
 
         // ------------------------------------------------------------ rotas
-        const VIEWS = ['inicio', 'clientes', 'cliente', 'financeiro', 'planos', 'conta'];
-        const TITULOS = { inicio: 'Visão geral', clientes: 'Clientes', financeiro: 'Financeiro', planos: 'Planos e módulos', conta: 'Acesso ao painel' };
+        const VIEWS = ['inicio', 'clientes', 'cliente', 'financeiro', 'tarefas', 'planos', 'conta'];
+        const TITULOS = { inicio: 'Visão geral', clientes: 'Clientes', financeiro: 'Financeiro', tarefas: 'Tarefas', planos: 'Planos e módulos', conta: 'Acesso ao painel' };
         window.addEventListener('hashchange', rotear);
         function rotear() {
             if ($('view-app').classList.contains('hidden')) return;
@@ -626,6 +696,7 @@
             if (v === 'clientes') renderClientes();
             if (v === 'financeiro') carregarFinanceiro();
             if (v === 'planos') renderPlanos();
+            if (v === 'tarefas') carregarTarefas();
         }
         $('btn-atualizar').onclick = async () => { await carregarTudo(); rotear(); toast('Dados atualizados.'); };
 
@@ -1093,6 +1164,206 @@
             if (location.hash.startsWith('#cliente/') && atual) abrirCliente(atual.id, true);
             else carregarFinanceiro();
         }
+
+        // ------------------------------------------------------------ tarefas (kanban)
+        let quadro = { etapas: [], tarefas: [] };
+        let tarefaEditando = null;
+        let fimArrasto = 0;
+        const COR_ETAPA = { azul: 'var(--primary)', ambar: 'var(--amber)', roxo: '#7E22CE', verde: 'var(--green)', cinza: '#94A3B8', vermelho: 'var(--red)' };
+        const NOME_COR = { azul: 'Azul', ambar: 'Laranja', roxo: 'Roxo', verde: 'Verde', cinza: 'Cinza', vermelho: 'Vermelho' };
+        const PRIORIDADE = { ALTA: ['Alta', 'b-vermelho'], MEDIA: ['Média', 'b-amarelo'], BAIXA: ['Baixa', 'b-cinza'] };
+        const nomeCliente = (id) => { const c = id && clientes.find((x) => x.id === id); return c ? (c.fantasia || c.nome) : null; };
+
+        async function carregarTarefas() {
+            try { quadro = await api('/tarefas'); renderQuadro(); } catch (e) { toast(e.message, 'erro'); }
+        }
+        function cartaoHtml(t, ultima) {
+            const cli = nomeCliente(t.clienteId);
+            const atrasada = t.prazo && !ultima && t.prazo < hoje();
+            const [rotP, corP] = PRIORIDADE[t.prioridade] || PRIORIDADE.MEDIA;
+            return `<div class="kb-cartao" data-id="${esc(t.id)}" tabindex="0">
+                <div class="corpo"><div class="titulo">${esc(t.titulo)}</div>
+                <div class="meta"><span class="badge sem-ponto ${corP}">${rotP}</span>
+                ${t.prazo ? `<span class="${atrasada ? 'atrasada' : ''}"><span class="ms">event</span> ${fmtData(t.prazo)}</span>` : ''}
+                ${cli ? `<span><span class="ms">storefront</span> ${esc(cli)}</span>` : ''}
+                ${t.descricao ? '<span class="ms" title="Tem descrição">notes</span>' : ''}</div></div>
+                <span class="ms kb-alca" title="Arrastar">drag_indicator</span></div>`;
+        }
+        function renderQuadro() {
+            const q = $('kb-busca').value.trim().toLowerCase();
+            const passa = (t) => !q || [t.titulo, t.descricao, nomeCliente(t.clienteId)].join(' ').toLowerCase().includes(q);
+            const ultimaId = quadro.etapas.length ? quadro.etapas[quadro.etapas.length - 1].id : null;
+            $('kb-quadro').innerHTML = quadro.etapas.map((e) => {
+                const ts = quadro.tarefas.filter((t) => t.etapaId === e.id && passa(t));
+                return `<div class="kb-coluna" style="--kb-cor:${COR_ETAPA[e.cor] || COR_ETAPA.cinza}">
+                    <div class="kb-col-head"><span>${esc(e.nome)}</span><span class="qtd">${ts.length}</span>
+                    <button class="btn-icone" title="Nova tarefa nesta etapa" data-nova="${esc(e.id)}"><span class="ms">add</span></button></div>
+                    <div class="kb-lista" data-etapa="${esc(e.id)}">${ts.map((t) => cartaoHtml(t, e.id === ultimaId)).join('') || '<div class="kb-vazia">Arraste tarefas para cá</div>'}</div></div>`;
+            }).join('');
+        }
+        $('kb-busca').addEventListener('input', renderQuadro);
+        $('btn-nova-tarefa').onclick = () => abrirTarefa(null);
+        $('kb-quadro').addEventListener('click', (e) => {
+            const nova = e.target.closest('[data-nova]');
+            if (nova) { abrirTarefa(null, nova.dataset.nova); return; }
+            const c = e.target.closest('.kb-cartao');
+            if (c && Date.now() - fimArrasto > 300) abrirTarefa(c.dataset.id);
+        });
+        $('kb-quadro').addEventListener('keydown', (e) => {
+            const c = e.target.closest('.kb-cartao');
+            if (c && e.key === 'Enter') abrirTarefa(c.dataset.id);
+        });
+
+        // Arrastar com o mouse (cartão inteiro) ou com o dedo (pela alça), via pointer events.
+        $('kb-quadro').addEventListener('pointerdown', (e) => {
+            const el = e.target.closest('.kb-cartao');
+            if (!el || (e.pointerType === 'mouse' && e.button !== 0)) return;
+            if (e.pointerType !== 'mouse' && !e.target.closest('.kb-alca')) return;
+            const ini = { x: e.clientX, y: e.clientY };
+            const caixa = $('kb-quadro');
+            let arr = null;
+            const mover = (ev) => {
+                if (!arr) {
+                    if (Math.hypot(ev.clientX - ini.x, ev.clientY - ini.y) < 6) return;
+                    const r = el.getBoundingClientRect();
+                    const fantasma = el.cloneNode(true);
+                    fantasma.classList.add('kb-fantasma');
+                    fantasma.style.width = r.width + 'px';
+                    document.body.appendChild(fantasma);
+                    const marcador = document.createElement('div');
+                    marcador.className = 'kb-marcador';
+                    marcador.style.height = r.height + 'px';
+                    el.after(marcador);
+                    el.style.display = 'none';
+                    document.body.classList.add('kb-arrastando-on');
+                    arr = { fantasma, marcador, dx: ini.x - r.left, dy: ini.y - r.top };
+                }
+                ev.preventDefault();
+                arr.fantasma.style.transform = `translate(${ev.clientX - arr.dx}px, ${ev.clientY - arr.dy}px) rotate(2deg)`;
+                const coluna = document.elementFromPoint(ev.clientX, ev.clientY)?.closest('.kb-coluna');
+                const lista = coluna && coluna.querySelector('.kb-lista');
+                if (lista) {
+                    const vazia = lista.querySelector('.kb-vazia');
+                    if (vazia) vazia.remove();
+                    const depois = [...lista.querySelectorAll('.kb-cartao')].filter((c) => c !== el)
+                        .find((c) => { const b = c.getBoundingClientRect(); return ev.clientY < b.top + b.height / 2; });
+                    if (depois) lista.insertBefore(arr.marcador, depois); else lista.appendChild(arr.marcador);
+                    const b = lista.getBoundingClientRect();
+                    if (ev.clientY > b.bottom - 30) lista.scrollTop += 10; else if (ev.clientY < b.top + 30) lista.scrollTop -= 10;
+                }
+                const bq = caixa.getBoundingClientRect();
+                if (ev.clientX > bq.right - 50) caixa.scrollLeft += 14; else if (ev.clientX < bq.left + 50) caixa.scrollLeft -= 14;
+            };
+            const soltar = async (ev) => {
+                window.removeEventListener('pointermove', mover);
+                window.removeEventListener('pointerup', soltar);
+                window.removeEventListener('pointercancel', soltar);
+                if (!arr) return;
+                fimArrasto = Date.now();
+                document.body.classList.remove('kb-arrastando-on');
+                arr.fantasma.remove();
+                const lista = arr.marcador.parentElement;
+                if (ev.type === 'pointercancel' || !lista || !lista.dataset.etapa) { renderQuadro(); return; }
+                const etapaId = lista.dataset.etapa;
+                // posição = quantos cartões (fora o arrastado) ficaram antes do marcador
+                let pos = 0;
+                for (const c of lista.children) { if (c === arr.marcador) break; if (c.classList.contains('kb-cartao') && c !== el) pos++; }
+                // Atualiza a tela na hora; o servidor confirma em seguida.
+                const id = el.dataset.id;
+                const i = quadro.tarefas.findIndex((t) => t.id === id);
+                if (i < 0) { renderQuadro(); return; }
+                const [t] = quadro.tarefas.splice(i, 1);
+                t.etapaId = etapaId;
+                const antes = quadro.tarefas.filter((x) => x.etapaId === etapaId)[pos];
+                quadro.tarefas.splice(antes ? quadro.tarefas.indexOf(antes) : quadro.tarefas.length, 0, t);
+                renderQuadro();
+                try { quadro = await api(`/tarefas/${id}/mover`, 'POST', { etapaId, posicao: pos }); renderQuadro(); }
+                catch (err) { toast(err.message, 'erro'); carregarTarefas(); }
+            };
+            window.addEventListener('pointermove', mover, { passive: false });
+            window.addEventListener('pointerup', soltar);
+            window.addEventListener('pointercancel', soltar);
+        });
+
+        function abrirTarefa(id, etapaId) {
+            tarefaEditando = id ? quadro.tarefas.find((t) => t.id === id) : null;
+            if (id && !tarefaEditando) return;
+            if (!quadro.etapas.length) { toast('Crie uma etapa antes de lançar tarefas.', 'erro'); return; }
+            const t = tarefaEditando || { titulo: '', descricao: '', etapaId: etapaId || quadro.etapas[0].id, clienteId: null, prioridade: 'MEDIA', prazo: null };
+            $('tar-titulo-modal').textContent = tarefaEditando ? 'Editar tarefa' : 'Nova tarefa';
+            $('tar-etapa').innerHTML = quadro.etapas.map((e) => `<option value="${esc(e.id)}">${esc(e.nome)}</option>`).join('');
+            $('tar-cliente').innerHTML = '<option value="">Nenhum</option>' + [...clientes].sort((a, b) => (a.fantasia || a.nome).localeCompare(b.fantasia || b.nome))
+                .map((c) => `<option value="${esc(c.id)}">${esc(c.fantasia || c.nome)}</option>`).join('');
+            $('tar-titulo').value = t.titulo;
+            $('tar-descricao').value = t.descricao || '';
+            $('tar-etapa').value = t.etapaId;
+            $('tar-cliente').value = t.clienteId || '';
+            $('tar-prioridade').value = t.prioridade || 'MEDIA';
+            $('tar-prazo').value = t.prazo || '';
+            $('tar-datas').textContent = tarefaEditando ? `Criada em ${fmtDataHora(t.criadaEm)} · atualizada em ${fmtDataHora(t.atualizadaEm)}` : '';
+            $('btn-excluir-tarefa').classList.toggle('hidden', !tarefaEditando);
+            abrir('modal-tarefa');
+            setTimeout(() => $('tar-titulo').focus(), 50);
+        }
+        $('btn-salvar-tarefa').onclick = async () => {
+            const corpo = { titulo: $('tar-titulo').value, descricao: $('tar-descricao').value, etapaId: $('tar-etapa').value, clienteId: $('tar-cliente').value || null, prioridade: $('tar-prioridade').value, prazo: $('tar-prazo').value || null };
+            if (!corpo.titulo.trim()) { toast('Informe o título da tarefa.', 'erro'); return; }
+            try {
+                if (tarefaEditando) quadro = await api(`/tarefas/${tarefaEditando.id}`, 'PUT', corpo);
+                else quadro = (await api('/tarefas', 'POST', corpo)).quadro;
+                fechar('modal-tarefa');
+                toast(tarefaEditando ? 'Tarefa atualizada.' : 'Tarefa criada.');
+                renderQuadro();
+            } catch (e) { toast(e.message, 'erro'); }
+        };
+        $('btn-excluir-tarefa').onclick = async () => {
+            if (!tarefaEditando) return;
+            const t = tarefaEditando;
+            fechar('modal-tarefa');
+            if (!await confirmar('Excluir tarefa', `A tarefa "${t.titulo}" será apagada. Não pode ser desfeito.`, 'Excluir')) { abrir('modal-tarefa'); return; }
+            try { quadro = await api(`/tarefas/${t.id}`, 'DELETE'); toast('Tarefa excluída.'); renderQuadro(); } catch (e) { toast(e.message, 'erro'); }
+        };
+
+        // Etapas do funil
+        let etapasEdit = [];
+        function renderEtapas() {
+            $('et-lista').innerHTML = etapasEdit.map((e, i) => {
+                const qtd = quadro.tarefas.filter((t) => t.etapaId === e.id).length;
+                return `<div class="et-linha" data-i="${i}">
+                    <input type="text" maxlength="60" value="${esc(e.nome)}" data-campo="nome" placeholder="Nome da etapa">
+                    <select data-campo="cor">${Object.keys(NOME_COR).map((c) => `<option value="${c}" ${c === e.cor ? 'selected' : ''}>${NOME_COR[c]}</option>`).join('')}</select>
+                    <div class="botoes">
+                        <button class="btn-icone" title="Subir" data-acao="subir" ${i === 0 ? 'disabled' : ''}><span class="ms">arrow_upward</span></button>
+                        <button class="btn-icone" title="Descer" data-acao="descer" ${i === etapasEdit.length - 1 ? 'disabled' : ''}><span class="ms">arrow_downward</span></button>
+                        <button class="btn-icone perigo" title="${qtd ? `Tem ${qtd} tarefa(s): mova antes de remover` : 'Remover etapa'}" data-acao="remover" ${qtd || etapasEdit.length === 1 ? 'disabled' : ''}><span class="ms">delete</span></button>
+                    </div></div>`;
+            }).join('');
+        }
+        $('et-lista').addEventListener('input', (e) => {
+            const l = e.target.closest('.et-linha');
+            if (!l || !e.target.dataset.campo) return;
+            etapasEdit[+l.dataset.i][e.target.dataset.campo] = e.target.value;
+        });
+        $('et-lista').addEventListener('click', (e) => {
+            const b = e.target.closest('[data-acao]');
+            if (!b || b.disabled) return;
+            const i = +b.closest('.et-linha').dataset.i;
+            if (b.dataset.acao === 'remover') etapasEdit.splice(i, 1);
+            else { const j = b.dataset.acao === 'subir' ? i - 1 : i + 1; [etapasEdit[i], etapasEdit[j]] = [etapasEdit[j], etapasEdit[i]]; }
+            renderEtapas();
+        });
+        $('btn-etapas').onclick = () => { etapasEdit = quadro.etapas.map((e) => ({ ...e })); renderEtapas(); abrir('modal-etapas'); };
+        $('btn-add-etapa').onclick = () => {
+            etapasEdit.push({ id: '', nome: '', cor: 'azul' });
+            renderEtapas();
+            const ins = $('et-lista').querySelectorAll('input');
+            ins[ins.length - 1].focus();
+        };
+        $('btn-salvar-etapas').onclick = async () => {
+            if (etapasEdit.some((e) => !e.nome.trim())) { toast('Dê um nome para todas as etapas.', 'erro'); return; }
+            try { quadro = await api('/tarefas-etapas', 'PUT', { etapas: etapasEdit }); fechar('modal-etapas'); toast('Etapas salvas.'); renderQuadro(); }
+            catch (e) { toast(e.message, 'erro'); }
+        };
 
         // ------------------------------------------------------------ planos
         function renderPlanos() {
