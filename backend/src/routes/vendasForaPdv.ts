@@ -7,10 +7,12 @@ import { autorizarDesconto } from '../utils/autorizacao';
 import { obterSetting } from '../utils/settings';
 import { registrarAuditoria } from '../utils/auditoria';
 import { resolverPreco } from '../utils/preco';
+import { pmcDoProduto } from '../utils/pmc';
 import { calcularPromocoes } from '../utils/promocoes';
 import { emitirNfce } from '../nfe';
 import { obterNfeConfig } from '../nfe/config';
 import { extrairQrCode } from '../nfe/parse';
+import { baixarLotesFefo, formatarValidade } from '../utils/fefo';
 
 const router = Router();
 router.use(autenticar);
@@ -133,6 +135,13 @@ router.post('/', async (req: any, res: any) => {
                 const precoUnit = (await resolverPreco(produto.id, variante?.id ?? null, clienteCadastrado.id, qtd, precoBase)) ?? precoBase;
                 const custoUnit = variante ? Number(variante.costPrice ?? produto.costPrice ?? 0) : Number(produto.costPrice ?? 0);
 
+                // D-08/D-11 + base/precos.md: PMC da CMED como teto legal, validado
+                // após o preço resolver e independente do módulo de preços.
+                const pmc = await pmcDoProduto(produto);
+                if (pmc !== null && precoUnit - pmc > 1e-9) {
+                    throw new Error(`Preço acima do PMC (teto CMED) para ${produto.name}: R$ ${precoUnit.toFixed(2)} > R$ ${pmc.toFixed(2)}.`);
+                }
+
                 const estoque = await tx.inventory.findFirst({
                     where: {
                         productId: produto.id,
@@ -166,6 +175,25 @@ router.post('/', async (req: any, res: any) => {
                         createdAt: new Date()
                     }
                 });
+
+                // FEFO: baixa dos lotes de menor validade (produto sem lote não faz nada).
+                if (!variante) {
+                    const lotesUsados = await baixarLotesFefo(produto.id, filial.id, qtd, tx);
+                    for (const lote of lotesUsados) {
+                        if (lote.quantidade <= 0 || !Number.isInteger(lote.quantidade)) continue;
+                        await tx.inventoryMovement.create({
+                            data: {
+                                id: randomUUID(),
+                                inventoryId: estoque.id,
+                                type: 'SALE',
+                                quantity: -lote.quantidade,
+                                reason: `Venda a prazo · Lote ${lote.lote} (val ${formatarValidade(lote.validade)})`,
+                                userId: operador.id,
+                                createdAt: new Date()
+                            }
+                        });
+                    }
+                }
 
                 itensVenda.push({
                     id: randomUUID(),

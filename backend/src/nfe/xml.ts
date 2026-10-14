@@ -152,6 +152,10 @@ export function montarNfce(venda: VendaFiscal, cfg: NfeConfig): string {
     criarElemento(doc, icmsTot, 'vICMS', fmt2(0));
     criarElemento(doc, icmsTot, 'vICMSDeson', fmt2(0));
     criarElemento(doc, icmsTot, 'vFCP', fmt2(0));
+    // O ST retido (CSOSN 500, grupo ICMSST do item) NÃO entra neste bloco: o MOC
+    // manda somar em vBCST/vST apenas o ST próprio (CST 10/30/70/90 e CSOSN
+    // 201/202/203/900). Na Fase 1 toda operação com ST é CSOSN 500, então os
+    // totais permanecem zerados de propósito — ver tests/farmacia-fiscal-icms-st.
     criarElemento(doc, icmsTot, 'vBCST', fmt2(0));
     criarElemento(doc, icmsTot, 'vST', fmt2(0));
     criarElemento(doc, icmsTot, 'vFCPST', fmt2(0));
@@ -212,23 +216,41 @@ function montarDet(doc: Document, infNFe: Element, item: ItemFiscal, cfg: NfeCon
 
     const icms = criarElemento(doc, imposto, 'ICMS');
     const imp = calcImpostoItem(item.vProd, item.produto, cfg);
-    const icmsSn = criarElemento(doc, icms, 'ICMSSN');
-    criarElemento(doc, icmsSn, 'orig', String(imp.icms.cOrig));
-    criarElemento(doc, icmsSn, 'CSOSN', imp.icms.csosn);
+    // CSOSN 500 declara o ICMS-ST restituído (D-12) no grupo ICMSST; os demais
+    // CSOSN da Fase 1 usam o grupo ICMSSN simples.
+    if (imp.icms.st) {
+        const icmsSt = criarElemento(doc, icms, 'ICMSST');
+        criarElemento(doc, icmsSt, 'orig', String(imp.icms.cOrig));
+        criarElemento(doc, icmsSt, 'CSOSN', imp.icms.csosn);
+        criarElemento(doc, icmsSt, 'vBCSTRet', fmt2(imp.icms.st.vBCST));
+        criarElemento(doc, icmsSt, 'pST', fmt2(imp.icms.st.pICMSST));
+        criarElemento(doc, icmsSt, 'vICMSSTRet', fmt2(imp.icms.st.vICMSST));
+    } else {
+        const icmsSn = criarElemento(doc, icms, 'ICMSSN');
+        criarElemento(doc, icmsSn, 'orig', String(imp.icms.cOrig));
+        criarElemento(doc, icmsSn, 'CSOSN', imp.icms.csosn);
+    }
 
+    // PIS/COFINS: o grupo é ditado pelo CST (T-08.01). CST 04 (monofásico) vai
+    // em PISNT/COFINSNT (só CST); 01/02 e demais vão em <grupo>Alíq/Outr com base,
+    // alíquota e valor.
     const pis = criarElemento(doc, imposto, 'PIS');
-    const pisOutr = criarElemento(doc, pis, 'PISOutr');
-    criarElemento(doc, pisOutr, 'CST', imp.pis.cst);
-    criarElemento(doc, pisOutr, 'vBC', fmt2(imp.pis.vBC));
-    criarElemento(doc, pisOutr, 'pPIS', fmt2(imp.pis.pPIS));
-    criarElemento(doc, pisOutr, 'vPIS', fmt2(imp.pis.vPIS));
+    const pisGrupo = criarElemento(doc, pis, imp.pis.grupo);
+    criarElemento(doc, pisGrupo, 'CST', imp.pis.cst);
+    if (imp.pis.grupo !== 'PISNT') {
+        criarElemento(doc, pisGrupo, 'vBC', fmt2(imp.pis.vBC));
+        criarElemento(doc, pisGrupo, 'pPIS', fmt2(imp.pis.pPIS));
+        criarElemento(doc, pisGrupo, 'vPIS', fmt2(imp.pis.vPIS));
+    }
 
     const cofins = criarElemento(doc, imposto, 'COFINS');
-    const cofinsOutr = criarElemento(doc, cofins, 'COFINSOutr');
-    criarElemento(doc, cofinsOutr, 'CST', imp.cofins.cst);
-    criarElemento(doc, cofinsOutr, 'vBC', fmt2(imp.cofins.vBC));
-    criarElemento(doc, cofinsOutr, 'pCOFINS', fmt2(imp.cofins.pCOFINS));
-    criarElemento(doc, cofinsOutr, 'vCOFINS', fmt2(imp.cofins.vCOFINS));
+    const cofinsGrupo = criarElemento(doc, cofins, imp.cofins.grupo);
+    criarElemento(doc, cofinsGrupo, 'CST', imp.cofins.cst);
+    if (imp.cofins.grupo !== 'COFINSNT') {
+        criarElemento(doc, cofinsGrupo, 'vBC', fmt2(imp.cofins.vBC));
+        criarElemento(doc, cofinsGrupo, 'pCOFINS', fmt2(imp.cofins.pCOFINS));
+        criarElemento(doc, cofinsGrupo, 'vCOFINS', fmt2(imp.cofins.vCOFINS));
+    }
 }
 
 function montarPag(doc: Document, infNFe: Element, venda: VendaFiscal): void {

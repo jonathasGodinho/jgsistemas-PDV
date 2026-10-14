@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { randomUUID } from 'crypto';
 import prisma from '../db';
 import { requerPermissao } from '../middlewares/auth';
+import { formatarValidade } from '../utils/fefo';
 
 const router = Router();
 
@@ -27,6 +28,20 @@ router.get('/', async (req: any, res: any) => {
         orderBy: { name: 'asc' }
     });
 
+    // Farmacia: saldo por lote (FEFO consome os lotes; a tela mostra um saldo por lote).
+    const lotes = produtos.length
+        ? await prisma.lote.findMany({
+            where: { productId: { in: produtos.map(p => p.id) } },
+            orderBy: [{ validade: 'asc' }, { lote: 'asc' }]
+        })
+        : [];
+    const lotesPorProduto = new Map<string, { lote: string; validade: Date; quantidade: number }[]>();
+    for (const l of lotes) {
+        const lista = lotesPorProduto.get(l.productId) ?? [];
+        lista.push({ lote: l.lote, validade: l.validade, quantidade: Number(l.quantidade) });
+        lotesPorProduto.set(l.productId, lista);
+    }
+
     let resultado: any[] = [];
     for (const p of produtos) {
         // Linha principal (estoque base)
@@ -50,6 +65,27 @@ router.get('/', async (req: any, res: any) => {
             situacao,
             grade: null
         });
+
+        // Linhas de lote (farmacia): um saldo por lote, com validade
+        for (const l of lotesPorProduto.get(p.id) ?? []) {
+            let situacaoLote = 'OK';
+            if (l.quantidade <= 0) situacaoLote = 'SEM_ESTOQUE';
+
+            resultado.push({
+                id: p.id,
+                nome: p.name,
+                codigo: null,
+                sku: null,
+                lote: l.lote,
+                validade: l.validade,
+                quantidade: l.quantidade,
+                minimo: 0,
+                maximo: 0,
+                situacao: situacaoLote,
+                grade: rotuloLote(l.lote, l.validade),
+                tipo: 'LOTE'
+            });
+        }
 
         // Linhas de variantes (grade cor/tamanho)
         for (const v of p.ProductVariant) {
@@ -235,5 +271,10 @@ router.post('/ajuste', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR', 'STOCKI
 
     return res.json({ ok: true, novaQuantidade: novaQtd });
 });
+
+// Farmacia: rótulo legível do lote com a validade (dd/mm/aaaa) para a lista de estoque.
+function rotuloLote(lote: string, validade: Date) {
+    return `Lote ${lote} · val ${formatarValidade(validade)}`;
+}
 
 export default router;

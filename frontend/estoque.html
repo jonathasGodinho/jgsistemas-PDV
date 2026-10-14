@@ -63,6 +63,11 @@
                 </div>
             </div>
 
+            <div class="card mb-16 hidden" id="card-vencimento">
+                <div class="card-head"><h3>Alerta de vencimento</h3><span class="sub" id="vencimento-resumo"></span></div>
+                <div class="mov-lista" id="lista-vencimento"><div class="sem-dados">Carregando...</div></div>
+            </div>
+
             <div class="card">
                 <div class="card-head"><h3>Últimas movimentações</h3></div>
                 <div class="mov-lista" id="tabela-movimentos"><div class="sem-dados">Carregando...</div></div>
@@ -260,7 +265,7 @@
                 JG.toast(`${TIPOS[tipo].titulo} registrada. Novo estoque: ${formatarQtd(r.novaQuantidade)}`, 'sucesso');
                 produtosMov = [];
                 fecharModalMovimento();
-                await Promise.all([buscarEstoque(), buscarMovimentos()]);
+                await Promise.all([buscarEstoque(), buscarMovimentos(), buscarVencimento()]);
             } catch (e) { alert(e.message); }
         }
 
@@ -274,6 +279,37 @@
             TRANSFER_IN: { txt: 'Transf. entrada', cls: 'in', ic: 'south_west' },
             TRANSFER_OUT: { txt: 'Transf. saída', cls: 'out', ic: 'north_east' }
         };
+
+        // ---------- Alerta de vencimento (farmácia / T-06.03)
+        function farmaciaAtiva() {
+            return !!(window.JG && typeof JG.moduloOk === 'function' && JG.moduloOk('farmacia'));
+        }
+
+        async function buscarVencimento() {
+            const card = document.getElementById('card-vencimento');
+            if (!farmaciaAtiva()) { card.classList.add('hidden'); return; }
+            try {
+                const d = await api('/api/farmacia/vencendo');
+                const lotes = d.lotes || [];
+                const vencidos = lotes.filter(l => l.vencido).length;
+                document.getElementById('vencimento-resumo').innerText = lotes.length === 0
+                    ? `Nada a vencer em ${d.limiarDias} dias`
+                    : `${vencidos} vencido(s) · ${lotes.length - vencidos} a vencer em até ${d.limiarDias} dias`;
+                document.getElementById('lista-vencimento').innerHTML = lotes.length === 0
+                    ? '<div class="estado-vazio"><span class="ms">check_circle</span><p>Nenhum lote vencido ou vencendo.</p></div>'
+                    : lotes.map(l => {
+                        const cls = l.vencido ? 'out' : 'adj';
+                        const ic = l.vencido ? 'event_busy' : 'schedule';
+                        const badge = l.vencido
+                            ? '<span class="badge vermelho sem-ponto">Vencido</span>'
+                            : `<span class="badge ambar sem-ponto">${l.diasRestantes === 0 ? 'Vence hoje' : 'Vence em ' + l.diasRestantes + ' dia(s)'}</span>`;
+                        return `<div class="mov"><div class="ic ${cls}"><span class="ms">${ic}</span></div>
+                            <div class="corpo"><b>${esc(l.produtoNome || 'Produto')}</b><small>Lote ${esc(l.lote)} · Validade ${esc(l.validade)}${l.filialNome ? ' · ' + esc(l.filialNome) : ''}</small>${badge}</div>
+                            <span class="qtd">${formatarQtd(l.quantidade)}</span></div>`;
+                    }).join('');
+                card.classList.remove('hidden');
+            } catch (e) { /* painel auxiliar: não bloqueia a tela */ }
+        }
 
         async function buscarMovimentos() {
             try {
@@ -300,11 +336,13 @@
 
         (async () => {
             try {
-                await Promise.all([buscarEstoque(), buscarMovimentos()]);
+                await Promise.all([buscarEstoque(), buscarMovimentos(), buscarVencimento()]);
             } catch (e) {
                 alert("Falha ao carregar dados: " + e.message);
             }
         })();
+
+        document.addEventListener('jg:modulos', () => { buscarVencimento(); });
     </script>
 </body>
 </html>

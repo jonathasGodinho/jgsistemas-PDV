@@ -6,11 +6,13 @@ import { gerarPixQrCode } from '../utils/pix';
 import { dadosEmpresa } from '../utils/empresa';
 import { autenticar, ehOperadorDeCaixa } from '../middlewares/auth';
 import { autorizarDesconto, validarSenhaAdmin } from '../utils/autorizacao';
+import { pmcDoProduto } from '../utils/pmc';
 import { registrarAuditoria } from '../utils/auditoria';
 import { resolverPreco } from '../utils/preco';
 import { calcularPromocoes } from '../utils/promocoes';
 import { obterSetting } from '../utils/settings';
 import { criarRecebiveisCartao } from '../utils/cartao';
+import { baixarLotesFefo, formatarValidade } from '../utils/fefo';
 import { extrairQrCode } from '../nfe/parse';
 import { emitirNfce } from '../nfe';
 import { obterNfeConfig } from '../nfe/config';
@@ -124,6 +126,14 @@ router.post('/', async (req: any, res: any) => {
                 const precoUnit = (await resolverPreco(produto.id, variante?.id ?? null, clienteId || null, qtd, precoBase)) ?? precoBase;
                 const custoUnit = variante ? Number(variante.costPrice ?? produto.costPrice ?? 0) : Number(produto.costPrice ?? 0);
 
+                // D-08/D-11 + base/precos.md: o PMC da CMED é teto legal, validado
+                // depois do preço resolver e independente do módulo de preços. Só
+                // bloqueia quando o produto tem PMC cadastrado.
+                const pmc = await pmcDoProduto(produto);
+                if (pmc !== null && precoUnit - pmc > 1e-9) {
+                    throw new Error(`Preço acima do PMC (teto CMED) para ${produto.name}: R$ ${precoUnit.toFixed(2)} > R$ ${pmc.toFixed(2)}.`);
+                }
+
                 // Verifica o estoque (no orçamento apenas confere, não baixa)
                 const estoque = await tx.inventory.findFirst({
                     where: {
@@ -162,6 +172,25 @@ router.post('/', async (req: any, res: any) => {
                             createdAt: new Date()
                         }
                     });
+
+                    // FEFO: baixa dos lotes de menor validade (produto sem lote não faz nada).
+                    if (!variante) {
+                        const lotesUsados = await baixarLotesFefo(produto.id, filial.id, qtd, tx);
+                        for (const lote of lotesUsados) {
+                            if (lote.quantidade <= 0 || !Number.isInteger(lote.quantidade)) continue;
+                            await tx.inventoryMovement.create({
+                                data: {
+                                    id: randomUUID(),
+                                    inventoryId: estoque.id,
+                                    type: 'SALE',
+                                    quantity: -lote.quantidade,
+                                    reason: `Venda PDV · Lote ${lote.lote} (val ${formatarValidade(lote.validade)})`,
+                                    userId: operador.id,
+                                    createdAt: new Date()
+                                }
+                            });
+                        }
+                    }
                 }
 
                 itensVenda.push({
@@ -502,6 +531,25 @@ router.post('/:id/efetivar', async (req: any, res: any) => {
                         createdAt: new Date()
                     }
                 });
+
+                // FEFO: baixa dos lotes de menor validade (produto sem lote não faz nada).
+                if (!item.variantId) {
+                    const lotesUsados = await baixarLotesFefo(item.productId, filial.id, item.quantity, tx);
+                    for (const lote of lotesUsados) {
+                        if (lote.quantidade <= 0 || !Number.isInteger(lote.quantidade)) continue;
+                        await tx.inventoryMovement.create({
+                            data: {
+                                id: randomUUID(),
+                                inventoryId: estoque.id,
+                                type: 'SALE',
+                                quantity: -lote.quantidade,
+                                reason: `Orçamento efetivado · Lote ${lote.lote} (val ${formatarValidade(lote.validade)})`,
+                                userId: operador.id,
+                                createdAt: new Date()
+                            }
+                        });
+                    }
+                }
             }
 
             // Gera PIX se necessário

@@ -53,6 +53,7 @@
                     <button data-secao="vendas"><span class="ms">point_of_sale</span>Vendas e pagamentos</button>
                     <button data-secao="usuarios"><span class="ms">manage_accounts</span>Usuários e permissões</button>
                     <button data-secao="fiscal"><span class="ms">receipt</span>Fiscal</button>
+                    <button data-secao="farmacia" id="menu-farmacia" class="hidden"><span class="ms">medication</span>Farmácia</button>
                 </nav>
             </div>
 
@@ -229,6 +230,21 @@
                         <div class="card-foot"><button class="btn btn-sucesso" onclick="salvarNfe()"><span class="ms">check</span>Salvar configuração fiscal</button></div>
                     </div>
                 </div>
+
+                <!-- FARMÁCIA -->
+                <div class="secao-cfg hidden" id="secao-farmacia">
+                    <div class="card mb-16">
+                        <div class="card-head"><h3>Farmácia</h3><span class="sub">Controle de lote, validade e preço de medicamento</span></div>
+                        <div class="card-body">
+                            <div class="form-grid">
+                                <div class="campo"><label for="f-limiarVencimento">Aviso de vencimento (dias antes)</label><input type="number" id="f-limiarVencimento" min="0" max="3650" step="1" value="90">
+                                    <span class="dica-campo">Lotes com validade dentro desse prazo — e os já vencidos — aparecem no alerta da tela de estoque. 0 = somente vencidos.</span></div>
+                            </div>
+                            <div class="aviso" id="aviso-farmacia" style="display:none;"></div>
+                        </div>
+                        <div class="card-foot"><button class="btn btn-sucesso" onclick="salvarFarmacia()"><span class="ms">check</span>Salvar farmácia</button></div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -315,6 +331,7 @@
                     : 'CSC não configurado. Digite o código e o ID abaixo.';
                 document.getElementById('n-qrcodeUrl').value = n.qrcodeUrl || '';
                 carregarStatusNfe();
+                carregarFarmacia();
 
                 const g = c.seguranca || {};
                 document.getElementById('g-loginMax').value = g.loginMaxTentativas ?? 5;
@@ -454,6 +471,54 @@
             }
         }
 
+        // ---------- Farmácia: alerta de vencimento (T-06.02)
+        // Grava no limiar do módulo farmácia (endpoint próprio, restrito ao ADMIN).
+        const FARMACIA_LIMIAR_PADRAO = 90;
+        const FARMACIA_LIMIAR_MAX = 3650;
+
+        function farmaciaCfgVisivel() {
+            const op = obterOperador();
+            if (!op || op.papel !== 'ADMIN') return false;
+            return !!(window.JG && typeof JG.moduloOk === 'function' && JG.moduloOk('farmacia'));
+        }
+
+        function aplicarGateFarmacia() {
+            const visivel = farmaciaCfgVisivel();
+            const btn = document.getElementById('menu-farmacia');
+            const secao = document.getElementById('secao-farmacia');
+            if (btn) btn.classList.toggle('hidden', !visivel);
+            if (!secao) return;
+            secao.classList.toggle('hidden', !visivel);
+            if (!visivel && secao.classList.contains('ativa') && typeof abrirSecao === 'function') abrirSecao('empresa');
+        }
+
+        async function carregarFarmacia() {
+            if (!farmaciaCfgVisivel()) return;
+            const campo = document.getElementById('f-limiarVencimento');
+            if (!campo) return;
+            try {
+                const d = await api('/api/farmacia/vencimento');
+                campo.value = d.limiarDias ?? 90;
+            } catch (e) {
+                campo.value = 90;
+            }
+        }
+
+        async function salvarFarmacia() {
+            const campo = document.getElementById('f-limiarVencimento');
+            const dias = Number(campo.value);
+            if (!Number.isInteger(dias) || dias < 0 || dias > 3650) {
+                mostrarAviso2('aviso-farmacia', 'Informe um número inteiro de dias entre 0 e 3650.', false);
+                return;
+            }
+            try {
+                await api('/api/farmacia/vencimento', 'PUT', { dias });
+                mostrarAviso2('aviso-farmacia', 'Alerta de vencimento salvo com sucesso!', true);
+            } catch (e) {
+                mostrarAviso2('aviso-farmacia', e.message, false);
+            }
+        }
+
         async function carregarOperadores() {
             try {
                 const ops = await api('/api/auth/operadores');
@@ -527,6 +592,11 @@
 
         carregar();
         carregarOperadores();
+        aplicarGateFarmacia();
+        document.addEventListener('jg:modulos', () => {
+            aplicarGateFarmacia();
+            carregarFarmacia();
+        });
     </script>
     <script>
         // ---------- Menu de seções (Configurações)

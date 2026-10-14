@@ -92,11 +92,29 @@ export interface VendaFiscal {
     infCpl?: string | undefined;
 }
 
+export type GrupoPis = 'PISAliq' | 'PISNT' | 'PISOutr';
+export type GrupoCofins = 'COFINSAliq' | 'COFINSNT' | 'COFINSOutr';
+
+export interface IcmsSTItem {
+    vBCST: number;
+    pMVAST: number;
+    pRedBCST: number;
+    pICMSST: number;
+    vICMSST: number;
+}
+
 export interface ImpostoItem {
     vItem12741: number;
-    icms: { cOrig: number; csosn: string };
-    pis: { cst: string; vBC: number; pPIS: number; vPIS: number };
-    cofins: { cst: string; vBC: number; pCOFINS: number; vCOFINS: number };
+    /** Item é medicamento (D-10: tipoMedicamento cadastrado) — regra monofásica. */
+    monofasico: boolean;
+    icms: {
+        cOrig: number;
+        csosn: string;
+        /** ICMS-ST restituído (CSOSN 500); ausente quando o produto não tem MVA (D-12). */
+        st?: IcmsSTItem | undefined;
+    };
+    pis: { cst: string; grupo: GrupoPis; vBC: number; pPIS: number; vPIS: number };
+    cofins: { cst: string; grupo: GrupoCofins; vBC: number; pCOFINS: number; vCOFINS: number };
 }
 
 export interface Totais {

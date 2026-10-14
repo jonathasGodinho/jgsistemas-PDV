@@ -105,6 +105,15 @@
       ]
     },
     {
+      "chave": "farmacia",
+      "nome": "Farmácia",
+      "grupo": "Farmácia",
+      "descricao": "Lote, validade e FEFO, princípio ativo, PMC/CMED e fiscal monofásico.",
+      "icone": "medication",
+      "paginas": [],
+      "apis": []
+    },
+    {
       "chave": "financeiro",
       "nome": "Contas a pagar e receber",
       "grupo": "Financeiro",

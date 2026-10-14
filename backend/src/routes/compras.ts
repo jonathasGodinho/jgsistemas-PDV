@@ -135,7 +135,7 @@ router.post('/', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: 
 // POST /api/compras/:id/receber - Recebe a mercadoria: entra no estoque e gera contas a pagar
 router.post('/:id/receber', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     const { id } = req.params;
-    const { vencimento, observacoes, recebidos } = req.body;
+    const { vencimento, observacoes, recebidos, lotes } = req.body;
 
     try {
         const compra = await prisma.purchase.findUnique({
@@ -167,6 +167,30 @@ router.post('/:id/receber', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), a
             return res.status(400).json({ erro: "Nenhum item recebido! Informe as quantidades conferidas." });
         }
         const faltas = compra.PurchaseItem.filter(i => qtdRecebida(i) < i.quantity);
+
+        // Farmácia: lote e validade por item (quem recebe informa o lote que entrou).
+        // Sem `lotes` a compra segue o fluxo normal (produto sem controle de lote).
+        const lerLote = (itemId: string) => {
+            const bruto = lotes && typeof lotes === 'object' ? (lotes as any)[itemId] : undefined;
+            if (bruto === undefined || bruto === null || bruto === '') return null;
+            const nome = String(bruto.lote ?? '').trim();
+            if (!nome) return { erro: "Informe o número do lote!" };
+            const validade = bruto.validade ? new Date(`${bruto.validade}T00:00:00`) : null;
+            if (!validade || Number.isNaN(validade.getTime())) {
+                return { erro: `Informe a validade do lote ${nome}!` };
+            }
+            return { nome, validade };
+        };
+
+        const lotesParaGravar: { productId: string; nome: string; validade: Date; quantidade: number }[] = [];
+        for (const item of compra.PurchaseItem) {
+            const info = lerLote(item.id);
+            if (!info) continue;
+            if ('erro' in info) return res.status(400).json({ erro: info.erro });
+            const qtd = qtdRecebida(item);
+            if (qtd <= 0) continue;
+            lotesParaGravar.push({ productId: item.productId, nome: info.nome, validade: info.validade, quantidade: qtd });
+        }
 
         await prisma.$transaction(async (tx) => {
             for (const item of compra.PurchaseItem) {
@@ -219,6 +243,28 @@ router.post('/:id/receber', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), a
                 }
             });
 
+            // Farmácia: grava/atualiza o lote de cada item recebido (mesmo lote+validade acumula).
+            for (const l of lotesParaGravar) {
+                const chave = {
+                    companyId: compra.companyId,
+                    branchId: filial.id,
+                    productId: l.productId,
+                    lote: l.nome,
+                    validade: l.validade
+                };
+                const existente = await tx.lote.findFirst({ where: chave });
+                if (existente) {
+                    await tx.lote.update({
+                        where: { id: existente.id },
+                        data: { quantidade: Number(existente.quantidade) + l.quantidade, updatedAt: new Date() }
+                    });
+                } else {
+                    await tx.lote.create({
+                        data: { id: randomUUID(), ...chave, quantidade: l.quantidade, createdAt: new Date(), updatedAt: new Date() }
+                    });
+                }
+            }
+
             await tx.purchase.update({
                 where: { id: compra.id },
                 data: { status: 'RECEIVED', updatedAt: new Date() }
@@ -230,10 +276,10 @@ router.post('/:id/receber', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), a
             action: 'COMPRA_RECEBIDA',
             entity: 'PURCHASE',
             entityId: compra.id,
-            detail: { numero: compra.orderNumber, total: Number(compra.total), totalRecebido, itensComFalta: faltas.length }
+            detail: { numero: compra.orderNumber, total: Number(compra.total), totalRecebido, itensComFalta: faltas.length, lotes: lotesParaGravar.length }
         });
 
-        return res.json({ ok: true, status: 'RECEIVED', totalRecebido, itensComFalta: faltas.length });
+        return res.json({ ok: true, status: 'RECEIVED', totalRecebido, itensComFalta: faltas.length, lotes: lotesParaGravar.length });
     } catch (e: any) {
         return res.status(400).json({ erro: e.message });
     }

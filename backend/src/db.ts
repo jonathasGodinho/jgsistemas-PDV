@@ -16,7 +16,7 @@ const DIRETAS = new Set([
     'Branch', 'Brand', 'CashRegister', 'Category', 'Collection', 'CardBrand', 'CardOperator',
     'CardReceivable', 'CardStatementImport', 'Customer', 'Employee', 'FinancialTransaction',
     'LoginAudit', 'Product', 'Purchase', 'Sale', 'Setting', 'Supplier', 'InventoryCount',
-    'PriceTable', 'Promotion', 'User'
+    'PriceTable', 'Promotion', 'User', 'Lote', 'CmedPreco'
 ]);
 
 // Tabelas filhas (sem companyId): filtradas pela tabela-mãe.

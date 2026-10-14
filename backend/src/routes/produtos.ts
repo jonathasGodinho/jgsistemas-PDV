@@ -28,6 +28,59 @@ const fotosDoCorpo = (foto: any): string[] | undefined => {
 };
 const inteiroOuNull = (v: any) => (v === undefined ? undefined : Math.max(0, Math.round(Number(v) || 0)));
 
+// Farmacia: tipos de medicamento aceitos (lista fixa).
+const TIPOS_MEDICAMENTO = ['REFERENCIA', 'GENERICO', 'SIMILAR', 'OUTROS'];
+
+// Normaliza os campos de farmácia do corpo. Retorna `erro` quando o tipo é inválido.
+function farmaciaDoCorpo(body: any): { erro?: string; dados?: Record<string, unknown> } {
+    const dados: Record<string, unknown> = {};
+
+    if (body.principioAtivo !== undefined) {
+        dados.principioAtivo = body.principioAtivo ? String(body.principioAtivo).trim().slice(0, 200) : null;
+    }
+
+    if (body.tipoMedicamento !== undefined) {
+        const tipo = body.tipoMedicamento ? String(body.tipoMedicamento).trim().toUpperCase() : '';
+        if (tipo && !TIPOS_MEDICAMENTO.includes(tipo)) {
+            return { erro: "Tipo de medicamento inválido!" };
+        }
+        dados.tipoMedicamento = tipo || null;
+    }
+
+    if (body.registroMS !== undefined) {
+        dados.registroMS = body.registroMS ? String(body.registroMS).replace(/\D/g, '').slice(0, 13) : null;
+    }
+
+    // T-08.02 (D-12): MVA e redução da base de ST são percentuais manuais do produto.
+    for (const campo of ['mvaSt', 'reducaoSt'] as const) {
+        const bruto = body[campo];
+        if (bruto === undefined) continue;
+        if (bruto === null || bruto === '') {
+            dados[campo] = null;
+            continue;
+        }
+        const numero = Number(String(bruto).replace(',', '.'));
+        if (!Number.isFinite(numero) || numero < 0 || numero > 100) {
+            return { erro: campo === 'mvaSt' ? "MVA de ST inválida!" : "Redução de ST inválida!" };
+        }
+        dados[campo] = numero;
+    }
+
+    if (body.pmc !== undefined) {
+        if (body.pmc === null || body.pmc === '') {
+            dados.pmc = null;
+        } else {
+            const valor = Number(body.pmc);
+            if (!Number.isFinite(valor) || valor < 0) {
+                return { erro: "PMC inválido!" };
+            }
+            dados.pmc = valor;
+        }
+    }
+
+    return { dados };
+}
+
 // GET /api/produtos - Lista produtos (com estoque e categoria), busca opcional
 router.get('/', async (req: any, res: any) => {
     const { busca } = req.query;
@@ -85,7 +138,13 @@ router.get('/', async (req: any, res: any) => {
         unidade: p.unit,
         descricao: p.description,
         foto: p.photos?.[0] ?? null,
-        ncm: p.ncm, cest: p.cest, cfop: p.cfop, csosn: p.csosn, cst: p.cst
+        ncm: p.ncm, cest: p.cest, cfop: p.cfop, csosn: p.csosn, cst: p.cst,
+        principioAtivo: p.principioAtivo,
+        tipoMedicamento: p.tipoMedicamento,
+        registroMS: p.registroMS,
+        pmc: p.pmc !== null && p.pmc !== undefined ? Number(p.pmc) : null,
+        mvaSt: p.mvaSt !== null && p.mvaSt !== undefined ? Number(p.mvaSt) : null,
+        reducaoSt: p.reducaoSt !== null && p.reducaoSt !== undefined ? Number(p.reducaoSt) : null
     })));
 });
 
@@ -161,6 +220,11 @@ router.post('/', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: 
         return res.status(400).json({ erro: "Código de barras já cadastrado!" });
     }
 
+    const farmacia = farmaciaDoCorpo(req.body);
+    if (farmacia.erro) {
+        return res.status(400).json({ erro: farmacia.erro });
+    }
+
     const empresa = await prisma.company.findUnique({ where: { id: req.operador.companyId } });
     const filial = req.operador.branchId
         ? await prisma.branch.findUnique({ where: { id: req.operador.branchId } })
@@ -188,6 +252,7 @@ router.post('/', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: 
             description: descricao ? String(descricao).slice(0, 2000) : null,
             photos: fotosDoCorpo(foto) ?? [],
             ...fiscaisDoCorpo(req.body),
+            ...farmacia.dados,
             isActive: req.body.ativo === undefined ? true : Boolean(req.body.ativo),
             createdAt: new Date(),
             updatedAt: new Date()
@@ -265,6 +330,11 @@ router.put('/:id', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req
         return res.status(404).json({ erro: "Produto não encontrado!" });
     }
 
+    const farmacia = farmaciaDoCorpo(req.body);
+    if (farmacia.erro) {
+        return res.status(400).json({ erro: farmacia.erro });
+    }
+
     if (codigo && codigo !== produtoExistente.barcode) {
         const dup = await prisma.product.findFirst({ where: { barcode: codigo } });
         if (dup) {
@@ -304,6 +374,7 @@ router.put('/:id', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req
             ...(descricao !== undefined ? { description: descricao ? String(descricao).slice(0, 2000) : null } : {}),
             ...(fotosDoCorpo(foto) !== undefined ? { photos: fotosDoCorpo(foto) } : {}),
             ...fiscaisDoCorpo(req.body),
+            ...farmacia.dados,
             updatedAt: new Date()
         }
     });

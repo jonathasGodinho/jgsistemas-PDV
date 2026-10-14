@@ -37,6 +37,7 @@ body.jg .foto-box .ms { font-size: 48px; }
             <button class="aba" data-aba="precos"><span class="ms sm">payments</span>Preços</button>
             <button class="aba" data-aba="estoque"><span class="ms sm">warehouse</span>Estoque</button>
             <button class="aba" data-aba="fiscal"><span class="ms sm">receipt</span>Fiscal</button>
+            <button class="aba" data-aba="farmacia"><span class="ms sm">medication</span>Farmácia</button>
             <button class="aba" data-aba="variacoes"><span class="ms sm">grid_view</span>Variações <span class="contador" id="cont-variacoes">0</span></button>
         </div>
 
@@ -98,6 +99,29 @@ body.jg .foto-box .ms { font-size: 48px; }
                             <div class="campo"><label for="p-cst">CST (regime normal)</label><input type="text" id="p-cst" placeholder="Ex.: 00" maxlength="3"></div>
                         </div>
                         <div class="alerta"><span class="ms">info</span><div>Campos em branco usam os padrões da empresa definidos em <a href="/configuracoes.html#fiscal">Configurações › Fiscal</a>.</div></div>
+                    </div>
+                </div>
+
+                <!-- Farmácia -->
+                <div class="card painel-aba" id="aba-farmacia">
+                    <div class="card-body">
+                        <div class="form-grid c3">
+                            <div class="campo"><label for="p-principio-ativo">Princípio ativo</label><input type="text" id="p-principio-ativo" maxlength="200" placeholder="Ex.: Dipirona sódica"></div>
+                            <div class="campo"><label for="p-tipo-medicamento">Tipo de medicamento</label>
+                                <select id="p-tipo-medicamento">
+                                    <option value="">—</option>
+                                    <option value="REFERENCIA">Referência</option>
+                                    <option value="GENERICO">Genérico</option>
+                                    <option value="SIMILAR">Similar</option>
+                                    <option value="OUTROS">Outros</option>
+                                </select>
+                            </div>
+                            <div class="campo"><label for="p-registro-ms">Registro MS</label><input type="text" id="p-registro-ms" maxlength="13" inputmode="numeric" placeholder="13 dígitos"></div>
+                            <div class="campo"><label for="p-pmc">PMC (R$)</label><input type="text" id="p-pmc" inputmode="decimal" placeholder="0,00"></div>
+                            <div class="campo"><label for="p-mva-st">MVA de ST (%)</label><input type="text" id="p-mva-st" inputmode="decimal" placeholder="0,00"></div>
+                            <div class="campo"><label for="p-reducao-st">Redução de ST (%)</label><input type="text" id="p-reducao-st" inputmode="decimal" placeholder="0,00"></div>
+                        </div>
+                        <div class="alerta"><span class="ms">info</span><div>Campos do módulo Farmácia. O PMC é o preço máximo ao consumidor publicado na CMED. A MVA e a redução de ST são usadas na NFC-e de produtos com ICMS-ST (CSOSN 500) e valem de 0 a 100.</div></div>
                     </div>
                 </div>
 
@@ -189,6 +213,24 @@ body.jg .foto-box .ms { font-size: 48px; }
             history.replaceState(null, '', location.search + '#' + b.dataset.aba);
         }));
         if (location.hash) { const b = document.querySelector(`[data-aba="${location.hash.slice(1)}"]`); if (b) b.click(); }
+
+        // ---------- módulo farmácia
+        function moduloFarmaciaAtivo() {
+            return window.JG && JG.moduloOk ? JG.moduloOk('farmacia') : true;
+        }
+        function aplicarModuloFarmacia() {
+            const ativo = moduloFarmaciaAtivo();
+            const btn = document.querySelector('[data-aba="farmacia"]');
+            const painel = $('aba-farmacia');
+            if (btn) btn.classList.toggle('hidden', !ativo);
+            if (painel) painel.classList.toggle('hidden', !ativo);
+            if (!ativo && painel && painel.classList.contains('ativa')) {
+                const geral = document.querySelector('[data-aba="geral"]');
+                if (geral) geral.click();
+            }
+        }
+        aplicarModuloFarmacia();
+        document.addEventListener('jg:modulos', aplicarModuloFarmacia);
 
         // ---------- selects
         async function carregarListas() {
@@ -345,6 +387,12 @@ body.jg .foto-box .ms { font-size: 48px; }
             $('p-maximo').value = p.maximo || 0;
             $('p-ativo').checked = p.ativo;
             ['ncm', 'cest', 'cfop', 'csosn', 'cst'].forEach(k => $('p-' + k).value = p[k] || '');
+            $('p-principio-ativo').value = p.principioAtivo || '';
+            $('p-tipo-medicamento').value = p.tipoMedicamento || '';
+            $('p-registro-ms').value = p.registroMS || '';
+            $('p-pmc').value = p.pmc !== null && p.pmc !== undefined ? paraCampo(p.pmc) : '';
+            $('p-mva-st').value = p.mvaSt !== null && p.mvaSt !== undefined ? paraCampo(p.mvaSt) : '';
+            $('p-reducao-st').value = p.reducaoSt !== null && p.reducaoSt !== undefined ? paraCampo(p.reducaoSt) : '';
             grade = (p.variantes || []).map(v => ({
                 cor: v.cor || '', tamanho: v.tamanho || '', sku: duplicando ? '' : (v.sku || ''), codigo: duplicando ? '' : (v.codigo || ''),
                 preco: v.preco !== null && v.preco !== undefined ? paraCampo(v.preco) : '', custo: v.custo !== null && v.custo !== undefined ? paraCampo(v.custo) : '',
@@ -383,6 +431,17 @@ body.jg .foto-box .ms { font-size: 48px; }
                 }))
             };
             if (foto !== undefined) corpo.foto = foto;
+            if (moduloFarmaciaAtivo()) {
+                const pmcTexto = $('p-pmc').value.trim();
+                corpo.principioAtivo = $('p-principio-ativo').value.trim();
+                corpo.tipoMedicamento = $('p-tipo-medicamento').value;
+                corpo.registroMS = $('p-registro-ms').value.trim();
+                corpo.pmc = pmcTexto ? parseMoeda(pmcTexto) : null;
+                const mvaTexto = $('p-mva-st').value.trim();
+                const reducaoTexto = $('p-reducao-st').value.trim();
+                corpo.mvaSt = mvaTexto ? parseMoeda(mvaTexto) : null;
+                corpo.reducaoSt = reducaoTexto ? parseMoeda(reducaoTexto) : null;
+            }
             if (!corpo.nome) { document.querySelector('[data-aba="geral"]').click(); $('p-nome').focus(); JG.toast('Informe o nome do produto.', 'alerta'); return; }
             if (!corpo.preco) { document.querySelector('[data-aba="precos"]').click(); $('p-preco').focus(); JG.toast('Informe o preço de venda.', 'alerta'); return; }
             const btn = $('btn-salvar');

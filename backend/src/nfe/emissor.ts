@@ -232,7 +232,16 @@ export async function emitirNfce(saleId: string): Promise<ResultadoEmissao> {
         return { ok: false, status: 'SEMEMPRESA', mensagem: 'Venda sem empresa configurada.' };
     }
 
-    const assinador = await criarAssinador();
+    // Sem certificado configurado a emissão não pode nem ser assinada: registra a
+    // falha na venda (para o operador ver o que falta) em vez de estourar um erro.
+    let assinador: Awaited<ReturnType<typeof criarAssinador>>;
+    try {
+        assinador = await criarAssinador();
+    } catch (e) {
+        const erro = e instanceof Error ? e.message : String(e);
+        return registrarFalha(venda.id, 'SEM_CERTIFICADO', erro, cfg.tpAmb);
+    }
+
     const agora = new Date();
     const serie = venda.nfeSerie ?? cfg.serie;
     let numero: number;
