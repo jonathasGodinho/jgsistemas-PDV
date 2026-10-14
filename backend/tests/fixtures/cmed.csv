@@ -1,0 +1,6 @@
+registroMS,descricao,pmc
+1234567890123,Dipirona 500mg,12.50
+9876543210987,Paracetamol 750mg,8.90
+1112223334445,Amoxicilina 500mg,25.00
+,Sem registro deve ser ignorada,3.00
+5556667778889,Sem preco deve ser ignorada,

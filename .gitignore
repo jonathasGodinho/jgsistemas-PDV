@@ -25,3 +25,6 @@ Thumbs.db
 
 .vercel
 .env*
+
+# Artefatos das verificações por navegador (D-19 / playwright MCP)
+.playwright-mcp/
