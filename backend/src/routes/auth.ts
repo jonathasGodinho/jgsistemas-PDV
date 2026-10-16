@@ -31,7 +31,11 @@ const serializar = (u: any) => ({
     filialId: u.branchId ?? null,
     token: u.sessionToken,
     expiraEm: u.sessionExpiresAt ?? null,
-    trocarSenha: Boolean(u.mustChangePassword)
+    trocarSenha: Boolean(u.mustChangePassword),
+    farmaceuticoRT: Boolean(u.farmaceuticoRT),
+    cpf: u.cpf ?? null,
+    crf: u.crf ?? null,
+    crfUf: u.crfUf ?? null
 });
 
 // Registra uma tentativa de login (auditoria de acesso).
@@ -75,7 +79,9 @@ router.get('/operadores', async (req: any, res: any) => {
         email: u.email,
         papel: u.role,
         caixaNumber: u.caixaNumber ?? null,
-        commissionRate: Number(u.commissionRate ?? 0)
+        commissionRate: Number(u.commissionRate ?? 0),
+        // Fase 2 (D-06): a lista é pública (tela de login) — só a marca de RT, nunca CPF/CRF.
+        farmaceuticoRT: Boolean(u.farmaceuticoRT)
     })));
 });
 
@@ -417,6 +423,10 @@ router.post('/operadores', autenticar, requerPermissao('ADMIN', 'MANAGER'), asyn
     }
 
     const role = papel || 'SELLER';
+    const rt = dadosFarmaceutico(req.body, null);
+    if (rt.erro) {
+        return res.status(400).json({ erro: rt.erro });
+    }
 
     // Operador de caixa recebe automaticamente o próximo número livre de registradora
     let caixaNumber: number | null = null;
@@ -442,6 +452,7 @@ router.post('/operadores', autenticar, requerPermissao('ADMIN', 'MANAGER'), asyn
             role: role as any,
             caixaNumber,
             commissionRate: comissao !== undefined ? (Number(comissao) || 0) : 0,
+            ...rt.dados,
             isActive: true,
             mustChangePassword: true,
             passwordChangedAt: new Date(),
@@ -451,6 +462,41 @@ router.post('/operadores', autenticar, requerPermissao('ADMIN', 'MANAGER'), asyn
     });
 
     return res.status(201).json(serializar({ ...user, sessionToken: null, sessionExpiresAt: null }));
+});
+
+// Fase 2 (D-06): dados do farmacêutico responsável técnico. Devolve { erro } ou os campos a gravar.
+function dadosFarmaceutico(body: any, existente: any): { erro?: string; dados?: any } {
+    const dados: any = {};
+    if (body.farmaceuticoRT !== undefined) dados.farmaceuticoRT = Boolean(body.farmaceuticoRT);
+    if (body.cpf !== undefined) dados.cpf = body.cpf ? String(body.cpf).replace(/\D/g, '') : null;
+    if (body.crf !== undefined) dados.crf = body.crf ? String(body.crf).trim().slice(0, 20) : null;
+    if (body.crfUf !== undefined) dados.crfUf = body.crfUf ? String(body.crfUf).trim().toUpperCase().slice(0, 2) : null;
+    const final = { ...{ farmaceuticoRT: existente?.farmaceuticoRT ?? false, cpf: existente?.cpf ?? null, crf: existente?.crf ?? null, crfUf: existente?.crfUf ?? null }, ...dados };
+    if (final.cpf && !cpfValido(final.cpf)) return { erro: "CPF do farmacêutico inválido!" };
+    if (final.farmaceuticoRT && (!final.cpf || !final.crf || !final.crfUf || !/^[A-Z]{2}$/.test(final.crfUf))) {
+        return { erro: "Farmacêutico RT exige CPF, CRF e UF do CRF!" };
+    }
+    return { dados };
+}
+
+function cpfValido(cpf: string): boolean {
+    if (!/^\d{11}$/.test(cpf) || /^(\d){10}$/.test(cpf)) return false;
+    const dv = (n: number) => {
+        let soma = 0;
+        for (let i = 0; i < n; i++) soma += Number(cpf[i]) * (n + 1 - i);
+        const r = (soma * 10) % 11;
+        return r === 10 ? 0 : r;
+    };
+    return dv(9) === Number(cpf[9]) && dv(10) === Number(cpf[10]);
+}
+
+// GET /api/auth/operadores/:id - Operador completo (inclui CPF/CRF do RT) — só ADMIN/MANAGER
+router.get('/operadores/:id', autenticar, requerPermissao('ADMIN', 'MANAGER'), async (req: any, res: any) => {
+    const user = await prisma.user.findUnique({ where: { id: req.params.id } });
+    if (!user) {
+        return res.status(404).json({ erro: "Operador não encontrado!" });
+    }
+    return res.json(serializar({ ...user, sessionToken: null, sessionExpiresAt: null }));
 });
 
 // PUT /api/auth/operadores/:id - Atualiza operador (nome, e-mail, papel, comissão, ativo)
@@ -481,6 +527,11 @@ router.put('/operadores/:id', autenticar, requerPermissao('ADMIN', 'MANAGER'), a
         isActive: ativo !== undefined ? Boolean(ativo) : existente.isActive,
         updatedAt: new Date()
     };
+    const rt = dadosFarmaceutico(req.body, existente);
+    if (rt.erro) {
+        return res.status(400).json({ erro: rt.erro });
+    }
+    Object.assign(dados, rt.dados);
     if (senha) {
         const erroPolitica = await validarPoliticaSenha(senha);
         if (erroPolitica) {

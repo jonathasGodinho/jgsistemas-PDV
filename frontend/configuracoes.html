@@ -161,6 +161,22 @@
                         </div>
                         <div class="card-body" style="padding-top:0"><div class="aviso" id="aviso-operadores" style="display:none;"></div></div>
                     </div>
+                    <!-- Farmácia Fase 2 (D-06): farmacêutico responsável técnico do SNGPC -->
+                    <div class="card mb-16 hidden" id="painel-rt">
+                        <div class="card-head"><h3>Farmacêutico RT — <span id="rt-nome"></span></h3><span class="sub">Gera os arquivos do SNGPC</span></div>
+                        <div class="card-body">
+                            <label class="toggle" style="margin-bottom:12px"><input type="checkbox" id="rt-marcado"><span class="trilho"></span> <span>Farmacêutico responsável técnico (RT)</span></label>
+                            <div class="form-grid c3" id="rt-campos">
+                                <div class="campo"><label for="rt-cpf">CPF</label><input type="text" id="rt-cpf" maxlength="14" inputmode="numeric" placeholder="000.000.000-00"></div>
+                                <div class="campo"><label for="rt-crf">CRF</label><input type="text" id="rt-crf" maxlength="20"></div>
+                                <div class="campo"><label for="rt-crf-uf">UF do CRF</label><input type="text" id="rt-crf-uf" maxlength="2" placeholder="AM" style="text-transform:uppercase"></div>
+                            </div>
+                            <div style="display:flex;gap:8px;margin-top:12px">
+                                <button class="btn btn-verde" id="rt-salvar">Salvar RT</button>
+                                <button class="btn" id="rt-fechar">Fechar</button>
+                            </div>
+                        </div>
+                    </div>
                     <div class="card">
                         <div class="card-head"><h3>Segurança</h3><span class="sub">Força bruta, sessão e política de senha</span></div>
                         <div class="card-body">
@@ -530,7 +546,7 @@
                 const papeis = { ADMIN: 'Administrador', MANAGER: 'Gerente', SELLER: 'Vendedor', SUPERVISOR: 'Supervisor', STOCKIST: 'Estoquista', FINANCIAL: 'Financeiro' };
                 tbody.innerHTML = ops.map(op => `
                     <tr>
-                        <td><strong>${esc(op.nome)}</strong></td>
+                        <td><strong>${esc(op.nome)}</strong>${op.farmaceuticoRT ? ' <span class="badge verde sem-ponto">RT</span>' : ''}</td>
                         <td>${esc(op.email)}</td>
                         <td><span class="badge azul sem-ponto">${papeis[op.papel] || op.papel}</span></td>
                         <td>${op.caixaNumber ? 'Caixa ' + String(op.caixaNumber).padStart(2, '0') : '—'}</td>
@@ -538,12 +554,55 @@
                         <td><label class="toggle"><input type="checkbox" id="op-ativo-${op.id}" ${op.papel === 'ADMIN' ? 'checked disabled' : 'checked'}><span class="trilho"></span></label></td>
                         <td class="acoes">
                             <button class="btn btn-mini btn-verde" onclick="salvarOperador('${op.id}')">Salvar</button>
+                            <button class="btn btn-mini" data-rt="${op.id}" onclick="abrirRt('${op.id}')" title="Farmacêutico RT (SNGPC)">RT</button>
                         </td>
                     </tr>`).join('');
             } catch (e) {
                 mostrarAviso2('aviso-operadores', e.message, false);
             }
         }
+
+        // ---------- Farmacêutico RT (Fase 2, D-06): CPF/CRF só pela leitura autenticada
+        let rtId = null;
+        function aplicarRtMarcado() {
+            document.getElementById('rt-campos').classList.toggle('hidden', !document.getElementById('rt-marcado').checked);
+        }
+        async function abrirRt(id) {
+            try {
+                const op = await api(`/api/auth/operadores/${id}`);
+                rtId = id;
+                document.getElementById('rt-nome').innerText = op.nome;
+                document.getElementById('rt-marcado').checked = Boolean(op.farmaceuticoRT);
+                document.getElementById('rt-cpf').value = op.cpf || '';
+                document.getElementById('rt-crf').value = op.crf || '';
+                document.getElementById('rt-crf-uf').value = op.crfUf || '';
+                aplicarRtMarcado();
+                document.getElementById('painel-rt').classList.remove('hidden');
+            } catch (e) {
+                mostrarAviso2('aviso-operadores', e.message, false);
+            }
+        }
+        async function salvarRt() {
+            if (!rtId) return;
+            const marcado = document.getElementById('rt-marcado').checked;
+            const corpo = { farmaceuticoRT: marcado };
+            if (marcado) {
+                corpo.cpf = document.getElementById('rt-cpf').value.trim();
+                corpo.crf = document.getElementById('rt-crf').value.trim();
+                corpo.crfUf = document.getElementById('rt-crf-uf').value.trim().toUpperCase();
+            }
+            try {
+                await api(`/api/auth/operadores/${rtId}`, 'PUT', corpo);
+                mostrarAviso2('aviso-operadores', 'Dados do farmacêutico RT salvos!', true);
+                document.getElementById('painel-rt').classList.add('hidden');
+                carregarOperadores();
+            } catch (e) {
+                mostrarAviso2('aviso-operadores', e.message, false);
+            }
+        }
+        document.getElementById('rt-marcado').addEventListener('change', aplicarRtMarcado);
+        document.getElementById('rt-salvar').addEventListener('click', salvarRt);
+        document.getElementById('rt-fechar').addEventListener('click', () => document.getElementById('painel-rt').classList.add('hidden'));
 
         async function salvarOperador(id) {
             try {

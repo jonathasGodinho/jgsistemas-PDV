@@ -121,6 +121,28 @@ body.jg .foto-box .ms { font-size: 48px; }
                             <div class="campo"><label for="p-mva-st">MVA de ST (%)</label><input type="text" id="p-mva-st" inputmode="decimal" placeholder="0,00"></div>
                             <div class="campo"><label for="p-reducao-st">Redução de ST (%)</label><input type="text" id="p-reducao-st" inputmode="decimal" placeholder="0,00"></div>
                         </div>
+                        <h4 style="margin:18px 0 8px">Controle SNGPC</h4>
+                        <div class="form-grid c3">
+                            <div class="campo"><label for="p-classe-sngpc">Classe SNGPC</label>
+                                <select id="p-classe-sngpc">
+                                    <option value="">Não controlado</option>
+                                    <option value="CONTROLADO">Controlado (Portaria 344)</option>
+                                    <option value="ANTIMICROBIANO">Antimicrobiano (RDC 471)</option>
+                                </select>
+                            </div>
+                            <div class="campo" id="box-lista-344"><label for="p-lista-344">Lista Portaria 344</label>
+                                <select id="p-lista-344">
+                                    <option value="">—</option>
+                                    <option>A1</option><option>A2</option><option>A3</option>
+                                    <option>B1</option><option>B2</option>
+                                    <option>C1</option><option>C2</option><option>C3</option><option>C4</option><option>C5</option>
+                                </select>
+                            </div>
+                            <div class="campo"><label for="p-unidade-sngpc">Unidade SNGPC</label>
+                                <select id="p-unidade-sngpc"><option value="1">Caixa</option><option value="2">Frasco</option></select>
+                            </div>
+                            <div class="campo"><label for="p-qtd-max-receita">Máx. por receita</label><input type="number" id="p-qtd-max-receita" min="1" max="999" step="1" placeholder="Sem limite"></div>
+                        </div>
                         <div class="alerta"><span class="ms">info</span><div>Campos do módulo Farmácia. O PMC é o preço máximo ao consumidor publicado na CMED. A MVA e a redução de ST são usadas na NFC-e de produtos com ICMS-ST (CSOSN 500) e valem de 0 a 100.</div></div>
                     </div>
                 </div>
@@ -231,6 +253,15 @@ body.jg .foto-box .ms { font-size: 48px; }
         }
         aplicarModuloFarmacia();
         document.addEventListener('jg:modulos', aplicarModuloFarmacia);
+
+        // Fase 2 (D-07): a lista da Portaria 344 só existe para produto controlado
+        function aplicarClasseSngpc() {
+            const controlado = $('p-classe-sngpc').value === 'CONTROLADO';
+            $('box-lista-344').classList.toggle('hidden', !controlado);
+            if (!controlado) $('p-lista-344').value = '';
+        }
+        $('p-classe-sngpc').addEventListener('change', aplicarClasseSngpc);
+        aplicarClasseSngpc();
 
         // ---------- selects
         async function carregarListas() {
@@ -393,7 +424,12 @@ body.jg .foto-box .ms { font-size: 48px; }
             $('p-pmc').value = p.pmc !== null && p.pmc !== undefined ? paraCampo(p.pmc) : '';
             $('p-mva-st').value = p.mvaSt !== null && p.mvaSt !== undefined ? paraCampo(p.mvaSt) : '';
             $('p-reducao-st').value = p.reducaoSt !== null && p.reducaoSt !== undefined ? paraCampo(p.reducaoSt) : '';
-            grade = (p.variantes || []).map(v => ({
+            $('p-classe-sngpc').value = p.classeSngpc || '';
+            $('p-lista-344').value = p.listaPortaria344 || '';
+            $('p-unidade-sngpc').value = String(p.unidadeSngpc || 1);
+            $('p-qtd-max-receita').value = p.qtdMaxReceita || '';
+            aplicarClasseSngpc();
+            grade =(p.variantes || []).map(v => ({
                 cor: v.cor || '', tamanho: v.tamanho || '', sku: duplicando ? '' : (v.sku || ''), codigo: duplicando ? '' : (v.codigo || ''),
                 preco: v.preco !== null && v.preco !== undefined ? paraCampo(v.preco) : '', custo: v.custo !== null && v.custo !== undefined ? paraCampo(v.custo) : '',
                 estoque: duplicando ? 0 : (v.estoque || 0)
@@ -441,6 +477,10 @@ body.jg .foto-box .ms { font-size: 48px; }
                 const reducaoTexto = $('p-reducao-st').value.trim();
                 corpo.mvaSt = mvaTexto ? parseMoeda(mvaTexto) : null;
                 corpo.reducaoSt = reducaoTexto ? parseMoeda(reducaoTexto) : null;
+                corpo.classeSngpc = $('p-classe-sngpc').value || null;
+                corpo.listaPortaria344 = corpo.classeSngpc === 'CONTROLADO' ? ($('p-lista-344').value || null) : null;
+                corpo.unidadeSngpc = Number($('p-unidade-sngpc').value) || 1;
+                corpo.qtdMaxReceita = $('p-qtd-max-receita').value ? Number($('p-qtd-max-receita').value) : null;
             }
             if (!corpo.nome) { document.querySelector('[data-aba="geral"]').click(); $('p-nome').focus(); JG.toast('Informe o nome do produto.', 'alerta'); return; }
             if (!corpo.preco) { document.querySelector('[data-aba="precos"]').click(); $('p-preco').focus(); JG.toast('Informe o preço de venda.', 'alerta'); return; }

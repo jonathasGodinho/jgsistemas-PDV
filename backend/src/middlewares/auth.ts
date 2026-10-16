@@ -86,5 +86,16 @@ export const requerPermissao = (...papeis: string[]) => (req: any, res: any, nex
     next();
 };
 
+// Fase 2 (D-06, RDC 22/2014 art. 18): rotas do SNGPC só para o farmacêutico responsável técnico
+export const requerFarmaceuticoRT = (req: any, res: any, next: any) => {
+    if (!req.operador) {
+        return res.status(401).json({ erro: "Operador não autenticado!" });
+    }
+    if (!req.operador.farmaceuticoRT) {
+        return res.status(403).json({ erro: "Acesso restrito ao farmacêutico responsável técnico (RT)!" });
+    }
+    next();
+};
+
 // Verdadeiro quando o operador é de caixa (SELLER)
 export const ehOperadorDeCaixa = (req: any) => req.operador?.role === 'SELLER';

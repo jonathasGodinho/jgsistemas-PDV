@@ -7,14 +7,14 @@ sprint_id: sprint-02
 atualizado_em: 2026-10-16
 sprint:
   titulo: "Cadastro SNGPC"
-  status: nao_iniciado
+  status: concluido
   criterio_saida: "npm test termina com 0 failed e as telas de produto e de operadores verificadas por navegador sem pageerror"
   riscos: ["Listas da Portaria 344 mudam por RDC; cadastro manual (D-26, base/regulacao-controlados.md)"]
   fora_de_escopo: ["Importacao da lista oficial da Portaria 344 (D-26)"]
 fases:
   - id: F-02.1
     titulo: "Cadastro e regras de dominio"
-    status: nao_iniciado
+    status: concluido
     criterio_saida: "Regras SNGPC testadas e campos SNGPC gravados e exibidos em produto e operador"
     paralelizavel: false
     paralela_com: []
@@ -23,7 +23,7 @@ tasks:
   - id: T-02.01
     titulo: "Regras de dominio SNGPC"
     fase: F-02.1
-    status: pendente
+    status: concluida
     objetivo: "Funcoes puras de tipo de receituario por produto (D-08), validade da receita (D-04) e conselhos permitidos (D-25)."
     arquivos:
       cria: [backend/src/utils/sngpc/regras.ts, backend/tests/sngpc-regras.test.ts, backend/tests/fixtures/sngpc-tipos-receituario.json]
@@ -33,12 +33,12 @@ tasks:
     criterio_aceite: "backend/tests/sngpc-regras.test.ts passa."
     depende_de: []
     paralelizavel: true
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-02.02
     titulo: "API de produto com campos SNGPC"
     fase: F-02.1
-    status: pendente
+    status: concluida
     objetivo: "POST/PUT /api/produtos validam e gravam classeSngpc, listaPortaria344, unidadeSngpc e qtdMaxReceita, e GET /api/produtos/:codigo os devolve."
     arquivos:
       cria: [backend/tests/sngpc-produto-api.test.ts]
@@ -48,12 +48,12 @@ tasks:
     criterio_aceite: "backend/tests/sngpc-produto-api.test.ts passa."
     depende_de: [T-02.01]
     paralelizavel: false
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-02.03
     titulo: "API de operador farmaceutico RT"
     fase: F-02.1
-    status: pendente
+    status: concluida
     objetivo: "Operadores ganham farmaceuticoRT, CPF validado, CRF e UF; middleware requerFarmaceuticoRT restringe rotas ao RT (D-06)."
     arquivos:
       cria: [backend/tests/sngpc-farmaceutico.test.ts]
@@ -63,12 +63,12 @@ tasks:
     criterio_aceite: "backend/tests/sngpc-farmaceutico.test.ts passa."
     depende_de: []
     paralelizavel: true
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-02.04
     titulo: "Tela de produto com campos SNGPC"
     fase: F-02.1
-    status: pendente
+    status: concluida
     objetivo: "Aba Farmacia do produto mostra e edita classe, lista Portaria 344, unidade SNGPC e maximo por receita."
     arquivos:
       cria: []
@@ -78,12 +78,12 @@ tasks:
     criterio_aceite: "Verificacao por navegador (D-19 da Fase 1) registra os dois cenarios com zero pageerror."
     depende_de: [T-02.02]
     paralelizavel: false
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-02.05
     titulo: "Tela de operadores com dados do RT"
     fase: F-02.1
-    status: pendente
+    status: concluida
     objetivo: "Cadastro de operadores em configuracoes ganha marca de farmaceutico RT com CPF, CRF e UF."
     arquivos:
       cria: []
@@ -93,8 +93,8 @@ tasks:
     criterio_aceite: "Verificacao por navegador registra os dois cenarios com zero pageerror."
     depende_de: [T-02.03]
     paralelizavel: false
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
 ---
 
 # Plano — Sprint 02 — Cadastro SNGPC
@@ -147,11 +147,11 @@ flowchart LR
   classDef bloqueada fill:#f8d7da,stroke:#c62828,color:#4a1d1f
   classDef pendente  fill:#eceff1,stroke:#78909c,color:#263238
   classDef critico   stroke-width:3px
-  class T_02_01 pendente
-  class T_02_02 pendente
-  class T_02_03 pendente
-  class T_02_04 pendente
-  class T_02_05 pendente
+  class T_02_01 concluida
+  class T_02_02 concluida
+  class T_02_03 concluida
+  class T_02_04 concluida
+  class T_02_05 concluida
   class T_02_01,T_02_02,T_02_04 critico
 ```
 
@@ -171,7 +171,8 @@ teste_funcional: "Receita tipo 2 emitida ha 31 dias e vencida e ha 30 dias nao; 
 criterio_aceite: "backend/tests/sngpc-regras.test.ts passa."
 depende_de: []
 paralelizavel: true
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: sngpc-regras 3 passed, 0 failed; typecheck 0 · real: 0.3 h
 ```
 
 ---
@@ -188,7 +189,8 @@ teste_funcional: "PUT com classeSngpc ANTIMICROBIANO e listaPortaria344 B1 respo
 criterio_aceite: "backend/tests/sngpc-produto-api.test.ts passa."
 depende_de: [T-02.01]
 paralelizavel: false
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: sngpc-produto-api 2 + farmacia-produto 6 passed, 0 failed · real: 0.6 h
 ```
 
 ---
@@ -205,7 +207,8 @@ teste_funcional: "Uma rota protegida por requerFarmaceuticoRT responde 403 para 
 criterio_aceite: "backend/tests/sngpc-farmaceutico.test.ts passa."
 depende_de: []
 paralelizavel: true
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: sngpc-farmaceutico 2 passed, 0 failed; typecheck 0 · real: 0.7 h
 ```
 
 ---
@@ -222,7 +225,8 @@ teste_funcional: "No navegador, escolher a classe Antimicrobiano esconde e limpa
 criterio_aceite: "Verificacao por navegador (D-19 da Fase 1) registra os dois cenarios com zero pageerror."
 depende_de: [T-02.02]
 paralelizavel: false
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: navegador: 2 cenarios, 0 pageerror · real: 0.5 h
 ```
 
 ---
@@ -239,5 +243,6 @@ teste_funcional: "No navegador, desmarcar RT esconde os campos CPF, CRF e UF."
 criterio_aceite: "Verificacao por navegador registra os dois cenarios com zero pageerror."
 depende_de: [T-02.03]
 paralelizavel: false
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: navegador: 2 cenarios, 0 pageerror · real: 0.5 h
 ```

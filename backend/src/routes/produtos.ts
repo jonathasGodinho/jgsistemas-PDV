@@ -3,6 +3,7 @@ import { randomUUID } from 'crypto';
 import prisma from '../db';
 import { resolverPreco } from '../utils/preco';
 import { requerPermissao } from '../middlewares/auth';
+import { CLASSES_SNGPC, LISTAS_PORTARIA_344, tipoReceituarioDoProduto } from '../utils/sngpc/regras';
 
 const router = Router();
 
@@ -32,7 +33,7 @@ const inteiroOuNull = (v: any) => (v === undefined ? undefined : Math.max(0, Mat
 const TIPOS_MEDICAMENTO = ['REFERENCIA', 'GENERICO', 'SIMILAR', 'OUTROS'];
 
 // Normaliza os campos de farmácia do corpo. Retorna `erro` quando o tipo é inválido.
-function farmaciaDoCorpo(body: any): { erro?: string; dados?: Record<string, unknown> } {
+function farmaciaDoCorpo(body: any, existente?: any): { erro?: string; dados?: Record<string, unknown> } {
     const dados: Record<string, unknown> = {};
 
     if (body.principioAtivo !== undefined) {
@@ -78,8 +79,67 @@ function farmaciaDoCorpo(body: any): { erro?: string; dados?: Record<string, unk
         }
     }
 
+    // Fase 2 (D-07): classe SNGPC, lista da Portaria 344, unidade SNGPC e máximo por receita.
+    if (body.classeSngpc !== undefined) {
+        const classe = body.classeSngpc ? String(body.classeSngpc).trim().toUpperCase() : '';
+        if (classe && !CLASSES_SNGPC.includes(classe as any)) {
+            return { erro: "Classe SNGPC inválida!" };
+        }
+        dados.classeSngpc = classe || null;
+    }
+    if (body.listaPortaria344 !== undefined) {
+        const lista = body.listaPortaria344 ? String(body.listaPortaria344).trim().toUpperCase() : '';
+        if (lista && !LISTAS_PORTARIA_344.includes(lista)) {
+            return { erro: "Lista da Portaria 344 inválida!" };
+        }
+        dados.listaPortaria344 = lista || null;
+    }
+    if (body.unidadeSngpc !== undefined) {
+        const unidade = Number(body.unidadeSngpc);
+        if (unidade !== 1 && unidade !== 2) {
+            return { erro: "Unidade SNGPC inválida (1 caixa, 2 frasco)!" };
+        }
+        dados.unidadeSngpc = unidade;
+    }
+    if (body.qtdMaxReceita !== undefined) {
+        if (body.qtdMaxReceita === null || body.qtdMaxReceita === '') {
+            dados.qtdMaxReceita = null;
+        } else {
+            const max = Number(body.qtdMaxReceita);
+            if (!Number.isInteger(max) || max < 1 || max > 999) {
+                return { erro: "Quantidade máxima por receita inválida!" };
+            }
+            dados.qtdMaxReceita = max;
+        }
+    }
+
+    // Coerência com o que já está gravado (PUT parcial)
+    const classeFinal = dados.classeSngpc !== undefined ? dados.classeSngpc : existente?.classeSngpc ?? null;
+    const registroFinal = dados.registroMS !== undefined ? dados.registroMS : existente?.registroMS ?? null;
+    const listaFinal = dados.listaPortaria344 !== undefined ? dados.listaPortaria344 : existente?.listaPortaria344 ?? null;
+    if (classeFinal !== 'CONTROLADO') {
+        if (dados.listaPortaria344) {
+            return { erro: "A lista da Portaria 344 só vale para produto controlado!" };
+        }
+        if (listaFinal) dados.listaPortaria344 = null;
+    } else if (!listaFinal) {
+        return { erro: "Informe a lista da Portaria 344 do produto controlado!" };
+    }
+    if (classeFinal && !registroFinal) {
+        return { erro: "Produto controlado ou antimicrobiano exige o Registro MS!" };
+    }
+
     return { dados };
 }
+
+// Campos SNGPC devolvidos nas leituras de produto (contrato C-02).
+const sngpcDoProduto = (p: any) => ({
+    classeSngpc: p.classeSngpc ?? null,
+    listaPortaria344: p.listaPortaria344 ?? null,
+    unidadeSngpc: p.unidadeSngpc ?? 1,
+    qtdMaxReceita: p.qtdMaxReceita ?? null,
+    tipoReceituario: tipoReceituarioDoProduto(p)
+});
 
 // GET /api/produtos - Lista produtos (com estoque e categoria), busca opcional
 router.get('/', async (req: any, res: any) => {
@@ -144,7 +204,8 @@ router.get('/', async (req: any, res: any) => {
         registroMS: p.registroMS,
         pmc: p.pmc !== null && p.pmc !== undefined ? Number(p.pmc) : null,
         mvaSt: p.mvaSt !== null && p.mvaSt !== undefined ? Number(p.mvaSt) : null,
-        reducaoSt: p.reducaoSt !== null && p.reducaoSt !== undefined ? Number(p.reducaoSt) : null
+        reducaoSt: p.reducaoSt !== null && p.reducaoSt !== undefined ? Number(p.reducaoSt) : null,
+        ...sngpcDoProduto(p)
     })));
 });
 
@@ -191,7 +252,8 @@ router.get('/:codigo', async (req: any, res: any) => {
         codigo: produto.barcode ?? produto.sku,
         descricao: produto.name,
         preco: Number(preco.toFixed(2)),
-        precoBase: base
+        precoBase: base,
+        ...sngpcDoProduto(produto)
     });
 });
 
@@ -330,7 +392,7 @@ router.put('/:id', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req
         return res.status(404).json({ erro: "Produto não encontrado!" });
     }
 
-    const farmacia = farmaciaDoCorpo(req.body);
+    const farmacia = farmaciaDoCorpo(req.body, produtoExistente);
     if (farmacia.erro) {
         return res.status(400).json({ erro: farmacia.erro });
     }

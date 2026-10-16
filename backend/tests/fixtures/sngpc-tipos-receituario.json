@@ -1,0 +1,7 @@
+{
+  "_fonte": "Guia SNGPC v2.3 p.19 (st_TipoReceituario) + Portaria 344/98: A=Notificacao A (4), B=Notificacao B (2), C2/C3=Notificacao Especial (3), C1/C4/C5=Receita de Controle Especial (1), antimicrobiano=Receita antimicrobiano 2 vias (5)",
+  "A1": 4, "A2": 4, "A3": 4,
+  "B1": 2, "B2": 2,
+  "C1": 1, "C2": 3, "C3": 3, "C4": 1, "C5": 1,
+  "ANTIMICROBIANO": 5
+}
