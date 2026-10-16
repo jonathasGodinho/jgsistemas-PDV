@@ -7,14 +7,14 @@ sprint_id: sprint-01
 atualizado_em: 2026-10-16
 sprint:
   titulo: "Capacidade de testar SNGPC"
-  status: nao_iniciado
+  status: concluido
   criterio_saida: "npm test termina com 0 failed incluindo sngpc-modelo, sngpc-xml e sngpc-factories, e npm run typecheck sai com 0"
   riscos: ["Migracao altera tabelas em producao (Supabase): aplicar com prisma migrate deploy antes do deploy do codigo (base/modelo-dados-atual.md)", "Reset do banco jg_test exige consentimento do usuario ao Prisma (base/modulos-e-testes.md)"]
   fora_de_escopo: ["Regras de venda e geracao de XML - sprints seguintes"]
 fases:
   - id: F-01.1
     titulo: "Fundacao de dados e harness"
-    status: nao_iniciado
+    status: concluido
     criterio_saida: "Migracao aplicada, helpers de XML/zip e factories cobertos por testes verdes"
     paralelizavel: false
     paralela_com: []
@@ -23,7 +23,7 @@ tasks:
   - id: T-01.01
     titulo: "Migracao de dados da Fase 2"
     fase: F-01.1
-    status: pendente
+    status: concluida
     objetivo: "Criar no schema os campos e tabelas da Fase 2 (D-07, D-10, D-13, D-14, D-16, D-05, D-06) com isolamento multiempresa."
     arquivos:
       cria: [backend/prisma/migrations/20261017090000_farmacia_controlados/migration.sql, backend/tests/sngpc-modelo.test.ts]
@@ -33,12 +33,12 @@ tasks:
     criterio_aceite: "backend/tests/sngpc-modelo.test.ts passa e npm run typecheck sai com 0."
     depende_de: []
     paralelizavel: true
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-01.02
     titulo: "Dependencia fflate e helpers de XML e zip"
     fase: F-01.1
-    status: pendente
+    status: concluida
     objetivo: "Adicionar fflate ao backend e helpers de teste para abrir zip base64 latin1 e consultar elementos do XML."
     arquivos:
       cria: [backend/tests/sngpc-xml.ts, backend/tests/sngpc-xml.test.ts]
@@ -48,12 +48,12 @@ tasks:
     criterio_aceite: "backend/tests/sngpc-xml.test.ts passa e fflate consta em dependencies do backend/package.json."
     depende_de: []
     paralelizavel: true
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-01.03
     titulo: "Factories do cenario SNGPC"
     fase: F-01.1
-    status: pendente
+    status: concluida
     objetivo: "Criar cenarioSngpc() com empresa e filial com CNPJ, farmaceutico RT com CPF, caixa aberto e produto SNGPC com lote e livro-razao."
     arquivos:
       cria: [backend/tests/sngpc-factories.ts, backend/tests/sngpc-factories.test.ts]
@@ -63,8 +63,8 @@ tasks:
     criterio_aceite: "backend/tests/sngpc-factories.test.ts passa."
     depende_de: [T-01.01]
     paralelizavel: false
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
 ---
 
 # Plano — Sprint 01 — Capacidade de testar SNGPC
@@ -114,9 +114,9 @@ flowchart LR
   classDef bloqueada fill:#f8d7da,stroke:#c62828,color:#4a1d1f
   classDef pendente  fill:#eceff1,stroke:#78909c,color:#263238
   classDef critico   stroke-width:3px
-  class T_01_01 pendente
-  class T_01_02 pendente
-  class T_01_03 pendente
+  class T_01_01 concluida
+  class T_01_02 concluida
+  class T_01_03 concluida
   class T_01_01,T_01_03 critico
 ```
 
@@ -136,7 +136,8 @@ teste_funcional: "O cliente multiempresa no contexto da empresa A nao retorna Re
 criterio_aceite: "backend/tests/sngpc-modelo.test.ts passa e npm run typecheck sai com 0."
 depende_de: []
 paralelizavel: true
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: sngpc-modelo 2 passed, 0 failed; typecheck 0 · real: 0.5 h
 ```
 
 ---
@@ -153,7 +154,8 @@ teste_funcional: "Para um XML de exemplo, textoEm(xml, \"cabecalho/cnpjEmissor\"
 criterio_aceite: "backend/tests/sngpc-xml.test.ts passa e fflate consta em dependencies do backend/package.json."
 depende_de: []
 paralelizavel: true
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: sngpc-xml 2 passed, 0 failed; typecheck 0 · real: 0.4 h
 ```
 
 ---
@@ -170,5 +172,6 @@ teste_funcional: "cenarioSngpc({ classe: \"ANTIMICROBIANO\" }) cria produto com 
 criterio_aceite: "backend/tests/sngpc-factories.test.ts passa."
 depende_de: [T-01.01]
 paralelizavel: false
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: sngpc-factories 2 passed, 0 failed · real: 0.5 h
 ```

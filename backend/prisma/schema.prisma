@@ -22,30 +22,32 @@ model AuditLog {
 }
 
 model Branch {
-  id             String           @id
-  companyId      String
-  name           String
-  document       String?
-  address        String?
-  number         String?
-  complement     String?
-  neighborhood   String?
-  city           String?
-  state          String?
-  zipCode        String?
-  phone          String?
-  email          String?
-  isActive       Boolean          @default(true)
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime
-  Company        Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  CashRegister   CashRegister[]
-  Inventory      Inventory[]
-  InventoryCount InventoryCount[]
-  Purchase       Purchase[]
-  Sale           Sale[]
-  User           User[]
-  Lote           Lote[]
+  id                   String                @id
+  companyId            String
+  name                 String
+  document             String?
+  address              String?
+  number               String?
+  complement           String?
+  neighborhood         String?
+  city                 String?
+  state                String?
+  zipCode              String?
+  phone                String?
+  email                String?
+  isActive             Boolean               @default(true)
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime
+  Company              Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  CashRegister         CashRegister[]
+  Inventory            Inventory[]
+  InventoryCount       InventoryCount[]
+  Purchase             Purchase[]
+  Sale                 Sale[]
+  User                 User[]
+  Lote                 Lote[]
+  sngpcArquivos        SngpcArquivo[]
+  sngpcInconsistencias SngpcInconsistencia[]
 }
 
 model Brand {
@@ -179,6 +181,9 @@ model Company {
   LoteMovimento        LoteMovimento[]
   Lote                 Lote[]
   CmedPreco            CmedPreco[]
+  receitas             Receita[]
+  sngpcArquivos        SngpcArquivo[]
+  sngpcInconsistencias SngpcInconsistencia[]
 }
 
 model CardBrand {
@@ -496,6 +501,10 @@ model Product {
   pmc              Decimal?           @db.Decimal(10, 2)
   mvaSt            Decimal?           @db.Decimal(5, 2)
   reducaoSt        Decimal?           @db.Decimal(5, 2)
+  classeSngpc      String?
+  listaPortaria344 String?
+  unidadeSngpc     Int                @default(1)
+  qtdMaxReceita    Int?
   unit             String             @default("UN")
   weight           Decimal?           @db.Decimal(10, 3)
   photos           String[]
@@ -536,6 +545,8 @@ model Purchase {
   branchId     String
   supplierId   String?
   orderNumber  String?
+  nfNumero     String?
+  nfData       DateTime?
   status       String         @default("PENDING")
   total        Decimal        @default(0) @db.Decimal(10, 2)
   notes        String?
@@ -593,6 +604,7 @@ model Sale {
   SaleInstallment SaleInstallment[]
   CardReceivable  CardReceivable[]
   NfeEvent        NfeEvent[]
+  receitas        Receita[]
 }
 
 model NfeEvent {
@@ -632,8 +644,10 @@ model SaleItem {
   discount  Decimal  @default(0) @db.Decimal(10, 2)
   subtotal  Decimal  @db.Decimal(10, 2)
   costPrice Decimal? @db.Decimal(10, 2)
+  receitaId String?
   Product   Product  @relation(fields: [productId], references: [id])
   Sale      Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  Receita   Receita? @relation(fields: [receitaId], references: [id], onDelete: SetNull)
 }
 
 model SalePayment {
@@ -791,6 +805,10 @@ model User {
   passwordChangedAt  DateTime?
   failedLoginCount   Int            @default(0)
   lockedUntil        DateTime?
+  farmaceuticoRT     Boolean        @default(false)
+  cpf                String?
+  crf                String?
+  crfUf              String?
   isActive           Boolean        @default(true)
   createdAt          DateTime       @default(now())
   updatedAt          DateTime
@@ -931,19 +949,23 @@ model Lote {
 // aqui; o saldo do lote é a soma das linhas. VENDA guarda a venda/item que consumiu o lote,
 // e CANCELAMENTO/DEVOLUCAO apontam (origemId) para a linha de VENDA que estornam.
 model LoteMovimento {
-  id         String   @id
-  companyId  String
-  loteId     String
-  tipo       String
-  quantidade Decimal  @db.Decimal(10, 3)
-  saleId     String?
-  saleItemId String?
-  origemId   String?
-  referencia String?
-  userId     String?
-  createdAt  DateTime @default(now())
-  Company    Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  Lote       Lote     @relation(fields: [loteId], references: [id], onDelete: Cascade)
+  id          String    @id
+  companyId   String
+  loteId      String
+  tipo        String
+  quantidade  Decimal   @db.Decimal(10, 3)
+  saleId      String?
+  saleItemId  String?
+  origemId    String?
+  referencia  String?
+  motivoPerda Int?
+  nfNumero    String?
+  nfData      DateTime?
+  cnpjOrigem  String?
+  userId      String?
+  createdAt   DateTime  @default(now())
+  Company     Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  Lote        Lote      @relation(fields: [loteId], references: [id], onDelete: Cascade)
 
   @@index([loteId])
   @@index([saleId])
@@ -951,6 +973,80 @@ model LoteMovimento {
 }
 
 // Farmacia: tabela de precos da CMED (import por upload; substitui as linhas da empresa — D-05/D-18).
+// Farmacia Fase 2 (C-01): receita de controlado/antimicrobiano ligada a venda (D-10).
+model Receita {
+  id                   String     @id
+  companyId            String
+  saleId               String
+  tipoReceituario      Int
+  numero               String?
+  dataPrescricao       DateTime
+  uso                  Int
+  prescritorNome       String
+  prescritorConselho   String
+  prescritorNumero     String
+  prescritorUf         String
+  compradorNome        String?
+  compradorTipoDoc     Int?
+  compradorDocumento   String?
+  compradorOrgao       String?
+  compradorUf          String?
+  pacienteNome         String?
+  pacienteIdade        Int?
+  pacienteUnidadeIdade Int?
+  pacienteSexo         Int?
+  pacienteCid          String?
+  quantidadeConfirmada Boolean    @default(false)
+  createdAt            DateTime   @default(now())
+  Company              Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  Sale                 Sale       @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  SaleItem             SaleItem[]
+
+  @@index([saleId])
+  @@index([companyId, compradorDocumento])
+}
+
+// Farmacia Fase 2 (C-01): arquivos XML gerados para o SNGPC (D-16).
+model SngpcArquivo {
+  id           String    @id
+  companyId    String
+  branchId     String
+  tipo         String
+  dataInicio   DateTime
+  dataFim      DateTime
+  hash         String
+  xml          String    @db.Text
+  zipBase64    String    @db.Text
+  status       String    @default("GERADO")
+  criadoPorId  String
+  enviadoEm    DateTime?
+  enviadoPorId String?
+  observacao   String?
+  createdAt    DateTime  @default(now())
+  Company      Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  Branch       Branch    @relation(fields: [branchId], references: [id])
+
+  @@index([companyId, branchId, tipo, dataFim])
+}
+
+// Farmacia Fase 2 (C-01): inconsistencia a notificar pelo RT no SNGPC (D-05, RDC 22 art. 14).
+model SngpcInconsistencia {
+  id             String    @id
+  companyId      String
+  branchId       String
+  saleId         String?
+  arquivoId      String?
+  descricao      String
+  status         String    @default("ABERTA")
+  createdAt      DateTime  @default(now())
+  resolvidaEm    DateTime?
+  resolvidaPorId String?
+  Company        Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  Branch         Branch    @relation(fields: [branchId], references: [id])
+
+  @@index([companyId, status])
+}
+
 model CmedPreco {
   id         String   @id
   companyId  String

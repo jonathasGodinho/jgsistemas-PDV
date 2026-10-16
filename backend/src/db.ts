@@ -16,7 +16,8 @@ const DIRETAS = new Set([
     'Branch', 'Brand', 'CashRegister', 'Category', 'Collection', 'CardBrand', 'CardOperator',
     'CardReceivable', 'CardStatementImport', 'Customer', 'Employee', 'FinancialTransaction',
     'LoginAudit', 'Product', 'Purchase', 'Sale', 'Setting', 'Supplier', 'InventoryCount',
-    'PriceTable', 'Promotion', 'User', 'Lote', 'LoteMovimento', 'CmedPreco'
+    'PriceTable', 'Promotion', 'User', 'Lote', 'LoteMovimento', 'CmedPreco',
+    'Receita', 'SngpcArquivo', 'SngpcInconsistencia'
 ]);
 
 // Tabelas filhas (sem companyId): filtradas pela tabela-mãe.
