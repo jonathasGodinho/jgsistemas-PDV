@@ -7,14 +7,14 @@ sprint_id: sprint-03
 atualizado_em: 2026-10-16
 sprint:
   titulo: "Receita na venda (backend)"
-  status: nao_iniciado
+  status: concluido
   criterio_saida: "npm test termina com 0 failed incluindo os testes sngpc-receita, sngpc-venda-pdv, sngpc-venda-prazo, sngpc-orcamento, sngpc-troca e sngpc-comprador"
   riscos: ["Captura da receita no fluxo do PDV pode atrasar vendas comuns; regras so se aplicam a produto com classeSngpc (base/fluxos-venda-estoque.md)"]
   fora_de_escopo: ["Telas (sprint-04)", "SNCR e receita eletronica (D-27)"]
 fases:
   - id: F-03.1
     titulo: "Receita obrigatoria nas rotas de venda"
-    status: nao_iniciado
+    status: concluido
     criterio_saida: "Rotas de venda recusam item SNGPC sem receita valida ou sem lote e gravam a receita quando valida"
     paralelizavel: false
     paralela_com: []
@@ -23,7 +23,7 @@ tasks:
   - id: T-03.01
     titulo: "Validacao da receita"
     fase: F-03.1
-    status: pendente
+    status: concluida
     objetivo: "validarReceita devolve erros e alertas segundo o Guia 4.2 e as decisoes D-04, D-10, D-24 e D-25."
     arquivos:
       cria: [backend/src/utils/sngpc/receita.ts, backend/tests/sngpc-receita.test.ts]
@@ -33,12 +33,12 @@ tasks:
     criterio_aceite: "backend/tests/sngpc-receita.test.ts passa."
     depende_de: [T-02.01]
     paralelizavel: false
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-03.02
     titulo: "Venda PDV com receita"
     fase: F-03.1
-    status: pendente
+    status: concluida
     objetivo: "POST /api/vendas exige receita para item SNGPC, recusa vencida ou alerta nao confirmado, e grava Receita e SaleItem.receitaId."
     arquivos:
       cria: [backend/src/utils/sngpc/vendaReceita.ts, backend/tests/sngpc-venda-pdv.test.ts]
@@ -48,12 +48,12 @@ tasks:
     criterio_aceite: "backend/tests/sngpc-venda-pdv.test.ts passa e farmacia-fefo-venda-pdv.test.ts continua verde."
     depende_de: [T-03.01, T-01.03]
     paralelizavel: false
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-03.03
     titulo: "Venda SNGPC exige saldo em lote"
     fase: F-03.1
-    status: pendente
+    status: concluida
     objetivo: "Produto SNGPC so vende quando os lotes nao vencidos cobrem a quantidade (D-09)."
     arquivos:
       cria: [backend/tests/sngpc-lote-obrigatorio.test.ts]
@@ -63,12 +63,12 @@ tasks:
     criterio_aceite: "backend/tests/sngpc-lote-obrigatorio.test.ts passa e farmacia-lote-livro.test.ts continua verde."
     depende_de: [T-03.02]
     paralelizavel: false
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-03.04
     titulo: "Venda a prazo com receita"
     fase: F-03.1
-    status: pendente
+    status: concluida
     objetivo: "POST /api/vendas-fora-pdv aplica as mesmas regras de receita e lote para item SNGPC."
     arquivos:
       cria: [backend/tests/sngpc-venda-prazo.test.ts]
@@ -78,12 +78,12 @@ tasks:
     criterio_aceite: "backend/tests/sngpc-venda-prazo.test.ts passa."
     depende_de: [T-03.03]
     paralelizavel: false
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-03.05
     titulo: "Efetivar orcamento exige receita"
     fase: F-03.1
-    status: pendente
+    status: concluida
     objetivo: "Orcamento com item SNGPC so efetiva com receitas no corpo do POST /api/vendas/:id/efetivar (D-11)."
     arquivos:
       cria: [backend/tests/sngpc-orcamento.test.ts]
@@ -93,12 +93,12 @@ tasks:
     criterio_aceite: "backend/tests/sngpc-orcamento.test.ts passa."
     depende_de: [T-03.03]
     paralelizavel: false
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-03.06
     titulo: "Troca recusa item novo SNGPC"
     fase: F-03.1
-    status: pendente
+    status: concluida
     objetivo: "POST /api/trocas recusa item novo com classeSngpc (D-11)."
     arquivos:
       cria: [backend/tests/sngpc-troca.test.ts]
@@ -108,12 +108,12 @@ tasks:
     criterio_aceite: "backend/tests/sngpc-troca.test.ts passa e farmacia-lote-livro.test.ts continua verde."
     depende_de: []
     paralelizavel: true
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-03.07
     titulo: "Pre-preenchimento do comprador"
     fase: F-03.1
-    status: pendente
+    status: concluida
     objetivo: "GET /api/farmacia/receitas/comprador/:documento devolve so os dados do comprador (nunca paciente nem prescritor) da ultima receita com o mesmo documento, a qualquer operador autenticado (D-23, D-30)."
     arquivos:
       cria: [backend/tests/sngpc-comprador.test.ts]
@@ -123,8 +123,8 @@ tasks:
     criterio_aceite: "backend/tests/sngpc-comprador.test.ts passa."
     depende_de: [T-03.02]
     paralelizavel: false
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
 ---
 
 # Plano — Sprint 03 — Receita na venda (backend)
@@ -182,13 +182,13 @@ flowchart LR
   classDef bloqueada fill:#f8d7da,stroke:#c62828,color:#4a1d1f
   classDef pendente  fill:#eceff1,stroke:#78909c,color:#263238
   classDef critico   stroke-width:3px
-  class T_03_01 pendente
-  class T_03_02 pendente
-  class T_03_03 pendente
-  class T_03_04 pendente
-  class T_03_05 pendente
-  class T_03_06 pendente
-  class T_03_07 pendente
+  class T_03_01 concluida
+  class T_03_02 concluida
+  class T_03_03 concluida
+  class T_03_04 concluida
+  class T_03_05 concluida
+  class T_03_06 concluida
+  class T_03_07 concluida
   class T_03_01,T_03_02,T_03_03,T_03_04 critico
 ```
 
@@ -208,7 +208,8 @@ teste_funcional: "Receita tipo 5 sem numero, com paciente completo e quantidade 
 criterio_aceite: "backend/tests/sngpc-receita.test.ts passa."
 depende_de: [T-02.01]
 paralelizavel: false
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: sngpc-receita 3 passed, 0 failed; typecheck 0 · real: 0.6 h
 ```
 
 ---
@@ -225,7 +226,8 @@ teste_funcional: "O mesmo POST sem receita responde 400 com Receita obrigatoria 
 criterio_aceite: "backend/tests/sngpc-venda-pdv.test.ts passa e farmacia-fefo-venda-pdv.test.ts continua verde."
 depende_de: [T-03.01, T-01.03]
 paralelizavel: false
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: sngpc-venda-pdv 4 + farmacia-fefo-venda-pdv + farmacia-lote-livro: 16 passed, 0 failed · real: 1.0 h
 ```
 
 ---
@@ -242,7 +244,8 @@ teste_funcional: "Produto sem classeSngpc nas mesmas condicoes vende 3 com 201."
 criterio_aceite: "backend/tests/sngpc-lote-obrigatorio.test.ts passa e farmacia-lote-livro.test.ts continua verde."
 depende_de: [T-03.02]
 paralelizavel: false
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: sngpc-lote-obrigatorio 2 + regressao 14: 16 passed, 0 failed · real: 0.4 h
 ```
 
 ---
@@ -259,7 +262,8 @@ teste_funcional: "O mesmo POST sem receita responde 400 com Receita obrigatoria.
 criterio_aceite: "backend/tests/sngpc-venda-prazo.test.ts passa."
 depende_de: [T-03.03]
 paralelizavel: false
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: sngpc-venda-prazo 2 + farmacia-venda-fora-pdv-fefo 1: 3 passed, 0 failed · real: 0.4 h
 ```
 
 ---
@@ -276,7 +280,8 @@ teste_funcional: "A efetivacao do mesmo orcamento sem receita responde 400 com R
 criterio_aceite: "backend/tests/sngpc-orcamento.test.ts passa."
 depende_de: [T-03.03]
 paralelizavel: false
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: sngpc-orcamento 2 + sngpc-venda-pdv 4: 6 passed, 0 failed · real: 0.4 h
 ```
 
 ---
@@ -293,7 +298,8 @@ teste_funcional: "Troca com item novo sem classeSngpc responde 201."
 criterio_aceite: "backend/tests/sngpc-troca.test.ts passa e farmacia-lote-livro.test.ts continua verde."
 depende_de: []
 paralelizavel: true
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: sngpc-troca 2 + farmacia-lote-livro 10: 12 passed, 0 failed · real: 0.3 h
 ```
 
 ---
@@ -310,5 +316,6 @@ teste_funcional: "Documento sem receita anterior devolve 404."
 criterio_aceite: "backend/tests/sngpc-comprador.test.ts passa."
 depende_de: [T-03.02]
 paralelizavel: false
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: sngpc-comprador 2 passed, 0 failed · real: 0.3 h
 ```

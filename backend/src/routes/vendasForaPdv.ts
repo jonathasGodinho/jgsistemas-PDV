@@ -12,7 +12,8 @@ import { calcularPromocoes } from '../utils/promocoes';
 import { emitirNfce } from '../nfe';
 import { obterNfeConfig } from '../nfe/config';
 import { extrairQrCode } from '../nfe/parse';
-import { baixarLotesFefo, rotuloLotes, validarEstoqueVendavel } from '../utils/fefo';
+import { baixarLotesFefo, exigirSaldoEmLote, rotuloLotes, validarEstoqueVendavel } from '../utils/fefo';
+import { LinhaVendaSngpc, corpoErroVenda, ehProdutoSngpc, gravarReceitas, prepararReceitas } from '../utils/sngpc/vendaReceita';
 
 const router = Router();
 router.use(autenticar);
@@ -43,7 +44,7 @@ const converterCents = (valor: number) => Math.round(Number(valor) * 100);
 
 // POST /api/vendas-fora-pdv - Registra venda fora do PDV (a prazo/crediário)
 router.post('/', async (req: any, res: any) => {
-    const { cliente, celular, itens, parcelas, primeiraVencimento, desconto, senhaAdmin, observacoes } = req.body;
+    const { cliente, celular, itens, parcelas, primeiraVencimento, desconto, senhaAdmin, observacoes, receitas } = req.body;
 
     if (!cliente || !String(cliente).trim()) {
         return res.status(400).json({ erro: "Informe o nome do cliente!" });
@@ -113,6 +114,7 @@ router.post('/', async (req: any, res: any) => {
             let subtotal = 0;
             let custoTotal = 0;
             const vendaId = randomUUID();
+            const linhasSngpc: LinhaVendaSngpc[] = [];
 
             for (const item of itens) {
                 const qtd = Math.round(Number(item.quantidade) || 1);
@@ -156,7 +158,12 @@ router.post('/', async (req: any, res: any) => {
                 }
                 // D-17/D-20: lote vencido não é vendável
                 if (!variante) await validarEstoqueVendavel(tx, produto, filial.id, qtd, estoque.quantity);
+                // Fase 2 (D-09/D-11): produto SNGPC exige lote e receita
+                if (!variante) await exigirSaldoEmLote(tx, produto, filial.id, qtd);
                 const itemId = randomUUID();
+                if (!variante && ehProdutoSngpc(produto)) {
+                    linhasSngpc.push({ itemId, produto, quantidade: qtd, receita: item.receita });
+                }
 
                 const valorItem = precoUnit * qtd;
                 const custoItem = custoUnit * qtd;
@@ -196,6 +203,8 @@ router.post('/', async (req: any, res: any) => {
                     costPrice: custoUnit
                 });
             }
+
+            const gruposReceita = prepararReceitas(linhasSngpc, receitas);
 
             const total = subtotal - descontoNum - cashbackResgate;
             if (total <= 0) {
@@ -279,6 +288,7 @@ router.post('/', async (req: any, res: any) => {
                     }
                 }
             });
+            await gravarReceitas(tx, empresa.id, venda.id, gruposReceita);
 
             // Gera as parcelas com as datas de vencimento e os títulos financeiros
             const totalCents = converterCents(totalFinal);
@@ -418,7 +428,7 @@ router.post('/', async (req: any, res: any) => {
         }
         return res.status(201).json(respostaForaPdv);
     } catch (error: any) {
-        return res.status(400).json({ erro: error.message });
+        return res.status(400).json(corpoErroVenda(error));
     }
 });
 

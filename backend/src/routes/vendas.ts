@@ -12,7 +12,8 @@ import { resolverPreco } from '../utils/preco';
 import { calcularPromocoes } from '../utils/promocoes';
 import { obterSetting } from '../utils/settings';
 import { criarRecebiveisCartao } from '../utils/cartao';
-import { baixarLotesFefo, estornarLotesDaVenda, rotuloLotes, validarEstoqueVendavel } from '../utils/fefo';
+import { baixarLotesFefo, estornarLotesDaVenda, exigirSaldoEmLote, rotuloLotes, validarEstoqueVendavel } from '../utils/fefo';
+import { LinhaVendaSngpc, corpoErroVenda, ehProdutoSngpc, gravarReceitas, prepararReceitas } from '../utils/sngpc/vendaReceita';
 import { extrairQrCode } from '../nfe/parse';
 import { emitirNfce } from '../nfe';
 import { obterNfeConfig } from '../nfe/config';
@@ -63,7 +64,7 @@ function serializarNfe(venda: any) {
 // POST /api/vendas - Finaliza uma venda (itens + pagamento), grava no banco e baixa estoque
 // Suporta orçamento (orcamento=true → status PENDING, sem baixa de estoque/pagamento)
 router.post('/', async (req: any, res: any) => {
-    const { itens, pagamento, orcamento, clienteId, naoEmitirNfe } = req.body;
+    const { itens, pagamento, orcamento, clienteId, naoEmitirNfe, receitas } = req.body;
     const ehOrcamento = Boolean(orcamento);
 
     if (!itens || !Array.isArray(itens) || itens.length === 0) {
@@ -104,6 +105,7 @@ router.post('/', async (req: any, res: any) => {
             let subtotal = 0;
             let custoTotal = 0;
             const vendaId = randomUUID();
+            const linhasSngpc: LinhaVendaSngpc[] = [];
 
             for (const item of itens) {
                 const qtd = Math.round(Number(item.quantidade) || 1);
@@ -149,6 +151,8 @@ router.post('/', async (req: any, res: any) => {
                 }
                 // D-17/D-20: lote vencido não é vendável
                 if (!variante) await validarEstoqueVendavel(tx, produto, filial.id, qtd, estoque.quantity);
+                // Fase 2 (D-09): produto SNGPC só vende com saldo em lote (no orçamento, só na efetivação)
+                if (!variante && !ehOrcamento) await exigirSaldoEmLote(tx, produto, filial.id, qtd);
                 const itemId = randomUUID();
 
                 const valorItem = precoUnit * qtd;
@@ -193,7 +197,13 @@ router.post('/', async (req: any, res: any) => {
                     subtotal: valorItem,
                     costPrice: custoUnit
                 });
+                // Fase 2 (D-11): item SNGPC exige receita, exceto no orçamento (exigida na efetivação)
+                if (!variante && ehProdutoSngpc(produto)) {
+                    linhasSngpc.push({ itemId, produto, quantidade: qtd, receita: item.receita });
+                }
             }
+
+            const gruposReceita = ehOrcamento ? [] : prepararReceitas(linhasSngpc, receitas);
 
             const desconto = Number(pagamento?.desconto ?? 0);
             const erroDesconto = await autorizarDesconto(desconto, pagamento?.senhaAdmin);
@@ -316,6 +326,7 @@ router.post('/', async (req: any, res: any) => {
                 },
                 include: { SaleItem: true, SalePayment: true }
             });
+            await gravarReceitas(tx, empresa.id, venda.id, gruposReceita);
 
             // Recebíveis de cartão: um por parcela (crédito) ou único (débito)
             let recebiveisLiquido = 0;
@@ -437,14 +448,14 @@ router.post('/', async (req: any, res: any) => {
         resposta.nfe = await vendaComNfe(result.venda.id);
         return res.status(201).json(resposta);
     } catch (error: any) {
-        return res.status(400).json({ erro: error.message });
+        return res.status(400).json(corpoErroVenda(error));
     }
 });
 
 // POST /api/vendas/:id/efetivar - Converte um orçamento (PENDING) em venda, baixa estoque e grava pagamento
 router.post('/:id/efetivar', async (req: any, res: any) => {
     const { id } = req.params;
-    const { pagamento } = req.body;
+    const { pagamento, receitas, itensReceita } = req.body;
 
     try {
         const result = await prisma.$transaction(async (tx) => {
@@ -495,6 +506,9 @@ router.post('/:id/efetivar', async (req: any, res: any) => {
                 totalFinal = Number((totalFinal - cashbackResgate).toFixed(2));
             }
 
+            // Fase 2 (D-11): itens SNGPC do orçamento exigem receita na efetivação
+            const linhasSngpc: LinhaVendaSngpc[] = [];
+
             // Revalida estoque e baixa
             for (const item of orcamento.SaleItem) {
                 const estoque = await tx.inventory.findFirst({
@@ -509,7 +523,13 @@ router.post('/:id/efetivar', async (req: any, res: any) => {
                 }
                 if (!item.variantId) {
                     const produtoItem = await tx.product.findFirst({ where: { id: item.productId } });
-                    if (produtoItem) await validarEstoqueVendavel(tx, produtoItem, filial.id, item.quantity, estoque.quantity);
+                    if (produtoItem) {
+                        await validarEstoqueVendavel(tx, produtoItem, filial.id, item.quantity, estoque.quantity);
+                        await exigirSaldoEmLote(tx, produtoItem, filial.id, item.quantity);
+                        if (ehProdutoSngpc(produtoItem)) {
+                            linhasSngpc.push({ itemId: item.id, produto: produtoItem, quantidade: item.quantity, receita: itensReceita?.[item.id] });
+                        }
+                    }
                 }
                 await tx.inventory.update({
                     where: { id: estoque.id },
@@ -569,6 +589,9 @@ router.post('/:id/efetivar', async (req: any, res: any) => {
                     bandeiraCartao = await tx.cardBrand.findUnique({ where: { id: cardBrandId } });
                 }
             }
+
+            const gruposReceita = prepararReceitas(linhasSngpc, receitas);
+            await gravarReceitas(tx, orcamento.companyId, orcamento.id, gruposReceita);
 
             const venda = await tx.sale.update({
                 where: { id },
@@ -711,7 +734,7 @@ router.post('/:id/efetivar', async (req: any, res: any) => {
         respostaEfetivar.nfe = await vendaComNfe(result.venda.id);
         return res.json(respostaEfetivar);
     } catch (error: any) {
-        return res.status(400).json({ erro: error.message });
+        return res.status(400).json(corpoErroVenda(error));
     }
 });
 

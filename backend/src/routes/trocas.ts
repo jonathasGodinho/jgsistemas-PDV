@@ -106,6 +106,10 @@ router.post('/', async (req: any, res: any) => {
                     throw new Error(`Produto não encontrado: ${item.codigo}`);
                 }
                 const { produto, variante } = encontrado;
+                // Fase 2 (D-11): controlado/antimicrobiano só sai em venda do PDV, com receita
+                if (!variante && produto.classeSngpc) {
+                    throw new Error(`${produto.name} é medicamento controlado/antimicrobiano: faça a venda no PDV com receita.`);
+                }
 
                 const estoque = await tx.inventory.findFirst({
                     where: {

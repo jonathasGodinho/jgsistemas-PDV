@@ -205,6 +205,26 @@ router.post('/lotes/conciliar', requerPermissao('ADMIN'), async (req: any, res: 
     }
 });
 
+// GET /api/farmacia/receitas/comprador/:documento - pré-preenche o comprador (Fase 2, D-23/D-30).
+// Devolve SÓ os dados do comprador da última receita com o mesmo documento — nunca paciente nem prescritor.
+router.get('/receitas/comprador/:documento', async (req: any, res: any) => {
+    const documento = String(req.params.documento ?? '').trim();
+    if (!documento) return res.status(400).json({ erro: 'Informe o documento.' });
+    const r = await prisma.receita.findFirst({
+        where: { compradorDocumento: documento },
+        orderBy: { createdAt: 'desc' },
+        select: { compradorNome: true, compradorTipoDoc: true, compradorDocumento: true, compradorOrgao: true, compradorUf: true }
+    });
+    if (!r) return res.status(404).json({ erro: 'Nenhuma receita anterior com este documento.' });
+    return res.json({
+        nome: r.compradorNome,
+        tipoDocumento: r.compradorTipoDoc,
+        documento: r.compradorDocumento,
+        orgaoExpedidor: r.compradorOrgao,
+        uf: r.compradorUf
+    });
+});
+
 // POST /api/farmacia/cmed - importa a planilha de PMC da CMED (restrito ao admin).
 // D-05: a importação substitui a tabela inteira da empresa.
 router.post('/cmed', requerPermissao('ADMIN'), async (req: any, res: any) => {

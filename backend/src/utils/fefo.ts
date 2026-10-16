@@ -336,3 +336,25 @@ export async function ajustarLotesAoEstoque(
     }
     return baixados;
 }
+
+/**
+ * Fase 2 (D-09 da feature farmacia-controlados): produto SNGPC (controlado/antimicrobiano) só
+ * sai de lote — o XML do SNGPC exige o lote em toda saída. Lança erro quando os lotes não
+ * vencidos não cobrem a quantidade.
+ */
+export async function exigirSaldoEmLote(
+    cliente: ClienteLotes,
+    produto: { id: string; name: string; classeSngpc?: string | null },
+    filialId: string,
+    quantidade: number
+) {
+    if (!produto.classeSngpc) return;
+    const disponiveis = await lotesDisponiveis(produto.id, filialId, cliente);
+    const saldo = arred(disponiveis.reduce((s: number, l: any) => s + Number(l.quantidade), 0));
+    if (quantidade > saldo) {
+        throw new Error(
+            `Saldo em lote insuficiente para ${produto.name}: ${saldo} unidade(s) em lote não vencido. ` +
+            `Medicamento controlado/antimicrobiano só pode ser vendido com lote.`
+        );
+    }
+}
