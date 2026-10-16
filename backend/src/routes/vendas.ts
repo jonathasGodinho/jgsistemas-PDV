@@ -14,6 +14,7 @@ import { obterSetting } from '../utils/settings';
 import { criarRecebiveisCartao } from '../utils/cartao';
 import { baixarLotesFefo, estornarLotesDaVenda, exigirSaldoEmLote, rotuloLotes, validarEstoqueVendavel } from '../utils/fefo';
 import { tipoReceituarioDoProduto } from '../utils/sngpc/regras';
+import { registrarSeExportada } from '../utils/sngpc/inconsistencias';
 import { LinhaVendaSngpc, corpoErroVenda, ehProdutoSngpc, gravarReceitas, prepararReceitas } from '../utils/sngpc/vendaReceita';
 import { extrairQrCode } from '../nfe/parse';
 import { emitirNfce } from '../nfe';
@@ -835,6 +836,9 @@ router.post('/:id/cancelar', async (req: any, res: any) => {
                     data: { status: 'CANCELLED', updatedAt: new Date() }
                 });
             }
+
+            // Fase 2 (D-05): venda SNGPC já exportada vira inconsistência para o RT
+            if (venda.status === 'COMPLETED') await registrarSeExportada(tx, venda, 'CANCELAMENTO');
 
             await tx.sale.update({
                 where: { id: venda.id },

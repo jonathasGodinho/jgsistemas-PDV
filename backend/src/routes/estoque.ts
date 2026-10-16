@@ -161,6 +161,17 @@ function lerLoteDoCorpo(body: any): null | { erro: string } | { lote: string; va
     return { lote, validade };
 }
 
+// Fase 2 (D-14): produto SNGPC (controlado/antimicrobiano) — perda exige motivo st_TipoMotivoPerda 1-9.
+async function produtoSngpc(produtoId: string) {
+    const p = await prisma.product.findFirst({ where: { id: produtoId }, select: { classeSngpc: true } });
+    return Boolean(p?.classeSngpc);
+}
+function motivoPerdaDoCorpo(body: any): number | null {
+    const m = Number(body?.motivoPerda);
+    return Number.isInteger(m) && m >= 1 && m <= 9 ? m : null;
+}
+const ERRO_MOTIVO = "Medicamento controlado/antimicrobiano: informe o motivo da perda do SNGPC (1 a 9)!";
+
 // POST /api/estoque/entrada - Entrada manual de estoque (com lote/validade opcionais — farmácia)
 router.post('/entrada', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR', 'STOCKIST'), async (req: any, res: any) => {
     const { produtoId, quantidade, motivo } = req.body;
@@ -172,6 +183,20 @@ router.post('/entrada', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR', 'STOCK
     const loteInfo = lerLoteDoCorpo(req.body);
     if (loteInfo && 'erro' in loteInfo) {
         return res.status(400).json({ erro: loteInfo.erro });
+    }
+    // Fase 2 (D-14): entrada de produto SNGPC exige lote e NF (número, data, CNPJ de origem)
+    let nf: { nfNumero: string; nfData: Date; cnpjOrigem: string } | null = null;
+    if (await produtoSngpc(produtoId)) {
+        const nfNumero = String(req.body.nfNumero ?? '').trim().slice(0, 20);
+        const nfData = req.body.nfData ? new Date(`${String(req.body.nfData).slice(0, 10)}T00:00:00`) : null;
+        const cnpjOrigem = String(req.body.cnpjOrigem ?? '').replace(/\D/g, '');
+        if (!nfNumero || !nfData || Number.isNaN(nfData.getTime()) || cnpjOrigem.length !== 14) {
+            return res.status(400).json({ erro: "Entrada de medicamento controlado/antimicrobiano exige número e data da nota fiscal e CNPJ de origem!" });
+        }
+        if (!loteInfo) {
+            return res.status(400).json({ erro: "Entrada de medicamento controlado/antimicrobiano exige lote e validade!" });
+        }
+        nf = { nfNumero, nfData, cnpjOrigem };
     }
 
     const filial = await prisma.branch.findFirst();
@@ -200,7 +225,7 @@ router.post('/entrada', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR', 'STOCK
                 lote: loteInfo.lote,
                 validade: loteInfo.validade,
                 quantidade: qtd
-            }, { tipo: 'ENTRADA_MANUAL', referencia: motivoFinal, userId: req.operador?.id ?? null });
+            }, { tipo: 'ENTRADA_MANUAL', referencia: motivoFinal, userId: req.operador?.id ?? null, ...(nf ?? {}) });
         }
         await tx.inventoryMovement.create({
             data: {
@@ -244,11 +269,15 @@ router.post('/saida', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR', 'STOCKIS
     if (inv.quantity < qtd) {
         return res.status(400).json({ erro: "Estoque insuficiente para a saída!" });
     }
+    const motivoPerda = motivoPerdaDoCorpo(req.body);
+    if (await produtoSngpc(produtoId) && !motivoPerda) {
+        return res.status(400).json({ erro: ERRO_MOTIVO });
+    }
 
     const motivoFinal = motivo || 'SAIDA MANUAL';
     try {
         await prisma.$transaction(async (tx) => {
-            const ctx = { referencia: motivoFinal, userId: req.operador?.id ?? null };
+            const ctx = { referencia: motivoFinal, userId: req.operador?.id ?? null, motivoPerda };
             const lotesBaixados: { lote: string; validade: Date }[] = [];
             if (loteId) {
                 const lote = await saidaDeLote(tx, String(loteId), qtd, ctx);
@@ -306,6 +335,15 @@ router.post('/ajuste', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR', 'STOCKI
 
     const delta = novaQtd - inv.quantity;
     const motivoFinal = motivo || 'AJUSTE DE INVENTÁRIO';
+    const motivoPerda = motivoPerdaDoCorpo(req.body);
+    if (await produtoSngpc(produtoId)) {
+        if (delta > 0) {
+            return res.status(400).json({ erro: "Medicamento controlado/antimicrobiano não aceita ajuste para cima: lance a entrada com nota fiscal e lote." });
+        }
+        if (delta < 0 && !motivoPerda) {
+            return res.status(400).json({ erro: ERRO_MOTIVO });
+        }
+    }
 
     await prisma.$transaction(async (tx) => {
         await tx.inventory.update({
@@ -313,7 +351,7 @@ router.post('/ajuste', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR', 'STOCKI
             data: { quantity: novaQtd, updatedAt: new Date() }
         });
         const lotesBaixados = await ajustarLotesAoEstoque(tx, produtoId, filial.id, novaQtd, {
-            tipo: 'AJUSTE', referencia: motivoFinal, userId: req.operador?.id ?? null
+            tipo: 'AJUSTE', referencia: motivoFinal, userId: req.operador?.id ?? null, motivoPerda
         });
         await tx.inventoryMovement.create({
             data: {

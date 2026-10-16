@@ -7,14 +7,14 @@ sprint_id: sprint-05
 atualizado_em: 2026-10-16
 sprint:
   titulo: "Entradas, perdas e inconsistencias"
-  status: em_andamento
+  status: concluido
   criterio_saida: "npm test termina com 0 failed incluindo sngpc-compra, sngpc-estoque-manual e sngpc-inconsistencia, e telas verificadas por navegador"
   riscos: ["Fornecedor sem CNPJ cadastrado impede receber compra de controlado (D-13)"]
   fora_de_escopo: ["Transferencia entre estabelecimentos (D-27)"]
 fases:
   - id: F-05.1
     titulo: "NF, motivo de perda e inconsistencia"
-    status: em_andamento
+    status: concluido
     criterio_saida: "Livro-razao de produto SNGPC guarda NF nas entradas e motivo nas perdas, e estorno pos-exportacao gera inconsistencia"
     paralelizavel: false
     paralela_com: []
@@ -38,7 +38,7 @@ tasks:
   - id: T-05.02
     titulo: "Movimento manual de SNGPC"
     fase: F-05.1
-    status: pendente
+    status: concluida
     objetivo: "Saida e ajuste para baixo de produto SNGPC exigem motivoPerda 1 a 9; entrada exige NF e lote; ajuste para cima e recusado (D-14)."
     arquivos:
       cria: [backend/tests/sngpc-estoque-manual.test.ts]
@@ -48,12 +48,12 @@ tasks:
     criterio_aceite: "backend/tests/sngpc-estoque-manual.test.ts passa e farmacia-lote-livro.test.ts continua verde."
     depende_de: [T-05.01]
     paralelizavel: false
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-05.03
     titulo: "Telas de compra e estoque para SNGPC"
     fase: F-05.1
-    status: pendente
+    status: concluida
     objetivo: "compras.html pede NF ao receber item SNGPC e estoque.html pede motivo SNGPC na saida e no ajuste."
     arquivos:
       cria: []
@@ -63,12 +63,12 @@ tasks:
     criterio_aceite: "Verificacao por navegador registra os dois cenarios com zero pageerror."
     depende_de: [T-05.02]
     paralelizavel: false
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-05.04
     titulo: "Inconsistencia ao estornar venda exportada"
     fase: F-05.1
-    status: pendente
+    status: concluida
     objetivo: "Cancelamento ou devolucao de venda SNGPC dentro de periodo ja exportado cria SngpcInconsistencia ABERTA (D-05)."
     arquivos:
       cria: [backend/src/utils/sngpc/inconsistencias.ts, backend/tests/sngpc-inconsistencia.test.ts]
@@ -78,8 +78,8 @@ tasks:
     criterio_aceite: "backend/tests/sngpc-inconsistencia.test.ts passa."
     depende_de: []
     paralelizavel: true
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
 ---
 
 # Plano — Sprint 05 — Entradas, perdas e inconsistencias
@@ -131,9 +131,9 @@ flowchart LR
   classDef pendente  fill:#eceff1,stroke:#78909c,color:#263238
   classDef critico   stroke-width:3px
   class T_05_01 concluida
-  class T_05_02 pendente
-  class T_05_03 pendente
-  class T_05_04 pendente
+  class T_05_02 concluida
+  class T_05_03 concluida
+  class T_05_04 concluida
   class T_05_01,T_05_02,T_05_03 critico
 ```
 
@@ -171,7 +171,8 @@ teste_funcional: "Ajuste de B1 de 5 para 8 responde 400 e o mesmo ajuste em prod
 criterio_aceite: "backend/tests/sngpc-estoque-manual.test.ts passa e farmacia-lote-livro.test.ts continua verde."
 depende_de: [T-05.01]
 paralelizavel: false
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: sngpc-estoque-manual 3 + farmacia-lote-livro 10: 13 passed, 0 failed · real: 0.6 h
 ```
 
 ---
@@ -188,7 +189,8 @@ teste_funcional: "No navegador, a saida de produto controlado mostra os 9 motivo
 criterio_aceite: "Verificacao por navegador registra os dois cenarios com zero pageerror."
 depende_de: [T-05.02]
 paralelizavel: false
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: navegador: 2 telas, 0 pageerror · real: 0.8 h
 ```
 
 ---
@@ -205,5 +207,6 @@ teste_funcional: "Devolucao via POST /api/trocas de venda B1 exportada cria inco
 criterio_aceite: "backend/tests/sngpc-inconsistencia.test.ts passa."
 depende_de: []
 paralelizavel: true
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: sngpc-inconsistencia 2 + regressao 12: 14 passed, 0 failed · real: 0.5 h
 ```

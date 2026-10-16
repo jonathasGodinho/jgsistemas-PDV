@@ -81,6 +81,11 @@
                         <tbody id="mr-itens"></tbody>
                     </table>
                 </div>
+                <!-- Farmácia Fase 2 (D-13): item controlado/antimicrobiano exige NF e lote -->
+                <div class="form-grid hidden" id="mr-box-nf">
+                    <div class="campo"><label for="mr-nf-numero">Nº da nota fiscal *</label><input type="text" id="mr-nf-numero" maxlength="20"></div>
+                    <div class="campo"><label for="mr-nf-data">Data da nota fiscal *</label><input type="date" id="mr-nf-data"></div>
+                </div>
                 <div class="form-grid">
                     <div class="campo"><label for="mr-vencimento">Vencimento da conta a pagar</label><input type="date" id="mr-vencimento"></div>
                     <div class="campo"><label for="mr-obs">Observações / nº da nota fiscal</label><input type="text" id="mr-obs" placeholder="Opcional"></div>
@@ -303,12 +308,17 @@
             document.getElementById('mr-vencimento').value = v.toISOString().slice(0, 10);
             document.getElementById('mr-obs').value = '';
             document.getElementById('mr-itens').innerHTML = compraReceber.itens.map((i, idx) => `
-                <tr><td><b>${esc(i.nome)}</b><br><small>${esc(i.codigo || '')}</small></td>
+                <tr><td><b>${esc(i.nome)}</b>${i.classeSngpc ? ' <span class="badge vermelho sem-ponto">SNGPC</span>' : ''}<br><small>${esc(i.codigo || '')}</small>
+                    <div class="row" style="gap:6px;margin-top:4px"><input type="text" class="mr-lote" data-idx="${idx}" placeholder="Lote${i.classeSngpc ? ' *' : ''}" maxlength="30" style="height:30px;width:110px"><input type="date" class="mr-validade" data-idx="${idx}" title="Validade" style="height:30px;width:140px"></div></td>
                 <td class="right">${i.quantidade}</td>
                 <td><input type="number" min="0" max="${i.quantidade}" value="${i.quantidade}" data-idx="${idx}" class="mr-qtd"></td>
                 <td class="right" id="mr-dif-${idx}"><span class="muted">—</span></td>
                 <td class="right">${formatarMoeda(i.custoUnitario)}</td>
                 <td class="right" id="mr-sub-${idx}">${formatarMoeda(i.total)}</td></tr>`).join('');
+            const temSngpc = compraReceber.itens.some(i => i.classeSngpc);
+            document.getElementById('mr-box-nf').classList.toggle('hidden', !temSngpc);
+            document.getElementById('mr-nf-numero').value = '';
+            document.getElementById('mr-nf-data').value = '';
             atualizarRecebimento();
             document.getElementById('modal-receber').classList.add('active');
         }
@@ -335,7 +345,22 @@
                     const i = compraReceber.itens[Number(inp.dataset.idx)];
                     if (i && i.id) recebidos[i.id] = Number(inp.value) || 0;
                 });
+                // Lote e validade por item (farmácia); obrigatórios para item SNGPC
+                const lotes = {};
+                for (const inp of document.querySelectorAll('.mr-lote')) {
+                    const i = compraReceber.itens[Number(inp.dataset.idx)];
+                    const lote = inp.value.trim();
+                    const validade = document.querySelector(`.mr-validade[data-idx="${inp.dataset.idx}"]`).value;
+                    if (i.classeSngpc && (!lote || !validade)) { alert(`Informe lote e validade de ${i.nome} (medicamento controlado/antimicrobiano).`); return; }
+                    if (lote || validade) lotes[i.id] = { lote, validade };
+                }
+                const temSngpc = compraReceber.itens.some(i => i.classeSngpc);
+                const nfNumero = document.getElementById('mr-nf-numero').value.trim();
+                const nfData = document.getElementById('mr-nf-data').value;
+                if (temSngpc && (!nfNumero || !nfData)) { alert('Informe o número e a data da nota fiscal (medicamento controlado/antimicrobiano).'); return; }
                 const r = await api(`/api/compras/${compraReceberId}/receber`, 'POST', {
+                    ...(Object.keys(lotes).length ? { lotes } : {}),
+                    ...(nfNumero ? { nfNumero, nfData } : {}),
                     vencimento: document.getElementById('mr-vencimento').value || undefined,
                     observacoes: document.getElementById('mr-obs').value.trim() || undefined,
                     recebidos

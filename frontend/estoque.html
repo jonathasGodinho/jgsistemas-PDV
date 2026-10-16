@@ -109,6 +109,27 @@
                     <div class="dica">No automático, a saída só mexe nos lotes se faltar saldo sem lote. Nesse caso, os vencidos saem primeiro.</div>
                 </div>
                 <div class="dica hidden" id="dica-lote-ajuste">Se o novo saldo ficar abaixo da soma dos lotes, os lotes são baixados automaticamente (vencidos primeiro).</div>
+                <!-- Farmácia Fase 2 (D-14): medicamento controlado/antimicrobiano -->
+                <div class="campo hidden" id="box-motivo-sngpc"><label for="m-motivo-perda">Motivo da perda (SNGPC) *</label>
+                    <select id="m-motivo-perda">
+                        <option value="">Selecione...</option>
+                        <option value="1">1 — Furto / roubo</option>
+                        <option value="2">2 — Avaria</option>
+                        <option value="3">3 — Vencimento</option>
+                        <option value="4">4 — Apreensão / recolhimento pela Visa</option>
+                        <option value="5">5 — Perda no processo</option>
+                        <option value="6">6 — Coleta para controle de qualidade</option>
+                        <option value="7">7 — Perda de exclusão da Portaria 344</option>
+                        <option value="8">8 — Desvio de qualidade</option>
+                        <option value="9">9 — Recolhimento do fabricante</option>
+                    </select>
+                </div>
+                <div class="form-grid hidden" id="box-nf-entrada">
+                    <div class="campo"><label for="m-nf-numero">Nº da NF *</label><input type="text" id="m-nf-numero" maxlength="20"></div>
+                    <div class="campo"><label for="m-nf-data">Data da NF *</label><input type="date" id="m-nf-data"></div>
+                    <div class="campo"><label for="m-nf-cnpj">CNPJ de origem *</label><input type="text" id="m-nf-cnpj" maxlength="18" placeholder="00.000.000/0000-00"></div>
+                </div>
+                <div class="dica hidden" id="dica-ajuste-sngpc">Medicamento controlado/antimicrobiano não aceita ajuste para cima: lance a entrada com nota fiscal e lote.</div>
             </div>
             <div class="modal-foot">
                 <button class="btn" onclick="fecharModalMovimento()">Cancelar</button>
@@ -240,6 +261,14 @@
             document.getElementById('dica-lote-ajuste').classList.toggle('hidden', !(farm && tipo === 'ajuste' && lotes.length));
             document.getElementById('m-lote-saida').innerHTML = '<option value="">Automático</option>' +
                 lotes.map(l => `<option value="${esc(l.loteId)}">${esc(l.grade)} — ${formatarQtd(l.quantidade)} un.</option>`).join('');
+            const sngpc = Boolean(produtoSngpcSelecionado());
+            document.getElementById('box-motivo-sngpc').classList.toggle('hidden', !(farm && sngpc && (tipo === 'saida' || tipo === 'ajuste')));
+            document.getElementById('box-nf-entrada').classList.toggle('hidden', !(farm && sngpc && tipo === 'entrada'));
+            document.getElementById('dica-ajuste-sngpc').classList.toggle('hidden', !(farm && sngpc && tipo === 'ajuste'));
+        }
+        function produtoSngpcSelecionado() {
+            const p = produtosMov.find(x => x.id === document.getElementById('m-produto').value);
+            return p && p.classeSngpc ? p : null;
         }
         document.getElementById('m-filtro').addEventListener('input', filtrarProdutosMov);
         document.getElementById('m-filtro').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); document.getElementById('m-quantidade').focus(); } });
@@ -263,6 +292,8 @@
             document.getElementById('m-motivo').value = '';
             document.getElementById('m-lote').value = '';
             document.getElementById('m-validade').value = '';
+            document.getElementById('m-motivo-perda').value = '';
+            ['m-nf-numero', 'm-nf-data', 'm-nf-cnpj'].forEach(id => document.getElementById(id).value = '');
 
             const select = document.getElementById('m-produto');
             if (!produtosMov.length) {
@@ -297,6 +328,20 @@
                     if (!lote || !validade) { alert("Informe o lote e a validade juntos!"); return; }
                     corpo.lote = lote;
                     corpo.validade = validade;
+                }
+            }
+            // Farmácia Fase 2 (D-14): perda com motivo SNGPC; entrada com NF e lote
+            if (farmaciaAtiva() && produtoSngpcSelecionado()) {
+                if (tipo === 'saida' || tipo === 'ajuste') {
+                    const mp = document.getElementById('m-motivo-perda').value;
+                    if (!mp) { alert("Informe o motivo da perda (SNGPC)!"); return; }
+                    corpo.motivoPerda = Number(mp);
+                }
+                if (tipo === 'entrada') {
+                    corpo.nfNumero = document.getElementById('m-nf-numero').value.trim();
+                    corpo.nfData = document.getElementById('m-nf-data').value;
+                    corpo.cnpjOrigem = document.getElementById('m-nf-cnpj').value.trim();
+                    if (!corpo.nfNumero || !corpo.nfData || !corpo.cnpjOrigem || !corpo.lote) { alert("Medicamento controlado/antimicrobiano: informe NF (número, data, CNPJ) e lote com validade!"); return; }
                 }
             }
             if (farmaciaAtiva() && tipo === 'saida' && document.getElementById('m-lote-saida').value) {

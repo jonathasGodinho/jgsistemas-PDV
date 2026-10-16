@@ -6,6 +6,7 @@ import { validarSenhaAdmin } from '../utils/autorizacao';
 import { registrarAuditoria } from '../utils/auditoria';
 import { resolverPreco } from '../utils/preco';
 import { calcularPromocoes } from '../utils/promocoes';
+import { registrarSeExportada } from '../utils/sngpc/inconsistencias';
 import { baixarLotesFefo, estornarLotesDaVenda, rotuloLotes, validarEstoqueVendavel } from '../utils/fefo';
 
 const router = Router();
@@ -243,6 +244,11 @@ router.post('/', async (req: any, res: any) => {
                     } : undefined
                 }
             });
+
+            // Fase 2 (D-05): devolução de venda SNGPC já exportada vira inconsistência para o RT
+            if (aDevolver.some((d: any) => !d.variante && d.produto.classeSngpc)) {
+                await registrarSeExportada(tx, venda, 'DEVOLUCAO');
+            }
 
             // Marca a venda original como devolvida e estorna parcelas pendentes
             await tx.sale.update({

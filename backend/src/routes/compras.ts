@@ -59,6 +59,7 @@ router.get('/:id', async (req: any, res: any) => {
             produtoId: i.productId,
             codigo: i.Product.barcode ?? i.Product.sku,
             nome: i.Product.name,
+            classeSngpc: i.Product.classeSngpc ?? null,
             quantidade: i.quantity,
             custoUnitario: Number(i.unitCost),
             total: Number(i.total)
