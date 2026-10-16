@@ -7,14 +7,14 @@ titulo: Farmacia Fase 2 - medicamentos controlados, antimicrobianos e SNGPC
 tipo_trabalho: feature
 tipo_ocorrencia: null
 estagio: f6
-status: em_andamento
+status: bloqueado
 criado_em: 2026-10-16
 atualizado_em: 2026-10-16
 concluido_em: null
 sprints: [sprint-01, sprint-02, sprint-03, sprint-04, sprint-05, sprint-06, sprint-07]
 caminho_critico: [T-01.01, T-01.03, T-02.01, T-02.02, T-02.04, T-03.01, T-03.02, T-03.03, T-03.04, T-04.01, T-04.02, T-05.01, T-05.02, T-05.03, T-06.02, T-06.04, T-06.05, T-06.06, T-06.07, T-07.01, T-07.02]
 modulo_afetado: [prisma, routes, utils, middlewares, tests, frontend, raiz]
-arquivos_alterados: []
+arquivos_alterados: [backend/prisma/migrations/20261017090000_farmacia_controlados/migration.sql, backend/tests/sngpc-modelo.test.ts, backend/prisma/schema.prisma, backend/src/db.ts, backend/tests/sngpc-xml.ts, backend/tests/sngpc-xml.test.ts, backend/package.json, backend/package-lock.json, backend/tests/sngpc-factories.ts, backend/tests/sngpc-factories.test.ts, backend/src/utils/sngpc/regras.ts, backend/tests/sngpc-regras.test.ts, backend/tests/fixtures/sngpc-tipos-receituario.json, backend/tests/sngpc-produto-api.test.ts, backend/src/routes/produtos.ts, backend/tests/sngpc-farmaceutico.test.ts, backend/src/routes/auth.ts, backend/src/middlewares/auth.ts, frontend/produto.html, frontend/configuracoes.html, backend/src/utils/sngpc/receita.ts, backend/tests/sngpc-receita.test.ts, backend/src/utils/sngpc/vendaReceita.ts, backend/tests/sngpc-venda-pdv.test.ts, backend/src/routes/vendas.ts, backend/tests/sngpc-lote-obrigatorio.test.ts, backend/src/utils/fefo.ts, backend/tests/sngpc-venda-prazo.test.ts, backend/src/routes/vendasForaPdv.ts, backend/tests/sngpc-orcamento.test.ts, backend/tests/sngpc-troca.test.ts, backend/src/routes/trocas.ts, backend/tests/sngpc-comprador.test.ts, backend/src/routes/farmacia.ts, frontend/ui/receita.js, frontend/pdv.html, frontend/vendas-fora-pdv.html, frontend/orcamentos.html, backend/tests/sngpc-compra.test.ts, backend/src/routes/compras.ts, backend/tests/sngpc-estoque-manual.test.ts, backend/src/routes/estoque.ts, frontend/compras.html, frontend/estoque.html, backend/src/utils/sngpc/inconsistencias.ts, backend/tests/sngpc-inconsistencia.test.ts, backend/src/utils/sngpc/inventario.ts, backend/tests/sngpc-inventario.test.ts, backend/src/utils/sngpc/xmlVendas.ts, backend/tests/sngpc-xml-vendas.test.ts, backend/src/utils/sngpc/xmlEntradasPerdas.ts, backend/tests/sngpc-xml-entradas-perdas.test.ts, backend/src/utils/sngpc/movimentacao.ts, backend/src/utils/sngpc/pacote.ts, backend/tests/sngpc-movimentacao.test.ts, backend/src/routes/sngpc.ts, backend/tests/sngpc-rotas.test.ts, backend/src/app.ts, backend/tests/sngpc-painel.test.ts, backend/tests/sngpc-livro.test.ts, frontend/sngpc.html, frontend/ui/shell.js, backend/modulos.json, backend/tests/sngpc-ponta-a-ponta.test.ts]
 palavras_chave: [sngpc, controlados, portaria-344, antimicrobianos, receita, anvisa, xml, farmacia]
 worktree: ../jgsistemas-PDV--farmacia-controlados
 ---
@@ -89,13 +89,15 @@ Paralelismo declarado: só as tasks com `paralelizavel: true` nos `tasks.md` (T-
 
 ## 7. Definição de pronto global
 
-- [ ] `npm test` no backend termina com 0 failed, com os testes de todas as tasks de backend verdes; as telas (T-02.04, T-02.05, T-04.01..T-04.04, T-05.03, T-07.01, T-07.02) verificadas por navegador sem pageerror.
-- [ ] `npm run typecheck` no backend sai com 0.
-- [ ] Produto SNGPC (classe, lista, unidade) e farmacêutico RT (CPF, CRF, UF) cadastráveis por API e tela.
-- [ ] Venda de produto SNGPC no PDV, na venda a prazo e na efetivação de orçamento exige receita válida e saldo em lote; receita vencida é recusada; quantidade acima do máximo só passa confirmada.
-- [ ] Compra de produto SNGPC exige NF; saída/ajuste para baixo exigem motivo SNGPC; ajuste para cima é recusado.
-- [ ] O RT gera, baixa e marca como enviados os XML de inventário e de movimentação (zip + MD5); o painel avisa quando passa de 7 dias; estorno de venda exportada abre inconsistência.
-- [ ] O teste ponta a ponta (T-07.03) prova que o inventário gerado depois do fluxo confere com o saldo dos lotes.
+> **Estado em 2026-10-16:** 33 de 33 tasks `concluida`; suíte inteira 47 files / 121 tests verde; typecheck 0. Falta só o aceite externo no portal SNGPC (B-01 em `00-BLOQUEIOS.md`): a feature está **pronta em simulação** (D-03).
+
+- [x] `npm test` no backend termina com 0 failed, com os testes de todas as tasks de backend verdes; as telas (T-02.04, T-02.05, T-04.01..T-04.04, T-05.03, T-07.01, T-07.02) verificadas por navegador sem pageerror.
+- [x] `npm run typecheck` no backend sai com 0.
+- [x] Produto SNGPC (classe, lista, unidade) e farmacêutico RT (CPF, CRF, UF) cadastráveis por API e tela.
+- [x] Venda de produto SNGPC no PDV, na venda a prazo e na efetivação de orçamento exige receita válida e saldo em lote; receita vencida é recusada; quantidade acima do máximo só passa confirmada.
+- [x] Compra de produto SNGPC exige NF; saída/ajuste para baixo exigem motivo SNGPC; ajuste para cima é recusado.
+- [x] O RT gera, baixa e marca como enviados os XML de inventário e de movimentação (zip + MD5); o painel avisa quando passa de 7 dias; estorno de venda exportada abre inconsistência.
+- [x] O teste ponta a ponta (T-07.03) prova que o inventário gerado depois do fluxo confere com o saldo dos lotes.
 - [ ] **Aceite externo (D-03):** o RT da farmácia faz o upload do zip de inventário e de movimentação no portal SNGPC e o arquivo é aceito. Sem RT/CNPJ reais disponíveis, registrar o bloqueio em `00-BLOQUEIOS.md` e a feature fica "pronta em simulação" até o aceite.
 
 ## 8. Como retomar uma sessão interrompida

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt-BR" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>SNGPC - JG Sistemas</title>
+    <style>
+        .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px; }
+        .kpi { padding: 14px 16px; }
+        .kpi small { color: var(--text-2); display: block; margin-bottom: 4px; }
+        .kpi b { font-size: 20px; }
+        .lista-item { display: flex; gap: 10px; padding: 10px 16px; border-bottom: 1px solid var(--border); font-size: 13px; align-items: center; }
+        .lista-item:last-child { border-bottom: 0; }
+        .lista-item .corpo { flex: 1; min-width: 0; }
+        .lista-item .corpo small { color: var(--text-2); display: block; }
+        .hash { font-family: ui-monospace, monospace; font-size: 12px; color: var(--text-2); }
+        #livro-tabela td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    </style>
+    <link rel="stylesheet" href="/ui/jg.css">
+</head>
+<body class="jg" data-pagina="sngpc">
+    <main>
+        <div class="page-head">
+            <div><h1>SNGPC — escrituração</h1><div class="sub">Medicamentos controlados (Portaria 344) e antimicrobianos (RDC 471). O farmacêutico RT gera o arquivo e faz o upload no portal da Anvisa.</div></div>
+            <div class="acoes">
+                <button class="btn" id="btn-inventario"><span class="ms">inventory_2</span>Gerar inventário</button>
+                <button class="btn btn-primario" id="btn-movimentacao"><span class="ms">upload_file</span>Gerar movimentação</button>
+            </div>
+        </div>
+
+        <div class="card mb-16 hidden" id="card-restrito">
+            <div class="card-body"><div class="estado-vazio"><span class="ms">lock</span><p id="restrito-msg">Acesso restrito ao farmacêutico responsável técnico (RT).</p></div></div>
+        </div>
+
+        <div id="conteudo">
+            <div class="kpis">
+                <div class="card kpi"><small>Último arquivo de movimentação</small><b id="kpi-ultimo">—</b></div>
+                <div class="card kpi"><small>Dias desde o último</small><b id="kpi-dias">—</b></div>
+                <div class="card kpi"><small>Último inventário</small><b id="kpi-inventario">—</b></div>
+                <div class="card kpi"><small>Inconsistências abertas</small><b id="kpi-inconsistencias">0</b></div>
+            </div>
+
+            <div class="alerta hidden mb-16" id="alerta-prazo"><span class="ms">warning</span><div id="alerta-prazo-msg"></div></div>
+
+            <div class="card mb-16 hidden" id="card-pendencias">
+                <div class="card-head"><h3>Pendências para o próximo arquivo</h3><span class="sub">Corrija antes de gerar</span></div>
+                <div id="lista-pendencias"></div>
+            </div>
+
+            <div class="card mb-16 hidden" id="card-inconsistencias">
+                <div class="card-head"><h3>Inconsistências a notificar</h3><span class="sub">Cancelamento/devolução depois da exportação (RDC 22, art. 14)</span></div>
+                <div id="lista-inconsistencias"></div>
+            </div>
+
+            <div class="card mb-16">
+                <div class="card-head"><h3>Arquivos gerados</h3><span class="sub">Baixe o .zip e envie no portal do SNGPC; depois marque como enviado</span></div>
+                <div id="lista-arquivos"><div class="sem-dados">Carregando...</div></div>
+            </div>
+
+            <div class="card" id="card-livro">
+                <div class="card-head"><h3>Livro de escrituração</h3>
+                    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                        <input type="date" id="livro-inicio" style="height:34px">
+                        <input type="date" id="livro-fim" style="height:34px">
+                        <button class="btn btn-mini" id="livro-filtrar">Filtrar</button>
+                    </div>
+                </div>
+                <div class="tabela-wrap">
+                    <table id="livro-tabela">
+                        <thead><tr><th>Data</th><th>Movimento</th><th>Produto</th><th>Lote</th><th class="right">Qtd</th><th>Referência</th></tr></thead>
+                        <tbody id="livro-linhas"><tr><td colspan="6" class="sem-dados">Escolha o período</td></tr></tbody>
+                    </table>
+                </div>
+                <div class="card-body" id="livro-saldos"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de geração -->
+    <div class="modal-overlay" id="modal-gerar">
+        <div class="modal sm">
+            <div class="modal-head"><span id="mg-titulo">Gerar arquivo</span><span class="close" id="mg-fechar">&times;</span></div>
+            <div class="modal-body">
+                <input type="hidden" id="mg-tipo">
+                <div id="mg-box-inicio"><label for="mg-inicio">Data inicial (primeiro arquivo)</label><input type="date" id="mg-inicio"></div>
+                <label for="mg-data" id="mg-label-data">Data final</label><input type="date" id="mg-data">
+                <div class="dica" id="mg-dica"></div>
+                <div class="modal-erro" id="mg-erro"></div>
+                <button class="btn-primary" id="mg-confirmar">Gerar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/seguranca.js"></script>
+    <script src="/ui/shell.js"></script>
+    <script>
+        const MOTIVOS = { 1: 'Furto/roubo', 2: 'Avaria', 3: 'Vencimento', 4: 'Apreensão/recolhimento Visa', 5: 'Perda no processo', 6: 'Controle de qualidade', 7: 'Exclusão da Portaria 344', 8: 'Desvio de qualidade', 9: 'Recolhimento do fabricante' };
+        const TIPOS_MOV = { VENDA: 'Venda', CANCELAMENTO: 'Cancelamento', DEVOLUCAO: 'Devolução', ENTRADA_COMPRA: 'Entrada (compra)', ENTRADA_MANUAL: 'Entrada manual', SAIDA_MANUAL: 'Perda/saída', AJUSTE: 'Ajuste', CONCILIACAO: 'Conciliação', SALDO_INICIAL: 'Saldo inicial' };
+        let painel = null;
+
+        function token() { try { return (JSON.parse(localStorage.getItem('jg_operador') || 'null') || {}).token || ''; } catch (e) { return ''; } }
+        async function api(url, metodo = 'GET', corpo = null) {
+            const op = { method: metodo, headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token() } };
+            if (corpo) op.body = JSON.stringify(corpo);
+            const r = await fetch(url, op);
+            if (r.status === 401) { localStorage.removeItem('jg_operador'); location.href = '/login.html'; throw new Error('Sessão expirada.'); }
+            const d = await r.json().catch(() => ({}));
+            if (!r.ok) { const e = new Error(d.erro || 'Erro na requisição'); e.status = r.status; e.dados = d; throw e; }
+            return d;
+        }
+        const hojeISO = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+        const br = (iso) => iso ? iso.slice(0, 10).split('-').reverse().join('/') : '—';
+
+        async function carregarPainel() {
+            try {
+                painel = await api('/api/farmacia/sngpc/painel');
+            } catch (e) {
+                if (e.status === 403) {
+                    document.getElementById('conteudo').classList.add('hidden');
+                    document.getElementById('btn-inventario').classList.add('hidden');
+                    document.getElementById('btn-movimentacao').classList.add('hidden');
+                    document.getElementById('restrito-msg').innerText = e.message;
+                    document.getElementById('card-restrito').classList.remove('hidden');
+                    return false;
+                }
+                JG.toast(e.message, 'alerta');
+                return false;
+            }
+            const u = painel.ultimoArquivo;
+            document.getElementById('kpi-ultimo').innerText = u ? `${br(u.dataInicio)} a ${br(u.dataFim)}` : 'Nenhum';
+            document.getElementById('kpi-dias').innerText = painel.diasDesdeUltimo === null ? '—' : String(painel.diasDesdeUltimo);
+            document.getElementById('kpi-inventario').innerText = painel.ultimoInventario ? br(painel.ultimoInventario.data) : 'Nenhum';
+            document.getElementById('kpi-inconsistencias').innerText = String(painel.inconsistenciasAbertas.length);
+            const alerta = document.getElementById('alerta-prazo');
+            alerta.classList.toggle('hidden', !painel.alertaPrazo);
+            document.getElementById('alerta-prazo-msg').innerText = u
+                ? `Já se passaram ${painel.diasDesdeUltimo} dias desde o último arquivo. A RDC 22/2014 exige transmissão em no máximo 7 dias, mesmo sem movimentação.`
+                : 'Nenhum arquivo de movimentação gerado ainda. Gere o inventário e o primeiro arquivo de movimentação.';
+            const pend = painel.pendencias || [];
+            document.getElementById('card-pendencias').classList.toggle('hidden', pend.length === 0);
+            document.getElementById('lista-pendencias').innerHTML = pend.map(p => `<div class="lista-item"><span class="ms" style="color:var(--red)">error</span><div class="corpo"><b>${esc(p.produto || 'Cadastro')}</b><small>${esc(p.detalhe)}</small></div></div>`).join('');
+            const inc = painel.inconsistenciasAbertas;
+            document.getElementById('card-inconsistencias').classList.toggle('hidden', inc.length === 0);
+            document.getElementById('lista-inconsistencias').innerHTML = inc.map(i => `<div class="lista-item"><span class="ms" style="color:var(--amber)">report</span><div class="corpo"><b>${esc(i.descricao)}</b><small>${new Date(i.createdAt).toLocaleString('pt-BR')}</small></div><button class="btn btn-mini" data-notificar="${esc(i.id)}">Marcar notificada</button></div>`).join('');
+            return true;
+        }
+
+        async function carregarArquivos() {
+            const lista = await api('/api/farmacia/sngpc/arquivos');
+            const el = document.getElementById('lista-arquivos');
+            if (!lista.length) { el.innerHTML = '<div class="estado-vazio"><span class="ms">folder_open</span><p>Nenhum arquivo gerado.</p></div>'; return; }
+            el.innerHTML = lista.map(a => `<div class="lista-item">
+                <span class="ms">${a.tipo === 'INVENTARIO' ? 'inventory_2' : 'upload_file'}</span>
+                <div class="corpo"><b>${a.tipo === 'INVENTARIO' ? 'Inventário de ' + br(a.dataFim) : 'Movimentação ' + br(a.dataInicio) + ' a ' + br(a.dataFim)}</b>
+                    <small><span class="hash">MD5 ${esc(a.hash)}</span>${a.observacao ? ' · ' + esc(a.observacao) : ''}</small></div>
+                ${a.status === 'ENVIADO' ? '<span class="badge ativo">Enviado</span>' : '<span class="badge baixo">Gerado</span>'}
+                <button class="btn btn-mini" data-baixar="${esc(a.id)}"><span class="ms">download</span>Baixar</button>
+                ${a.status === 'ENVIADO' ? '' : `<button class="btn btn-mini btn-verde" data-enviado="${esc(a.id)}">Marcar enviado</button>`}
+            </div>`).join('');
+        }
+
+        async function baixar(id) {
+            const r = await fetch(`/api/farmacia/sngpc/arquivos/${encodeURIComponent(id)}/download`, { headers: { Authorization: 'Bearer ' + token() } });
+            if (!r.ok) { JG.toast('Falha ao baixar o arquivo.', 'alerta'); return; }
+            const nome = (r.headers.get('Content-Disposition') || '').match(/filename="([^"]+)"/);
+            const blob = await r.blob();
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = nome ? nome[1] : 'sngpc.zip';
+            document.body.appendChild(a); a.click(); a.remove();
+        }
+
+        function abrirGerar(tipo) {
+            const primeiro = tipo === 'MOVIMENTACAO' && !(painel && painel.ultimoArquivo);
+            document.getElementById('mg-tipo').value = tipo;
+            document.getElementById('mg-titulo').innerText = tipo === 'INVENTARIO' ? 'Gerar inventário' : 'Gerar movimentação';
+            document.getElementById('mg-label-data').innerText = tipo === 'INVENTARIO' ? 'Data do inventário (até 7 dias atrás)' : 'Data final';
+            document.getElementById('mg-box-inicio').classList.toggle('hidden', !primeiro);
+            document.getElementById('mg-inicio').value = hojeISO();
+            document.getElementById('mg-data').value = hojeISO();
+            document.getElementById('mg-dica').innerText = tipo === 'MOVIMENTACAO' && !primeiro
+                ? `O período começa no dia seguinte ao último arquivo (${br(painel.ultimoArquivo.dataFim)}).` : '';
+            document.getElementById('mg-erro').innerText = '';
+            document.getElementById('modal-gerar').classList.add('active');
+        }
+
+        async function confirmarGerar() {
+            const tipo = document.getElementById('mg-tipo').value;
+            const erro = document.getElementById('mg-erro');
+            erro.innerText = '';
+            try {
+                const corpo = tipo === 'INVENTARIO'
+                    ? { data: document.getElementById('mg-data').value }
+                    : { dataFim: document.getElementById('mg-data').value, ...(document.getElementById('mg-box-inicio').classList.contains('hidden') ? {} : { dataInicio: document.getElementById('mg-inicio').value }) };
+                const r = await api(`/api/farmacia/sngpc/${tipo === 'INVENTARIO' ? 'inventario' : 'movimentacao'}`, 'POST', corpo);
+                document.getElementById('modal-gerar').classList.remove('active');
+                JG.toast(`Arquivo gerado. MD5 ${r.hash}`, 'sucesso');
+                await Promise.all([carregarPainel(), carregarArquivos()]);
+            } catch (e) {
+                const pend = e.dados && e.dados.pendencias;
+                erro.innerHTML = esc(e.message) + (pend ? '<br>' + pend.map(p => `• ${esc(p.produto || '')} ${esc(p.detalhe)}`).join('<br>') : '');
+                erro.style.display = 'block';
+            }
+        }
+
+        async function carregarLivro() {
+            const inicio = document.getElementById('livro-inicio').value;
+            const fim = document.getElementById('livro-fim').value;
+            const d = await api(`/api/farmacia/sngpc/livro?inicio=${encodeURIComponent(inicio)}&fim=${encodeURIComponent(fim)}`);
+            const tbody = document.getElementById('livro-linhas');
+            tbody.innerHTML = d.linhas.length === 0
+                ? '<tr><td colspan="6"><div class="estado-vazio"><span class="ms">menu_book</span><p>Nenhuma movimentação no período.</p></div></td></tr>'
+                : d.linhas.map(l => `<tr><td>${new Date(l.data).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}</td>
+                    <td>${esc(TIPOS_MOV[l.tipo] || l.tipo)}${l.motivoPerda ? ' · ' + esc(MOTIVOS[l.motivoPerda]) : ''}</td>
+                    <td>${esc(l.produto)}<br><small>${esc(l.registroMS || '')}</small></td><td>${esc(l.lote)}</td>
+                    <td class="num ${l.quantidade < 0 ? 'txt-vermelho' : 'txt-verde'}">${l.quantidade > 0 ? '+' : ''}${l.quantidade}</td>
+                    <td>${esc(l.referencia || '')}${l.nfNumero ? ' · NF ' + esc(l.nfNumero) : ''}</td></tr>`).join('');
+            document.getElementById('livro-saldos').innerHTML = d.saldos.length
+                ? '<b>Saldo no fim do período:</b> ' + d.saldos.map(s => `${esc(s.produto)} · lote ${esc(s.lote)}: <b>${s.saldoFinal}</b>`).join(' &nbsp;|&nbsp; ')
+                : '';
+        }
+
+        document.getElementById('btn-inventario').addEventListener('click', () => abrirGerar('INVENTARIO'));
+        document.getElementById('btn-movimentacao').addEventListener('click', () => abrirGerar('MOVIMENTACAO'));
+        document.getElementById('mg-fechar').addEventListener('click', () => document.getElementById('modal-gerar').classList.remove('active'));
+        document.getElementById('mg-confirmar').addEventListener('click', confirmarGerar);
+        document.getElementById('livro-filtrar').addEventListener('click', () => carregarLivro().catch(e => JG.toast(e.message, 'alerta')));
+        document.getElementById('lista-arquivos').addEventListener('click', async (e) => {
+            const b = e.target.closest('[data-baixar]');
+            if (b) return baixar(b.dataset.baixar);
+            const env = e.target.closest('[data-enviado]');
+            if (env) {
+                const obs = prompt('Observação (ex.: protocolo ou mensagem de recebimento do portal):', '') || '';
+                try { await api(`/api/farmacia/sngpc/arquivos/${encodeURIComponent(env.dataset.enviado)}/enviado`, 'POST', { observacao: obs }); await Promise.all([carregarPainel(), carregarArquivos()]); }
+                catch (err) { JG.toast(err.message, 'alerta'); }
+            }
+        });
+        document.getElementById('lista-inconsistencias').addEventListener('click', async (e) => {
+            const b = e.target.closest('[data-notificar]');
+            if (!b) return;
+            try { await api(`/api/farmacia/sngpc/inconsistencias/${encodeURIComponent(b.dataset.notificar)}/notificada`, 'POST', {}); await carregarPainel(); }
+            catch (err) { JG.toast(err.message, 'alerta'); }
+        });
+
+        (async () => {
+            const d = new Date(Date.now() - 30 * 864e5);
+            document.getElementById('livro-inicio').value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            document.getElementById('livro-fim').value = hojeISO();
+            if (await carregarPainel()) await carregarArquivos().catch(e => JG.toast(e.message, 'alerta'));
+        })();
+    </script>
+</body>
+</html>

@@ -64,7 +64,8 @@
             { id: 'estoque', nome: 'Posição de estoque', icone: 'warehouse', href: '/estoque.html', modulo: 'estoque' },
             { id: 'inventario', nome: 'Inventário', icone: 'fact_check', href: '/inventario.html', modulo: 'inventario' },
             { id: 'compras', nome: 'Compras', icone: 'shopping_cart', href: '/compras.html', modulo: 'estoque' },
-            { id: 'fornecedores', nome: 'Fornecedores', icone: 'local_shipping', href: '/fornecedores.html', modulo: 'estoque' }
+            { id: 'fornecedores', nome: 'Fornecedores', icone: 'local_shipping', href: '/fornecedores.html', modulo: 'estoque' },
+            { id: 'sngpc', nome: 'SNGPC (controlados)', icone: 'medication', href: '/sngpc.html', modulo: 'farmacia' }
         ] },
         { grupo: 'Financeiro', itens: [
             { id: 'financeiro-visao', nome: 'Visão geral', icone: 'monitoring', href: '/financeiro-visao.html', modulo: 'financeiro' },

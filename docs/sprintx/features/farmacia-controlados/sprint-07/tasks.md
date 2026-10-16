@@ -7,14 +7,14 @@ sprint_id: sprint-07
 atualizado_em: 2026-10-16
 sprint:
   titulo: "Tela SNGPC e fluxo ponta a ponta"
-  status: nao_iniciado
+  status: concluido
   criterio_saida: "npm test termina com 0 failed incluindo sngpc-ponta-a-ponta e a tela sngpc.html verificada por navegador sem pageerror"
   riscos: ["Aceite real no portal SNGPC depende do RT e do CNPJ reais da farmacia (D-03); sem eles a entrega fica pronta em simulacao"]
   fora_de_escopo: ["Envio automatico (D-02)"]
 fases:
   - id: F-07.1
     titulo: "Tela do RT e prova ponta a ponta"
-    status: nao_iniciado
+    status: concluido
     criterio_saida: "Tela sngpc.html opera geracao, download, envio e livro, e o teste ponta a ponta passa"
     paralelizavel: false
     paralela_com: []
@@ -23,7 +23,7 @@ tasks:
   - id: T-07.01
     titulo: "Tela SNGPC do RT"
     fase: F-07.1
-    status: pendente
+    status: concluida
     objetivo: "frontend/sngpc.html com painel, geracao, historico, download, marcar enviado e inconsistencias, com item no menu do modulo farmacia."
     arquivos:
       cria: [frontend/sngpc.html]
@@ -33,12 +33,12 @@ tasks:
     criterio_aceite: "Verificacao por navegador registra os dois cenarios com zero pageerror."
     depende_de: []
     paralelizavel: false
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-07.02
     titulo: "Tela do livro de escrituracao"
     fase: F-07.1
-    status: pendente
+    status: concluida
     objetivo: "sngpc.html ganha a secao do livro de escrituracao com filtro de periodo."
     arquivos:
       cria: []
@@ -48,12 +48,12 @@ tasks:
     criterio_aceite: "Verificacao por navegador registra os dois cenarios com zero pageerror."
     depende_de: [T-07.01]
     paralelizavel: false
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-07.03
     titulo: "Fluxo SNGPC ponta a ponta"
     fase: F-07.1
-    status: pendente
+    status: concluida
     objetivo: "Teste de compra com NF, venda com receita, perda, inventario e movimentacao pelas rotas reais."
     arquivos:
       cria: [backend/tests/sngpc-ponta-a-ponta.test.ts]
@@ -63,8 +63,8 @@ tasks:
     criterio_aceite: "backend/tests/sngpc-ponta-a-ponta.test.ts passa."
     depende_de: []
     paralelizavel: true
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
 ---
 
 # Plano — Sprint 07 — Tela SNGPC e fluxo ponta a ponta
@@ -113,9 +113,9 @@ flowchart LR
   classDef bloqueada fill:#f8d7da,stroke:#c62828,color:#4a1d1f
   classDef pendente  fill:#eceff1,stroke:#78909c,color:#263238
   classDef critico   stroke-width:3px
-  class T_07_01 pendente
-  class T_07_02 pendente
-  class T_07_03 pendente
+  class T_07_01 concluida
+  class T_07_02 concluida
+  class T_07_03 concluida
   class T_07_01,T_07_02 critico
 ```
 
@@ -135,7 +135,8 @@ teste_funcional: "No navegador, Baixar chama GET /download e Marcar enviado cham
 criterio_aceite: "Verificacao por navegador registra os dois cenarios com zero pageerror."
 depende_de: []
 paralelizavel: false
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: navegador: painel, gerar, baixar, enviado; 0 pageerror · real: 1.0 h
 ```
 
 ---
@@ -152,7 +153,8 @@ teste_funcional: "No navegador, periodo sem movimentos mostra o estado vazio."
 criterio_aceite: "Verificacao por navegador registra os dois cenarios com zero pageerror."
 depende_de: [T-07.01]
 paralelizavel: false
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: navegador: livro com linhas e vazio; 0 pageerror · real: 0.3 h
 ```
 
 ---
@@ -169,5 +171,6 @@ teste_funcional: "O inventario gerado depois do fluxo tem quantidade 6 para o lo
 criterio_aceite: "backend/tests/sngpc-ponta-a-ponta.test.ts passa."
 depende_de: []
 paralelizavel: true
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: sngpc-ponta-a-ponta 1 passed, 0 failed · real: 0.5 h
 ```

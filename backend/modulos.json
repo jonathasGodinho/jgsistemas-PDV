@@ -108,9 +108,11 @@
       "chave": "farmacia",
       "nome": "Farmácia",
       "grupo": "Farmácia",
-      "descricao": "Lote, validade e FEFO, princípio ativo, PMC/CMED e fiscal monofásico.",
+      "descricao": "Lote, validade e FEFO, princípio ativo, PMC/CMED, fiscal monofásico e controlados/SNGPC.",
       "icone": "medication",
-      "paginas": [],
+      "paginas": [
+        "/sngpc.html"
+      ],
       "apis": []
     },
     {
