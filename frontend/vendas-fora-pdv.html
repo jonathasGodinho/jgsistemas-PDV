@@ -215,6 +215,7 @@
 
     <script src="/seguranca.js"></script>
     <script src="/ui/shell.js"></script>
+    <script src="/ui/receita.js"></script>
     <script>
 
 const API_BASE = '';
@@ -261,6 +262,7 @@ async function carregarConfig() {
 
 // ---------- Itens da venda ----------
 let itens = [];
+let receitasVenda = []; // Farmácia Fase 2: receitas dos itens SNGPC (contrato C-02)
 let clienteSelecionadoId = null;
 let codigoPendente = null;
 let modoRemover = false;
@@ -290,14 +292,23 @@ function adicionarItem(qtdLancada) {
     let codigo = (codigoPendente || document.getElementById('f-codigo').value || '').trim();
     codigoPendente = null;
     if (!codigo) { alert('Informe o código do produto!'); return; }
-    api(`/api/produtos/${encodeURIComponent(codigo)}?clienteId=${encodeURIComponent(clienteSelecionadoId || '')}&qtd=1`).then(p => {
-        const existente = itens.find(i => i.codigo === p.codigo);
+    api(`/api/produtos/${encodeURIComponent(codigo)}?clienteId=${encodeURIComponent(clienteSelecionadoId || '')}&qtd=1`).then(async p => {
+        // Farmácia Fase 2 (D-11): item controlado/antimicrobiano pede a receita; cada adição é uma linha
+        let receitaIdx = null;
+        if (p.classeSngpc && window.JGReceita) {
+            const anteriores = receitasVenda.map((rc, i) => ({ indice: i, tipoReceituario: rc.tipoReceituario, rotulo: `${rc.numero || 'sem número'} — ${rc.dataPrescricao}` }));
+            const r = await JGReceita.abrir(p, qtdLancada, { anteriores });
+            if (!r) { document.getElementById('f-codigo').focus(); return; }
+            if (r.reutilizar !== undefined) receitaIdx = r.reutilizar;
+            else { receitasVenda.push(r.receita); receitaIdx = receitasVenda.length - 1; }
+        }
+        const existente = p.classeSngpc ? null : itens.find(i => i.codigo === p.codigo);
         let idx;
         if (existente) {
             existente.quantidade += qtdLancada;
             idx = itens.indexOf(existente);
         } else {
-            itens.push({ codigo: p.codigo, nome: p.descricao, quantidade: qtdLancada, unitario: Number(p.preco) });
+            itens.push({ codigo: p.codigo, nome: p.descricao, quantidade: qtdLancada, unitario: Number(p.preco), receita: receitaIdx });
             idx = itens.length - 1;
         }
         document.getElementById('f-codigo').value = '';
@@ -555,7 +566,8 @@ async function registrarVenda() {
         cliente,
         clienteId: clienteSelecionadoId || null,
         celular: document.getElementById('f-celular').value.trim(),
-        itens: itens.map(i => ({ codigo: i.codigo, quantidade: i.quantidade })),
+        itens: itens.map(i => ({ codigo: i.codigo, quantidade: i.quantidade, ...(i.receita !== null && i.receita !== undefined ? { receita: i.receita } : {}) })),
+        receitas: receitasVenda.map(({ tipoReceituario, ...rc }) => rc),
         parcelas: Number(document.getElementById('f-parcelas').value) || 1,
         primeiraVencimento: primeira,
         desconto: Number(document.getElementById('f-desconto').value) || 0,
@@ -568,6 +580,7 @@ async function registrarVenda() {
         const r = await api('/api/vendas-fora-pdv', 'POST', payload);
         alert(`Venda a prazo Nº ${r.numero} registrada com sucesso!\nCliente: ${r.cliente}\nTotal: ${formatarMoeda(r.total)}\nParcelas: ${r.parcelas}x`);
         itens = [];
+        receitasVenda = [];
         clienteSelecionadoId = null;
         document.getElementById('f-cliente').value = '';
         document.getElementById('f-celular').value = '';

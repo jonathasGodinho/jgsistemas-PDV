@@ -91,6 +91,7 @@
 
     <script src="/seguranca.js"></script>
     <script src="/ui/shell.js"></script>
+    <script src="/ui/receita.js"></script>
     <script>
         const API_BASE = '';
         const formatarMoeda = v => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -237,8 +238,21 @@
         async function confirmarEfetivar() {
             if (!orcamentoEfetivarId) return;
             const metodo = document.getElementById('me-metodo').value;
+            // Farmácia Fase 2 (D-11): itens controlados/antimicrobianos pedem a receita antes de efetivar
+            const v = orcamentosCache.find(x => x.id === orcamentoEfetivarId) || {};
+            const receitas = [];
+            const itensReceita = {};
+            for (const item of (v.itensDetalhe || []).filter(i => i.classeSngpc)) {
+                if (!window.JGReceita) break;
+                const anteriores = receitas.map((rc, i) => ({ indice: i, tipoReceituario: rc.tipoReceituario, rotulo: `${rc.numero || 'sem número'} — ${rc.dataPrescricao}` }));
+                const r = await JGReceita.abrir({ ...item, descricao: item.nome }, item.quantidade, { anteriores });
+                if (!r) return;
+                if (r.reutilizar !== undefined) itensReceita[item.id] = r.reutilizar;
+                else { receitas.push(r.receita); itensReceita[item.id] = receitas.length - 1; }
+            }
             try {
                 const r = await api(`/api/vendas/${orcamentoEfetivarId}/efetivar`, 'POST', {
+                    ...(receitas.length ? { receitas: receitas.map(({ tipoReceituario, ...rc }) => rc), itensReceita } : {}),
                     pagamento: {
                         metodo,
                         parcelas: metodo === 'CREDIT_CARD' ? Number(document.getElementById('me-parcelas').value) || 1 : 1,

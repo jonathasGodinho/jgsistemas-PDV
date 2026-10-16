@@ -7,14 +7,14 @@ sprint_id: sprint-04
 atualizado_em: 2026-10-16
 sprint:
   titulo: "Receita nas telas de venda"
-  status: nao_iniciado
+  status: concluido
   criterio_saida: "As quatro tasks verificadas por navegador sem pageerror e npm test termina com 0 failed"
   riscos: ["pdv.html tem 1633 linhas e dois pontos de envio da venda (linhas 1333 e 1410, base/fluxos-venda-estoque.md)"]
   fora_de_escopo: ["Mudancas no layout geral do PDV"]
 fases:
   - id: F-04.1
     titulo: "Captura da receita no frontend"
-    status: nao_iniciado
+    status: concluido
     criterio_saida: "Os tres fluxos de venda enviam receitas ao backend e cancelar o modal nao adiciona o item"
     paralelizavel: false
     paralela_com: []
@@ -23,7 +23,7 @@ tasks:
   - id: T-04.01
     titulo: "Componente de receita"
     fase: F-04.1
-    status: pendente
+    status: concluida
     objetivo: "frontend/ui/receita.js expoe JGReceita.abrir(produto, quantidade) com campos por tipo de receituario, validacao de validade e pre-preenchimento do comprador pelo documento (D-23)."
     arquivos:
       cria: [frontend/ui/receita.js]
@@ -33,12 +33,12 @@ tasks:
     criterio_aceite: "Verificacao por navegador registra os dois cenarios com zero pageerror."
     depende_de: [T-03.07]
     paralelizavel: false
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-04.02
     titulo: "PDV pede receita no item SNGPC"
     fase: F-04.1
-    status: pendente
+    status: concluida
     objetivo: "Adicionar item SNGPC no PDV abre o componente e a finalizacao envia receitas e itens[].receita."
     arquivos:
       cria: []
@@ -48,12 +48,12 @@ tasks:
     criterio_aceite: "Verificacao por navegador registra os dois cenarios com zero pageerror."
     depende_de: [T-04.01]
     paralelizavel: false
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-04.03
     titulo: "Venda a prazo pede receita"
     fase: F-04.1
-    status: pendente
+    status: concluida
     objetivo: "vendas-fora-pdv.html usa o componente e envia receitas no POST."
     arquivos:
       cria: []
@@ -63,12 +63,12 @@ tasks:
     criterio_aceite: "Verificacao por navegador registra os dois cenarios com zero pageerror."
     depende_de: [T-04.01]
     paralelizavel: false
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-04.04
     titulo: "Efetivar orcamento pede receita"
     fase: F-04.1
-    status: pendente
+    status: concluida
     objetivo: "orcamentos.html pede a receita dos itens SNGPC antes de efetivar."
     arquivos:
       cria: []
@@ -78,8 +78,8 @@ tasks:
     criterio_aceite: "Verificacao por navegador registra os dois cenarios com zero pageerror."
     depende_de: [T-04.01]
     paralelizavel: false
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
 ---
 
 # Plano — Sprint 04 — Receita nas telas de venda
@@ -131,10 +131,10 @@ flowchart LR
   classDef bloqueada fill:#f8d7da,stroke:#c62828,color:#4a1d1f
   classDef pendente  fill:#eceff1,stroke:#78909c,color:#263238
   classDef critico   stroke-width:3px
-  class T_04_01 pendente
-  class T_04_02 pendente
-  class T_04_03 pendente
-  class T_04_04 pendente
+  class T_04_01 concluida
+  class T_04_02 concluida
+  class T_04_03 concluida
+  class T_04_04 concluida
   class T_04_01,T_04_02 critico
 ```
 
@@ -154,7 +154,8 @@ teste_funcional: "Preencher e confirmar resolve um objeto com tipoReceituario 2 
 criterio_aceite: "Verificacao por navegador registra os dois cenarios com zero pageerror."
 depende_de: [T-03.07]
 paralelizavel: false
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: navegador: 2 cenarios + prefill, 0 pageerror · real: 0.8 h
 ```
 
 ---
@@ -171,7 +172,8 @@ teste_funcional: "No navegador, cancelar o modal nao adiciona o item ao carrinho
 criterio_aceite: "Verificacao por navegador registra os dois cenarios com zero pageerror."
 depende_de: [T-04.01]
 paralelizavel: false
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: navegador: 2 cenarios, 0 pageerror · real: 0.7 h
 ```
 
 ---
@@ -188,7 +190,8 @@ teste_funcional: "No navegador, cancelar o modal nao adiciona o item."
 criterio_aceite: "Verificacao por navegador registra os dois cenarios com zero pageerror."
 depende_de: [T-04.01]
 paralelizavel: false
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: navegador: 2 cenarios, 0 pageerror · real: 0.4 h
 ```
 
 ---
@@ -205,5 +208,6 @@ teste_funcional: "No navegador, cancelar o modal nao envia a efetivacao."
 criterio_aceite: "Verificacao por navegador registra os dois cenarios com zero pageerror."
 depende_de: [T-04.01]
 paralelizavel: false
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: navegador: 2 cenarios, 0 pageerror · real: 0.5 h
 ```

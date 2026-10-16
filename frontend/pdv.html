@@ -436,12 +436,14 @@
 
     <script src="/seguranca.js"></script>
     <script src="/ui/shell.js"></script>
+    <script src="/ui/receita.js"></script>
     <script>
         const inputCodigo = document.getElementById('codigo-barras');
         const inputQtd = document.getElementById('quantidade');
         const tabela = document.getElementById('tabela-itens').getElementsByTagName('tbody')[0];
 
         let itens = [];        // itens da venda atual
+        let receitasVenda = []; // Farmácia Fase 2: receitas dos itens SNGPC (contrato C-02)
         let itemContador = 1;
         let caixaAberto = null;
         let cupomAtual = null;
@@ -668,8 +670,18 @@
 
                     const produto = await response.json();
 
+                    // Farmácia Fase 2 (D-11): item controlado/antimicrobiano pede a receita; cada adição é uma linha
+                    let receitaIdx = null;
+                    if (produto.classeSngpc && window.JGReceita) {
+                        const anteriores = receitasVenda.map((rc, i) => ({ indice: i, tipoReceituario: rc.tipoReceituario, rotulo: `${rc.numero || 'sem número'} — ${rc.dataPrescricao}` }));
+                        const r = await JGReceita.abrir(produto, qtd, { anteriores });
+                        if (!r) { inputCodigo.focus(); return; }
+                        if (r.reutilizar !== undefined) receitaIdx = r.reutilizar;
+                        else { receitasVenda.push(r.receita); receitaIdx = receitasVenda.length - 1; }
+                    }
+
                     // Se o produto já está na venda, soma a quantidade e reajusta o preço
-                    const existente = itens.find(i => i.codigo === produto.codigo);
+                    const existente = produto.classeSngpc ? null : itens.find(i => i.codigo === produto.codigo);
                     if (existente) {
                         existente.quantidade += qtd;
                         const novaQtd = existente.quantidade;
@@ -684,7 +696,8 @@
                             codigo: produto.codigo,
                             descricao: produto.descricao,
                             quantidade: qtd,
-                            preco: produto.preco
+                            preco: produto.preco,
+                            receita: receitaIdx
                         });
                     }
 
@@ -1040,6 +1053,8 @@
 
         // Indica se algum modal de busca/autorização está sobreposto ao fechamento
         function temModalSobreposto() {
+            const rc = document.getElementById('modal-receita');
+            if (rc && rc.classList.contains('active')) return true;
             return document.getElementById('modal-busca').classList.contains('active') ||
                    document.getElementById('modal-cliente').classList.contains('active') ||
                    document.getElementById('modal-admin').classList.contains('active');
@@ -1334,7 +1349,8 @@
                     method: 'POST',
                     headers: Object.assign({ 'Content-Type': 'application/json' }, tokenAuth()),
                     body: JSON.stringify({
-                        itens: itens.map(i => ({ codigo: i.codigo, quantidade: i.quantidade })),
+                        itens: itens.map(i => ({ codigo: i.codigo, quantidade: i.quantidade, ...(i.receita !== null && i.receita !== undefined ? { receita: i.receita } : {}) })),
+                        receitas: receitasVenda.map(({ tipoReceituario, ...rc }) => rc),
                         pagamento,
                         clienteId: clienteSelecionadoId || null,
                         naoEmitirNfe: semNfe
@@ -1383,6 +1399,7 @@
                 imprimirCupom(true);
                 promocaoPdv = { descontos: [], totalDesconto: 0 };
                 itens = [];
+                receitasVenda = [];
                 renderizarTabela();
                 document.getElementById('desc-ultimo-item').innerText = 'NENHUM ITEM';
 
@@ -1430,6 +1447,7 @@
                 fecharModalPagamento();
                 alert(`Orçamento ${dados.numero} salvo! Você pode efetivá-lo na tela de Orçamentos.`);
                 itens = [];
+                receitasVenda = [];
                 renderizarTabela();
                 document.getElementById('desc-ultimo-item').innerText = 'NENHUM ITEM';
             } catch (error) {

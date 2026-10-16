@@ -13,6 +13,7 @@ import { calcularPromocoes } from '../utils/promocoes';
 import { obterSetting } from '../utils/settings';
 import { criarRecebiveisCartao } from '../utils/cartao';
 import { baixarLotesFefo, estornarLotesDaVenda, exigirSaldoEmLote, rotuloLotes, validarEstoqueVendavel } from '../utils/fefo';
+import { tipoReceituarioDoProduto } from '../utils/sngpc/regras';
 import { LinhaVendaSngpc, corpoErroVenda, ehProdutoSngpc, gravarReceitas, prepararReceitas } from '../utils/sngpc/vendaReceita';
 import { extrairQrCode } from '../nfe/parse';
 import { emitirNfce } from '../nfe';
@@ -972,8 +973,14 @@ router.get('/consulta', async (req: any, res: any) => {
             nfeStatus: v.nfeStatus ?? 'NONE',
             nfeNumero: v.nfeNumber ?? null,
             itensDetalhe: v.SaleItem.map(i => ({
+                id: i.id,
                 codigo: i.Product.barcode ?? i.Product.sku ?? '-',
                 nome: i.Product.name,
+                // Fase 2: a efetivação de orçamento pede receita dos itens SNGPC
+                classeSngpc: i.variantId ? null : i.Product.classeSngpc ?? null,
+                listaPortaria344: i.Product.listaPortaria344 ?? null,
+                qtdMaxReceita: i.Product.qtdMaxReceita ?? null,
+                tipoReceituario: i.variantId ? null : tipoReceituarioDoProduto(i.Product),
                 quantidade: i.quantity,
                 unitario: Number(i.unitPrice),
                 subtotal: Number(i.subtotal)
