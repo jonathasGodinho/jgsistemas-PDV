@@ -33,6 +33,11 @@ export type ContextoMovimento = {
     saleItemId?: string | null;
     referencia?: string | null;
     userId?: string | null;
+    // Fase 2 (SNGPC): NF da entrada e motivo da perda (st_TipoMotivoPerda 1-9)
+    nfNumero?: string | null;
+    nfData?: Date | null;
+    cnpjOrigem?: string | null;
+    motivoPerda?: number | null;
 };
 
 const arred = (n: number) => Math.round((Number(n) || 0) * 1000) / 1000;
@@ -88,6 +93,10 @@ async function movimentarLote(
             origemId: ctx.origemId ?? null,
             referencia: ctx.referencia ?? null,
             userId: ctx.userId ?? null,
+            nfNumero: ctx.nfNumero ?? null,
+            nfData: ctx.nfData ?? null,
+            cnpjOrigem: ctx.cnpjOrigem ?? null,
+            motivoPerda: ctx.motivoPerda ?? null,
             createdAt: new Date()
         }
     });

@@ -7,14 +7,14 @@ sprint_id: sprint-05
 atualizado_em: 2026-10-16
 sprint:
   titulo: "Entradas, perdas e inconsistencias"
-  status: nao_iniciado
+  status: em_andamento
   criterio_saida: "npm test termina com 0 failed incluindo sngpc-compra, sngpc-estoque-manual e sngpc-inconsistencia, e telas verificadas por navegador"
   riscos: ["Fornecedor sem CNPJ cadastrado impede receber compra de controlado (D-13)"]
   fora_de_escopo: ["Transferencia entre estabelecimentos (D-27)"]
 fases:
   - id: F-05.1
     titulo: "NF, motivo de perda e inconsistencia"
-    status: nao_iniciado
+    status: em_andamento
     criterio_saida: "Livro-razao de produto SNGPC guarda NF nas entradas e motivo nas perdas, e estorno pos-exportacao gera inconsistencia"
     paralelizavel: false
     paralela_com: []
@@ -23,7 +23,7 @@ tasks:
   - id: T-05.01
     titulo: "Compra de SNGPC exige NF"
     fase: F-05.1
-    status: pendente
+    status: concluida
     objetivo: "Receber compra com item SNGPC exige nfNumero, nfData e CNPJ do fornecedor, gravados em Purchase e no LoteMovimento ENTRADA_COMPRA (D-13)."
     arquivos:
       cria: [backend/tests/sngpc-compra.test.ts]
@@ -33,8 +33,8 @@ tasks:
     criterio_aceite: "backend/tests/sngpc-compra.test.ts passa e farmacia-compra-lote.test.ts continua verde."
     depende_de: []
     paralelizavel: false
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-05.02
     titulo: "Movimento manual de SNGPC"
     fase: F-05.1
@@ -130,7 +130,7 @@ flowchart LR
   classDef bloqueada fill:#f8d7da,stroke:#c62828,color:#4a1d1f
   classDef pendente  fill:#eceff1,stroke:#78909c,color:#263238
   classDef critico   stroke-width:3px
-  class T_05_01 pendente
+  class T_05_01 concluida
   class T_05_02 pendente
   class T_05_03 pendente
   class T_05_04 pendente
@@ -153,7 +153,8 @@ teste_funcional: "Compra so de produto sem classeSngpc recebe sem NF com 200."
 criterio_aceite: "backend/tests/sngpc-compra.test.ts passa e farmacia-compra-lote.test.ts continua verde."
 depende_de: []
 paralelizavel: false
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: sngpc-compra 3 + farmacia-compra-lote 3: 6 passed, 0 failed · real: 0.6 h
 ```
 
 ---

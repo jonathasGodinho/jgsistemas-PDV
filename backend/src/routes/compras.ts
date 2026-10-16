@@ -136,7 +136,7 @@ router.post('/', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: 
 // POST /api/compras/:id/receber - Recebe a mercadoria: entra no estoque e gera contas a pagar
 router.post('/:id/receber', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), async (req: any, res: any) => {
     const { id } = req.params;
-    const { vencimento, observacoes, recebidos, lotes } = req.body;
+    const { vencimento, observacoes, recebidos, lotes, nfNumero, nfData } = req.body;
 
     try {
         const compra = await prisma.purchase.findUnique({
@@ -191,6 +191,31 @@ router.post('/:id/receber', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), a
             const qtd = qtdRecebida(item);
             if (qtd <= 0) continue;
             lotesParaGravar.push({ productId: item.productId, nome: info.nome, validade: info.validade, quantidade: qtd });
+        }
+
+        // Fase 2 (D-13): item SNGPC (controlado/antimicrobiano) recebido exige lote, NF e CNPJ do fornecedor
+        const produtosDaCompra = await prisma.product.findMany({
+            where: { id: { in: compra.PurchaseItem.map(i => i.productId) } },
+            select: { id: true, name: true, classeSngpc: true }
+        });
+        const sngpc = new Map(produtosDaCompra.filter(p => p.classeSngpc).map(p => [p.id, p]));
+        const itensSngpc = compra.PurchaseItem.filter(i => sngpc.has(i.productId) && qtdRecebida(i) > 0);
+        const nfNum = nfNumero !== undefined && nfNumero !== null ? String(nfNumero).trim().slice(0, 20) : '';
+        const nfDt = nfData ? new Date(`${String(nfData).slice(0, 10)}T00:00:00`) : null;
+        let cnpjFornecedor: string | null = null;
+        if (itensSngpc.length) {
+            if (!nfNum || !nfDt || Number.isNaN(nfDt.getTime())) {
+                return res.status(400).json({ erro: "Compra com medicamento controlado/antimicrobiano exige número e data da nota fiscal!" });
+            }
+            const semLote = itensSngpc.find(i => !lotesParaGravar.some(l => l.productId === i.productId));
+            if (semLote) {
+                return res.status(400).json({ erro: `Informe o lote de ${sngpc.get(semLote.productId)!.name} (medicamento controlado/antimicrobiano)!` });
+            }
+            const fornecedor = compra.supplierId ? await prisma.supplier.findUnique({ where: { id: compra.supplierId } }) : null;
+            cnpjFornecedor = fornecedor?.document ? String(fornecedor.document).replace(/\D/g, '') : null;
+            if (!cnpjFornecedor || cnpjFornecedor.length !== 14) {
+                return res.status(400).json({ erro: "Cadastre o CNPJ do fornecedor: a entrada de medicamento controlado/antimicrobiano é escriturada com ele." });
+            }
         }
 
         await prisma.$transaction(async (tx) => {
@@ -254,12 +279,17 @@ router.post('/:id/receber', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), a
                     lote: l.nome,
                     validade: l.validade,
                     quantidade: l.quantidade
-                }, { tipo: 'ENTRADA_COMPRA', referencia: `Recebimento compra ${compra.orderNumber}`, userId: operador?.id ?? null });
+                }, {
+                    tipo: 'ENTRADA_COMPRA',
+                    referencia: `Recebimento compra ${compra.orderNumber}`,
+                    userId: operador?.id ?? null,
+                    ...(sngpc.has(l.productId) ? { nfNumero: nfNum, nfData: nfDt, cnpjOrigem: cnpjFornecedor } : {})
+                });
             }
 
             await tx.purchase.update({
                 where: { id: compra.id },
-                data: { status: 'RECEIVED', updatedAt: new Date() }
+                data: { status: 'RECEIVED', ...(nfNum ? { nfNumero: nfNum, nfData: nfDt } : {}), updatedAt: new Date() }
             });
         });
 
