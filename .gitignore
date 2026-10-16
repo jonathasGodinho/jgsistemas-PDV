@@ -28,3 +28,4 @@ Thumbs.db
 
 # Artefatos das verificações por navegador (D-19 / playwright MCP)
 .playwright-mcp/
+docs/eventos/
