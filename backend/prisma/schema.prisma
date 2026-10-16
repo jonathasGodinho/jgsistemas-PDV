@@ -176,6 +176,7 @@ model Company {
   Setting              Setting[]
   Supplier             Supplier[]
   User                 User[]
+  LoteMovimento        LoteMovimento[]
   Lote                 Lote[]
   CmedPreco            CmedPreco[]
 }
@@ -908,21 +909,45 @@ model SaasNota {
 
 // Farmacia: lote de um produto numa filial, com validade e saldo (FEFO consome os lotes).
 model Lote {
-  id         String   @id
+  id         String          @id
   companyId  String
   branchId   String
   productId  String
   lote       String
   validade   DateTime
-  quantidade Decimal  @default(0) @db.Decimal(10, 3)
-  createdAt  DateTime @default(now())
+  quantidade Decimal         @default(0) @db.Decimal(10, 3)
+  createdAt  DateTime        @default(now())
   updatedAt  DateTime
-  Branch     Branch   @relation(fields: [branchId], references: [id])
-  Company    Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  Product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  Branch     Branch          @relation(fields: [branchId], references: [id])
+  Company    Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  Product    Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  Movimentos LoteMovimento[]
 
   @@index([companyId, productId, validade])
   @@index([branchId, validade])
+}
+
+// Farmacia: livro-razão do lote (D-20). Toda mudança de saldo de um Lote grava uma linha
+// aqui; o saldo do lote é a soma das linhas. VENDA guarda a venda/item que consumiu o lote,
+// e CANCELAMENTO/DEVOLUCAO apontam (origemId) para a linha de VENDA que estornam.
+model LoteMovimento {
+  id         String   @id
+  companyId  String
+  loteId     String
+  tipo       String
+  quantidade Decimal  @db.Decimal(10, 3)
+  saleId     String?
+  saleItemId String?
+  origemId   String?
+  referencia String?
+  userId     String?
+  createdAt  DateTime @default(now())
+  Company    Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  Lote       Lote     @relation(fields: [loteId], references: [id], onDelete: Cascade)
+
+  @@index([loteId])
+  @@index([saleId])
+  @@index([origemId])
 }
 
 // Farmacia: tabela de precos da CMED (import por upload; substitui as linhas da empresa — D-05/D-18).

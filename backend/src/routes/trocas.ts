@@ -6,6 +6,7 @@ import { validarSenhaAdmin } from '../utils/autorizacao';
 import { registrarAuditoria } from '../utils/auditoria';
 import { resolverPreco } from '../utils/preco';
 import { calcularPromocoes } from '../utils/promocoes';
+import { baixarLotesFefo, estornarLotesDaVenda, rotuloLotes, validarEstoqueVendavel } from '../utils/fefo';
 
 const router = Router();
 router.use(autenticar, requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'));
@@ -96,6 +97,7 @@ router.post('/', async (req: any, res: any) => {
             const itensVenda: any[] = [];
             let subtotalNovo = 0;
             let custoNovo = 0;
+            const novaVendaId = randomUUID();
 
             for (const item of itensNovosArr) {
                 const qtd = Math.round(Number(item.quantidade) || 1);
@@ -120,9 +122,16 @@ router.post('/', async (req: any, res: any) => {
                 const precoUnit = (await resolverPreco(produto.id, variante?.id ?? null, venda.customerId, qtd, precoBase)) ?? precoBase;
                 const custoUnit = variante ? Number(variante.costPrice ?? produto.costPrice ?? 0) : Number(produto.costPrice ?? 0);
 
+                // D-17/D-20: lote vencido não é vendável; a saída consome lotes por FEFO
+                if (!variante) await validarEstoqueVendavel(tx, produto, filial.id, qtd, estoque.quantity);
+                const itemId = randomUUID();
+
                 await tx.inventory.update({
                     where: { id: estoque.id },
                     data: { quantity: estoque.quantity - qtd, updatedAt: new Date() }
+                });
+                const lotesUsados = variante ? [] : await baixarLotesFefo(produto.id, filial.id, qtd, tx, {
+                    saleId: novaVendaId, saleItemId: itemId, referencia: `Troca venda ${venda.nfceNumber}`, userId: operador.id
                 });
                 await tx.inventoryMovement.create({
                     data: {
@@ -130,14 +139,14 @@ router.post('/', async (req: any, res: any) => {
                         inventoryId: estoque.id,
                         type: 'SALE',
                         quantity: -qtd,
-                        reason: `Troca venda ${venda.nfceNumber}`,
+                        reason: `Troca venda ${venda.nfceNumber}${rotuloLotes(lotesUsados)}`,
                         userId: operador.id,
                         createdAt: new Date()
                     }
                 });
 
                 itensVenda.push({
-                    id: randomUUID(),
+                    id: itemId,
                     productId: produto.id,
                     variantId: variante?.id ?? null,
                     quantity: qtd,
@@ -163,13 +172,23 @@ router.post('/', async (req: any, res: any) => {
                         where: { id: estoque.id },
                         data: { quantity: estoque.quantity + d.quantidade, updatedAt: new Date() }
                     });
+                    // D-20: volta para os lotes que a venda original consumiu deste produto
+                    const estorno = d.variante
+                        ? { lotes: [] }
+                        : await estornarLotesDaVenda(tx, venda.id, {
+                            tipo: 'DEVOLUCAO',
+                            productId: d.produto.id,
+                            quantidade: d.quantidade,
+                            referencia: `Devolução troca venda ${venda.nfceNumber}`,
+                            userId: operador.id
+                        });
                     await tx.inventoryMovement.create({
                         data: {
                             id: randomUUID(),
                             inventoryId: estoque.id,
                             type: 'RETURN',
                             quantity: d.quantidade,
-                            reason: `Devolução troca venda ${venda.nfceNumber}`,
+                            reason: `Devolução troca venda ${venda.nfceNumber}${rotuloLotes(estorno.lotes)}`,
                             userId: operador.id,
                             createdAt: new Date()
                         }
@@ -194,7 +213,7 @@ router.post('/', async (req: any, res: any) => {
             const numeroVenda = (await tx.sale.count()) + 1;
             const novaVenda = await tx.sale.create({
                 data: {
-                    id: randomUUID(),
+                    id: novaVendaId,
                     companyId: empresa.id,
                     branchId: filial.id,
                     customerId: venda.customerId,

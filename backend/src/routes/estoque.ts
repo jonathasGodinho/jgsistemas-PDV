@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { randomUUID } from 'crypto';
 import prisma from '../db';
 import { requerPermissao } from '../middlewares/auth';
-import { formatarValidade } from '../utils/fefo';
+import { ajustarLotesAoEstoque, entradaEmLote, formatarValidade, rotuloLotes, saidaDeLote } from '../utils/fefo';
 
 const router = Router();
 
@@ -35,10 +35,10 @@ router.get('/', async (req: any, res: any) => {
             orderBy: [{ validade: 'asc' }, { lote: 'asc' }]
         })
         : [];
-    const lotesPorProduto = new Map<string, { lote: string; validade: Date; quantidade: number }[]>();
+    const lotesPorProduto = new Map<string, { id: string; lote: string; validade: Date; quantidade: number }[]>();
     for (const l of lotes) {
         const lista = lotesPorProduto.get(l.productId) ?? [];
-        lista.push({ lote: l.lote, validade: l.validade, quantidade: Number(l.quantidade) });
+        lista.push({ id: l.id, lote: l.lote, validade: l.validade, quantidade: Number(l.quantidade) });
         lotesPorProduto.set(l.productId, lista);
     }
 
@@ -54,6 +54,12 @@ router.get('/', async (req: any, res: any) => {
         if (quantidade <= 0) situacao = 'SEM_ESTOQUE';
         else if (quantidade <= minimo) situacao = 'BAIXO';
 
+        // Farmácia (D-20): parte do estoque que não está em nenhum lote
+        const lotesDoProduto = lotesPorProduto.get(p.id);
+        const saldoSemLote = lotesDoProduto
+            ? Math.round((quantidade - lotesDoProduto.reduce((s, l) => s + l.quantidade, 0)) * 1000) / 1000
+            : null;
+
         resultado.push({
             id: p.id,
             nome: p.name,
@@ -63,7 +69,8 @@ router.get('/', async (req: any, res: any) => {
             minimo,
             maximo,
             situacao,
-            grade: null
+            grade: null,
+            ...(saldoSemLote !== null ? { saldoSemLote } : {})
         });
 
         // Linhas de lote (farmacia): um saldo por lote, com validade
@@ -76,6 +83,7 @@ router.get('/', async (req: any, res: any) => {
                 nome: p.name,
                 codigo: null,
                 sku: null,
+                loteId: l.id,
                 lote: l.lote,
                 validade: l.validade,
                 quantidade: l.quantidade,
@@ -143,7 +151,17 @@ router.get('/movimentacoes', async (_req: any, res: any) => {
     })));
 });
 
-// POST /api/estoque/entrada - Entrada manual de estoque
+// Farmacia (D-20): lê lote/validade opcionais do corpo. null = sem lote; { erro } = dado inválido.
+function lerLoteDoCorpo(body: any): null | { erro: string } | { lote: string; validade: Date } {
+    const lote = body?.lote !== undefined && body?.lote !== null ? String(body.lote).trim() : '';
+    if (!lote && !body?.validade) return null;
+    if (!lote) return { erro: "Informe o número do lote!" };
+    const validade = body?.validade ? new Date(`${String(body.validade).slice(0, 10)}T00:00:00`) : null;
+    if (!validade || Number.isNaN(validade.getTime())) return { erro: `Informe a validade do lote ${lote}!` };
+    return { lote, validade };
+}
+
+// POST /api/estoque/entrada - Entrada manual de estoque (com lote/validade opcionais — farmácia)
 router.post('/entrada', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR', 'STOCKIST'), async (req: any, res: any) => {
     const { produtoId, quantidade, motivo } = req.body;
     const qtd = Math.round(Number(quantidade) || 0);
@@ -151,6 +169,10 @@ router.post('/entrada', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR', 'STOCK
     if (!produtoId || qtd <= 0) {
         return res.status(400).json({ erro: "Informe o produto e uma quantidade válida!" });
     }
+    const loteInfo = lerLoteDoCorpo(req.body);
+    if (loteInfo && 'erro' in loteInfo) {
+        return res.status(400).json({ erro: loteInfo.erro });
+    }
 
     const filial = await prisma.branch.findFirst();
     if (!filial) {
@@ -158,35 +180,49 @@ router.post('/entrada', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR', 'STOCK
     }
 
     const inv = await prisma.inventory.findFirst({
-        where: { productId: produtoId, branchId: filial.id }
+        where: { productId: produtoId, branchId: filial.id, variantId: null }
     });
     if (!inv) {
         return res.status(400).json({ erro: "Produto sem estoque cadastrado!" });
     }
 
-    await prisma.inventory.update({
-        where: { id: inv.id },
-        data: { quantity: inv.quantity + qtd, updatedAt: new Date() }
-    });
-
-    await prisma.inventoryMovement.create({
-        data: {
-            id: randomUUID(),
-            inventoryId: inv.id,
-            type: 'IN',
-            quantity: qtd,
-            reason: motivo || 'ENTRADA MANUAL',
-            userId: req.operador?.id ?? null,
-            createdAt: new Date()
+    const motivoFinal = motivo || 'ENTRADA MANUAL';
+    await prisma.$transaction(async (tx) => {
+        await tx.inventory.update({
+            where: { id: inv.id },
+            data: { quantity: { increment: qtd }, updatedAt: new Date() }
+        });
+        if (loteInfo) {
+            await entradaEmLote(tx, {
+                companyId: filial.companyId,
+                branchId: filial.id,
+                productId: produtoId,
+                lote: loteInfo.lote,
+                validade: loteInfo.validade,
+                quantidade: qtd
+            }, { tipo: 'ENTRADA_MANUAL', referencia: motivoFinal, userId: req.operador?.id ?? null });
         }
+        await tx.inventoryMovement.create({
+            data: {
+                id: randomUUID(),
+                inventoryId: inv.id,
+                type: 'IN',
+                quantity: qtd,
+                reason: `${motivoFinal}${loteInfo ? rotuloLotes([loteInfo]) : ''}`,
+                userId: req.operador?.id ?? null,
+                createdAt: new Date()
+            }
+        });
     });
 
     return res.json({ ok: true, novaQuantidade: inv.quantity + qtd });
 });
 
-// POST /api/estoque/saida - Saída manual de estoque
+// POST /api/estoque/saida - Saída manual de estoque.
+// Farmácia (D-20): `loteId` opcional baixa daquele lote; sem ele, se a saída deixaria o estoque
+// abaixo da soma dos lotes, o excedente sai dos lotes (vencidos primeiro).
 router.post('/saida', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR', 'STOCKIST'), async (req: any, res: any) => {
-    const { produtoId, quantidade, motivo } = req.body;
+    const { produtoId, quantidade, motivo, loteId } = req.body;
     const qtd = Math.round(Number(quantidade) || 0);
 
     if (!produtoId || qtd <= 0) {
@@ -199,7 +235,7 @@ router.post('/saida', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR', 'STOCKIS
     }
 
     const inv = await prisma.inventory.findFirst({
-        where: { productId: produtoId, branchId: filial.id }
+        where: { productId: produtoId, branchId: filial.id, variantId: null }
     });
     if (!inv) {
         return res.status(400).json({ erro: "Produto sem estoque cadastrado!" });
@@ -209,27 +245,45 @@ router.post('/saida', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR', 'STOCKIS
         return res.status(400).json({ erro: "Estoque insuficiente para a saída!" });
     }
 
-    await prisma.inventory.update({
-        where: { id: inv.id },
-        data: { quantity: inv.quantity - qtd, updatedAt: new Date() }
-    });
-
-    await prisma.inventoryMovement.create({
-        data: {
-            id: randomUUID(),
-            inventoryId: inv.id,
-            type: 'OUT',
-            quantity: -qtd,
-            reason: motivo || 'SAIDA MANUAL',
-            userId: req.operador?.id ?? null,
-            createdAt: new Date()
-        }
-    });
+    const motivoFinal = motivo || 'SAIDA MANUAL';
+    try {
+        await prisma.$transaction(async (tx) => {
+            const ctx = { referencia: motivoFinal, userId: req.operador?.id ?? null };
+            const lotesBaixados: { lote: string; validade: Date }[] = [];
+            if (loteId) {
+                const lote = await saidaDeLote(tx, String(loteId), qtd, ctx);
+                if (lote.productId !== produtoId || lote.branchId !== filial.id) {
+                    throw new Error('O lote informado não pertence a este produto!');
+                }
+                lotesBaixados.push(lote);
+            }
+            await tx.inventory.update({
+                where: { id: inv.id },
+                data: { quantity: { decrement: qtd }, updatedAt: new Date() }
+            });
+            lotesBaixados.push(...await ajustarLotesAoEstoque(tx, produtoId, filial.id, inv.quantity - qtd, { ...ctx, tipo: 'SAIDA_MANUAL' }));
+            await tx.inventoryMovement.create({
+                data: {
+                    id: randomUUID(),
+                    inventoryId: inv.id,
+                    type: 'OUT',
+                    quantity: -qtd,
+                    reason: `${motivoFinal}${rotuloLotes(lotesBaixados)}`,
+                    userId: req.operador?.id ?? null,
+                    createdAt: new Date()
+                }
+            });
+        });
+    } catch (e: any) {
+        return res.status(400).json({ erro: e.message });
+    }
 
     return res.json({ ok: true, novaQuantidade: inv.quantity - qtd });
 });
 
-// POST /api/estoque/ajuste - Ajusta estoque para um valor específico
+// POST /api/estoque/ajuste - Ajusta estoque para um valor específico.
+// Farmácia (D-20): se o novo saldo ficar abaixo da soma dos lotes, os lotes são baixados
+// (vencidos primeiro) para que nunca exista lote com mais unidades do que o estoque.
 router.post('/ajuste', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR', 'STOCKIST'), async (req: any, res: any) => {
     const { produtoId, quantidade, motivo } = req.body;
     const novaQtd = Math.round(Number(quantidade) || 0);
@@ -244,29 +298,34 @@ router.post('/ajuste', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR', 'STOCKI
     }
 
     const inv = await prisma.inventory.findFirst({
-        where: { productId: produtoId, branchId: filial.id }
+        where: { productId: produtoId, branchId: filial.id, variantId: null }
     });
     if (!inv) {
         return res.status(400).json({ erro: "Produto sem estoque cadastrado!" });
     }
 
     const delta = novaQtd - inv.quantity;
+    const motivoFinal = motivo || 'AJUSTE DE INVENTÁRIO';
 
-    await prisma.inventory.update({
-        where: { id: inv.id },
-        data: { quantity: novaQtd, updatedAt: new Date() }
-    });
-
-    await prisma.inventoryMovement.create({
-        data: {
-            id: randomUUID(),
-            inventoryId: inv.id,
-            type: 'ADJUSTMENT',
-            quantity: delta,
-            reason: motivo || 'AJUSTE DE INVENTÁRIO',
-            userId: req.operador?.id ?? null,
-            createdAt: new Date()
-        }
+    await prisma.$transaction(async (tx) => {
+        await tx.inventory.update({
+            where: { id: inv.id },
+            data: { quantity: novaQtd, updatedAt: new Date() }
+        });
+        const lotesBaixados = await ajustarLotesAoEstoque(tx, produtoId, filial.id, novaQtd, {
+            tipo: 'AJUSTE', referencia: motivoFinal, userId: req.operador?.id ?? null
+        });
+        await tx.inventoryMovement.create({
+            data: {
+                id: randomUUID(),
+                inventoryId: inv.id,
+                type: 'ADJUSTMENT',
+                quantity: delta,
+                reason: `${motivoFinal}${rotuloLotes(lotesBaixados)}`,
+                userId: req.operador?.id ?? null,
+                createdAt: new Date()
+            }
+        });
     });
 
     return res.json({ ok: true, novaQuantidade: novaQtd });

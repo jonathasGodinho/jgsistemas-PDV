@@ -12,7 +12,7 @@ import { calcularPromocoes } from '../utils/promocoes';
 import { emitirNfce } from '../nfe';
 import { obterNfeConfig } from '../nfe/config';
 import { extrairQrCode } from '../nfe/parse';
-import { baixarLotesFefo, formatarValidade } from '../utils/fefo';
+import { baixarLotesFefo, rotuloLotes, validarEstoqueVendavel } from '../utils/fefo';
 
 const router = Router();
 router.use(autenticar);
@@ -112,6 +112,7 @@ router.post('/', async (req: any, res: any) => {
             const itensVenda: any[] = [];
             let subtotal = 0;
             let custoTotal = 0;
+            const vendaId = randomUUID();
 
             for (const item of itens) {
                 const qtd = Math.round(Number(item.quantidade) || 1);
@@ -153,6 +154,9 @@ router.post('/', async (req: any, res: any) => {
                 if (!estoque || estoque.quantity < qtd) {
                     throw new Error(`Estoque insuficiente para: ${produto.name}`);
                 }
+                // D-17/D-20: lote vencido não é vendável
+                if (!variante) await validarEstoqueVendavel(tx, produto, filial.id, qtd, estoque.quantity);
+                const itemId = randomUUID();
 
                 const valorItem = precoUnit * qtd;
                 const custoItem = custoUnit * qtd;
@@ -164,39 +168,26 @@ router.post('/', async (req: any, res: any) => {
                     data: { quantity: estoque.quantity - qtd, updatedAt: new Date() }
                 });
 
+                // FEFO: baixa dos lotes de menor validade (produto sem lote não faz nada),
+                // gravada no livro-razão do lote com a venda e o item (D-20).
+                const lotesUsados = variante ? [] : await baixarLotesFefo(produto.id, filial.id, qtd, tx, {
+                    saleId: vendaId, saleItemId: itemId, referencia: 'Venda a prazo', userId: operador.id
+                });
+
                 await tx.inventoryMovement.create({
                     data: {
                         id: randomUUID(),
                         inventoryId: estoque.id,
                         type: 'SALE',
                         quantity: -qtd,
-                        reason: 'Venda a prazo',
+                        reason: `Venda a prazo${rotuloLotes(lotesUsados)}`,
                         userId: operador.id,
                         createdAt: new Date()
                     }
                 });
 
-                // FEFO: baixa dos lotes de menor validade (produto sem lote não faz nada).
-                if (!variante) {
-                    const lotesUsados = await baixarLotesFefo(produto.id, filial.id, qtd, tx);
-                    for (const lote of lotesUsados) {
-                        if (lote.quantidade <= 0 || !Number.isInteger(lote.quantidade)) continue;
-                        await tx.inventoryMovement.create({
-                            data: {
-                                id: randomUUID(),
-                                inventoryId: estoque.id,
-                                type: 'SALE',
-                                quantity: -lote.quantidade,
-                                reason: `Venda a prazo · Lote ${lote.lote} (val ${formatarValidade(lote.validade)})`,
-                                userId: operador.id,
-                                createdAt: new Date()
-                            }
-                        });
-                    }
-                }
-
                 itensVenda.push({
-                    id: randomUUID(),
+                    id: itemId,
                     productId: produto.id,
                     variantId: variante?.id ?? null,
                     quantity: qtd,
@@ -260,7 +251,7 @@ router.post('/', async (req: any, res: any) => {
 
             const venda = await tx.sale.create({
                 data: {
-                    id: randomUUID(),
+                    id: vendaId,
                     companyId: empresa.id,
                     branchId: filial.id,
                     customerId: clienteCadastrado.id,

@@ -12,7 +12,7 @@ import { resolverPreco } from '../utils/preco';
 import { calcularPromocoes } from '../utils/promocoes';
 import { obterSetting } from '../utils/settings';
 import { criarRecebiveisCartao } from '../utils/cartao';
-import { baixarLotesFefo, formatarValidade } from '../utils/fefo';
+import { baixarLotesFefo, estornarLotesDaVenda, rotuloLotes, validarEstoqueVendavel } from '../utils/fefo';
 import { extrairQrCode } from '../nfe/parse';
 import { emitirNfce } from '../nfe';
 import { obterNfeConfig } from '../nfe/config';
@@ -103,6 +103,7 @@ router.post('/', async (req: any, res: any) => {
             const itensVenda: any[] = [];
             let subtotal = 0;
             let custoTotal = 0;
+            const vendaId = randomUUID();
 
             for (const item of itens) {
                 const qtd = Math.round(Number(item.quantidade) || 1);
@@ -146,6 +147,9 @@ router.post('/', async (req: any, res: any) => {
                 if (!estoque || estoque.quantity < qtd) {
                     throw new Error(`Estoque insuficiente para: ${produto.name}`);
                 }
+                // D-17/D-20: lote vencido não é vendável
+                if (!variante) await validarEstoqueVendavel(tx, produto, filial.id, qtd, estoque.quantity);
+                const itemId = randomUUID();
 
                 const valorItem = precoUnit * qtd;
                 const custoItem = custoUnit * qtd;
@@ -161,40 +165,27 @@ router.post('/', async (req: any, res: any) => {
                         }
                     });
 
+                    // FEFO: baixa dos lotes de menor validade (produto sem lote não faz nada),
+                    // gravada no livro-razão do lote com a venda e o item (D-20).
+                    const lotesUsados = variante ? [] : await baixarLotesFefo(produto.id, filial.id, qtd, tx, {
+                        saleId: vendaId, saleItemId: itemId, referencia: 'Venda PDV', userId: operador.id
+                    });
+
                     await tx.inventoryMovement.create({
                         data: {
                             id: randomUUID(),
                             inventoryId: estoque.id,
                             type: 'SALE',
                             quantity: -qtd,
-                            reason: 'Venda PDV',
+                            reason: `Venda PDV${rotuloLotes(lotesUsados)}`,
                             userId: operador.id,
                             createdAt: new Date()
                         }
                     });
-
-                    // FEFO: baixa dos lotes de menor validade (produto sem lote não faz nada).
-                    if (!variante) {
-                        const lotesUsados = await baixarLotesFefo(produto.id, filial.id, qtd, tx);
-                        for (const lote of lotesUsados) {
-                            if (lote.quantidade <= 0 || !Number.isInteger(lote.quantidade)) continue;
-                            await tx.inventoryMovement.create({
-                                data: {
-                                    id: randomUUID(),
-                                    inventoryId: estoque.id,
-                                    type: 'SALE',
-                                    quantity: -lote.quantidade,
-                                    reason: `Venda PDV · Lote ${lote.lote} (val ${formatarValidade(lote.validade)})`,
-                                    userId: operador.id,
-                                    createdAt: new Date()
-                                }
-                            });
-                        }
-                    }
                 }
 
                 itensVenda.push({
-                    id: randomUUID(),
+                    id: itemId,
                     productId: produto.id,
                     variantId: variante?.id ?? null,
                     quantity: qtd,
@@ -289,7 +280,7 @@ router.post('/', async (req: any, res: any) => {
 
             const venda = await tx.sale.create({
                 data: {
-                    id: randomUUID(),
+                    id: vendaId,
                     companyId: empresa.id,
                     branchId: filial.id,
                     customerId: clienteId || null,
@@ -516,40 +507,31 @@ router.post('/:id/efetivar', async (req: any, res: any) => {
                 if (!estoque || estoque.quantity < item.quantity) {
                     throw new Error(`Estoque insuficiente para efetivar o orçamento!`);
                 }
+                if (!item.variantId) {
+                    const produtoItem = await tx.product.findFirst({ where: { id: item.productId } });
+                    if (produtoItem) await validarEstoqueVendavel(tx, produtoItem, filial.id, item.quantity, estoque.quantity);
+                }
                 await tx.inventory.update({
                     where: { id: estoque.id },
                     data: { quantity: estoque.quantity - item.quantity, updatedAt: new Date() }
                 });
+
+                // FEFO: baixa dos lotes de menor validade (produto sem lote não faz nada) — D-20.
+                const lotesUsados = item.variantId ? [] : await baixarLotesFefo(item.productId, filial.id, item.quantity, tx, {
+                    saleId: orcamento.id, saleItemId: item.id, referencia: 'Orçamento efetivado', userId: operador.id
+                });
+
                 await tx.inventoryMovement.create({
                     data: {
                         id: randomUUID(),
                         inventoryId: estoque.id,
                         type: 'SALE',
                         quantity: -item.quantity,
-                        reason: 'Orçamento efetivado',
+                        reason: `Orçamento efetivado${rotuloLotes(lotesUsados)}`,
                         userId: operador.id,
                         createdAt: new Date()
                     }
                 });
-
-                // FEFO: baixa dos lotes de menor validade (produto sem lote não faz nada).
-                if (!item.variantId) {
-                    const lotesUsados = await baixarLotesFefo(item.productId, filial.id, item.quantity, tx);
-                    for (const lote of lotesUsados) {
-                        if (lote.quantidade <= 0 || !Number.isInteger(lote.quantidade)) continue;
-                        await tx.inventoryMovement.create({
-                            data: {
-                                id: randomUUID(),
-                                inventoryId: estoque.id,
-                                type: 'SALE',
-                                quantity: -lote.quantidade,
-                                reason: `Orçamento efetivado · Lote ${lote.lote} (val ${formatarValidade(lote.validade)})`,
-                                userId: operador.id,
-                                createdAt: new Date()
-                            }
-                        });
-                    }
-                }
             }
 
             // Gera PIX se necessário
@@ -766,8 +748,8 @@ router.post('/:id/cancelar', async (req: any, res: any) => {
         await prisma.$transaction(async (tx) => {
             const filial = await tx.branch.findFirst();
 
-            // Devolve o estoque
-            for (const item of venda.SaleItem) {
+            // Devolve o estoque — orçamento (PENDING) nunca baixou estoque, então não devolve nada
+            for (const item of venda.status === 'COMPLETED' ? venda.SaleItem : []) {
                 const estoque = await tx.inventory.findFirst({
                     where: {
                         productId: item.productId,
@@ -780,13 +762,22 @@ router.post('/:id/cancelar', async (req: any, res: any) => {
                         where: { id: estoque.id },
                         data: { quantity: estoque.quantity + item.quantity, updatedAt: new Date() }
                     });
+                    // D-20: recompõe exatamente os lotes que este item consumiu
+                    const estorno = item.variantId
+                        ? { lotes: [] }
+                        : await estornarLotesDaVenda(tx, venda.id, {
+                            tipo: 'CANCELAMENTO',
+                            saleItemId: item.id,
+                            referencia: `Cancelamento venda ${venda.nfceNumber}`,
+                            userId: req.operador.id
+                        });
                     await tx.inventoryMovement.create({
                         data: {
                             id: randomUUID(),
                             inventoryId: estoque.id,
                             type: 'RETURN',
                             quantity: item.quantity,
-                            reason: `Cancelamento venda ${venda.nfceNumber}${motivo ? ' - ' + motivo : ''}`,
+                            reason: `Cancelamento venda ${venda.nfceNumber}${rotuloLotes(estorno.lotes)}${motivo ? ' - ' + motivo : ''}`,
                             userId: req.operador.id,
                             createdAt: new Date()
                         }

@@ -68,6 +68,11 @@
                 <div class="mov-lista" id="lista-vencimento"><div class="sem-dados">Carregando...</div></div>
             </div>
 
+            <div class="card mb-16 hidden" id="card-conciliacao">
+                <div class="card-head"><h3>Lotes fora de sincronia</h3><button class="btn btn-primario" onclick="conciliarLotes()"><span class="ms">sync</span>Corrigir</button></div>
+                <div class="mov-lista" id="lista-conciliacao"></div>
+            </div>
+
             <div class="card">
                 <div class="card-head"><h3>Últimas movimentações</h3></div>
                 <div class="mov-lista" id="tabela-movimentos"><div class="sem-dados">Carregando...</div></div>
@@ -94,6 +99,16 @@
                         <select id="m-motivo-sel"><option value="">Selecione...</option><option>Compra de fornecedor</option><option>Reposição</option><option>Devolução de cliente</option><option>Quebra / avaria</option><option>Uso interno</option><option>Contagem / inventário</option><option value="outro">Outro...</option></select></div>
                 </div>
                 <div class="campo hidden" id="box-motivo"><label for="m-motivo">Descreva o motivo</label><input type="text" id="m-motivo" placeholder="Ex.: brinde para cliente"></div>
+                <!-- Farmácia (D-20): lote da entrada / lote da saída -->
+                <div class="form-grid hidden" id="box-lote-entrada">
+                    <div class="campo"><label for="m-lote">Lote</label><input type="text" id="m-lote" placeholder="Opcional"></div>
+                    <div class="campo"><label for="m-validade">Validade</label><input type="date" id="m-validade"></div>
+                </div>
+                <div class="campo hidden" id="box-lote-saida"><label for="m-lote-saida">Lote</label>
+                    <select id="m-lote-saida"></select>
+                    <div class="dica">No automático, a saída só mexe nos lotes se faltar saldo sem lote. Nesse caso, os vencidos saem primeiro.</div>
+                </div>
+                <div class="dica hidden" id="dica-lote-ajuste">Se o novo saldo ficar abaixo da soma dos lotes, os lotes são baixados automaticamente (vencidos primeiro).</div>
             </div>
             <div class="modal-foot">
                 <button class="btn" onclick="fecharModalMovimento()">Cancelar</button>
@@ -211,6 +226,20 @@
         function mostrarAtual() {
             const p = produtosMov.find(x => x.id === document.getElementById('m-produto').value);
             document.getElementById('m-atual').innerHTML = p ? `Estoque atual: <b>${formatarQtd(p.estoque)}</b>${p.minimo ? ` · mínimo ${formatarQtd(p.minimo)}` : ''}` : '';
+            atualizarCamposLote();
+        }
+
+        // Farmácia (D-20): campos de lote conforme o tipo de movimento
+        function atualizarCamposLote() {
+            const tipo = document.getElementById('m-tipo').value;
+            const farm = farmaciaAtiva();
+            const produtoId = document.getElementById('m-produto').value;
+            const lotes = estoque.filter(l => l.tipo === 'LOTE' && l.id === produtoId && l.quantidade > 0);
+            document.getElementById('box-lote-entrada').classList.toggle('hidden', !(farm && tipo === 'entrada'));
+            document.getElementById('box-lote-saida').classList.toggle('hidden', !(farm && tipo === 'saida' && lotes.length));
+            document.getElementById('dica-lote-ajuste').classList.toggle('hidden', !(farm && tipo === 'ajuste' && lotes.length));
+            document.getElementById('m-lote-saida').innerHTML = '<option value="">Automático</option>' +
+                lotes.map(l => `<option value="${esc(l.loteId)}">${esc(l.grade)} — ${formatarQtd(l.quantidade)} un.</option>`).join('');
         }
         document.getElementById('m-filtro').addEventListener('input', filtrarProdutosMov);
         document.getElementById('m-filtro').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); document.getElementById('m-quantidade').focus(); } });
@@ -232,6 +261,8 @@
             document.getElementById('m-label-qtd').innerText = conf.qtd;
             document.getElementById('m-quantidade').value = '';
             document.getElementById('m-motivo').value = '';
+            document.getElementById('m-lote').value = '';
+            document.getElementById('m-validade').value = '';
 
             const select = document.getElementById('m-produto');
             if (!produtosMov.length) {
@@ -259,13 +290,52 @@
             };
             if (!corpo.produtoId) { alert("Selecione o produto!"); return; }
             if (!corpo.quantidade || corpo.quantidade <= 0) { alert("Informe a quantidade!"); return; }
+            if (farmaciaAtiva() && tipo === 'entrada') {
+                const lote = document.getElementById('m-lote').value.trim();
+                const validade = document.getElementById('m-validade').value;
+                if (lote || validade) {
+                    if (!lote || !validade) { alert("Informe o lote e a validade juntos!"); return; }
+                    corpo.lote = lote;
+                    corpo.validade = validade;
+                }
+            }
+            if (farmaciaAtiva() && tipo === 'saida' && document.getElementById('m-lote-saida').value) {
+                corpo.loteId = document.getElementById('m-lote-saida').value;
+            }
 
             try {
                 const r = await api(`/api/estoque/${tipo}`, 'POST', corpo);
                 JG.toast(`${TIPOS[tipo].titulo} registrada. Novo estoque: ${formatarQtd(r.novaQuantidade)}`, 'sucesso');
                 produtosMov = [];
                 fecharModalMovimento();
-                await Promise.all([buscarEstoque(), buscarMovimentos(), buscarVencimento()]);
+                await Promise.all([buscarEstoque(), buscarMovimentos(), buscarVencimento(), buscarConciliacao()]);
+            } catch (e) { alert(e.message); }
+        }
+
+        // ---------- Conciliação de lotes (farmácia / D-20): só aparece quando há divergência
+        async function buscarConciliacao() {
+            const card = document.getElementById('card-conciliacao');
+            if (!farmaciaAtiva()) { card.classList.add('hidden'); return; }
+            try {
+                const c = await api('/api/farmacia/lotes/conciliacao');
+                if (c.coerente) { card.classList.add('hidden'); return; }
+                const itens = [
+                    ...c.produtos.filter(p => p.situacao !== 'OK').map(p =>
+                        `<div class="mov"><div class="ic out"><span class="ms">inventory</span></div><div class="corpo"><b>${esc(p.produtoNome)}</b><small>Lotes somam ${formatarQtd(p.somaLotes)}, mas o estoque é ${formatarQtd(p.estoque)}</small></div></div>`),
+                    ...c.lotesDivergentes.map(l =>
+                        `<div class="mov"><div class="ic adj"><span class="ms">receipt_long</span></div><div class="corpo"><b>${esc(l.produtoNome || 'Produto')}</b><small>Lote ${esc(l.lote)}: saldo ${l.saldo}, histórico ${l.livro}</small></div></div>`)
+                ];
+                document.getElementById('lista-conciliacao').innerHTML = itens.join('');
+                card.classList.remove('hidden');
+            } catch (e) { /* painel auxiliar: não bloqueia a tela */ }
+        }
+
+        async function conciliarLotes() {
+            if (!confirm('Corrigir as divergências de lote agora?')) return;
+            try {
+                const r = await api('/api/farmacia/lotes/conciliar', 'POST', {});
+                JG.toast(`Conciliação feita: ${r.corrigidos.produtos} produto(s) e ${r.corrigidos.lotes} lote(s) corrigidos.`, 'sucesso');
+                await Promise.all([buscarEstoque(), buscarMovimentos(), buscarVencimento(), buscarConciliacao()]);
             } catch (e) { alert(e.message); }
         }
 
@@ -336,13 +406,13 @@
 
         (async () => {
             try {
-                await Promise.all([buscarEstoque(), buscarMovimentos(), buscarVencimento()]);
+                await Promise.all([buscarEstoque(), buscarMovimentos(), buscarVencimento(), buscarConciliacao()]);
             } catch (e) {
                 alert("Falha ao carregar dados: " + e.message);
             }
         })();
 
-        document.addEventListener('jg:modulos', () => { buscarVencimento(); });
+        document.addEventListener('jg:modulos', () => { buscarVencimento(); buscarConciliacao(); });
     </script>
 </body>
 </html>

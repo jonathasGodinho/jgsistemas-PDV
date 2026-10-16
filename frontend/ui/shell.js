@@ -345,13 +345,15 @@
             const sub = document.getElementById('jg-brand-sub');
             if (sub && m.empresa) sub.textContent = m.empresa;
         } catch (e) { modulosLiberados = null; }
-        if (!modulosLiberados) return;
-        // Recria a sidebar sem os módulos bloqueados
-        const antiga = document.querySelector('.jg-sidebar');
-        if (antiga) antiga.replaceWith(montarSidebar(op, atual));
-        // Página de um módulo bloqueado: mostra aviso no lugar do conteúdo
-        if (atual && atual.item.modulo && !moduloOk(atual.item.modulo)) bloquearPagina(atual.item.nome);
-        document.dispatchEvent(new CustomEvent('jg:modulos', { detail: m }));
+        if (modulosLiberados) {
+            // Recria a sidebar sem os módulos bloqueados
+            const antiga = document.querySelector('.jg-sidebar');
+            if (antiga) antiga.replaceWith(montarSidebar(op, atual));
+            // Página de um módulo bloqueado: mostra aviso no lugar do conteúdo
+            if (atual && atual.item.modulo && !moduloOk(atual.item.modulo)) bloquearPagina(atual.item.nome);
+        }
+        // Avisa as telas que a lista de módulos chegou (o `m` do try não existe aqui fora — B-04)
+        document.dispatchEvent(new CustomEvent('jg:modulos', { detail: window.jgModulos || null }));
     }
 
     function bloquearPagina(nome) {

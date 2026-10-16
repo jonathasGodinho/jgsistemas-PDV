@@ -3,6 +3,7 @@ import { randomUUID } from 'crypto';
 import prisma from '../db';
 import { autenticar, requerPermissao } from '../middlewares/auth';
 import { registrarAuditoria } from '../utils/auditoria';
+import { entradaEmLote } from '../utils/fefo';
 
 const router = Router();
 router.use(autenticar);
@@ -243,26 +244,17 @@ router.post('/:id/receber', requerPermissao('ADMIN', 'MANAGER', 'SUPERVISOR'), a
                 }
             });
 
-            // Farmácia: grava/atualiza o lote de cada item recebido (mesmo lote+validade acumula).
+            // Farmácia: grava/atualiza o lote de cada item recebido (mesmo lote+validade acumula),
+            // com a entrada registrada no livro-razão do lote (D-20).
             for (const l of lotesParaGravar) {
-                const chave = {
+                await entradaEmLote(tx, {
                     companyId: compra.companyId,
                     branchId: filial.id,
                     productId: l.productId,
                     lote: l.nome,
-                    validade: l.validade
-                };
-                const existente = await tx.lote.findFirst({ where: chave });
-                if (existente) {
-                    await tx.lote.update({
-                        where: { id: existente.id },
-                        data: { quantidade: Number(existente.quantidade) + l.quantidade, updatedAt: new Date() }
-                    });
-                } else {
-                    await tx.lote.create({
-                        data: { id: randomUUID(), ...chave, quantidade: l.quantidade, createdAt: new Date(), updatedAt: new Date() }
-                    });
-                }
+                    validade: l.validade,
+                    quantidade: l.quantidade
+                }, { tipo: 'ENTRADA_COMPRA', referencia: `Recebimento compra ${compra.orderNumber}`, userId: operador?.id ?? null });
             }
 
             await tx.purchase.update({
