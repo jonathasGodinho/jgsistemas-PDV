@@ -1,7 +1,7 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import path from 'path';
-import { autenticar } from './middlewares/auth';
+import { autenticar, requerFarmaceuticoRT } from './middlewares/auth';
 import { headersSeguranca, bloquearBotsIA, protegerInjecao } from './middlewares/seguranca';
 import { criarLimiter } from './middlewares/rateLimit';
 import vendasRouter from './routes/vendas';
@@ -35,6 +35,7 @@ import nfeRouter from './routes/nfe';
 import sistemaRouter from './routes/sistema';
 import painelRouter from './routes/painel';
 import farmaciaRouter from './routes/farmacia';
+import sngpcRouter from './routes/sngpc';
 import { exigirModulos } from './utils/modulos';
 
 // O app Express sem `listen`: importável por testes e pela função da Vercel.
@@ -119,6 +120,8 @@ app.use('/api/nfe', autenticar, nfeRouter);
 app.use('/api/sistema', sistemaRouter);
 // Painel do Administrador da JG Sistemas (SaaS) — login próprio, enxerga todas as empresas
 app.use('/api/painel', painelRouter);
+// Farmácia Fase 2: rotas do SNGPC, só para o farmacêutico RT (montadas antes de /api/farmacia)
+app.use('/api/farmacia/sngpc', autenticar, requerFarmaceuticoRT, sngpcRouter);
 app.use('/api/farmacia', autenticar, farmaciaRouter);
 
 // Erros não tratados nas rotas. Registro inexistente (ou de outra empresa, que o

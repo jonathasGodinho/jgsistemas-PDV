@@ -7,14 +7,14 @@ sprint_id: sprint-06
 atualizado_em: 2026-10-16
 sprint:
   titulo: "Geracao dos arquivos SNGPC"
-  status: nao_iniciado
+  status: concluido
   criterio_saida: "npm test termina com 0 failed incluindo os testes sngpc-inventario, sngpc-xml-vendas, sngpc-xml-entradas-perdas, sngpc-movimentacao, sngpc-rotas, sngpc-painel e sngpc-livro"
   riscos: ["XSD oficial indisponivel; conformidade so contra o Guia (D-22, base/00-LACUNAS.md)", "Cancelamento e devolucao nao tem operacao no padrao XML (base/00-LACUNAS.md, D-05)"]
   fora_de_escopo: ["Envio automatico ao SNGPC (D-02)", "Manipulacao e insumos (D-27)"]
 fases:
   - id: F-06.1
     titulo: "XML, pacote e rotas do SNGPC"
-    status: nao_iniciado
+    status: concluido
     criterio_saida: "Rotas do RT geram arquivos que conferem com o Guia v2.3 e o painel informa prazo e pendencias"
     paralelizavel: false
     paralela_com: []
@@ -23,7 +23,7 @@ tasks:
   - id: T-06.01
     titulo: "XML de inventario"
     fase: F-06.1
-    status: pendente
+    status: concluida
     objetivo: "montarInventario monta mensagemSNGPCInventario do saldo dos lotes SNGPC na data ou devolve pendencias (D-15)."
     arquivos:
       cria: [backend/src/utils/sngpc/inventario.ts, backend/tests/sngpc-inventario.test.ts]
@@ -33,12 +33,12 @@ tasks:
     criterio_aceite: "backend/tests/sngpc-inventario.test.ts passa."
     depende_de: []
     paralelizavel: true
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-06.02
     titulo: "XML do bloco de vendas"
     fase: F-06.1
-    status: pendente
+    status: concluida
     objetivo: "blocoVendas monta saidaMedicamentoVendaAoConsumidor por receita a partir das linhas VENDA liquidas do periodo (D-12)."
     arquivos:
       cria: [backend/src/utils/sngpc/xmlVendas.ts, backend/tests/sngpc-xml-vendas.test.ts]
@@ -48,12 +48,12 @@ tasks:
     criterio_aceite: "backend/tests/sngpc-xml-vendas.test.ts passa."
     depende_de: []
     paralelizavel: true
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-06.03
     titulo: "XML dos blocos de entrada e perda"
     fase: F-06.1
-    status: pendente
+    status: concluida
     objetivo: "blocosEntradaPerda monta entradaMedicamentos por NF e saidaMedicamentoPerda por motivo a partir do livro-razao (D-12, D-14)."
     arquivos:
       cria: [backend/src/utils/sngpc/xmlEntradasPerdas.ts, backend/tests/sngpc-xml-entradas-perdas.test.ts]
@@ -63,12 +63,12 @@ tasks:
     criterio_aceite: "backend/tests/sngpc-xml-entradas-perdas.test.ts passa."
     depende_de: []
     paralelizavel: true
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-06.04
     titulo: "Mensagem de movimentacao e pacote zip"
     fase: F-06.1
-    status: pendente
+    status: concluida
     objetivo: "montarMovimentacao junta cabecalho e blocos na ordem do Guia e empacotar gera zip base64 latin1 com MD5 (D-02, D-17)."
     arquivos:
       cria: [backend/src/utils/sngpc/movimentacao.ts, backend/src/utils/sngpc/pacote.ts, backend/tests/sngpc-movimentacao.test.ts]
@@ -78,12 +78,12 @@ tasks:
     criterio_aceite: "backend/tests/sngpc-movimentacao.test.ts passa."
     depende_de: [T-06.02, T-06.03]
     paralelizavel: false
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-06.05
     titulo: "Rotas de geracao e download"
     fase: F-06.1
-    status: pendente
+    status: concluida
     objetivo: "Rotas /api/farmacia/sngpc de inventario, movimentacao com periodo continuo, lista e download, restritas ao RT (D-06, D-16, D-20)."
     arquivos:
       cria: [backend/src/routes/sngpc.ts, backend/tests/sngpc-rotas.test.ts]
@@ -93,12 +93,12 @@ tasks:
     criterio_aceite: "backend/tests/sngpc-rotas.test.ts passa e cada arquivo gerado deixa um registro SNGPC_ARQUIVO_GERADO em AuditLog."
     depende_de: [T-06.01, T-06.04]
     paralelizavel: false
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-06.06
     titulo: "Painel SNGPC e marcar enviado"
     fase: F-06.1
-    status: pendente
+    status: concluida
     objetivo: "GET painel com ultimo arquivo, dias desde ele, alerta de 7 dias, pendencias e inconsistencias; marcar arquivo enviado e inconsistencia notificada (D-16, D-19)."
     arquivos:
       cria: [backend/tests/sngpc-painel.test.ts]
@@ -108,12 +108,12 @@ tasks:
     criterio_aceite: "backend/tests/sngpc-painel.test.ts passa."
     depende_de: [T-06.05]
     paralelizavel: false
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
   - id: T-06.07
     titulo: "Livro de escrituracao"
     fase: F-06.1
-    status: pendente
+    status: concluida
     objetivo: "GET /api/farmacia/sngpc/livro lista as movimentacoes SNGPC do periodo por produto e lote com saldo final (RDC 22 art. 19 II)."
     arquivos:
       cria: [backend/tests/sngpc-livro.test.ts]
@@ -123,8 +123,8 @@ tasks:
     criterio_aceite: "backend/tests/sngpc-livro.test.ts passa."
     depende_de: [T-06.06]
     paralelizavel: false
-    concluida_em: null
-    suite: nao_executada
+    concluida_em: 2026-10-16
+    suite: parcial
 ---
 
 # Plano — Sprint 06 — Geracao dos arquivos SNGPC
@@ -184,13 +184,13 @@ flowchart LR
   classDef bloqueada fill:#f8d7da,stroke:#c62828,color:#4a1d1f
   classDef pendente  fill:#eceff1,stroke:#78909c,color:#263238
   classDef critico   stroke-width:3px
-  class T_06_01 pendente
-  class T_06_02 pendente
-  class T_06_03 pendente
-  class T_06_04 pendente
-  class T_06_05 pendente
-  class T_06_06 pendente
-  class T_06_07 pendente
+  class T_06_01 concluida
+  class T_06_02 concluida
+  class T_06_03 concluida
+  class T_06_04 concluida
+  class T_06_05 concluida
+  class T_06_06 concluida
+  class T_06_07 concluida
   class T_06_02,T_06_04,T_06_05,T_06_06,T_06_07 critico
 ```
 
@@ -210,7 +210,8 @@ teste_funcional: "Produto SNGPC com saldo sem lote faz a funcao devolver a pende
 criterio_aceite: "backend/tests/sngpc-inventario.test.ts passa."
 depende_de: []
 paralelizavel: true
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: sngpc-inventario 2 passed, 0 failed · real: 0.6 h
 ```
 
 ---
@@ -227,7 +228,8 @@ teste_funcional: "Venda cancelada no periodo nao gera bloco, venda de antimicrob
 criterio_aceite: "backend/tests/sngpc-xml-vendas.test.ts passa."
 depende_de: []
 paralelizavel: true
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: sngpc-xml-vendas 2 passed, 0 failed · real: 0.9 h
 ```
 
 ---
@@ -244,7 +246,8 @@ teste_funcional: "SAIDA_MANUAL com motivoPerda 3 de 2 unidades gera saidaMedicam
 criterio_aceite: "backend/tests/sngpc-xml-entradas-perdas.test.ts passa."
 depende_de: []
 paralelizavel: true
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: sngpc-xml-entradas-perdas 2 passed, 0 failed; typecheck 0 · real: 0.7 h
 ```
 
 ---
@@ -261,7 +264,8 @@ teste_funcional: "empacotar devolve zip base64 que abre no XML original e hash i
 criterio_aceite: "backend/tests/sngpc-movimentacao.test.ts passa."
 depende_de: [T-06.02, T-06.03]
 paralelizavel: false
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: sngpc-movimentacao 2 passed, 0 failed · real: 0.5 h
 ```
 
 ---
@@ -278,7 +282,8 @@ teste_funcional: "O mesmo POST como ADMIN sem marca de RT responde 403, com pend
 criterio_aceite: "backend/tests/sngpc-rotas.test.ts passa e cada arquivo gerado deixa um registro SNGPC_ARQUIVO_GERADO em AuditLog."
 depende_de: [T-06.01, T-06.04]
 paralelizavel: false
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: sngpc-rotas 2 passed, 0 failed; typecheck 0 · real: 1.0 h
 ```
 
 ---
@@ -295,7 +300,8 @@ teste_funcional: "POST /api/farmacia/sngpc/arquivos/:id/enviado muda status para
 criterio_aceite: "backend/tests/sngpc-painel.test.ts passa."
 depende_de: [T-06.05]
 paralelizavel: false
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: sngpc-painel 2 + sngpc-rotas 2: 4 passed, 0 failed · real: 0.7 h
 ```
 
 ---
@@ -312,5 +318,6 @@ teste_funcional: "GET do livro por usuario sem marca de RT responde 403."
 criterio_aceite: "backend/tests/sngpc-livro.test.ts passa."
 depende_de: [T-06.06]
 paralelizavel: false
-status: pendente
+status: concluida
+resultado: 2026-10-16 · suíte: sngpc-livro 2 passed, 0 failed · real: 0.5 h
 ```
